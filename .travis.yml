@@ -16,9 +16,9 @@ before_install:
 
 
 before_script:
-  - ./hike3_development/tests/travis/setup/before_script.sh
-  - ./hike3_development/tests/travis/setup/setup_apache.sh
-  - ./hike3_development/tests/travis/setup/setup_selenium_server.sh
+  - ./tests/travis/setup/before_script.sh
+  - ./tests/travis/setup/setup_apache.sh
+  - ./tests/travis/setup/setup_selenium_server.sh
 
 script:
   - ./vendor/bin/codecept run
