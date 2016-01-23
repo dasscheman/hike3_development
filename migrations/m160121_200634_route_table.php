@@ -20,7 +20,7 @@ class m160121_200634_route_table extends Migration
             'route_ID'          => $this->primaryKey(),
             'route_name'	=> $this->string(255)->notNull(),
             'event_ID'          => $this->integer()->notNull(),
-            'day_date'          => $this->date(),
+            'day_date'          => $this->date()->notNull(),
             'route_volgorde'    => $this->integer(11),
             'create_time'	=> $this->dateTime(),
             'create_user_ID'    => $this->integer(11),
@@ -29,33 +29,38 @@ class m160121_200634_route_table extends Migration
 	],
         'ENGINE=InnoDB');
         
-        $this->createIndex('event_ID', 'tbl_route', ['event_ID', 'day_date', 'route_name'], true);
+        $this->createIndex(
+            'event_ID', 
+            'tbl_route', 
+            ['event_ID', 'day_date', 'route_name'], 
+            true);
 
-	$this->addForeignKey("fk_route_event_id", 
-			     "tbl_route", 
-			     "event_ID",
-			     "tbl_event_names", 
-			     "event_ID", 
-			     "RESTRICT", 
-			     "CASCADE");
+	$this->addForeignKey(
+            "fk_route_event_id", 
+            "tbl_route", 
+            "event_ID",
+            "tbl_event_names", 
+            "event_ID", 
+            "RESTRICT", 
+            "CASCADE");
 
-	$this->addForeignKey("fk_route_create_user_name", 
-			     "tbl_route", 
-			     "create_user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE");
+	$this->addForeignKey(
+            "fk_route_create_user_name", 
+            "tbl_route", 
+            "create_user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE");
 	
-	$this->addForeignKey("fk_route_update_user_name", 
-			     "tbl_route", 
-			     "update_user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE");
-
-
+	$this->addForeignKey(
+            "fk_route_update_user_name", 
+            "tbl_route", 
+            "update_user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE");
     }
 
     public function down()

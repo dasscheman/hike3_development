@@ -14,7 +14,12 @@ return [
     ],
     'components' => [
         'db' => [
-            'dsn' => 'mysql:host=localhost;dbname=yii2_basic_tests',
+            'dsn' => 'mysql:host=localhost;dbname=hike3_tests',
+            'username' => 'hike3',
+            'password' => 'yU25AztJ66RNLCVX',
+            'dump' => 'codeception/_data/hike-v2-01.sql',
+            'populate' => true,
+            'cleanup' => true
         ],
         'mailer' => [
             'useFileTransport' => true,

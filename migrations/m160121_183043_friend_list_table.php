@@ -24,41 +24,47 @@ class m160121_183043_friend_list_table extends Migration
 	],
         'ENGINE=InnoDB');
 
-        $this->createIndex('friendship_ID', 'tbl_friend_list', ['user_ID', 'friends_with_user_ID'], true);
+        $this->createIndex(
+            'friendship_ID', 
+            'tbl_friend_list', 
+            ['user_ID', 'friends_with_user_ID'], 
+            true);
 
-        /*********************** table friens_list ****************************/
-  
-	$this->addForeignKey("fk_friend_list_user", 
-			     "tbl_friend_list", 
-			     "user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE");
+	$this->addForeignKey(
+            "fk_friend_list_user", 
+            "tbl_friend_list", 
+            "user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE");
 	
-	$this->addForeignKey("fk_friend_list_friends_with_user", 
-			     "tbl_friend_list", 
-			     "friends_with_user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE"); 
+	$this->addForeignKey(
+            "fk_friend_list_friends_with_user", 
+            "tbl_friend_list", 
+            "friends_with_user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE"); 
 
-	$this->addForeignKey("fk_friend_list_create_user", 
-			     "tbl_friend_list", 
-			     "create_user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE");
+	$this->addForeignKey(
+            "fk_friend_list_create_user", 
+            "tbl_friend_list", 
+            "create_user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE");
 	
-	$this->addForeignKey("fk_friend_list_update_user", 
-			     "tbl_friend_list", 
-			     "update_user_ID",
-			     "tbl_users", 
-			     "user_ID", 
-			     "RESTRICT", 
-			     "CASCADE"); 
+	$this->addForeignKey(
+            "fk_friend_list_update_user", 
+            "tbl_friend_list", 
+            "update_user_ID",
+            "tbl_users", 
+            "user_ID", 
+            "RESTRICT", 
+            "CASCADE"); 
     }
 
     public function down()
