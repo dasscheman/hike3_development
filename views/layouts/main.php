@@ -55,7 +55,7 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => Yii::t('app','Home'),                 
+            ['label' => Yii::t('app','Profiel'),                 
                 'items' => [
                     [
                         'label' => Yii::t('app','Search Friends'), 
@@ -67,11 +67,6 @@ AppAsset::register($this);
                         'url' => ['/users/selectHike'],
                         'visible' => Users::isActionAllowed('users', 'selectHike'),
                     ],
-                    [
-                        'label' => Yii::t('app','Start New Hike'), 
-                        'url'=>['/event-names/create'],
-                        'visible' => EventNames::isActionAllowed('eventNames', 'create'),
-                    ], 
                     [
                         'label' => Yii::t('app','Account Settings') . \Yii::$app->user->id, 
                         'url' => ['users/update'],
@@ -94,7 +89,7 @@ AppAsset::register($this);
                     ],                   
                 ],
             ],
-            ['label' => Yii::t('app','Game'),                 
+            ['label' => Yii::t('app','Deelnemer'),                 
                 'items' => [
                     [
                         'label'=> Yii::t('app','Check Answers'),
@@ -146,16 +141,21 @@ AppAsset::register($this);
                     ],       
                 ],
             ],
-            ['label' => Yii::t('app','Hike Startup'),                
+            ['label' => Yii::t('app','Organisatie'),                
                 'items' => [
                     [
-                        'label'=>'Hike instellingen',
+                        'label' => Yii::t('app','Start New Hike'), 
+                        'url'=>['/event-names/create'],
+                        'visible' => EventNames::isActionAllowed('eventNames', 'create'),
+                    ], 
+                    [
+                        'label'=>Yii::t('app', 'Hike instellingen'),
                         'url'=>[
                             '/eventNames/update'],
                         'visible'=> EventNames::isActionAllowed('eventNames', 'update')
                     ],
                     [
-                        'label'=>'Introductie',
+                        'label'=>Yii::t('app', 'Introductie'),
                         'url'=>[
                             '/Route/viewIntroductie',
                             'introduction'=>true],
