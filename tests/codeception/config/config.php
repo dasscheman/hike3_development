@@ -14,12 +14,12 @@ return [
     ],
     'components' => [
         'db' => [
-            'dsn' => 'mysql:host=localhost;dbname=hike3_tests',
-            'username' => 'hike3',
-            'password' => 'yU25AztJ66RNLCVX',
-            'dump' => 'codeception/_data/hike-v2-01.sql',
-            'populate' => true,
-            'cleanup' => true
+            'dsn' => 'mysql:host=localhost;dbname=hike3_test',
+            'username' => 'hike3_test',
+            'password' => '74B2xH9vd5vqG8BX',
+            //'dump' => 'codeception/_data/hike-v2-01.sql',
+            //'populate' => true,
+            //'cleanup' => true
         ],
         'mailer' => [
             'useFileTransport' => true,

@@ -15,7 +15,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -27,6 +27,14 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
+            'transport' => [                
+                'class' => 'Swift_SmtpTransport',
+                'host'=>'biologenkantoor.nl',
+                'username'=>'noreply@biologenkantoor.nl',
+                'password'=>'Vzvr074$',
+                'port'=>'587', 
+                //'encryption' => 'tls',
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

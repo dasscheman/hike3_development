@@ -20,7 +20,9 @@ modules:
     config:
         PhpBrowser:
 # PLEASE ADJUST IT TO THE ACTUAL ENTRY POINT WITHOUT PATH INFO
-            url: http://localhost:8080
+            url: http://localhost/Hike3_development/web
+#			url: http://localhost:8080/web
+
 #        WebDriver:
 #            url: http://localhost:8080
 #            browser: firefox

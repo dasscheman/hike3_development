@@ -20,7 +20,7 @@ class m160121_200634_route_table extends Migration
             'route_ID'          => $this->primaryKey(),
             'route_name'	=> $this->string(255)->notNull(),
             'event_ID'          => $this->integer()->notNull(),
-            'day_date'          => $this->date()->notNull(),
+            'day_date'          => $this->date(),
             'route_volgorde'    => $this->integer(11),
             'create_time'	=> $this->dateTime(),
             'create_user_ID'    => $this->integer(11),
