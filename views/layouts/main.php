@@ -149,10 +149,14 @@ AppAsset::register($this);
                         'visible' => EventNames::isActionAllowed('eventNames', 'create'),
                     ], 
                     [
+                        'label' => Yii::t('app','Hike overzicht'), 
+                        'url'=>['/organisatie/overview'],
+                        //'visible' => EventNames::isActionAllowed('organisatie', 'overview'),
+                    ], 
+                    [
                         'label'=>Yii::t('app', 'Hike instellingen'),
-                        'url'=>[
-                            '/eventNames/update'],
-                        'visible'=> EventNames::isActionAllowed('eventNames', 'update')
+                        'url'=>['/eventNames/update'],
+                        //'visible'=> EventNames::isActionAllowed('eventNames', 'update')
                     ],
                     [
                         'label'=>Yii::t('app', 'Introductie'),

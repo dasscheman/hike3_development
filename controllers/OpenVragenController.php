@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblOpenVragen;
-use app\models\TblOpenVragenSearch;
+use app\models\OpenVragen;
+use app\models\OpenVragenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

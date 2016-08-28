@@ -108,7 +108,7 @@ class BonuspuntenController extends Controller
      */
     public function actionCreate()
     {
-        $model = new TblBonuspunten();
+        $model = new Bonuspunten();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->bouspunten_ID]);

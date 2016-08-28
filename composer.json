@@ -25,6 +25,7 @@
         "kartik-v/yii2-widget-select2": "*",
         "kartik-v/yii2-editable": "*",
         "kartik-v/yii2-builder": "@dev",
+        "kartik-v/yii2-detail-view": "dev-master",
         "codeception/codeception": "2.0.*",
         "codeception/specify": "*",
         "codeception/verify": "*",

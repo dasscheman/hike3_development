@@ -64,7 +64,7 @@ use yii\base\Model;
  */
 class Users extends HikeActiveRecord implements IdentityInterface
 {    
-    public $selected_event_ID = 123;
+    public $selected_event_ID = 1;
     public $password_repeat;
     /**
      * @inheritdoc
