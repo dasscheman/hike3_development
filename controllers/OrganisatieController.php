@@ -82,7 +82,7 @@ class OrganisatieController extends Controller
                 'pageSize' => 10,
             ],
         ]);
-
+        
 		return $this->render('/organisatie/overview', array(
             'eventModel' => EventNames::find($event_id)->one(),
 			'organisatieData' => $providerOrganisatie,

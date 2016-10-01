@@ -12,6 +12,8 @@ use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\HttpException;
+use \yii\helpers\Json;
 
 /**
  * EventNamesController implements the CRUD actions for TblEventNames model.
@@ -25,11 +27,14 @@ class EventNamesController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+//                    'testactiveday' => ['post'],
+//                    'testmaxtime' => ['post'],
                 ],
             ],            
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['create','index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+//                   'testactiveday', 'teststatus', 'testmaxtime' ],
                 'rules' => [
                     array(	
                         'actions'=>array('create'),
@@ -37,7 +42,8 @@ class EventNamesController extends Controller
                         'roles'=>array('@'),
                     ),
                     array(
-                        'actions'=>array('index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'),
+                        'actions'=>['index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+//                   'testactiveday', 'teststatus', 'testmaxtime'),
                         'allow' => true,
 //                        'expression'=> \app\models\EventNames::isActionAllowed(
 //                            Yii::$app->controller->id,
@@ -84,6 +90,10 @@ class EventNamesController extends Controller
     public function actionCreate()
     {
         $model = new EventNames();
+        $model->status = 1;
+        $model->start_date = date('Y-m-d');
+        $model->end_date = date('Y-m-d');
+        
         // De gebruiker die de hike aanmaakt moet ook gelijk aangemaakt worden als organisatie
         $modelDeelnemersEvent = new DeelnemersEvent;
         // Het route onderdeel introductie moet ook direct aangemaakt worden.
@@ -91,11 +101,10 @@ class EventNamesController extends Controller
         $modelRoute = new Route;
         
         if ($model->load(Yii::$app->request->post())) {
-              $model->attributes=Yii::$app->request->post('EventNames');
+            $model->attributes=Yii::$app->request->post('EventNames');
             $model->event_ID = EventNames::determineNewHikeId();
-            $model->status = 1;
-            $model->image=UploadedFile::getInstance($model,'image');
-
+            $model->image=UploadedFile::getInstance($model,'image');           
+            
             $modelDeelnemersEvent->event_ID = $model->event_ID;
             $modelDeelnemersEvent->user_ID = \Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
@@ -137,14 +146,18 @@ class EventNamesController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate()
     {
-        $model = $this->findModel($id);
-
+        if (!isset(Yii::$app->user->identity->selected_event_ID)) { // No hike set
+            throw new \yii\web\HttpException(418, Yii::t('app', 'No hike selected.'));
+        }
+     
+        $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['startup/startupOverview', 'event_id' => $model->event_ID]);
+            return $this->redirect(['organisatie/overview']);
         } else {
-            return $this->render('update', [
+            return $this->render('/eventnames/update', [
                 'model' => $model,
             ]);
         }
@@ -250,12 +263,12 @@ class EventNamesController extends Controller
      * Finds the TblEventNames model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblEventNames the loaded model
+     * @return EventNames the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblEventNames::findOne($id)) !== null) {
+        if (($model = EventNames::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

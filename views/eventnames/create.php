@@ -8,9 +8,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Nieuwe hike maken');
 ?>
-<div class="tbl-event-names-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="tbl-event-names-form">
 
     <?= $this->render('_form', [
         'model' => $model,

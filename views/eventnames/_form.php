@@ -1,10 +1,13 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\widgets\ActiveForm;
-use kartik\widgets\ActiveForm;
 use kartik\builder\Form;
+//use kartik\daterange\DateRangePicker;
 use kartik\file\FileInput;
+use kartik\widgets\ActiveForm;
+use kartik\date\DatePicker;
+//use kartik\editable\Editable;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblEventNames */
@@ -12,99 +15,99 @@ use kartik\file\FileInput;
 ?>
 
 <div class="tbl-event-names-form">
-    <?php 
-    $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_VERTICAL]);
-    echo Form::widget([
-        'model'=>$model,
-        'form'=>$form,
-        'columns'=>2,
-        'attributes'=>[       // 2 column layout
-            'event_name'=>['type'=>Form::INPUT_TEXT, 'options'=>['placeholder'=>Yii::t('app', 'Hike name')]],
-            'organisatie'=>['type'=>Form::INPUT_TEXT, 'options'=>['placeholder'=>Yii::t('app', 'Organisation')]]
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php
+    $attributes['event_name'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            //'disabled' => !$model->isNewRecord,
+            'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
+        ],
+    ];
+
+    $attributes['organisatie'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            //'disabled' => !$model->isNewRecord,
+            'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
         ]
-    ]);
-    echo Form::widget([       // 1 column layout
-        'model'=>$model,
-        'form'=>$form,
-        'columns'=>1,
-        'attributes'=>[
-            'image'=>[
-                'type'=>Form::INPUT_FILE, 
+    ];
+
+    $attributes['daterange'] = [
+        'type' => Form::INPUT_WIDGET,
+        'widgetClass' => 'kartik\daterange\DateRangePicker',
+        'options' => [
+            //'disabled' => !$model->isNewRecord,
+            'startAttribute' => 'start_date',
+            'endAttribute' => 'end_date',
+            'pluginOptions' => [
+                'minDate' => date('Y-m-d'),
+                "dateLimit" => [
+                    'days' => 10
+                ],
+                'locale' => [
+                    'format' => 'YYYY-MM-DD',
+                    'separator' => Yii::t('app', ' t/m ')],
             ]
         ]
-    ]);
-    echo Form::widget([     // nesting attributes together (without labels for children)
-        'model'=>$model,
-        'form'=>$form,
-        'columns'=>2,
-        'attributes'=>[
-            'date_range' => [
-                'label' => Yii::t('app', 'Date Range'),
-                'attributes'=>[
-                    'start_date' => [
-                        'type'=>Form::INPUT_WIDGET, 
-                        'widgetClass'=>'\kartik\widgets\DatePicker', 
-                        'options'=>[
-                            'options'=>[
-                                'options'=>['placeholder'=>'Date from...']
-                            ],
-                        ],
-                        'hint'=>Yii::t('app', 'Enter start date')
-                    ],
-                    'end_date'=>[
-                        'type'=>Form::INPUT_WIDGET, 
-                        'widgetClass'=>'\kartik\widgets\DatePicker', 
-                        'options'=>[
-                            'options'=>[
-                                'options'=>['placeholder'=>'Date to...', 'class'=>'col-md-9']
-                            ]
-                        ],
-                        'hint'=>Yii::t('app', 'Enter end date')
+    ];
+
+    $attributes['website'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            //'disabled' => !$model->isNewRecord,
+            'placeholder' => Yii::t('app', 'Website organisatie')
+        ]
+    ];
+
+    if (!$model->isNewRecord) {
+        $attributes['status'] = [
+            'type' => Form::INPUT_DROPDOWN_LIST,
+            'items' => \app\models\EventNames::getStatusOptions(),
+            'options' => [
+                'placeholder' => Yii::t('app', 'status'),
+            //'disabled' => !$model->isNewRecord, 
+            ],
+        ];
+
+        $attributes['active_day'] = [
+            'type' => Form::INPUT_WIDGET,
+            'widgetClass' => 'kartik\daterange\DateRangePicker',
+            'options' => [
+                //'disabled' => !$model->isNewRecord,
+                'pluginOptions' => [
+                    'singleDatePicker' => true,
+                    'autoclose' => true,
+                    'minDate' => $model->start_date,
+                    'maxDate' => $model->end_date,
+                    'locale' => [
+                        'format' => 'YYYY-MM-DD',
                     ]
                 ]
+            ]
+        ];
+
+        $attributes['max_time'] = [
+            'type' => Form::INPUT_DROPDOWN_LIST,
+            'items' => \app\models\EventNames::getStatusOptions(),
+            'options' => [
+                'placeholder' => Yii::t('app', 'status'),
+                //'disabled' => !$model->isNewRecord,
             ],
-        ]
-    ]);
-    
-    echo Form::widget([       // 3 column layout
-        'model'=>$model,
-        'form'=>$form,
-        'columns'=>3,
-        'attributes'=>[
-            'website'=>[
-                'type'=>Form::INPUT_TEXT, 
-                'options'=>['placeholder'=>Yii::t('app', 'Website organisatie')]
-            ],      
-            'status'=>[
-                'type'=>Form::INPUT_DROPDOWN_LIST,
-                'items' => \app\models\EventNames::getStatusOptions(),
-                'options'=>['placeholder'=>Yii::t('app', 'status'),
-                    'disabled' => $model->isNewRecord, 
-                ],
-            ],   
-            'actions'=>[
-                'type'=>Form::INPUT_RAW, 
-                'value'=>'<div style="text-align: right; margin-top: 20px">' . 
-                    Html::resetButton(Yii::t('app', 'Reset'), ['class'=>'btn btn-default']) . ' ' .
-                    Html::submitButton(Yii::t('app', 'Save'), ['type'=>'button', 'class'=>'btn btn-primary']) . 
-                    '</div>'
-            ],
-        ]
-    ]);
-    ActiveForm::end(); 
-    
-    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
-    $form->field($model, 'image')->widget(FileInput::classname(), [
-        'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize'=> 10280,],
-        'pluginOptions' => [
-            'previewFileType' => 'image',
-            'showCaption' => false,
-            'showRemove' => false,
-            'showUpload' => false,
-            'browseClass' => 'btn btn-primary btn-block',
-            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-            'browseLabel' =>  Yii::t('app', 'Select Photo')
-        ]
-    ]);
-    ActiveForm::end();?>
+        ];
+    }
+
+    $form = ActiveForm::begin(['type' => ActiveForm::TYPE_VERTICAL, 'formConfig' => ['labelSpan' => 20]]);
+    echo Form::widget([
+        'model' => $model,
+        'form' => $form,
+        'columns' => 4,
+        'attributes' => $attributes,
+    ]);?>
+
+    <div class="form-group">
+        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 </div>

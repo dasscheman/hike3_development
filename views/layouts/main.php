@@ -155,7 +155,7 @@ AppAsset::register($this);
                     ], 
                     [
                         'label'=>Yii::t('app', 'Hike instellingen'),
-                        'url'=>['/eventNames/update'],
+                        'url'=>['/event-names/update'],
                         //'visible'=> EventNames::isActionAllowed('eventNames', 'update')
                     ],
                     [
