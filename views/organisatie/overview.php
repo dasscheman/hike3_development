@@ -3,21 +3,23 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\detail\DetailView;
+use yii\widgets\ListView;
 use app\models\EventNames;
 use app\models\Users;
 use yii\bootstrap\Modal;
 use kartik\file\FileInput;
-
 use kartik\widgets\ActiveForm;
 use kartik\builder\Form;
+use prawee\widgets\ButtonAjax;
+
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
 ?>
+
+
 <div class="organisatie-overview">
 
     <?php
-    
-    
     $form2 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
     $form2->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
         'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
@@ -135,7 +137,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
     Modal::begin(
         [
             'toggleButton' => [
-                'label' => Yii::t('app', 'Wijzig Hike instellingen'),
+                'label' => Yii::t('app', 'Change settings hike'),
                 'class' => 'btn btn-success pull-right'
             ],
             'closeButton' => [
@@ -154,7 +156,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
     Modal::begin(
         [
             'toggleButton' => [
-                'label' => Yii::t('app', 'Wijzig Hike status'),
+                'label' => Yii::t('app', 'Change status hike'),
                 'class' => 'btn btn-success pull-right'
             ],
             'closeButton' => [
@@ -167,5 +169,44 @@ $this->title = Yii::t('app', 'Hike overzicht');
     );
     echo $this->render('/eventnames/_form', ['model' => $eventModel]);
     Modal::end();
+    
+    echo ButtonAjax::widget([
+        'name'=>'Create',
+        'route'=>['groups/create'],
+        'modalId'=>'#main-modal',
+        'modalContent'=>'#group-content-modal',
+        'options'=>[
+            'class'=>'btn btn-success',
+            'title'=>'Button for create application',
+        ]
+    ]);
+
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="group-content-modal"></div>';
+    Modal::end();
+
+    
+    
+     
     ?>
+
+
+
+</div>
+<div class="groups-overview">
+    <td style="vertical-align:top">
+        <?php
+        echo "Groepen die ingeschreven staan"; ?>
+        <div class="row">
+            <?php
+            echo ListView::widget([
+                'summary' => FALSE,
+                'pager' => FALSE,
+                'dataProvider' => $groupsData,
+                'itemView' => '/groups/_list',
+                'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+            ]);
+            ?>
+        </div>
+    </td>
 </div>

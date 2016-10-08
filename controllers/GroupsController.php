@@ -3,15 +3,15 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblGroups;
-use app\models\TblGroupsSearch;
+use app\models\Groups;
+use app\models\GroupsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * GroupsController implements the CRUD actions for TblGroups model.
+ * GroupsController implements the CRUD actions for Groups model.
  */
 class GroupsController extends Controller
 {
@@ -24,32 +24,45 @@ class GroupsController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'delete', 'view', 'create'],
-                'rules' => [			
-                    array(
-                        'deny',  // deny all guest users
-                        'users'=>array('?'),
-                    ),			
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete', 'view', 'create'),
-                        'expression'=> Groups::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
-                    ),
-                    array('deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                'only' => ['index', 'create'],
+                'rules' => [
+                    [
+                        'actions' => ['create'],
+                        'allow' => TRUE, 
+                    ],
+                    
                 ],
-            ]
+            ],
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'only' => ['index', 'update', 'delete', 'view', 'create'],
+//                'rules' => [			
+////                    array(
+////                        'deny',  // deny all guest users
+////                        'users'=>array('?'),
+////                    ),			
+//                    array(	
+//                        'allow', // allow admin user to perform 'viewplayers' actions
+//                        'actions'=>array('index', 'update', 'delete', 'view', 'create'),
+//                        'expression'=> TRUE,
+////                        Groups::isActionAllowed(
+////                            Yii::app()->controller->id,
+////                            Yii::app()->controller->action->id,
+////                            $_GET["event_id"]),
+//                    ),
+//                    array('deny',  // deny all users
+//                        'users'=>array('*'),
+//                    ),
+//                ],
+//            ]
         ];
     }
 
     /**
-     * Lists all TblGroups models.
+     * Lists all Groups models.
      * @return mixed
      */
     public function actionIndex()
@@ -64,7 +77,7 @@ class GroupsController extends Controller
     }
      
     /**
-     * Displays a single TblGroups model.
+     * Displays a single Groups model.
      * @param integer $id
      * @return mixed
      */
@@ -76,12 +89,39 @@ class GroupsController extends Controller
     }
 
     /**
-     * Creates a new TblGroups model.
+     * Creates a new Groups model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
+        
+        var_dump('sadf', Yii::$app->request->post(), Yii::$app->request->get()); 
+        $model = new Groups();
+        if ($model->load(Yii::$app->request->post()) ) {
+            
+            $model->event_ID = 1;
+            var_dump($model->save());
+            
+       // var_dump('een'); exit;
+        return $this->redirect(['view', 'id' => (string) $model->id]);
+        
+        } elseif ($model->load(Yii::$app->request->get()) && $model->save()) {
+            
+        var_dump('eeneen'); exit;
+        return $this->redirect(['view', 'id' => (string) $model->id]);
+        
+        }elseif (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
+                        'model' => $model
+            ]);
+        } else {
+        var_dump('drie'); exit;
+            return $this->render('_form', [
+                        'model' => $model
+            ]);
+        }
+        
         $model = new Groups();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -94,7 +134,7 @@ class GroupsController extends Controller
     }
     
     /**
-     * Updates an existing TblGroups model.
+     * Updates an existing Groups model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -113,7 +153,7 @@ class GroupsController extends Controller
     }
 		
     /**
-     * Deletes an existing TblGroups model.
+     * Deletes an existing Groups model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -147,15 +187,15 @@ class GroupsController extends Controller
 	}
     
     /**
-     * Finds the TblGroups model based on its primary key value.
+     * Finds the Groups model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblGroups the loaded model
+     * @return Groups the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblGroups::findOne($id)) !== null) {
+        if (($model = Groups::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

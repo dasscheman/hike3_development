@@ -60,7 +60,7 @@ class Groups extends HikeActiveRecord
             [['group_name'], 'string', 'max' => 255],
             [   ['event_ID', 'group_name'], 
                 'unique', 'targetAttribute' => ['event_ID', 'group_name'], 
-                'message' => Yii::t('app/error', 'This group is already assigned to this hike')]
+                'message' => Yii::t('app', 'This group is already assigned to this hike')]
         ];
     }
 

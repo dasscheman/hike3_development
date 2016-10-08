@@ -59,6 +59,11 @@ class OrganisatieController extends Controller
      */
     public function actionOverview()
     {
+            if (isset($_POST['hasEditable'])) {
+                var_dump($_POST); exit;
+            }
+        
+        
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
         $queryOrganisatie = DeelnemersEvent::find()
@@ -72,7 +77,7 @@ class OrganisatieController extends Controller
                 'pageSize' => 50,
             ],
         ]);
-                
+        $groupModel = new Groups;        
         $queryGroups = Groups::find()
             ->where(['=', 'event_ID', $event_id])
             ->orderby('group_name ASC');
@@ -87,6 +92,7 @@ class OrganisatieController extends Controller
             'eventModel' => EventNames::find($event_id)->one(),
 			'organisatieData' => $providerOrganisatie,
 			'groupsData' => $providerGroups,
+            'groupModel' => $groupModel,
 		));
 	}
 }

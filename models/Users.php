@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_users".
@@ -486,8 +487,8 @@ class Users extends HikeActiveRecord implements IdentityInterface {
      * @return array an array of all available users'.
      */
     public function getUserNameOptions() {
-        $data = Users::model()->findAll();
-        $list = CHtml::listData($data, 'user_ID', 'username');
+        $data = Users::find()->all();        
+        $list = ArrayHelper::map($data, 'user_ID', 'username');
         return $list;
     }
 

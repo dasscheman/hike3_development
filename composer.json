@@ -28,6 +28,7 @@
         "kartik-v/yii2-detail-view": "dev-master",      
         "kartik-v/yii2-editable": "*",
         "kartik-v/yii2-field-range": "*",
+        "prawee/yii2-widgets": "dev-master",
         "codeception/codeception": "2.0.*",
         "codeception/specify": "*",
         "codeception/verify": "*",
