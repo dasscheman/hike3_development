@@ -114,51 +114,6 @@ class Posten extends HikeActiveRecord
     }
 
 	/**
-	 * Check if actions are allowed. These checks are not only use in the controllers,
-	 * but also for the visability of the menu items.
-	 */
-
-    function isActionAllowed($controller_id = null,
-							 $action_id = null,
-							 $event_id = null,
-							 $model_id = null,
-							 $group_id = null,
-							 $date = null,
-							 $order = null,
-							 $move = null)
-    {
-		$actionAllowed = parent::isActionAllowed($controller_id, $action_id, $event_id, $model_id);
-
-		$hikeStatus = EventNames::getStatusHike($event_id);
-		$rolPlayer = DeelnemersEvent::getRolOfPlayer($event_id, \Yii::$app->user->id);
-
-		if ($action_id == 'moveUpDown'){
-			if (!isset($date)){
-				return $actionAllowed;
-			}
-			if ($hikeStatus != EventNames::STATUS_opstart or
-				$rolPlayer != DeelnemersEvent::ROL_organisatie) {
-					return $actionAllowed;
-			}
-			if ($move == 'up'){
-				$nextOrderExist = Posten::higherOrderNumberExists($event_id,
-																		   $date,
-																		   $order);
-			}
-			if ($move == 'down'){
-				$nextOrderExist = Posten::lowererOrderNumberExists($event_id,
-																		   $date,
-																		   $order);
-			}
-			if ($nextOrderExist) {
-				$actionAllowed = true;
-			}
-		}
-
-		return $actionAllowed;
-	}
-
-    /**
     * Retrieves a list of post namen
     * @return array an array of all available posten'.
     */

@@ -115,47 +115,6 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     }
     
     /**
-     * Check if actions are allowed. These checks are not only use in the controllers,
-     * but also for the visability of the menu items.
-     */
-    function isActionAllowed($controller_id = null, $action_id = null, $model_id = null, $group_id = null)
-    {
-        if (Yii::$app->user->identity === null){
-            return false;
-        }
-        $actionAllowed = parent::isActionAllowed($controller_id, $action_id, $model_id, $group_id);
-
-        $hikeStatus = EventNames::getStatusHike(Yii::$app->user->identity->getSelectedEventID());
-        $rolPlayer = DeelnemersEvent::getRolOfPlayer(Yii::$app->user->identity->getSelectedEventID());
-
-        switch ($action_id) {
-            case 'antwoordGoedOfFout':
-                if (($hikeStatus == EventNames::STATUS_introductie OR
-                    $hikeStatus == EventNames::STATUS_gestart) AND
-                    $rolPlayer == DeelnemersEvent::ROL_organisatie AND
-                    !OpenVragenAntwoorden::isAntwoordGecontroleerd($model_id)) {
-                        $actionAllowed = true;
-                }
-            break;
-            case 'viewControle':
-                if (($hikeStatus == EventNames::STATUS_introductie OR
-                    $hikeStatus == EventNames::STATUS_gestart) AND
-                    $rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                        $actionAllowed = true;
-                }
-            break;
-            case 'updateOrganisatie':
-                if (($hikeStatus == EventNames::STATUS_introductie OR
-                    $hikeStatus == EventNames::STATUS_gestart) AND
-                    $rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                        $actionAllowed = true;
-                }
-            break;
-        }
-        return $actionAllowed;
-    }
-
-    /**
      * Als een nieuwe record aangemaakt wordt dan moeten deze waarden gezet worden.
      * Ook bedenken wat er met het score veld moet gebeuren... Als deze toch gezet wordt moet
      * de score anders opgehaald worden.

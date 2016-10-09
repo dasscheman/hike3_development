@@ -24,7 +24,6 @@ use app\models\Users;
 
 use Yii;
 
-
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -58,24 +57,29 @@ AppAsset::register($this);
             ['label' => Yii::t('app','Profiel'),                 
                 'items' => [
                     [
+                        'label' => Yii::t('app','Overview'), 
+                        'url'=>['/users/indexOverview'],
+                        'visible' => Yii::$app->user->identity->isActionAllowed('users', 'searchFriends'),
+                    ],
+                    [
                         'label' => Yii::t('app','Search Friends'), 
                         'url'=>['/users/searchFriends'],
-                        'visible' => Users::isActionAllowed('users', 'searchFriends'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('users', 'searchFriends'),
                     ],
                     [
                         'label' => Yii::t('app','Select Hike'), 
                         'url' => ['/users/selectHike'],
-                        'visible' => Users::isActionAllowed('users', 'selectHike'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('users', 'selectHike'),
                     ],
                     [
                         'label' => Yii::t('app','Account Settings') . \Yii::$app->user->id, 
                         'url' => ['users/update'],
-                        'visible'=> Users::isActionAllowed('users', 'update'),
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('users', 'update'),
                     ],
                     [
                         'label' => Yii::t('app','Change Password'), 
                         'url' => ['/users/changePassword'],
-                        'visible' => Users::isActionAllowed('users', 'changePassword'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('users', 'changePassword'),
                     ],  
                     [
                         'label' => Yii::t('app','Create Account'), 
@@ -85,7 +89,7 @@ AppAsset::register($this);
                     [
                         'label' => Yii::t('app','Forgot Password'), 
                         'url' => ['/users/changePassword', 'language'=> 'nl'],
-                        'visible' => Users::isActionAllowed('users', 'changePassword'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('users', 'changePassword'),
                     ],                   
                 ],
             ],
@@ -94,12 +98,12 @@ AppAsset::register($this);
                     [
                         'label'=> Yii::t('app','Check Answers'),
                         'url'=> ['openVragenAntwoorden/viewControle', 'event_id'=>$event_id],
-                        'visible'=> OpenVragenAntwoorden::isActionAllowed('openVragenAntwoorden', 'viewControle')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'viewControle')
                     ],
                     [
                         'label'=> Yii::t('app','Assign Bonus Points'),
                         'url'=>['bonuspunten/create', 'event_id'=>$event_id],
-                        'visible'=> Bonuspunten::isActionAllowed('bonuspunten', 'create')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('bonuspunten', 'create')
                     ],
                     [
                         'label'=> Yii::t('app','Answered Questions'),
@@ -109,108 +113,101 @@ AppAsset::register($this);
                             'event_id'=>$event_id,
                             'previous'=>'game/gameOverview'
                         ],
-                        'visible'=> OpenVragenAntwoorden::isActionAllowed('openVragenAntwoorden', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'index')
                     ],
                     [
                         'label'=> Yii::t('app','Opened Hints'),
                         'url'=>['openNoodEnvelop/index',
                             'event_id'=>$event_id,
                             'previous'=>'game/gameOverview'],
-                        'visible'=> OpenNoodEnvelop::isActionAllowed('openNoodEnvelop', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('openNoodEnvelop', 'index')
                     ],
                     [
                         'label'=> Yii::t('app','Bonus Points'),
                         'url'=>['bonuspunten/index',
                             'event_id'=>$event_id,
                             'previous'=>'game/gameOverview'],
-                        'visible'=> Bonuspunten::isActionAllowed('bonuspunten', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
                     ],
                     [
                         'label'=> Yii::t('app','Checked Stations'),
                         'url'=>['postPassage/index',
                             'event_id'=>$event_id,
                             'previous'=>'game/gameOverview'],
-                        'visible'=> PostPassage::isActionAllowed('postPassage', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('postPassage', 'index')
                     ],
                     [
                         'label'=> Yii::t('app','Qr'),
                         'url'=>['QrCheck/index',
                             'event_id'=>$event_id,
                             'previous'=>'game/gameOverview'],
-                        'visible'=> QrCheck::isActionAllowed('qrCheck', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('qrCheck', 'index')
                     ],       
                 ],
-            ],
+            ],            
             ['label' => Yii::t('app','Organisatie'),                
                 'items' => [
                     [
                         'label' => Yii::t('app','Start New Hike'), 
                         'url'=>['/event-names/create'],
-                        'visible' => EventNames::isActionAllowed('eventNames', 'create'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('eventNames', 'create'),
                     ], 
                     [
                         'label' => Yii::t('app','Hike overzicht'), 
                         'url'=>['/organisatie/overview'],
-                        //'visible' => EventNames::isActionAllowed('organisatie', 'overview'),
+                        'visible' => Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
                     ], 
-                    [
-                        'label'=>Yii::t('app', 'Hike instellingen'),
-                        'url'=>['/event-names/update'],
-                        //'visible'=> EventNames::isActionAllowed('eventNames', 'update')
-                    ],
                     [
                         'label'=>Yii::t('app', 'Introductie'),
                         'url'=>[
                             '/Route/viewIntroductie',
                             'introduction'=>true],
-                        'visible'=> Route::isActionAllowed('route', 'viewIntroductie')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('route', 'viewIntroductie')
                     ],
                     [
-                        'label'=>'Route Beheren',
-                        'url'=>[
-                            '/route/index',
-                        ],
-                        'visible'=> Route::isActionAllowed('route', 'index')
+                        'label'=>'Route Overzict',
+                        'url'=>['/route/index'],
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('route', 'index')
                     ],
                     [
                         'label'=>'Posten Beheren',
                         'url'=>['/posten/index'],
-                        'visible'=> Posten::isActionAllowed('posten', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('posten', 'index')
                     ],
                     [
                         'label'=>'Vragen Overzicht',
                         'url'=>['/openVragen/index'],
-                        'visible'=> OpenVragen::isActionAllowed('openVragen', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('openVragen', 'index')
                     ],
                     [
                         'label'=>'Hints Overzicht',
                         'url'=>['/noodEnvelop/index'],
-                        'visible'=> Qr::isActionAllowed('noodEnvelop', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('noodEnvelop', 'index')
                     ],
                     [
                         'label'=>'Stille Posten Overzicht',
                         'url'=>['/qr/index'],
-                        'visible'=> Qr::isActionAllowed('qr', 'index')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('qr', 'index')
                     ],
                     [
                         'label'=>'Deelnemers Toevoegen',
                         'url'=>['/deelnemersEvent/create'],
-                        'visible'=> DeelnemersEvent::isActionAllowed('deelnemersEvent', 'create')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('deelnemersEvent', 'create')
                     ],
                     [
                         'label'=>'Groep Aanmaken',
                         'url'=>['/groups/create'],
-                        'visible'=> Groups::isActionAllowed('groups', 'create')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('groups', 'create')
                     ],
                     [
                         'label'=>'Dag Veranderen',
                         'url'=>['/eventNames/changeDay'],
-                        'visible'=> EventNames::isActionAllowed('eventNames', 'changeDay')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('eventNames', 'changeDay')
                     ],
                     [
                         'label'=>'Status Veranderen',
                         'url'=>['/eventNames/changeStatus'],
-                        'visible'=> EventNames::isActionAllowed('eventNames', 'changeStatus')
+                        'visible'=> Yii::$app->user->identity->isActionAllowed('eventNames', 'changeStatus')
                     ],
                 ]
             ],

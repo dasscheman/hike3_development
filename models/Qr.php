@@ -113,68 +113,6 @@ class Qr extends HikeActiveRecord
         return $this->hasMany(QrCheck::className(), ['qr_ID' => 'qr_ID']);
     }
 
-	
-
-	/**
-	 * Check if actions are allowed. These checks are not only use in the controllers,
-	 * but also for the visability of the menu items.
-	 */
-    function isActionAllowed($controller_id = null,
-							 $action_id = null,
-							 $event_id = null,
-							 $model_id = null,
-							 $group_id = null,
-							 $date = null,
-							 $order = null,
-							 $move = null)
-    {
-		$actionAllowed = parent::isActionAllowed($controller_id, $action_id, $event_id, $model_id);
-
-		$hikeStatus = EventNames::getStatusHike($event_id);
-		$rolPlayer = DeelnemersEvent::getRolOfPlayer($event_id, \Yii::$app->user->id);
-		$route_id = Qr::getQrRouteID($model_id);
-
-		if ($action_id == 'createIntroductie' and
-			$hikeStatus == EventNames::STATUS_opstart and
-			$rolPlayer == DeelnemersEvent::ROL_organisatie) {
-				$actionAllowed = true;
-		}
-
-		if ($action_id == 'report' and
-			$rolPlayer == DeelnemersEvent::ROL_organisatie) {
-				$actionAllowed = true;
-		}
-
-		if ($action_id == 'moveUpDown'){
-			if (!isset($order) || !isset($route_id)){
-				return $actionAllowed;
-			}
-			if ($hikeStatus != EventNames::STATUS_opstart or
-				$rolPlayer != DeelnemersEvent::ROL_organisatie) {
-					return $actionAllowed;
-			}
-
-			if ($move == 'up'){
-				$nextOrderExist = Qr::higherOrderNumberExists($event_id,
-																	   $model_id,
-																	   $order,
-																	   $route_id);
-			}
-			if ($move == 'down'){
-				$nextOrderExist = Qr::lowererOrderNumberExists($event_id,
-																		$model_id,
-																		$order,
-																		$route_id);
-			}
-			if ($nextOrderExist) {
-				$actionAllowed = true;
-			}
-		}
-
-		return $actionAllowed;
-	}
-
-
 	public function getUniqueQrCode()
 	{
 		$UniqueQrCode = 99;

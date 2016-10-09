@@ -128,7 +128,7 @@ class DeelnemersEventController extends Controller
                 return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
             }
         } else {
-            return $this->render('_addForm', [
+            return $this->render('_formAdd', [
                 'model' => $model,
             ]);
         }

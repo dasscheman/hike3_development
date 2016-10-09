@@ -122,54 +122,6 @@ class Route extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
-    function isActionAllowed($controller_id = null,
-							 $action_id = null,
-							 $event_id = null,
-							 $model_id = null,
-							 $group_id = null,
-							 $date = null,
-							 $order = null,
-							 $move = null)
-    {
-		$actionAllowed = parent::isActionAllowed($controller_id, $action_id, $event_id, $model_id);
-        if (isset($_GET['event_id'])) {
-            $event_id = $_GET['event_id'];
-        }
-
-        $hikeStatus = EventNames::getStatusHike($event_id);
-        $rolPlayer = DeelnemersEvent::getRolOfPlayer($event_id, \Yii::$app->user->id);
-
-		if ($action_id == 'moveUpDown'){
-			if (!isset($date) || !isset($move)){
-				return $actionAllowed;
-			}
-			if ($hikeStatus != EventNames::STATUS_opstart or
-				$rolPlayer != DeelnemersEvent::ROL_organisatie) {
-					return $actionAllowed;
-			}
-			if ($move == 'up'){
-				$nextOrderExist = Route::higherOrderNumberExists($event_id,
-																		  $date,
-																		  $order);
-			}
-			if ($move == 'down'){
-				$nextOrderExist = Route::lowererOrderNumberExists($event_id,
-																		   $date,
-																		   $order);
-			}
-			if ($nextOrderExist) {
-				$actionAllowed = true;
-			}
-		}
-
-		if ($action_id == 'viewIntroductie'){
-            if ($rolPlayer == DeelnemersEvent::ROL_organisatie ){
-                $actionAllowed = true;
-            }
-        }
-		return $actionAllowed;
-	}
-
 	public function getDayOfRouteId($id)
 	{
 		$data = Route::find('route_ID =:route_id', array(':route_id' => $id));

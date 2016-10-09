@@ -216,13 +216,6 @@ class UsersController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-}
-
-
-
-
-class UsersController extends Controller
-{
 
 
 	/**

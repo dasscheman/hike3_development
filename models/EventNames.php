@@ -93,42 +93,6 @@ class EventNames extends HikeActiveRecord {
         ];
     }
 
-    /* Only the actions specific to the model DeelnemersEvents and to the 
-     * controller Game are here defined. Game does not have an model for itself.
-     */
-
-    function isActionAllowed($controller_id = null, $action_id = null, $model_id = null, $group_id = null) {
-        if (Yii::$app->user->identity === null) {
-            return false;
-        }
-
-        $actionAllowed = parent::isActionAllowed($controller_id, $action_id, $model_id, $group_id);
-
-        if (!isset(Yii::$app->user->identity->selected_event_ID)) {
-            return false;
-        }
-
-        $event_id = Yii::$app->user->identity->selected_event_ID;
-        $hikeStatus = EventNames::getStatusHike($event_id);
-        $rolPlayer = DeelnemersEvent::getRolOfPlayer(Yii::$app->user->id);
-
-        if ($action_id == 'changeStatus') {
-            if (($hikeStatus == EventNames::STATUS_opstart or
-                $hikeStatus == EventNames::STATUS_introductie or
-                $hikeStatus == EventNames::STATUS_gestart) and
-                $rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                $actionAllowed = true;
-            }
-        }
-        if ($action_id == 'changeDay') {
-            if ($hikeStatus == EventNames::STATUS_gestart and
-                $rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                $actionAllowed = true;
-            }
-        }
-        return $actionAllowed;
-    }
-
     /**
      * @return \yii\db\ActiveQuery
      */

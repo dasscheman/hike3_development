@@ -73,54 +73,6 @@ class DeelnemersEvent extends HikeActiveRecord
         ];
     }
     
-    /* Only the actions specific to the model DeelnemersEvents and to the controller Game are here defined.
-     * Game does not have an model for itself.
-     */
-    function isActionAllowed($controller_id = null, $action_id = null, $model_id = null, $group_id = null)
-    {
-        if (!isset(Yii::$app->user->identity->selected_event_ID)) {
-            return false;
-        }
-
-        $event_id = Yii::$app->user->identity->selected_event_ID;
-
-        $actionAllowed = parent::isActionAllowed($controller_id, $action_id, $event_id, $model_id, $group_id);
-        $hikeStatus = EventNames::getStatusHike($event_id);
-        $rolPlayer = DeelnemersEvent::getRolOfPlayer(Yii::$app->user->id);
-        if ($rolPlayer == DeelnemersEvent::ROL_deelnemer) {
-            $group_id_of_player = DeelnemersEvent::model()->getGroupOfPlayer($event_id, Yii::$app->user->id);
-        }
-
-        if (isset($rolPlayer) && $controller_id == 'game'){
-            if ($rolPlayer <= DeelnemersEvent::ROL_deelnemer &&
-				$action_id == 'gameOverview') {
-					$actionAllowed = true;
-			}
-			if ($action_id == 'groupOverview') {
-				if ($rolPlayer <= DeelnemersEvent::ROL_post) {
-					$actionAllowed = true;
-				}
-				if ($rolPlayer == DeelnemersEvent::ROL_deelnemer &&
-					$group_id == $group_id_of_player &&
-					($hikeStatus == EventNames::STATUS_gestart ||
-					$hikeStatus == EventNames::STATUS_introductie)) {
-					$actionAllowed = true;
-				}
-				if ($rolPlayer == DeelnemersEvent::ROL_deelnemer &&
-					$hikeStatus == EventNames::STATUS_beindigd) {
-					$actionAllowed = true;
-				}
-			}
-		}
-
-		//Startup overview is only allowed when player is organisation
-        if (isset($rolPlayer) && $controller_id === 'startup' && $rolPlayer == DeelnemersEvent::ROL_organisatie) {
-            if (in_array($action_id, array('startupOverview'))) {
-					$actionAllowed = true;
-			}
-        }
-		return $actionAllowed;
-    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -188,15 +140,18 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de rol van een speler tijdens een bepaalde hike
      */
-    public function getRolOfPlayer($user_Id)
+    public function getRolOfPlayer()
     {
-//        $data = DeelnemersEvent::findOne([['event_ID' => Yii::$app->user->identity->selected_event_ID],['user_ID' => $user_Id]]);
-//        if(isset($data->rol))
-//        {
-//            return $data->rol;
-//        }
-
-        return;
+        $data = DeelnemersEvent::findOne([
+            'event_ID' => Yii::$app->user->identity->selected_event_ID,
+            'user_ID' => Yii::$app->user->identity->id
+        ]);
+        
+        if(isset($data->rol))
+        {
+            return $data->rol;
+        }
+        return FALSE;
     }
 
     /**

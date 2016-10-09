@@ -63,7 +63,7 @@ use yii\helpers\ArrayHelper;
  * @property Route[] $Routes
  * @property Route[] $Routes0
  */
-class Users extends HikeActiveRecord implements IdentityInterface {
+class Users extends AccessControl implements IdentityInterface {
 
     public $selected_event_ID = 1;
     public $password_repeat;
@@ -123,21 +123,7 @@ class Users extends HikeActiveRecord implements IdentityInterface {
             'accessToken' => Yii::t('app', 'Access Token'),
         ];
     }
-
-    /**
-     * Only the actions specific to the model User are here defined.
-     */
-    function isActionAllowed($controller_id = null, $action_id = null, $model_id = null, $group_id = null) {
-        $actionAllowed = parent::isActionAllowed($controller_id, $action_id, $model_id, $group_id);
-
-        if ($controller_id == 'users') {
-            if (in_array($action_id, ['decline', 'accept'])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {

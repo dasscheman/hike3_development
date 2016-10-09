@@ -111,21 +111,6 @@ class QrCheck extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
-
-	/**
-	 * Check if actions are allowed. These checks are not only use in the controllers,
-	 * but also for the visability of the menu items.
-	 */
-
-    function isActionAllowed($controller_id = null, $action_id = null, $event_id = null, $model_id = null, $group_id = null)
-    {
-		$actionAllowed = parent::isActionAllowed($controller_id, $action_id, $event_id, $model_id, $group_id);
-
-		$hikeStatus = EventNames::getStatusHike($event_id);
-		$rolPlayer = DeelnemersEvent::getRolOfPlayer($event_id, \Yii::$app->user->id);
-		return $actionAllowed;
-	}
-
     /**
      * Checks if qr id is used by any group.
      */
