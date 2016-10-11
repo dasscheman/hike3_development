@@ -68,11 +68,11 @@ class UsersSearch extends Users
     public function search($params)
     {
         $query = Users::find();
-        $queryFriendList = FriendList::find();
-        $queryFriendList->select('friends_with_user_ID')
-                        ->where(['user_ID'=>Yii::app()->user->id])  
-                        ->andwhere(['user_ID' =>Yii::app()->user->id]);    
-        $query->where(['not in', 't.user_ID' => $queryFriendList]);
+//        $queryFriendList = FriendList::find();
+//        $queryFriendList->select('friends_with_user_ID')
+//                        ->where(['user_ID'=>Yii::$app->user->id])  
+//                        ->andwhere(['user_ID' =>Yii::$app->user->id]);    
+//        $query->where(['not in', 't.user_ID', $queryFriendList]);
         
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

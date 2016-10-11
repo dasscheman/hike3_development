@@ -51,9 +51,8 @@ class SiteController extends Controller
     public function actionIndex()
     {
         if (!\Yii::$app->user->isGuest) {
-            $this->redirect(array('/game/viewUser'));
+            $this->redirect(array('/users/index'));
         }
-        
         return $this->render('index');
     }
 
@@ -62,7 +61,7 @@ class SiteController extends Controller
         if (!\Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
+        
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();

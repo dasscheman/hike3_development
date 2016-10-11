@@ -1,49 +1,92 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use kartik\date\DatePicker; 
+use kartik\builder\Form;
+use kartik\widgets\ActiveForm;
+//use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
+
 <div class="users-form">
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php
+    $attributes['username'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Username')
+        ],
+    ];
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'voornaam')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'achternaam')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'organisatie')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
+    $attributes['voornaam'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'First name')
+        ],
+    ];
     
-    <?= $form->field($model, 'password_repeat')->passwordInput(['maxlength' => true]) ?>
+    $attributes['achternaam'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Surname')
+        ],
+    ];
     
-    <?= $form->field($model, 'birthdate')->widget(DatePicker::classname(),
-        [
-            'name' => 'birthdate',
-            'value'=> $model->birthdate,
-            //'type' => DatePicker::TYPE_INLINE,
-            'convertFormat' => true,
+    $attributes['organisatie'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Belongs to organisation')
+        ]
+    ];
+
+    
+    $attributes['email'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Email')
+        ]
+    ];
+    
+    $attributes['birthdate'] = [
+        'type' => Form::INPUT_WIDGET,
+        'widgetClass' => 'kartik\date\DatePicker', 
+        'options' => [
             'pluginOptions' => [
-               'format' => 'yyyy-MM-dd',
-                    'todayHighlight' => true
+                'value' => date('d-M-Y'),
+                'format' => 'yyyy-mm-dd',
+                'todayHighlight' => true
             ]
-        ]); 
-    ?> 
+        ]
+    ];
+
+    $attributes['password'] = [
+        'type' => Form::INPUT_PASSWORD,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Password')
+        ]
+    ];
+
+    $attributes['password_repeat'] = [
+        'type' => Form::INPUT_PASSWORD,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Repeat password')
+        ]
+    ];
+
+    $form = ActiveForm::begin(['type' => ActiveForm::TYPE_VERTICAL, 'formConfig' => ['labelSpan' => 20]]);
+    echo Form::widget([
+        'model' => $model,
+        'form' => $form,
+        'columns' => 4,
+        'attributes' => $attributes,
+    ]);?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>

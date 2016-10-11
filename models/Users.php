@@ -88,13 +88,17 @@ class Users extends AccessControl implements IdentityInterface {
             ['username', 'unique'],
             ['email', 'unique'],
             [['email'], 'email'],
+            
+            ['password', 'required'], //'on' => ['ChangePassword', 'create']
+            ['password', 'string', 'min' => 6],
+            ['password_repeat', 'required'],
+            ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
             [
                 'birthdate',
                 'date',
                 'message' => Yii::t('app', '{attribute}: This is not a date!'),
                 'format' => 'yyyy-MM-dd'
             ],
-            ['password', 'compare', 'on' => 'ChangePassword'],
         ];
     }
 
@@ -127,7 +131,7 @@ class Users extends AccessControl implements IdentityInterface {
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
-                $this->authKey = \Yii::$app->security->generateRandomString();
+                $this->authKey = Yii::$app->security->generateRandomString();
             }
             return true;
         }
@@ -506,14 +510,29 @@ class Users extends AccessControl implements IdentityInterface {
         }
     }
 
-    public function sendEmailWithNewPassword($model, $newWachtwoord) {
-        $message = Yii::$app->mailer->compose('resendPassword', [
-                'newMailUsers' => $model->username,
-                'newWachtwoord' => $newWachtwoord,
+    public function sendEmailNewAccount() {
+        $message = Yii::$app->mailer->compose('newAccount', [
+                'newMailUsers' => $this->username,
+                'newWachtwoord' => $this->password,
             ])
             ->setSubject('Wachtwoord Hike-app')
             ->setFrom('noreply@biologenkatoor.nl')
-            ->setTo($model->email);
+            ->setTo($this->email);
+
+        if ($message->send()) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function sendEmailWithNewPassword() {
+        $message = Yii::$app->mailer->compose('resendPassword', [
+                'newMailUsers' => $this->username,
+                'newWachtwoord' => $this->password,
+            ])
+            ->setSubject('Wachtwoord Hike-app')
+            ->setFrom('noreply@biologenkatoor.nl')
+            ->setTo($this->email);
 
         if ($message->send()) {
             return true;
@@ -526,9 +545,8 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function afterValidate() {
         parent::afterValidate();
-        if (!$this->hasErrors() && Yii::app()->controller->action->id != 'update') {
+        if (!$this->hasErrors() && Yii::$app->controller->action->id != 'update') {
             $this->password = $this->hashPassword($this->password);
         }
     }
-
 }

@@ -36,28 +36,24 @@ class GroupsController extends Controller
                     
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'only' => ['index', 'update', 'delete', 'view', 'create'],
-//                'rules' => [			
-////                    array(
-////                        'deny',  // deny all guest users
-////                        'users'=>array('?'),
-////                    ),			
-//                    array(	
-//                        'allow', // allow admin user to perform 'viewplayers' actions
-//                        'actions'=>array('index', 'update', 'delete', 'view', 'create'),
-//                        'expression'=> TRUE,
-////                        Groups::isActionAllowed(
-////                            Yii::app()->controller->id,
-////                            Yii::app()->controller->action->id,
-////                            $_GET["event_id"]),
-//                    ),
-//                    array('deny',  // deny all users
-//                        'users'=>array('*'),
-//                    ),
-//                ],
-//            ]
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'update', 'delete', 'view', 'create'],
+                'rules' => [			
+//                    array(
+//                        'deny',  // deny all guest users
+//                        'users'=>array('?'),
+//                    ),			
+                    array(	
+                        'allow', // allow admin user to perform 'viewplayers' actions
+                        'actions'=>array('index', 'update', 'delete', 'view', 'create'),
+                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
+                    ),
+                    array('deny',  // deny all users
+                        'users'=>array('*'),
+                    ),
+                ],
+            ]
         ];
     }
 

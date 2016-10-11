@@ -35,12 +35,12 @@ class QrCheckController extends Controller
                     array(	
                         'deny',  // deny if group_id is not set
                         'actions'=>array('create'),
-                        'expression'=> !isset($_GET["qr_code"]),
+                        'matchCallback'=> !isset($_GET["qr_code"]),
                     ),
                     array(	
                         'deny',  // deny if group_id is not set
                         'actions'=>array('update', 'viewPlayers'),
-                        'expression'=> !isset($_GET["group_id"]),
+                        'matchCallback'=> !isset($_GET["group_id"]),
                     ),
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
@@ -53,7 +53,7 @@ class QrCheckController extends Controller
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('update'),
-                        'expression'=> QrCheck::isActionAllowed(
+                        'matchCallback'=> QrCheck::isActionAllowed(
                             Yii::app()->controller->id,
                             Yii::app()->controller->action->id,
                             $_GET["event_id"],
@@ -63,7 +63,7 @@ class QrCheckController extends Controller
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('viewPlayers'),
-                        'expression'=> QrCheck::isActionAllowed(
+                        'matchCallback'=> QrCheck::isActionAllowed(
                             Yii::app()->controller->id,
                             Yii::app()->controller->action->id,
                             $_GET["event_id"],

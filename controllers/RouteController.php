@@ -3,13 +3,13 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblRoute;
-use app\models\TblRouteSearch;
+use app\models\Route;
+use app\models\RouteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-
+use app\models\Users;
 /**
  * RouteController implements the CRUD actions for TblRoute model.
  */
@@ -39,22 +39,11 @@ class RouteController extends Controller
                     array(	
                         'allow', // only when $_GET are set
                         'actions'=>array('moveUpDown'),
-                        'expression'=> Route::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            "",
-                            $_GET["date"],
-                            $_GET["volgorde"],
-                            $_GET["up_down"])),
+                        'expression'=> Yii::$app->user->identity->isActionAllowed()),
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie'),
-                        'expression'=> Route::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"])),
+                        'expression'=> Yii::$app->user->identity->isActionAllowed()),
                     array(
                         'deny', //deny all users
                         'users'=>array('*'),

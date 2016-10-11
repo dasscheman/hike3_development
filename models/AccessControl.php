@@ -18,14 +18,14 @@ class AccessControl extends HikeActiveRecord {
     function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = array(), array $parameters = array()) {
                
         AccessControl::setControllerId($controller_id);
-        AccessControl::setActionId($this->action_id);
+        AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
         AccessControl::setParameters($parameters);
         AccessControl::setEventId();
         AccessControl::setHikeStatus();
         AccessControl::setRolPlayer();
         AccessControl::setGroupOfPlayer();
-
+        
         switch ($this->action_id) {
             case 'index':
                 return AccessControl::indexAllowed();
@@ -67,10 +67,10 @@ class AccessControl extends HikeActiveRecord {
     }
 
     function setActionId($action_id) {
-       if ($this->action_id == NULL) {
+        if ($this->action_id == NULL) {
             $this->action_id = Yii::$app->controller->action->id;
         } else {
-            $this->action_id = $this->action_id;
+            $this->action_id = $action_id;
         }
     }
 
@@ -151,6 +151,7 @@ class AccessControl extends HikeActiveRecord {
 
     function updateAllowed() {
         if ($this->controller_id === 'users' &&
+            array_key_exists('user_id', $this->ids) &&
             Yii::$app->user->identity->id === $this->ids['user_id']) {
             return TRUE;
         }

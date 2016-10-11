@@ -10,7 +10,7 @@ use kartik\date\DatePicker;
 use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblEventNames */
+/* @var $model app\models\EventNames */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

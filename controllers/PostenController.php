@@ -29,32 +29,27 @@ class PostenController extends Controller
                 'only' => ['index', 'update', 'delete', 'create', 'view',  'moveUpDown'],
                 'rules' => [
                     array(
-                        'deny',  // deny all users
-                        'users'=>array('?'),),
+                        'allow' => FALSE,  // deny all users
+                        'roles'=>array('?'),),
                     array(	
-                        'allow', // only when $_GET are set
+                        'allow' => TRUE, // only when $_GET are set
                         'actions'=>array('moveUpDown'),
-                        'expression'=> Posten::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            "",
-                            $_GET["date"],
-                            $_GET["volgorde"],
-                            $_GET["up_down"])
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(
+                            '',
+                            '',
+                            array(),
+                            ['date' => Yii::$app->request->get('date'),
+                             'order' => Yii::$app->request->get('volgorde'),
+                             'move' => Yii::$app->request->get('up_down')])
                     ),
                     array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
+                        'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'create', 'view'),
-                        'expression'=> Posten::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
                     array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
+                        'allow' => FALSE,  // deny all users
+                        'roles'=>array('*'),
                     ),
                 ]
             ]

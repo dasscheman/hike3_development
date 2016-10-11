@@ -46,25 +46,15 @@ class BonuspuntenController extends Controller
                     ],
                     [
                         'actions' => ['index', 'delete', 'create'],
-                        'allow' => Bonuspunten::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id),
+                        'allow' => Yii::$app->user->identity->isActionAllowed(),
                     ],
                     [
                         'actions' => ['update'],
-                        'allow' => Bonuspunten::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["id"],
-                            $_GET["group_id"]),
+                        'allow' => Yii::$app->user->identity->isActionAllowed(),
                     ],
                     [
                         'actions' => ['viewPlayers'],
-                        'allow' => Bonuspunten::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            "",
-                            $_GET["group_id"]),
+                        'allow' => Yii::$app->user->identity->isActionAllowed(),
                     ],
                     
                 ],

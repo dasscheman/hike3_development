@@ -45,10 +45,7 @@ class EventNamesController extends Controller
                         'actions'=>['index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
 //                   'testactiveday', 'teststatus', 'testmaxtime'),
                         'allow' => true,
-//                        'expression'=> \app\models\EventNames::isActionAllowed(
-//                            Yii::$app->controller->id,
-//                            Yii::$app->controller->action->id,
-//                            Yii::$app->request->get('event_id')),
+                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
                 ]
             ]

@@ -34,22 +34,17 @@ class QrController extends Controller
                     array(	
                         'allow', // only when $_GET are set
                         'actions'=>array('moveUpDown'),
-                        'expression'=> Qr::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            $_GET["qr_id"],
-                            "",
-                            $_GET["date"],
-                            $_GET["volgorde"],
-                            $_GET["up_down"])),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(
+                            '',
+                            '',
+                            ['qr_id' => Yii::$app->request->get('qr_id')],
+                            ['date' => Yii::$app->request->get('date'),
+                             'order' => Yii::$app->request->get('volgorde'),
+                             'move' => Yii::$app->request->get('up_down')])),
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie'),
-                        'expression'=> Qr::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"])),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed()),
                     array(
                         'deny',  // deny all users
                         'users'=>array('*'),

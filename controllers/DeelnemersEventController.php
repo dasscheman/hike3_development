@@ -24,53 +24,39 @@ class DeelnemersEventController extends Controller
                     'delete' => ['post'],
                 ],
             ],       
-            
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'create'],
+                'only' => ['dynamicrol', 'index','view', 'update', 'delete', 'viewPlayers', 'create'],
                 'rules' => [
                     [
-                        'actions' => ['create'],
-                        'allow' => TRUE, 
+                        'deny',  // deny all guest users
+                        'users'=>array('?'),
                     ],
-                    
+                    array(
+                        'allow', // allow authenticated user to perform 'create' and 'update' actions
+                        'actions'=>array('dynamicrol'),
+                        'users'=>array('@'),
+                    ),			
+                    array(	
+                        'deny',  // deny if group_id is not set
+                        'actions'=>array('index','view'),
+                        'expression'=> !isset(Yii::$app->request->get('group_id')),
+                    ),			
+                    array(	
+                        'allow', // allow admin user to perform 'viewplayers' actions
+                        'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
+                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
+                    ),
+                    array(
+                        'deny', // allow admin user to perform 'admin' and 'delete' actions
+                        'actions'=>array('adminCreate'),
+                    ),
+                    array(
+                        'deny',  // deny all users
+                        'users'=>array('*'),
+                    ),
                 ],
-            ],     
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'only' => ['dynamicrol', 'index','view', 'update', 'delete', 'viewPlayers', 'create'],
-//                'rules' => [
-//                    [
-//                        'deny',  // deny all guest users
-//                        'users'=>array('?'),
-//                    ],
-//                    array(
-//                        'allow', // allow authenticated user to perform 'create' and 'update' actions
-//                        'actions'=>array('dynamicrol'),
-//                        'users'=>array('@'),
-//                    ),			
-//                    array(	
-//                        'deny',  // deny if group_id is not set
-//                        'actions'=>array('index','view'),
-//                        'expression'=> !isset($_GET["group_id"]),
-//                    ),			
-//                    array(	
-//                        'allow', // allow admin user to perform 'viewplayers' actions
-//                        'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
-//                        'expression'=> DeelnemersEvent::isActionAllowed(
-//                            Yii::app()->controller->id,
-//                            Yii::app()->controller->action->id),
-//                    ),
-//                    array(
-//                        'deny', // allow admin user to perform 'admin' and 'delete' actions
-//                        'actions'=>array('adminCreate'),
-//                    ),
-//                    array(
-//                        'deny',  // deny all users
-//                        'users'=>array('*'),
-//                    ),
-//                ],
-//            ],
+            ],
         ];
     }
 
