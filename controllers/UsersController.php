@@ -27,7 +27,7 @@ class UsersController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['resendPasswordUser', 'create', 'index', 'delete', 'updateAdmin', 'searchFriends', 'update', 'view', 'ChangePassword'],
+                'only' => ['resendPasswordUser', 'create', 'index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'ChangePassword'],
                 'rules' => [
                     [
                         'actions' => ['resendPasswordUser', 'create'],
@@ -35,7 +35,7 @@ class UsersController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'delete', 'updateAdmin', 'searchFriends', 'update', 'view', 'ChangePassword'],
+                        'actions' => ['index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'ChangePassword'],
                         'allow' => TRUE,
                         'matchCallback' => function () {
                             return Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed();
@@ -54,12 +54,13 @@ class UsersController extends Controller
      * Lists all TblUsers models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionSearchNewFriends()
     {
+        Yii::$app->session->removeAllFlashes();
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('searchNewFriends', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -71,11 +72,27 @@ class UsersController extends Controller
     public function actionSearchFriends()
     {
         Yii::$app->session->removeAllFlashes();
-        $model=new UsersSearch();
-        $model->unsetAttributes(); // clear any default values
-        Yii::$app->request->get();
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchFriends(Yii::$app->request->queryParams);
+
         return $this->render('searchFriends', [
-            'model'=>$model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    /**
+     * Manages all models.
+     */
+    public function actionSearchFriendRequests()
+    {
+        Yii::$app->session->removeAllFlashes();
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
+
+        return $this->render('searchFriendRequests', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
     

@@ -104,12 +104,15 @@ class UsersSearch extends Users
     }
 
     public function searchFriends($params)
-    {
+    {        
         $query = Users::find();
-        $query->join('inner join', 'tbl_friend_list', 'tbl_friend_list.user_ID = t.user_ID');
-        $query->where(['not', ['friends.friend_list_ID' => null]])
-              ->andWhere(['tbl_friend_list.friends_with_user_ID' => Yii::$app->user->id])
-              ->andWhere(['tbl_friend_list.status' => 2]);
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
+                        ->addParams([':user_id' => Yii::$app->user->id]);
+        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
+              ->addParams([':user_id' => Yii::$app->user->id]);
         
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -124,36 +127,31 @@ class UsersSearch extends Users
         }
 
         $query->andFilterWhere([
-            'user_ID' => $this->user_ID,
             'birthdate' => $this->birthdate,
             'last_login_time' => $this->last_login_time,
             'create_time' => $this->create_time,
-            'create_user_ID' => $this->create_user_ID,
-            'update_time' => $this->update_time,
-            'update_user_ID' => $this->update_user_ID,
-            'selected_event_ID' => $this->selected_event_ID,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'voornaam', $this->voornaam])
             ->andFilterWhere(['like', 'achternaam', $this->achternaam])
             ->andFilterWhere(['like', 'organisatie', $this->organisatie])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password', $this->password])           
-            ->andFilterWhere(['like', 'macadres', $this->macadres])
-            ->andFilterWhere(['like', 'authKey', $this->authKey])
-            ->andFilterWhere(['like', 'accessToken', $this->accessToken]);
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }
 
-    public function searchPending($params)
+    public function searchFriendRequests($params)
     {
         $query = Users::find();
-        $query->join('inner join', 'tbl_friend_list', 'tbl_friend_list.friends_with_user_ID = t.user_ID');
-        $query->where(['not', ['friends.friend_list_ID' => null]])
-              ->andWhere(['tbl_friend_list.user_ID' => Yii::$app->user->id])
-              ->andWhere(['tbl_friend_list.status' => 0]);      
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->addParams([':user_id' => Yii::$app->user->id])
+                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
+        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
+              ->andwhere('tbl_users.user_ID<>:user_id')
+              ->addParams([':user_id' => Yii::$app->user->id]);
         
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -168,25 +166,16 @@ class UsersSearch extends Users
         }
 
         $query->andFilterWhere([
-            'user_ID' => $this->user_ID,
             'birthdate' => $this->birthdate,
             'last_login_time' => $this->last_login_time,
             'create_time' => $this->create_time,
-            'create_user_ID' => $this->create_user_ID,
-            'update_time' => $this->update_time,
-            'update_user_ID' => $this->update_user_ID,
-            'selected_event_ID' => $this->selected_event_ID,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'voornaam', $this->voornaam])
             ->andFilterWhere(['like', 'achternaam', $this->achternaam])
             ->andFilterWhere(['like', 'organisatie', $this->organisatie])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password', $this->password])           
-            ->andFilterWhere(['like', 'macadres', $this->macadres])
-            ->andFilterWhere(['like', 'authKey', $this->authKey])
-            ->andFilterWhere(['like', 'accessToken', $this->accessToken]);
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }

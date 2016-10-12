@@ -50,11 +50,25 @@ AppAsset::register($this);
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'view'),
                     ],
                     [
-                        'label' => Yii::t('app','Search Friends'), 
+                        'label' => Yii::t('app','Search New Friends'), 
                         'url'=>[
-                            '/users/index', 
+                            '/users/search-new-friends', 
                             'id' => Yii::$app->user->id],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'index'),
+                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-new-friends'),
+                    ],
+                    [
+                        'label' => Yii::t('app','Friends'), 
+                        'url'=>[
+                            '/users/search-friends', 
+                            'id' => Yii::$app->user->id],
+                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-friends'),
+                    ],
+                    [
+                        'label' => Yii::t('app','Friend Requests'), 
+                        'url'=>[
+                            '/users/search-friend-requests', 
+                            'id' => Yii::$app->user->id],
+                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-friend-requests'),
                     ],
                     [
                         'label' => Yii::t('app','Select Hike'), 

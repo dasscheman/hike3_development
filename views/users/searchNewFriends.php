@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\UsersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Friends');
+$this->title = Yii::t('app', 'Search for new friends');
 ?>
 <div class="users-index">
 
@@ -27,6 +27,22 @@ $this->title = Yii::t('app', 'Friends');
             'email',
              'birthdate',
             'last_login_time',
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{connect}',
+                'buttons' => [
+                    'connect' => function ($url, $model) {
+                        return Html::a( 
+                            Yii::t('app', 'Invite'),
+                            ['friend-list/connect', 'user_id'=>$model->id],
+                            [ 
+                                'title' => Yii::t('app', 'Invite'),
+                                'class' =>'btn btn-primary btn-xs', 
+                            ]
+                        ); 
+                    }
+                ],
+            ],
         ],
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>

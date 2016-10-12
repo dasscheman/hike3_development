@@ -522,7 +522,7 @@ class AccessControl extends HikeActiveRecord {
         switch ($this->controller_id) {
             case 'users':
             case 'friend-list':      
-                if (in_array($this->action_id, ['decline', 'accept', 'connect'])) {
+                if (in_array($this->action_id, ['decline', 'accept', 'connect', 'search-friends', 'search-new-friends', 'search-friend-requests'])) {
                     return TRUE;
                 }
             case 'organisatie':

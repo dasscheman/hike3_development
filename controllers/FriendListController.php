@@ -146,7 +146,6 @@ class FriendListController extends Controller
 	 */
 	public function actionConnect()
 	{
-        var_dump("sad;fklas;kfjlk;saj");
 		$friendsWithUser = Yii::$app->request->get('user_id');
         
 		$modelCurrentUser=new FriendList;
@@ -161,25 +160,25 @@ class FriendListController extends Controller
 		
 		$valid=$modelCurrentUser->validate();
         $valid=$modelNewFriendUser->validate() && $valid;
-        Yii::$app->session->removeAllFlashes();
+        
 		if(!$valid)
 		{   
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'), TRUE);
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'));
         } else {
             $modelCurrentUser->save(false);
             $modelNewFriendUser->save(false);
         }
         $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->post());
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
         if (Yii::$app->getRequest()->isAjax) {
-            return $this->renderPartial('/users/index', [
+            return $this->renderPartial('/users/searchNewFriends', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
         }
         
-        return $this->render('/users/index', [
+        return $this->render('/users/searchNewFriends', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -187,56 +186,82 @@ class FriendListController extends Controller
 
 	public function actionAccept()
 	{
-		$requstedUserId = $_GET['user_id'];
+		$requstedUserId = Yii::$app->request->get('user_id');
+                
 		$dataRequester = FriendList::model()->find('user_ID =:requestUserId AND
 										   friends_with_user_ID =:acceptingUserId',
 									 array(':requestUserId'=>$requstedUserId,
-										   ':acceptingUserId'=>Yii::app()->user->id));
+										   ':acceptingUserId'=>Yii::$app->user->id))->one;
 		$dataAccepter = FriendList::model()->find('user_ID =:requestUserId AND
 										   friends_with_user_ID =:acceptingUserId',
-									 array(':requestUserId'=>Yii::app()->user->id,
-										   ':acceptingUserId'=>$requstedUserId));
+									 array(':requestUserId'=>Yii::$app->user->id,
+										   ':acceptingUserId'=>$requstedUserId))->one;
 
 		$modelRequester=$this->loadModel($dataRequester->friend_list_ID);
 		$modelAccepter=$this->loadModel($dataAccepter->friend_list_ID);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		$modelRequester->status=2;
-		$modelAccepter->status=2;
+		$modelRequester->status=FriendList::STATUS_accepted;
+		$modelAccepter->status=FriendList::STATUS_accepted;
 
 		$valid=$modelRequester->validate();
 		$valid=$modelAccepter->validate() && $valid;
 
-		if($valid)
+		if(!$valid)
 		{
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
+        } else {
 			// use false parameter to disable validation
 			$modelRequester->save(false);
-			$modelAccepter->save(false);
-			
+			$modelAccepter->save(false);			
 		}
-		$this->redirect(array('game/viewUser','user_id'=>Yii::app()->user->id));
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
+
+        if (Yii::$app->getRequest()->isAjax) {
+            return $this->renderPartial('/users/searchFriendRequests', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        
+        return $this->render('/users/searchFriendRequests', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
 	}
 
 	public function actionDecline()
 	{
-		$requstedUserId = $_GET['user_id'];
+		$requstedUserId = Yii::$app->request->get('user_id');
 		$dataAccepter = FriendList::model()->find('user_ID =:requestUserId AND
 										   friends_with_user_ID =:acceptingUserId',
-									 array(':requestUserId'=>Yii::app()->user->id,
-										   ':acceptingUserId'=>$requstedUserId));
+									 array(':requestUserId'=>Yii::$app->user->id,
+										   ':acceptingUserId'=>$requstedUserId))->one();
 
 		$modelAccepter=$this->loadModel($dataAccepter->friend_list_ID);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		$modelAccepter->status=3;
-
-		if($modelAccepter->save())
-		{echo "save";
-			$this->redirect(array('game/viewUser','user_id'=>Yii::app()->user->id));			
+		$modelAccepter->status=FriendList::STATUS_declined;
+        
+		if(!$modelAccepter->validate()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
+        } else {
+			// use false parameter to disable validation
+            $modelAccepter->save(FALSE);
 		}
+        
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
+
+        if (Yii::$app->getRequest()->isAjax) {
+            return $this->renderPartial('/users/searchFriendRequests', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        
+        return $this->render('/users/searchFriendRequests', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
 	}
 }
