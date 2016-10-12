@@ -99,10 +99,11 @@ class UsersController extends Controller
     {
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->save()){
+            $model->birthdate = Yii::$app->setupdatetime->storeFormat($model->birthdate, 'date');
             $emailSend = $model->sendEmailNewAccount();
             if($emailSend)
             {
-                Yii::$app->session->setFlash('success', Yii::$app->t('app', 'You created an account and you can logon.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'You created an account and you can logon.'));
                 return $this->redirect(['/site/login']);
             } else {
                 throw new \yii\web\HttpException(400, Yii::t('app', 'Your account is created, but unfortunately we could not send an email with details. Contact hike-app@biologenkantoor.nl'));
@@ -172,7 +173,7 @@ class UsersController extends Controller
                     {
                         $this->redirect(array('site/index'));
                     } else {
-                        throw new CHttpException(400, Yii::$app->t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
+                        throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
                     }
                 }
             }

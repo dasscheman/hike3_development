@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="tbl-event-names-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->event_ID], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->event_ID], [

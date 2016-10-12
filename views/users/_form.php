@@ -12,7 +12,6 @@ use kartik\widgets\ActiveForm;
 
 
 <div class="users-form">
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php
     $attributes['username'] = [
         'type' => Form::INPUT_TEXT,
@@ -61,21 +60,23 @@ use kartik\widgets\ActiveForm;
             ]
         ]
     ];
-
+    
     $attributes['password'] = [
         'type' => Form::INPUT_PASSWORD,
         'options' => [
-            'placeholder' => Yii::t('app', 'Password')
+            'placeholder' => Yii::t('app', 'Password'),
+            'value'=>'',
         ]
     ];
 
-    $attributes['password_repeat'] = [
-        'type' => Form::INPUT_PASSWORD,
-        'options' => [
-            'placeholder' => Yii::t('app', 'Repeat password')
-        ]
-    ];
-
+    if ($model->isNewRecord) {
+        $attributes['password_repeat'] = [
+            'type' => Form::INPUT_PASSWORD,
+            'options' => [
+                'placeholder' => Yii::t('app', 'Repeat password')
+            ]
+        ];
+    }
     $form = ActiveForm::begin(['type' => ActiveForm::TYPE_VERTICAL, 'formConfig' => ['labelSpan' => 20]]);
     echo Form::widget([
         'model' => $model,

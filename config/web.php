@@ -45,6 +45,9 @@ $config = [
                 ],
             ],
         ],
+        'setupdatetime' => [
+            'class' => 'app\components\SetupDateTime',
+        ],
         'db' => require(__DIR__ . '/db.php'),
     ],
     'params' => $params,

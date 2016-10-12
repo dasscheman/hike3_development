@@ -279,7 +279,7 @@ class EventNames extends HikeActiveRecord {
      * Retrieves a event name
      */
     public function getEventName($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
         if (isset($data->event_name)) {
             return $data->event_name;
         } else {
@@ -291,7 +291,7 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStatusHike($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
         if (isset($data->status)) {
             return $data->status;
         } else {

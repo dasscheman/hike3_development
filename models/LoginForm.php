@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\components\SetupDateTime;
 
 /**
  * LoginForm is the model behind the login form.
@@ -12,6 +13,7 @@ class LoginForm extends Model
 {
     public $username;
     public $password;
+    public $previous_login_time;
     public $rememberMe = true;
 
     private $_user = false;
@@ -46,6 +48,10 @@ class LoginForm extends Model
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
+            } else {
+                $this->previous_login_time = $user->last_login_time;
+                $user->last_login_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime'); 
+                $user->save(FALSE);                    
             }
         }
     }
@@ -56,7 +62,7 @@ class LoginForm extends Model
      */
     public function login()
     {
-        if ($this->validate()) {    
+        if ($this->validate()) {
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         }
         return false;

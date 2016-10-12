@@ -51,7 +51,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         if (!\Yii::$app->user->isGuest) {
-            $this->redirect(array('/users/index'));
+            $this->redirect(array('/users/view', 'id' => Yii::$app->user->id));
         }
         return $this->render('index');
     }
@@ -64,6 +64,8 @@ class SiteController extends Controller
         
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $last_login = $model->previous_login_time;
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Welcome ' . $model->username . '. Your last visit was on ' . $last_login));
             return $this->goBack();
         }
         return $this->render('login', [
