@@ -29,58 +29,24 @@ class OpenVragenController extends Controller
                 'only' => ['update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'viewPlayers', 'moveUpDown', 'dynamicRouteOnderdeel'],
                 'rules' => [
                     array(
-                        'deny',  // deny all users
-                        'users'=>array('?'),
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
                     ),
                     array(	
-                        'allow', // allow authenticated user to perform 'create' and 'update' actions
+                        'allow' => TRUE,
                         'actions'=>array('dynamicRouteOnderdeel'),
-                        'users'=>array('@'),
+                        'roles'=>array('@'),
                     ),
                     array(	
-                        'deny',  // deny if event_id is not set
-                        'actions'=>array('delete'),
-                        'expression'=> !isset($_GET["vraag_id"]),
+                        'allow' => TRUE,
+                        'actions'=>array('viewPlayers', 'update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'moveUpDown'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'roles'=>array('@'),
                     ),
-                    array(	
-                        'deny',  // deny if event_id is not set
-                        'actions'=>array('create'),
-                        'expression'=> !isset($_GET["route_id"]),
-                    ),
-                    array(	
-                        'allow', // only when $_GET are set
-                        'actions'=>array('moveUpDown'),
-                        'expression'=> OpenVragen::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            $_GET["vraag_id"],
-                            "",
-                            $_GET["date"],
-                            $_GET["volgorde"],
-                            $_GET["up_down"])),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('update', 'delete', 'create', 'view', 'createIntroductie', 'index'),
-                        'expression'=> OpenVragen::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('viewPlayers'),
-                        'expression'=> OpenVragen::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
-                    ),
-                    array(	
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ],
             ],
         ];

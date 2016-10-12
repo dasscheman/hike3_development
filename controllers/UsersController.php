@@ -27,24 +27,22 @@ class UsersController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['resendPasswordUser', 'create', 'searchFriends', 'update', 'view', 'ChangePassword'],
+                'only' => ['resendPasswordUser', 'create', 'index', 'delete', 'updateAdmin', 'searchFriends', 'update', 'view', 'ChangePassword'],
                 'rules' => [
                     [
                         'actions' => ['resendPasswordUser', 'create'],
                         'allow' => true,
-                        // Allow users, moderators and admins to create
                         'roles' => ['?'],
                     ],
                     [
-                        // TODO: might want to change the check for  'update', 'view', 'ChangePassword'.
-                        'actions' => ['searchFriends', 'update', 'view', 'ChangePassword'],
-                        'allow' => true,
-                        'roles'=>array('@'),
+                        'actions' => ['index', 'delete', 'updateAdmin', 'searchFriends', 'update', 'view', 'ChangePassword'],
+                        'allow' => TRUE,
+                        'matchCallback' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed(), 
                     ],
                     [
-                        'actions' => ['index', 'delete', 'updateAdmin'],
-                        'allow' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed(), 
-                    ]
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

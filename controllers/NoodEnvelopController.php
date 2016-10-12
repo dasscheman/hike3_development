@@ -29,58 +29,19 @@ class NoodEnvelopController extends Controller
                 'only' => ['viewPlayers', 'moveUpDown','viewPlayers', 'create', 'index', 'update', 'delete'],
                 'rules' => [
                     array(
-                        'deny',  // deny all guest users
-                        'users'=>array('?'),
-                    ),
-                    array(	
-                        'deny',  // deny if event_id is not set
-                        'actions'=>array('create'),
-                        'expression'=> !isset($_GET["route_id"]),
-                    ),
-                    array(	
-                        'deny',  // deny if event_id is not set
-                        'actions'=>array('delete', 'update'),
-                        'expression'=> !isset($_GET["nood_envelop_id"]),
-                    ),
-                    array(	
-                        'deny',  // deny if group_id is not set
-                        'actions'=>array('viewPlayers'),
-                        'expression'=> !isset($_GET["group_id"]),
-                    ),
-                    array(	
-                        'allow', // only when $_GET are set
-                        'actions'=>array('moveUpDown'),
-                        'expression'=> NoodEnvelop::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            $_GET["nood_envelop_id"],
-                            "",
-                            $_GET["date"],
-                            $_GET["volgorde"],
-                            $_GET["up_down"])),
-                    array(
-                        'allow', // allow authenticated user to perform 'index' actions
-                        'actions'=>array('viewPlayers'),
-                        'expression'=> NoodEnvelop::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
                     ),
                     array(
-                        'allow', // allow authenticated user to perform 'index' actions
-                        'actions'=>array('create', 'index', 'update', 'delete'),
-                        'expression'=> NoodEnvelop::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
+                        'allow' => TRUE,
+                        'actions'=>array('create', 'index', 'update', 'delete', 'viewPlayers', 'moveUpDown'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'roles'=>array('@'),
                     ),
-                    array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ],
         ];

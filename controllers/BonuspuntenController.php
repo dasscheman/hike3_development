@@ -34,29 +34,18 @@ class BonuspuntenController extends Controller
                 'rules' => [
                     [
                         'actions' => ['dynamicpostid'],
-                        'allow' => true,
-                        // Allow users, moderators and admins to create
+                        'allow' => TRUE,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['viewPlayers'],
-                        'allow' => isset($_GET["group_id"]),
-                        // Allow moderators and admins to update
-                        'roles' => ['@'],
-                    ],
+                        'actions' => ['index', 'delete', 'create', 'update', 'viewPlayers', 'view'],
+                        'allow' => TRUE,
+                        'matchCallback' => Yii::$app->user->identity->isActionAllowed(),
+                    ],   
                     [
-                        'actions' => ['index', 'delete', 'create'],
-                        'allow' => Yii::$app->user->identity->isActionAllowed(),
-                    ],
-                    [
-                        'actions' => ['update'],
-                        'allow' => Yii::$app->user->identity->isActionAllowed(),
-                    ],
-                    [
-                        'actions' => ['viewPlayers'],
-                        'allow' => Yii::$app->user->identity->isActionAllowed(),
-                    ],
-                    
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],                 
                 ],
             ],
         ];

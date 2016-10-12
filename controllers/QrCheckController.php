@@ -29,51 +29,18 @@ class QrCheckController extends Controller
                 'only' => ['viewPlayers', 'update', 'index', 'delete', 'create'],
                 'rules' => [
                     array(
-                        'deny',  // deny all guest users
-                        'users'=>array('?'),
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
                     ),
                     array(	
-                        'deny',  // deny if group_id is not set
-                        'actions'=>array('create'),
-                        'matchCallback'=> !isset($_GET["qr_code"]),
+                        'allow' => TRUE,
+                        'actions'=>array('viewPlayers', 'index', 'delete', 'create', 'update'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
-                    array(	
-                        'deny',  // deny if group_id is not set
-                        'actions'=>array('update', 'viewPlayers'),
-                        'matchCallback'=> !isset($_GET["group_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'delete', 'create'),
-                        'expression'=> QrCheck::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('update'),
-                        'matchCallback'=> QrCheck::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            $_GET["id"],
-                            $_GET["group_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('viewPlayers'),
-                        'matchCallback'=> QrCheck::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
-                    ),
-                    array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

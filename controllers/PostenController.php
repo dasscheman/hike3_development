@@ -29,28 +29,17 @@ class PostenController extends Controller
                 'only' => ['index', 'update', 'delete', 'create', 'view',  'moveUpDown'],
                 'rules' => [
                     array(
-                        'allow' => FALSE,  // deny all users
+                        'allow' => FALSE,
                         'roles'=>array('?'),),
                     array(	
-                        'allow' => TRUE, // only when $_GET are set
-                        'actions'=>array('moveUpDown'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(
-                            '',
-                            '',
-                            array(),
-                            ['date' => Yii::$app->request->get('date'),
-                             'order' => Yii::$app->request->get('volgorde'),
-                             'move' => Yii::$app->request->get('up_down')])
-                    ),
-                    array(	
-                        'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete', 'create', 'view'),
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'create', 'view', 'moveUpDown'),
                         'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
-                    array(
+                    [
                         'allow' => FALSE,  // deny all users
-                        'roles'=>array('*'),
-                    ),
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

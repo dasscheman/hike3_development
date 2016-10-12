@@ -29,26 +29,16 @@ class QrController extends Controller
                 'only' => ['index', 'update', 'delete', 'create', 'report', 'createIntroductie','moveUpDown'],
                 'rules' => [			
                     array(
-                        'deny',  // deny all guest users
+                        'allow' => FALSE,
                         'users'=>array('?'),),
                     array(	
-                        'allow', // only when $_GET are set
-                        'actions'=>array('moveUpDown'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(
-                            '',
-                            '',
-                            ['qr_id' => Yii::$app->request->get('qr_id')],
-                            ['date' => Yii::$app->request->get('date'),
-                             'order' => Yii::$app->request->get('volgorde'),
-                             'move' => Yii::$app->request->get('up_down')])),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie'),
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie', 'moveUpDown'),
                         'matchCallback'=> Yii::$app->user->identity->isActionAllowed()),
-                    array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

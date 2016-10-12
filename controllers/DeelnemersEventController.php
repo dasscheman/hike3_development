@@ -29,32 +29,23 @@ class DeelnemersEventController extends Controller
                 'only' => ['dynamicrol', 'index','view', 'update', 'delete', 'viewPlayers', 'create'],
                 'rules' => [
                     [
-                        'deny',  // deny all guest users
-                        'users'=>array('?'),
+                        'allow' => FALSE,  // deny all guest users
+                        'roles'=>array('?'),
                     ],
                     array(
-                        'allow', // allow authenticated user to perform 'create' and 'update' actions
+                        'allow' => TRUE,
                         'actions'=>array('dynamicrol'),
-                        'users'=>array('@'),
+                        'roles'=>array('@'),
                     ),			
                     array(	
-                        'deny',  // deny if group_id is not set
-                        'actions'=>array('index','view'),
-                        'expression'=> !isset(Yii::$app->request->get('group_id')),
-                    ),			
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
+                        'allow' => TRUE,
                         'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
-                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
-                    array(
-                        'deny', // allow admin user to perform 'admin' and 'delete' actions
-                        'actions'=>array('adminCreate'),
-                    ),
-                    array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ],
             ],
         ];

@@ -29,40 +29,23 @@ class PostPassageController extends Controller
                 'only' => ['dynamicpostscore', 'dynamicpostid', 'create', 'createDayStart', 'updateVertrek', 'index', 'update', 'delete'],
                 'rules' => [
                     array(
-                        'deny',  // deny all users
-                        'users'=>array('?'),
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
                     ),
                     array(
-                        'allow', // allow authenticated user to perform 'create' and 'update' actions
+                        'allow' => TRUE,
                         'actions'=>array('dynamicpostscore', 'dynamicpostid'),
-                        'users'=>array('@'),
+                        'roles'=>array('@'),
                     ),
                     array(	
-                        'deny',  // deny if group is not set
-                        'actions'=>array('create'),
-                        'expression'=> !isset($_GET["group_id"]),
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'create', 'createDayStart', 'updateVertrek'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('create', 'createDayStart', 'updateVertrek'),
-                        'expression'=> PostPassage::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete'),
-                        'expression'=> PostPassage::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
-                    ),
-                    array('deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

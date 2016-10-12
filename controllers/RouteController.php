@@ -29,25 +29,17 @@ class RouteController extends Controller
                 'only' => ['index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'],
                 'rules' => [
                     array(
-                        'deny', // deny all users
+                        'allow' => FALSEE,
                         'users'=>array('?'),
                     ),
-                    array(
-                        'allow', // allow authenticated user to perform 'create'
-                        'actions'=>array('view'),
-                        'users'=>array('@'),),
                     array(	
-                        'allow', // only when $_GET are set
-                        'actions'=>array('moveUpDown'),
-                        'expression'=> Yii::$app->user->identity->isActionAllowed()),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie'),
-                        'expression'=> Yii::$app->user->identity->isActionAllowed()),
-                    array(
-                        'deny', //deny all users
-                        'users'=>array('*'),
-                    ),
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed()),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

@@ -40,18 +40,19 @@ class GroupsController extends Controller
                 'class' => AccessControl::className(),
                 'only' => ['index', 'update', 'delete', 'view', 'create'],
                 'rules' => [			
-//                    array(
-//                        'deny',  // deny all guest users
-//                        'users'=>array('?'),
-//                    ),			
+                    array(
+                        'allow' => FALSE,  // deny all guest users
+                        'rolos'=>array('?'),
+                    ),			
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'view', 'create'),
-                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
-                    array('deny',  // deny all users
-                        'users'=>array('*'),
-                    ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ],
             ]
         ];

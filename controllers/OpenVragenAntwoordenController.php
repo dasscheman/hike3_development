@@ -26,42 +26,20 @@ class OpenVragenAntwoordenController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['connect', 'accept', 'decline','update', 'delete', 'create'],
+                'only' => ['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
                 'rules' => [ 
                     [
-                        'deny',  // deny all users
-                        'users'=>['?'],
-                    ],
-                    [
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>['antwoordGoedOfFout'],
-                        'expression'=> OpenVragenAntwoorden::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            $_GET["id"]),
+                        'allow' => FALSE,
+                        'roles'=>['?'],
                     ],
                     [	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>['viewPlayers', 'update',  'create'],
-                        'expression'=> OpenVragenAntwoorden::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
-                    ],
-                    [	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie'],
-                        'expression'=> OpenVragenAntwoorden::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
+                        'allow' => TRUE,
+                        'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ],
                     [   
                         'deny',  // deny all users
-                        'users'=>['*'],
+                        'roles'=>['*'],
                     ],
                 ],
             ],

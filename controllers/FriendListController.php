@@ -26,20 +26,16 @@ class FriendListController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['connect', 'accept', 'decline','update', 'delete', 'create'],
-                'rules' => [	
+                'rules' => [
                     [
-                        'allow',  // deny if group_id is not set
-                        'actions'=>array('create'),
-                        'expression'=> '?',
+                        'allow' => TRUE,
+                        'actions'=>array('connect', 'accept', 'decline','update', 'delete', 'create'),
+                        'roles'=> array('@'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ],
                     [
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('connect', 'accept', 'decline','update', 'delete'),
-                        'users'=> array('@'),
-                    ],
-                    [
-                        'deny',  // deny all users
-                        'users'=>array('*'),
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
                     ],
                 ],
             ],

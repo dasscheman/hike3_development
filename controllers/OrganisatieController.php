@@ -29,23 +29,23 @@ class OrganisatieController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 // We will override the default rule config with the new AccessRule class
-//                'ruleConfig' => [
-//                    'class' => AccessRule::className(),
-//                ],
-                'only' => ['index', 'overview'],
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'only' => ['overview'],
                 'rules' => [
-//                    [
-//                        'actions' => ['index'],
-//                        'allow' => true,
-//                        // Allow users, moderators and admins to create
-//                        'roles' => ['@'],
-//                    ],
+                    [
+                        'allow' => FALSE,
+                        'roles'=>['?'],
+                    ],
                     [
                         'actions' => ['overview'],
-                        'allow' => TRUE, /*EventNames::isActionAllowed(
-                            Yii::$app->controller->id,
-                            Yii::$app->controller->action->id,
-                            Yii::$app->user->identity->selected_event_ID),*/
+                        'allow' => TRUE,
+                        'matchCallback' => Yii::$app->user->identity->isActionAllowed(),
+                    ],
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
                     ],
                     
                 ],

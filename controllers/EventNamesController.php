@@ -27,26 +27,26 @@ class EventNamesController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
-//                    'testactiveday' => ['post'],
-//                    'testmaxtime' => ['post'],
                 ],
             ],            
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['create','index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
-//                   'testactiveday', 'teststatus', 'testmaxtime' ],
                 'rules' => [
                     array(	
                         'actions'=>array('create'),
-                        'allow' => true,
+                        'allow' => TRUE,
                         'roles'=>array('@'),
                     ),
                     array(
                         'actions'=>['index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
-//                   'testactiveday', 'teststatus', 'testmaxtime'),
-                        'allow' => true,
-                        'expression'=> Yii::$app->user->identity->isActionAllowed(),
+                        'allow' => TRUE,
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
                     ),
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
                 ]
             ]
         ];

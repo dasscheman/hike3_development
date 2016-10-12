@@ -29,36 +29,19 @@ class OpenNoodEnvelopController extends Controller
                 'only' => [],
                 'rules' => [
                     array(
-                        'deny',  // deny all users
-                        'users'=>array('?'),
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
                     ),
                     array(	
-                        'deny',  // deny if event_id is not set
-                        'actions'=>array('update', 'create'),
-                        'expression'=> !isset($_GET["group_id"]),
+                        'allow' => TRUE,
+                        'actions'=>array('create', 'index', 'update', 'delete'),
+                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'roles'=>array('@'),
                     ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete'),
-                        'expression'=> OpenNoodEnvelop::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"]),
-                    ),
-                    array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('create'),
-                        'expression'=> OpenNoodEnvelop::isActionAllowed(
-                            Yii::app()->controller->id,
-                            Yii::app()->controller->action->id,
-                            $_GET["event_id"],
-                            "",
-                            $_GET["group_id"]),
-                    ),
-                    array(
-                        'deny',  // deny all users
-                        'users'=>array('*'),
-                    ),                    
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],                  
                 ],
             ]
         ];
