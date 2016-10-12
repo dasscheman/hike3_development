@@ -37,7 +37,9 @@ class UsersController extends Controller
                     [
                         'actions' => ['index', 'delete', 'updateAdmin', 'searchFriends', 'update', 'view', 'ChangePassword'],
                         'allow' => TRUE,
-                        'matchCallback' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed(), 
+                        'matchCallback' => function () {
+                            return Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed();
+                        }
                     ],
                     [
                         'allow' => FALSE,  // deny all users
@@ -55,7 +57,7 @@ class UsersController extends Controller
     public function actionIndex()
     {
         $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -68,6 +70,7 @@ class UsersController extends Controller
      */
     public function actionSearchFriends()
     {
+        Yii::$app->session->removeAllFlashes();
         $model=new UsersSearch();
         $model->unsetAttributes(); // clear any default values
         Yii::$app->request->get();

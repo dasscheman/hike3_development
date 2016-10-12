@@ -41,7 +41,9 @@ class EventNamesController extends Controller
                     array(
                         'actions'=>['index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
                         'allow' => TRUE,
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ),
                     [
                         'allow' => FALSE,  // deny all users

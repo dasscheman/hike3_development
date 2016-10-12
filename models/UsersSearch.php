@@ -65,14 +65,16 @@ class UsersSearch extends Users
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function searchNewFriends($params)
+    {        
         $query = Users::find();
-//        $queryFriendList = FriendList::find();
-//        $queryFriendList->select('friends_with_user_ID')
-//                        ->where(['user_ID'=>Yii::$app->user->id])  
-//                        ->andwhere(['user_ID' =>Yii::$app->user->id]);    
-//        $query->where(['not in', 't.user_ID', $queryFriendList]);
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->addParams([':user_id' => Yii::$app->user->id]);
+        $query->where(['not in', 'tbl_users.user_ID', $queryFriendList])
+              ->andwhere('tbl_users.user_ID<>:user_id')
+              ->addParams([':user_id' => Yii::$app->user->id]);
         
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -87,25 +89,16 @@ class UsersSearch extends Users
         }
 
         $query->andFilterWhere([
-            'user_ID' => $this->user_ID,
             'birthdate' => $this->birthdate,
             'last_login_time' => $this->last_login_time,
             'create_time' => $this->create_time,
-            'create_user_ID' => $this->create_user_ID,
-            'update_time' => $this->update_time,
-            'update_user_ID' => $this->update_user_ID,
-            'selected_event_ID' => $this->selected_event_ID,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'voornaam', $this->voornaam])
             ->andFilterWhere(['like', 'achternaam', $this->achternaam])
             ->andFilterWhere(['like', 'organisatie', $this->organisatie])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password', $this->password])           
-            ->andFilterWhere(['like', 'macadres', $this->macadres])
-            ->andFilterWhere(['like', 'authKey', $this->authKey])
-            ->andFilterWhere(['like', 'accessToken', $this->accessToken]);
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }

@@ -35,7 +35,9 @@ class QrCheckController extends Controller
                     array(	
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'index', 'delete', 'create', 'update'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ),
                     [
                         'allow' => FALSE,  // deny all users

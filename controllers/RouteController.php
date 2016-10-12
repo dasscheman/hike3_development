@@ -35,7 +35,10 @@ class RouteController extends Controller
                     array(	
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed()),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
+                    ),
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],

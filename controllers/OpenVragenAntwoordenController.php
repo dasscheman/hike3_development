@@ -35,7 +35,9 @@ class OpenVragenAntwoordenController extends Controller
                     [	
                         'allow' => TRUE,
                         'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ],
                     [   
                         'deny',  // deny all users

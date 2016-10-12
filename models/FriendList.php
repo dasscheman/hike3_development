@@ -49,7 +49,7 @@ class FriendList extends HikeActiveRecord
                 ['user_ID', 'friends_with_user_ID'], 
                 'unique', 
                 'targetAttribute' => ['user_ID', 'friends_with_user_ID'], 
-                'message' => Yii::t('app/error', 'This user is already you friend, has an invitation from you or is blocked.')]
+                'message' => Yii::t('app', 'This user is already you friend, has an invitation from you or is blocked.')]
         ];
     }
 

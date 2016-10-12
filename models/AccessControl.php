@@ -15,8 +15,7 @@ class AccessControl extends HikeActiveRecord {
     public $rolPlayer;
     public $groupOfPlayer;
     
-    function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = array(), array $parameters = array()) {
-               
+    function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {  
         AccessControl::setControllerId($controller_id);
         AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
@@ -27,32 +26,26 @@ class AccessControl extends HikeActiveRecord {
         AccessControl::setGroupOfPlayer();
         
         switch ($this->action_id) {
-            case 'index':
-                return AccessControl::indexAllowed();
-                break;
-            case 'view':
-                return AccessControl::viewAllowed();
-                break;
             case 'create':
                 return AccessControl::createAllowed();
-                break;
             case 'createIntroductie':
                 return AccessControl::createIntroductieAllowed();
-                break;
+            case 'delete':
+                return AccessControl::deleteAllowed();
+            case 'index':
+                return AccessControl::indexAllowed();
+            case 'moveUpDown':
+                return AccessControl::moveUpDownAllowed();
             case 'update':
             case 'updateImage':
                 return AccessControl::updateAllowed();
                 break;
-            case 'delete':
-                return AccessControl::deleteAllowed();
-                break;
-            case 'viewPlayers':
-                return AccessControl::viewPlayersAllowed();
-                break;
-            case 'moveUpDown':
-                return AccessControl::moveUpDownAllowed();
+            case 'view':
+                return AccessControl::viewAllowed();
             case 'ViewIntroductie':
                 return AccessControl::viewIntroductieAllowed();
+            case 'viewPlayers':
+                return AccessControl::viewPlayersAllowed();
             default:
                 return AccessControl::defaultAllowed();
         }
@@ -110,36 +103,38 @@ class AccessControl extends HikeActiveRecord {
     }
     
     function indexAllowed() {
+        if ($this->controller_id === 'users' &&
+            Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
+            return TRUE;
+        }
+        
         if (!isset($this->event_id)) {
             return FALSE;
         }
     
         switch ($this->controller_id) {
-            case 'noodEnvelop':
-            case 'openVragen':
+            case 'nood-envelop':
+            case 'open-vragen':
             case 'posten':
             case 'qr':
             case 'route':
             case 'groups':
-            case 'deelnemersEvent':
-            case 'eventNames':
-            case 'groups':
-            case 'route':
-            case 'startup':
+            case 'deelnemers-event':
+            case 'event-names':
                 if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
-            case 'openNoodEnvelop':
-            case 'postPassage':
+            case 'open-nood-envelop':
+            case 'post-passage':
                 if ($this->hikeStatus > EventNames::STATUS_introductie AND
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
-            case 'qrCheck':
+            case 'qr-check':
             case 'bonuspunten':
-            case 'openVragenAntwoorden':
+            case 'open-vragen-antwoorden':
                 if ($this->hikeStatus <> EventNames::STATUS_opstart AND
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
@@ -149,10 +144,9 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
-    function updateAllowed() {
+    function updateAllowed() {        
         if ($this->controller_id === 'users' &&
-            array_key_exists('user_id', $this->ids) &&
-            Yii::$app->user->identity->id === $this->ids['user_id']) {
+            Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
             return TRUE;
         }
 
@@ -161,7 +155,7 @@ class AccessControl extends HikeActiveRecord {
         }
 
         switch ($this->controller_id) {
-            case 'openVragenAntwoorden':
+            case 'open-vragen-antwoorden':
                 if ($this->hikeStatus == EventNames::STATUS_introductie and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
                     $this->groupOfPlayer == $group_id) {
@@ -174,22 +168,22 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
             case 'bonuspunten':
-            case 'qrCheck':
+            case 'qr-check':
                 if (($this->hikeStatus == EventNames::STATUS_introductie or
                     $this->hikeStatus == EventNames::STATUS_gestart) and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
-            case 'openNoodEnvelop':
-            case 'postPassage':
+            case 'open-nood-envelop':
+            case 'post-passage':
                 if ($this->hikeStatus == EventNames::STATUS_gestart and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
-            case 'noodEnvelop':
-            case 'openVragen':
+            case 'nood-envelop':
+            case 'open-vragen':
             case 'posten':
             case 'qr':
             case 'route':
@@ -199,13 +193,13 @@ class AccessControl extends HikeActiveRecord {
                 }
                 break;
             case 'groups':
-            case 'deelnemersEvent':
+            case 'deelnemers-event':
             case 'groups':
                 if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
-            case 'eventNames':
+            case 'event-names':
                 if ($this->hikeStatus == EventNames::STATUS_opstart and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
@@ -228,8 +222,8 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
                 break;
-            case 'noodEnvelop':
-            case 'openVragen':
+            case 'nood-envelop':
+            case 'open-vragen':
             case 'posten':
             case 'qr':
             case 'groups':
@@ -239,7 +233,7 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
                 break;
-            case 'deelnemersEvent':
+            case 'deelnemers-event':
                 if (($this->hikeStatus == EventNames::STATUS_opstart or
                     $this->hikeStatus == EventNames::STATUS_introductie) and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
@@ -252,12 +246,12 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
                 break;
-            case 'eventNames':
+            case 'event-names':
             case 'users':
                 return TRUE;
                 break;
-            case 'qrCheck':
-            case 'openVragenAntwoorden':
+            case 'qr-check':
+            case 'open-vragen-antwoorden':
                 if ($this->hikeStatus == EventNames::STATUS_introductie and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
                     return TRUE;
@@ -267,9 +261,9 @@ class AccessControl extends HikeActiveRecord {
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
                     return TRUE;
                 }
-            // Hier geen break. OpenNoodenvelop en postPassage moeten uitgesloten worden voor de introductie.
-            case 'openNoodEnvelop':
-            case 'postPassage':
+            // Hier geen break. OpenNoodenvelop en post-passage moeten uitgesloten worden voor de introductie.
+            case 'open-nood-envelop':
+            case 'post-passage':
                 if ($this->hikeStatus == EventNames::STATUS_gestart and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
                     $this->groupOfPlayer === $this->ids['group_id'] and
@@ -294,19 +288,19 @@ class AccessControl extends HikeActiveRecord {
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
-            case 'noodEnvelop':
-            case 'openVragen':
+            case 'nood-envelop':
+            case 'open-vragen':
             case 'posten':
             case 'qr':
             case 'chart':
             case 'groups':
-            case 'deelnemersEvent':
-            case 'eventNames':
+            case 'deelnemers-event':
+            case 'event-names':
             case 'groups':
-            case 'openNoodEnvelop':
-            case 'openVragenAntwoorden':
-            case 'postPassage':
-            case 'qrCheck':
+            case 'open-nood-envelop':
+            case 'open-vragen-antwoorden':
+            case 'post-passage':
+            case 'qr-check':
             case 'route':
                 if ($this->hikeStatus == EventNames::STATUS_opstart and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
@@ -319,25 +313,30 @@ class AccessControl extends HikeActiveRecord {
     }
 
     function viewAllowed() {
-        if (!isset($this->event_id)) {
-            return FALSE;
-        }
-
         switch ($this->controller_id) {
-            case 'noodEnvelop':
-            case 'openVragen':
+            case 'users':
+                if ($this->controller_id === 'users' &&
+                    Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
+                    return TRUE;
+                }
+                return FALSE;
+            case 'nood-envelop':
+            case 'open-vragen':
             case 'posten':
             case 'qr':
             case 'route':
             case 'chart':
             case 'groups':
-            case 'deelnemersEvent':
-            case 'eventNames':
+            case 'deelnemers-event':
+            case 'event-names':
             case 'groups':
-            case 'openNoodEnvelop':
-            case 'openVragenAntwoorden':
-            case 'postPassage':
-            case 'qrCheck':
+            case 'open-nood-envelop':
+            case 'open-vragen-antwoorden':
+            case 'post-passage':
+            case 'qr-check':
+                if (!isset($this->event_id)) {
+                    return FALSE;
+                }
                 if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
@@ -361,9 +360,9 @@ class AccessControl extends HikeActiveRecord {
 
         switch ($this->controller_id) {
             case 'bonuspunten':
-            case 'qrCheck':
-            case 'openVragen':
-            case 'openVragenAntwoorden':
+            case 'qr-check':
+            case 'open-vragen':
+            case 'open-vragen-antwoorden':
                 if (($this->hikeStatus == EventNames::STATUS_introductie or
                     $this->hikeStatus == EventNames::STATUS_gestart) and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
@@ -385,9 +384,9 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
                 break;
-            case 'noodEnvelop':
-            case 'openNoodEnvelop':
-            case 'postPassage':
+            case 'nood-envelop':
+            case 'open-nood-envelop':
+            case 'post-passage':
                 if ($this->hikeStatus == EventNames::STATUS_gestart AND
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
@@ -417,7 +416,7 @@ class AccessControl extends HikeActiveRecord {
         }
         
         switch ($this->controller_id) {
-            case 'openVragen':
+            case 'open-vragen':
             case 'qr':
                 if ($this->hikeStatus == EventNames::STATUS_opstart and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
@@ -453,7 +452,7 @@ class AccessControl extends HikeActiveRecord {
                                                                             $order,
                                                                             $route_id);
                 }
-            case 'openVragen':
+            case 'open-vragen':
                  if ($move == 'up') {
                     $nextOrderExist = OpenVragen::higherOrderNumberExists($event_id,
                                                                         $model_id,
@@ -473,7 +472,7 @@ class AccessControl extends HikeActiveRecord {
                 if ($move == 'down') {
                     $nextOrderExist = Posten::lowererOrderNumberExists($event_id, $date, $order);
                 }
-            case 'noodEnvelop':
+            case 'nood-envelop':
                 if ($move == 'up'){
                     $nextOrderExist = NoodEnvelop::model()->higherOrderNumberExists($event_id,
                                                                                     $model_id,
@@ -522,8 +521,8 @@ class AccessControl extends HikeActiveRecord {
         
         switch ($this->controller_id) {
             case 'users':
-            case 'friendList':      
-                if (in_array($this->action_id, ['decline', 'accept'])) {
+            case 'friend-list':      
+                if (in_array($this->action_id, ['decline', 'accept', 'connect'])) {
                     return TRUE;
                 }
             case 'organisatie':
@@ -550,7 +549,7 @@ class AccessControl extends HikeActiveRecord {
                     if ($this->action_id == 'overview') {
                         return TRUE;
                     }
-                    if ($this->controller_id === 'eventNames' && $this->action_id == 'changeStatus') {
+                    if ($this->controller_id === 'event-names' && $this->action_id == 'changeStatus') {
                         if (($this->hikeStatus == EventNames::STATUS_opstart or
                             $this->hikeStatus == EventNames::STATUS_introductie or
                             $this->hikeStatus == EventNames::STATUS_gestart) and
@@ -558,7 +557,7 @@ class AccessControl extends HikeActiveRecord {
                             return TRUE;
                         }
                     }
-                    if ($this->controller_id === 'eventNames' && $this->action_id == 'changeDay') {
+                    if ($this->controller_id === 'event-names' && $this->action_id == 'changeDay') {
                         if ($this->hikeStatus == EventNames::STATUS_gestart and
                             $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                             return TRUE;
@@ -567,7 +566,7 @@ class AccessControl extends HikeActiveRecord {
                 }
             default:
         }
-        if ($this->controller_id === 'openVragenAntwoorden') {
+        if ($this->controller_id === 'open-vragen-antwoorden') {
             switch ($this->action_id) {
                 case 'antwoordGoedOfFout':
                     if (($this->hikeStatus == EventNames::STATUS_introductie OR
@@ -593,7 +592,7 @@ class AccessControl extends HikeActiveRecord {
             }
         }
 
-        if ($this->controller_id === 'postPassage') {
+        if ($this->controller_id === 'post-passage') {
 
             if ($this->action_id == 'create' and
                 $this->hikeStatus == EventNames::STATUS_gestart and

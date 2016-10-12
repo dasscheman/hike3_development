@@ -40,7 +40,9 @@ class OpenVragenController extends Controller
                     array(	
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'moveUpDown'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        },
                         'roles'=>array('@'),
                     ),
                     [

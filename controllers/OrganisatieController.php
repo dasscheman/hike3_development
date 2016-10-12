@@ -28,10 +28,6 @@ class OrganisatieController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                // We will override the default rule config with the new AccessRule class
-                'ruleConfig' => [
-                    'class' => AccessRule::className(),
-                ],
                 'only' => ['overview'],
                 'rules' => [
                     [
@@ -41,7 +37,9 @@ class OrganisatieController extends Controller
                     [
                         'actions' => ['overview'],
                         'allow' => TRUE,
-                        'matchCallback' => Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback' =>  function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ],
                     [
                         'allow' => FALSE,  // deny all users

@@ -47,7 +47,9 @@ class GroupsController extends Controller
                     array(	
                         'allow', // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'view', 'create'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ),
                     [
                         'allow' => FALSE,  // deny all users

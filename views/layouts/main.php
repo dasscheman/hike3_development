@@ -44,24 +44,32 @@ AppAsset::register($this);
                 'items' => [
                     [
                         'label' => Yii::t('app','Overview'), 
-                        'url'=>['/users/indexOverview'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'indexOverview'),
+                        'url'=>['/users/view', 
+                            'id' => Yii::$app->user->id
+                        ],
+                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'view'),
                     ],
                     [
                         'label' => Yii::t('app','Search Friends'), 
-                        'url'=>['/users/searchFriends'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'searchFriends'),
+                        'url'=>[
+                            '/users/index', 
+                            'id' => Yii::$app->user->id],
+                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'index'),
                     ],
                     [
                         'label' => Yii::t('app','Select Hike'), 
                         'url' => ['/users/selectHike'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'selectHike'),
                     ],
-                    [
-                        'label' => Yii::t('app','Account Settings') . \Yii::$app->user->id, 
-                        'url' => ['users/update'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'update'),
-                    ],
+//                    Leave this for now, only implement this when modal popup is not usable on mobile.
+//                    [
+//                        'label' => Yii::t('app','Account Settings') . ' ' . \Yii::$app->user->id, 
+//                        'url' => [
+//                            'users/update', 
+//                            'id' => Yii::$app->user->id
+//                        ],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'update'),
+//                    ],
                     [
                         'label' => Yii::t('app','Change Password'), 
                         'url' => ['/users/changePassword'],

@@ -40,7 +40,9 @@ class DeelnemersEventController extends Controller
                     array(	
                         'allow' => TRUE,
                         'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
-                        'matchCallback'=> Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ),
                     [
                         'allow' => FALSE,  // deny all users

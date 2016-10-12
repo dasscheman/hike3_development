@@ -40,7 +40,9 @@ class BonuspuntenController extends Controller
                     [
                         'actions' => ['index', 'delete', 'create', 'update', 'viewPlayers', 'view'],
                         'allow' => TRUE,
-                        'matchCallback' => Yii::$app->user->identity->isActionAllowed(),
+                        'matchCallback' => function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        }
                     ],   
                     [
                         'allow' => FALSE,  // deny all users
