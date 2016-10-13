@@ -330,7 +330,7 @@ class RouteController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = TblRoute::findOne($id)) !== null) {
+        if (($model = Route::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

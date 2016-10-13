@@ -48,7 +48,7 @@ class FriendListController extends Controller
     }
 
     /**
-     * Lists all TblFriendList models.
+     * Lists all FriendList models.
      * @return mixed
      */
     public function actionIndex()
@@ -63,7 +63,7 @@ class FriendListController extends Controller
     }
 
     /**
-     * Displays a single TblFriendList model.
+     * Displays a single FriendList model.
      * @param integer $id
      * @return mixed
      */
@@ -75,7 +75,7 @@ class FriendListController extends Controller
     }
 
     /**
-     * Creates a new TblFriendList model.
+     * Creates a new FriendList model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -93,7 +93,7 @@ class FriendListController extends Controller
     }
 
     /**
-     * Updates an existing TblFriendList model.
+     * Updates an existing FriendList model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -112,7 +112,7 @@ class FriendListController extends Controller
     }
 
     /**
-     * Deletes an existing TblFriendList model.
+     * Deletes an existing FriendList model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -125,15 +125,15 @@ class FriendListController extends Controller
     }
 
     /**
-     * Finds the TblFriendList model based on its primary key value.
+     * Finds the FriendList model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblFriendList the loaded model
+     * @return FriendList the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblFriendList::findOne($id)) !== null) {
+        if (($model = FriendList::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -188,19 +188,23 @@ class FriendListController extends Controller
 	{
 		$requstedUserId = Yii::$app->request->get('user_id');
                 
-		$dataRequester = FriendList::model()->find('user_ID =:requestUserId AND
-										   friends_with_user_ID =:acceptingUserId',
-									 array(':requestUserId'=>$requstedUserId,
-										   ':acceptingUserId'=>Yii::$app->user->id))->one;
-		$dataAccepter = FriendList::model()->find('user_ID =:requestUserId AND
-										   friends_with_user_ID =:acceptingUserId',
-									 array(':requestUserId'=>Yii::$app->user->id,
-										   ':acceptingUserId'=>$requstedUserId))->one;
+		$dataRequester = FriendList::find(
+                'user_ID =:requestUserId AND
+            friends_with_user_ID =:acceptingUserId', [
+                ':requestUserId' => $requstedUserId,
+                ':acceptingUserId' => Yii::$app->user->id
+            ])->one();
+        $dataAccepter = FriendList::find(
+            'user_ID =:requestUserId AND
+            friends_with_user_ID =:acceptingUserId', [
+                ':requestUserId' => Yii::$app->user->id,
+                ':acceptingUserId' => $requstedUserId
+            ])->one();
 
-		$modelRequester=$this->loadModel($dataRequester->friend_list_ID);
-		$modelAccepter=$this->loadModel($dataAccepter->friend_list_ID);
+        $modelRequester = $this->findModel($dataRequester->friend_list_ID);
+        $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
 
-		$modelRequester->status=FriendList::STATUS_accepted;
+        $modelRequester->status=FriendList::STATUS_accepted;
 		$modelAccepter->status=FriendList::STATUS_accepted;
 
 		$valid=$modelRequester->validate();
@@ -215,7 +219,7 @@ class FriendListController extends Controller
 			$modelAccepter->save(false);			
 		}
         $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 
         if (Yii::$app->getRequest()->isAjax) {
             return $this->renderPartial('/users/searchFriendRequests', [
@@ -233,14 +237,16 @@ class FriendListController extends Controller
 	public function actionDecline()
 	{
 		$requstedUserId = Yii::$app->request->get('user_id');
-		$dataAccepter = FriendList::model()->find('user_ID =:requestUserId AND
-										   friends_with_user_ID =:acceptingUserId',
-									 array(':requestUserId'=>Yii::$app->user->id,
-										   ':acceptingUserId'=>$requstedUserId))->one();
+		$dataAccepter = FriendList::find(
+            'user_ID =:requestUserId AND
+            friends_with_user_ID =:acceptingUserId', [
+                ':requestUserId' => Yii::$app->user->id,
+                ':acceptingUserId' => $requstedUserId
+            ])->one();
 
-		$modelAccepter=$this->loadModel($dataAccepter->friend_list_ID);
+        $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
 
-		$modelAccepter->status=FriendList::STATUS_declined;
+        $modelAccepter->status=FriendList::STATUS_declined;
         
 		if(!$modelAccepter->validate()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
@@ -250,7 +256,7 @@ class FriendListController extends Controller
 		}
         
         $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 
         if (Yii::$app->getRequest()->isAjax) {
             return $this->renderPartial('/users/searchFriendRequests', [
