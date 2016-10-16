@@ -17,10 +17,14 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Clear Color Selection' => '',
-    'No Color Selected' => '',
-    'cancel' => '',
-    'choose' => '',
-    'less' => '',
-    'more' => '',
+    'Qr code is already checked by this group.' => '',
+    'Question name already exists for this route section' => '',
+    'This group already answered this question' => '',
+    'This group already checked in on this station.' => '',
+    'This hint is already opened by this group.' => '',
+    'This hint name alrady exists for this Hike' => '',
+    'This qr code exists for this hike' => '',
+    'This station name exist for this day.' => '',
+    'You cannot remove this hike' => '',
+    'You cannot remove this user.' => '',
 ];

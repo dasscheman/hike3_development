@@ -289,15 +289,6 @@ class OpenVragen extends HikeActiveRecord
 		return $newOrder;
 	}
 
-	public function getNumberVragenRouteId($event_id, $route_id)
-	{
-        $criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-
-		return OpenVragen::count($criteria);
-	}
-
 	public function lowerOrderNumberExists($event_id, $id, $vraag_order, $route_id)
 	{
 		$criteria = new CDbCriteria();

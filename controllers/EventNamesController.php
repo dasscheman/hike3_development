@@ -176,7 +176,7 @@ class EventNamesController extends Controller
         }
         catch(CDbException $e)
         {
-            throw new CHttpException(400,"Je kan deze hike niet verwijderen.");
+            throw new CHttpException(400, Yii::t('app/error', 'You cannot remove this hike'));
         }
         $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
     }

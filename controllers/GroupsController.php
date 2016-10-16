@@ -42,10 +42,10 @@ class GroupsController extends Controller
                 'rules' => [			
                     array(
                         'allow' => FALSE,  // deny all guest users
-                        'rolos'=>array('?'),
+                        'roles' => array('?'),
                     ),			
                     array(	
-                        'allow', // allow admin user to perform 'viewplayers' actions
+                        'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'update', 'delete', 'view', 'create'),
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
@@ -94,8 +94,6 @@ class GroupsController extends Controller
      */
     public function actionCreate()
     {
-        
-        var_dump('sadf', Yii::$app->request->post(), Yii::$app->request->get()); 
         $model = new Groups();
         if ($model->load(Yii::$app->request->post()) ) {
             
@@ -107,11 +105,9 @@ class GroupsController extends Controller
         
         } elseif ($model->load(Yii::$app->request->get()) && $model->save()) {
             
-        var_dump('eeneen'); exit;
         return $this->redirect(['view', 'id' => (string) $model->id]);
-        
         }elseif (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form', [
+            return $this->renderAjax('create', [
                         'model' => $model
             ]);
         } else {

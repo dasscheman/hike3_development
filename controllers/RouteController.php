@@ -9,7 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use app\models\Users;
+use app\models\Qr;
+use app\models\EventNames;
+
 /**
  * RouteController implements the CRUD actions for TblRoute model.
  */
@@ -29,8 +31,8 @@ class RouteController extends Controller
                 'only' => ['index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'],
                 'rules' => [
                     array(
-                        'allow' => FALSEE,
-                        'users'=>array('?'),
+                        'allow' => FALSE,
+                        'roles' => array('?'),
                     ),
                     array(	
                         'allow' => TRUE,
@@ -58,18 +60,18 @@ class RouteController extends Controller
             Route::setActiveTab($_GET['date']);
         }
 
-        $event_Id = $_GET['event_id'];
+        $event_Id = Yii::$app->user->identity->selected_event_ID;
         $startDate=EventNames::getStartDate($event_Id);
         $endDate=EventNames::getEndDate($event_Id);
-        
+
         $searchModel = new RouteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'startDate'=>$startDate,
-            'endDate'=>$endDat
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate
         ]);
     }
 
@@ -132,10 +134,15 @@ class RouteController extends Controller
     public function actionCreate()
     {
         $model = new Route();
-        $qrModel=new Qr;
+        $qrModel=new Qr();
 
-        if(isset($_POST['Route']))
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        if(NULL !== Yii::$app->request->post('Route'))
         {
+var_dump('if'); exit;
             $model->attributes = $_POST['Route'];
             $model->day_date = $_GET['date'];
             $model->event_ID = $_GET['event_id'];
@@ -186,6 +193,10 @@ class RouteController extends Controller
                     'date'=>$model->day_date));
             }
         }
+        
+        $this->renderPartial('_form',array(
+			'model'=>$model,
+		));
     }
 
     /**

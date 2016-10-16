@@ -67,11 +67,12 @@ class UsersSearch extends Users
      */
     public function searchNewFriends($params)
     {        
-        $query = Users::find();
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
                         ->where('user_ID=:user_id')
                         ->addParams([':user_id' => Yii::$app->user->id]);
+
+        $query = Users::find();
         $query->where(['not in', 'tbl_users.user_ID', $queryFriendList])
               ->andwhere('tbl_users.user_ID<>:user_id')
               ->addParams([':user_id' => Yii::$app->user->id]);

@@ -188,18 +188,21 @@ class FriendListController extends Controller
 	{
 		$requstedUserId = Yii::$app->request->get('user_id');
                 
-		$dataRequester = FriendList::find(
-                'user_ID =:requestUserId AND
-            friends_with_user_ID =:acceptingUserId', [
+		$dataRequester = FriendList::find()
+            ->where('user_ID=:requestUserId')
+            ->andWhere('friends_with_user_ID =:acceptingUserId')
+            ->addParams([
                 ':requestUserId' => $requstedUserId,
-                ':acceptingUserId' => Yii::$app->user->id
-            ])->one();
-        $dataAccepter = FriendList::find(
-            'user_ID =:requestUserId AND
-            friends_with_user_ID =:acceptingUserId', [
+                ':acceptingUserId' => Yii::$app->user->id])
+            ->one();
+
+        $dataAccepter = FriendList::find()
+            ->where('user_ID =:requestUserId')
+            ->andWhere('friends_with_user_ID =:acceptingUserId')
+            ->addParams([
                 ':requestUserId' => Yii::$app->user->id,
-                ':acceptingUserId' => $requstedUserId
-            ])->one();
+                ':acceptingUserId' => $requstedUserId])
+            ->one();
 
         $modelRequester = $this->findModel($dataRequester->friend_list_ID);
         $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
@@ -237,12 +240,14 @@ class FriendListController extends Controller
 	public function actionDecline()
 	{
 		$requstedUserId = Yii::$app->request->get('user_id');
-		$dataAccepter = FriendList::find(
-            'user_ID =:requestUserId AND
-            friends_with_user_ID =:acceptingUserId', [
+		$dataAccepter = FriendList::find()
+            ->where('user_ID=:requestUserId')
+            ->andWhere('friends_with_user_ID =:acceptingUserId')
+            ->addParams([
                 ':requestUserId' => Yii::$app->user->id,
-                ':acceptingUserId' => $requstedUserId
-            ])->one();
+                ':acceptingUserId' => $requstedUserId])
+            ->one();
+
 
         $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
 

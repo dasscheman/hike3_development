@@ -1,151 +1,157 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+//use yii\grid\GridView;
+use kartik\grid\GridView;
+use app\models\Route;
+use yii\bootstrap\Tabs;
+use app\models\OpenVragen;
+use app\models\Qr;
+use app\models\NoodEnvelop;
+use yii\bootstrap\Modal;
+use prawee\widgets\ButtonAjax;
+
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\TblRouteSearch */
+/* @var $searchModel app\models\RouteSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tbl Routes');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Routes');
 ?>
+
 <div class="tbl-route-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Tbl Route'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-<?php
-   $activeTab = Route::model()->getDefaultActiveTab($startDate);
-	$count=0;
+    <?php
 
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
 
+    $count=0;
+    $gridColumns = [
+        [
+            'header' => 'View Qr',
+            'class'=>'kartik\grid\ExpandRowColumn',
+            'width'=>'50px',
+            'value'=> function ($model, $key, $index, $column) {
+                return GridView::ROW_COLLAPSED;
+            },
+            'detail'=>function ($model, $key, $index, $column) {
+                return Yii::$app->controller->renderPartial('view', ['model'=>$model]);
+            },
+            'headerOptions'=>['class'=>'kartik-sheet-style'],
+            'expandOneOnly'=>true,
+            'expandTitle' => 'LALAAL',
+            'collapseTitle' => 'LOLOLO',
+        ],
+        'event_ID' =>
+        [
+            'class'=>'kartik\grid\ExpandRowColumn',
+            'width'=>'50px',
+            'value'=>function ($model, $key, $index, $column) {
+                return GridView::ROW_COLLAPSED;
+            },
+            'detail'=>function ($model, $key, $index, $column) {
+                return Yii::$app->controller->renderPartial('view', ['model' => $model]);
+            },
+            'headerOptions'=>['class'=>'kartik-sheet-style'],
+            'expandOneOnly'=>true,
+            'expandTitle' => 'LALAAL',
+            'collapseTitle' => 'LOLOLO',
+        ],
+        [
+            'header' => '#Vragen',
+            'value' => function($key){
+                return Route::findOne($key)->getOpenVragenCount();
+            },
+        ],
+        [
+            'header' => '#Hints',
+            'value' => function($key){
+                return Route::findOne($key)->getNoodEnvelopCount();
+            },
+        ],
+        [
+            'header' => '#Stille posten',
+            'value' => function($key){
+                return Route::findOne($key)->getQrCount();
+            },
+        ],
+        [
+            'header' => 'Aangemaakt',
+            'value' => function($key){
+                return Route::findOne($key)->getCreateUser()->username;
+            },
+        ],
+        [
+            'header' => 'Laatst Bijgewerkt',
+            'value' => function($key){
+                return Route::findOne($key)->getUpdateUser()->username;
+            },
 
-	while(strtotime($startDate) <= strtotime($endDate)) {
-		if (Route::model()->isActionAllowed("route", "create", $_GET['event_id'])) {
-			$newButton = CHtml::link(
-					'<span class="fa-stack fa-lg">
-						<td style="text-align:right;">
-							<i class="fa fa-plus fa-stack-1x">Nieuw</i>
-						</td>
-					</span>',
-						$this->createAbsoluteUrl(
-							'create',
-							array('event_id'=>$_GET['event_id'],
-								'date'=>$startDate)));
-		} else {
-			$newButton = '';
-		}
-		// dit moet nog een vervangen worden door javascript.
-		//Met de volgende code wordt de active tab onthouden.
-		$active=false;
-		if (isset($activeTab))
-		{
-			if ($activeTab==$startDate)
-				$active=true;
-		}
-		else
-		{
-			if ($count==0)
-				$active=true;
-		}
+        ],
+        'route_name',
+        'day_date',
+        'route_volgorde'
+    ];
+    $bordered = FALSE;
+    $striped = TRUE;
+    $condensed = TRUE;
+    $responsive = FALSE;
+    $hover = TRUE;
+    $pageSummary = FALSE;
+    $heading = TRUE;
+    $exportConfig = TRUE;
 
-	    $dataArray[$count]=array(
+    while(strtotime($startDate) <= strtotime($endDate)) {
+        $dataArray[$count]=array(
 		    'label' =>$startDate,
-		    'active'=>$active,
-		    'content' =>$newButton
-            .$this->widget(
-		    	'bootstrap.widgets.TbGridView',
-				array(
-					'id'=>'route-grid',
-					'dataProvider'=>$routeData->searchRoute($_GET['event_id'], $startDate),
-					'columns'=>array(
-                        array(
-                            'header'=>'Route Onderdeel',
-                            'value'=>'Route::model()->getRouteName($data->route_ID)'),
-                        array(
-                            'header'=>'#Vragen',
-                            'value'=>'OpenVragen::model()->getNumberVragenRouteId($data->event_ID, $data->route_ID)'),
-                        array(
-                            'header'=>'#Hints',
-                            'value'=>'NoodEnvelop::model()->getNumberNoodEnvelopRouteId($data->event_ID, $data->route_ID)'),
-                        array(
-                            'header'=>'#Stille posten',
-                            'value'=>'Qr::model()->getNumberQrRouteId($data->event_ID, $data->route_ID)'),
-                        array(
-                            'header'=>'Aangemaakt',
-                            'value'=>'Users::model()->getUserName($data->create_user_ID)'),
-                       	array(
-                            'header'=>'Laatst Bijgewerkt',
-                            'value'=>'Users::model()->getUserName($data->update_user_ID)'),
-                        'route_volgorde',
-						array(
-							'header'=>'Opties',
-							'class'=>'CButtonColumn',
-							'template'=>'{details}{omhoog}{omlaag}',
-							'buttons'=>array(
-								'details' => array(
-									'label'=>'<span class="fa-stack fa-lg">
-												<i class="fa fa-search fa-stack-1x"></i>
-											  </span>',
-									'options'=>array('title'=>'Bekijk deze hike'),
-									'url'=>'Yii::app()->createUrl("route/view", array(
-										"route_id"=>$data->route_ID,
-										"event_id"=>$data->event_ID))',
-								),
-								'omhoog' => array(
-									'label'=>'<span class="fa-stack fa-lg">
-										<i class="fa fa-level-up fa-stack-1x"></i>
-										</span>',
-									'options'=>array('title'=>'Schuif omhoog'),
-									'url'=>'Yii::app()->createUrl("/route/moveUpDown", array(
-										"event_id"=>$data->event_ID,
-										"date"=>$data->day_date,
-										"up_down"=>"up",
-										"route_id"=>$data->route_ID,
-										"volgorde"=>$data->route_volgorde))',
-                                    'visible'=>'Route::model()->isActionAllowed(
-										"route",
-										"moveUpDown",
-                                        $data->event_ID,
-										"",
-										"",
-                                        $data->day_date,
-                                        $data->route_volgorde,
-										"up")',
-								),
-								'omlaag' => array(
-									'label'=>'<span class="fa-stack fa-lg">
-										<i class="fa fa-level-down fa-stack-1x"></i>
-										</span>',
-									'options'=>array('title'=>'Schuif omlaag'),
-									'url'=>'Yii::app()->createUrl("/route/moveUpDown", array(
-										"event_id"=>$data->event_ID,
-										"date"=>$data->day_date,
-										"up_down"=>"down",
-										"route_id"=>$data->route_ID,
-										"volgorde"=>$data->route_volgorde))',
-                                    'visible'=>'Route::model()->isActionAllowed(
-										"route",
-										"moveUpDown",
-                                        $data->event_ID,
-										"",
-										"",
-                                        $data->day_date,
-                                        $data->route_volgorde,
-										"down")',
-								),
-							),
-						),
-			    ),
-			),
-			true
-		    ),
-		//),
-	    );
+		    'content' => GridView::widget([
+                'id' => 'kv-grid-demo',
+                'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => $startDate]]),
+                'columns'=>$gridColumns,
+                'containerOptions'=>FALSE, //['style'=>'overflow: auto'], // only set when $responsive = false
+                'headerRowOptions'=>['class'=>'kartik-sheet-style'],
+                'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+                'pjax'=>true, // pjax is set to always true for this demo
+                // set your toolbar
+                'toolbar'=> [
+                    ['content'=>
+                        ButtonAjax::widget([
+                            'name'=>'Create',
+                            'route'=>['route/create'],
+                            'modalId'=>'#main-modal',
+                            'modalContent'=>'#main-content-modal',
+                            'options'=>[
+                                'class'=>'btn btn-success',
+                                'title'=>'Button for create application',
+                            ]
+                        ]),
+                    ],
+                    '{export}',
+                    '{toggleData}',
+                ],
+                // set export properties
+                'export'=>[
+                    'fontAwesome'=>true
+                ],
+                // parameters from the demo form
+                'bordered'=>$bordered,
+                'striped'=>$striped,
+                'condensed'=>$condensed,
+                'responsive'=>$responsive,
+                'hover'=>$hover,
+                'showPageSummary'=>$pageSummary,
+                'panel'=>[
+                    'type'=>GridView::TYPE_INFO,
+                    'heading'=>$heading,
+                ],
+                'persistResize'=>false,
+                //'exportConfig'=>$exportConfig,
+            ])
+        );
 		$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));
 	    $count++;
 		// more then 10 days is unlikly, therefore break.
@@ -153,16 +159,8 @@ $this->params['breadcrumbs'][] = $this->title;
 			break;
 		}
 	}
-
-$this->widget('bootstrap.widgets.TbTabs', array(
-	'tabs'=>$dataArray
-    )
-);
- ?>
-
-    
-    
-    
+    echo Tabs::widget([
+        'items' => $dataArray
+    ]);
     ?>
-
 </div>

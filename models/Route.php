@@ -79,7 +79,12 @@ class Route extends HikeActiveRecord
      */
     public function getNoodEnvelops()
     {
-        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID'])->all();
+    }
+
+    public function getNoodEnvelopCount()
+    {
+        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID'])->count();
     }
 
     /**
@@ -87,15 +92,27 @@ class Route extends HikeActiveRecord
      */
     public function getOpenVragens()
     {
-        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])->all();
     }
+
+    public function getOpenVragenCount()
+    {
+        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])->count();
+    }
+
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getQrs()
     {
-        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID'])->all();
+    }
+
+    public function getQrCount()
+    {
+        // Customer has_many Order via Order.customer_id -> id
+        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID'])->count();
     }
 
     /**
@@ -103,7 +120,7 @@ class Route extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID'])->one();
     }
 
     /**
@@ -119,7 +136,7 @@ class Route extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID'])->one();
     }
 
 	public function getDayOfRouteId($id)

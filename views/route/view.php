@@ -1,43 +1,39 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-
+//use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use yii\widgets\ListView;
+use app\models\Qr;
+use yii\data\ActiveDataProvider;
+use yii\bootstrap\Modal;
+use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
-/* @var $model app\models\TblRoute */
+/* @var $model app\models\Route */
 
-$this->title = $model->route_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Routes'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Qr\'s for' . ' ' . $model->route_name;
 ?>
 <div class="tbl-route-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->route_ID], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a(Yii::t('app', 'Create new qr'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>
     </p>
+    <?php
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'route_ID',
-            'route_name',
-            'event_ID',
-            'day_date',
-            'route_volgorde',
-            'create_time',
-            'create_user_ID',
-            'update_time',
-            'update_user_ID',
-        ],
-    ]) ?>
+    $query = Qr::find();
 
+    $dataProvider = new ActiveDataProvider([
+        'query' => $query,
+    ]);
+
+    echo ListView::widget([
+        'summary' => FALSE,
+        'pager' => FALSE,
+        'dataProvider' => $dataProvider,
+        'itemView' => '/qr/_list',
+        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+    ]);
+?>
 </div>

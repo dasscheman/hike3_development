@@ -303,7 +303,7 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStartDate($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
         if (isset($data->status)) {
             return $data->start_date;
         } else {
@@ -315,7 +315,7 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getEndDate($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
         if (isset($data->status)) {
             return $data->end_date;
         } else {

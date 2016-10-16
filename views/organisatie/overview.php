@@ -210,3 +210,4 @@ $this->title = Yii::t('app', 'Hike overzicht');
         </div>
     </td>
 </div>
+<?= Yii::$app->language ?>

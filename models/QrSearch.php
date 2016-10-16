@@ -41,7 +41,7 @@ class TblQrSearch extends TblQr
      */
     public function search($params)
     {
-        $query = TblQr::find();
+        $query = Qr::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
