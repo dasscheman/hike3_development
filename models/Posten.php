@@ -248,14 +248,16 @@ class Posten extends HikeActiveRecord
 
 	public function startPostExist($event_id, $date)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date);
-
-		if (Posten::exists($criteria))
-			return true;
-		else
-			return false;
+        $exists = Posten::find()
+            ->where('event_ID=:event_id')
+            ->andwhere('day_date=:day_date')
+            ->addParams(
+                [
+                    ':event_ID' => $event_id,
+                    ':day_date' => $date,
+                ])
+            ->exists();
+        return $exists;
 	}
 
 	public function setActiveTab($date)

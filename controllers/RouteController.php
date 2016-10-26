@@ -133,31 +133,29 @@ class RouteController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Route();
-        $qrModel=new Qr();
+        $model = new Route;
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('create', ['model' => $model]);
-        }
+        if (Yii::$app->request->post('Route') && $model->load(Yii::$app->request->post())) {
+            $model->setAttributes([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'day_date' => Yii::$app->request->get('date')
+            ]);
+            var_dump(Yii::$app->request->get('date'));
+            $model->setRouteOrder();
 
-        if(NULL !== Yii::$app->request->post('Route'))
-        {
-var_dump('if'); exit;
-            $model->attributes = $_POST['Route'];
-            $model->day_date = $_GET['date'];
-            $model->event_ID = $_GET['event_id'];
-            $model->route_volgorde = Route::getNewOrderForDateRoute($_GET['event_id'], $_GET['date']);
-
-            // Wanneer er een route onderdeel aangemaakt wordt, dan moet er gecheckt woren of er voor die dag al een
-            // begin aangemaakt is.  Als dat niet het geval is dan moet die nog aangemaakt worden.
-            if (!Posten::startPostExist($_GET['event_id'], $_GET['date'])) {
+            // Wanneer er een route onderdeel aangemaakt wordt, dan moet er
+            // gecheckt woren of er voor die dag al een begin aangemaakt is.
+            // Als dat niet het geval is dan moet die nog aangemaakt worden.
+            if (!Posten::startPostExist($model->event_ID, $model->day_date)) {
 
                 $modelStartPost = new Posten;
-                $modelStartPost->event_ID = $_GET['event_id'];
-                $modelStartPost->post_name = 'Dag Start';
-                $modelStartPost->date = $_GET['date'];
-                $modelStartPost->post_volgorde = 1;
-                $modelStartPost->score = 0;
+                $modelStartPost->setAttributes([
+                    'event_ID' => $model->event_ID,
+                    'post_name' => Yii::t('app', 'Start day'),
+                    'date' => $model->day_date,
+                    'post_volgorde'=> 1,
+                    'score' => 0,
+                ]);
             }
 
             // validate BOTH $model, $modelStartPost.
@@ -166,37 +164,48 @@ var_dump('if'); exit;
                 $valid=$modelStartPost->validate() && $valid;
             }
 
-            if($valid)
-            {
-                $model->save(false);
-                if (isset($modelStartPost))
-                {
+            if($valid && $model->save(false)) {
+                if(isset($modelStartPost)) {
                     $modelStartPost->save(false);
                 }
+
                 // QR record can only be set after the routemodel save.
                 // Because route_ID is not available before save.
                 // Furthermore it is not a problem when route record is saved and
                 // an error occured on qr save. Therefore this easy and fast solution is choosen.
-                if (!Qr::qrExistForRouteId($_GET['event_id'], $model->route_ID)) {
-                    $qrModel->qr_name = $model->route_name;
-                    $qrModel->qr_code = Qr::model()->getUniqueQrCode();
-                    $qrModel->event_ID = $_GET['event_id'];
-                    $qrModel->route_ID = $model->route_ID;
-                    $qrModel->qr_volgorde = Qr::getNewOrderForQr($_GET['event_id'], $model->route_ID);
-                    $qrModel->score = 5;
+                if (!Qr::qrExistForRouteId($model->evnt_ID, $model->route_ID)) {
+                    $qrModel=new Qr;
+                    $qrModel->setAttributes([
+                        'qr_name' => $model->route_name,
+                        'qr_code' => Qr::getUniqueQrCode(),
+                        'event_ID' => $model->evnt_ID,
+                        'route_ID' => $model->route_ID,
+                        'score' => 5,
+                    ]);
+
+                    $qrModel->setNewOrderForQr();
+
                     // use false parameter to disable validation
                     $qrModel->save(false);
                 }
-                return $this->redirect(array(
+                if (Yii::$app->request->isAjax) {
+                    return $this->renderAjax('/route/index', ['model' => $model]);
+                }
+                return $this->render([
                     '/route/index',
-                    'event_id'=>$model->event_ID,
-                    'date'=>$model->day_date));
+                    'event_id'=>$model->event_ID
+                ]);
             }
         }
-        
-        $this->renderPartial('_form',array(
-			'model'=>$model,
-		));
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/route/create',
+            'model' => $model
+        ]);
     }
 
     /**

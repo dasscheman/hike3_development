@@ -1,47 +1,50 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-
+//use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use yii\widgets\ListView;
+use app\models\Qr;
+use yii\data\ActiveDataProvider;
+use yii\bootstrap\Modal;
+use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
-/* @var $model app\models\TblOpenVragen */
+/* @var $model app\models\Route */
 
-$this->title = $model->open_vragen_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Open Vragens'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
 ?>
 <div class="tbl-open-vragen-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->open_vragen_ID], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->open_vragen_ID], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?php
+        echo ButtonAjax::widget([
+            'name'=>Yii::t('app', 'Create new question'),
+             'route'=>['openvraag/create'],
+             'modalId'=>'#main-modal',
+             'modalContent'=>'#main-content-modal',
+             'options'=>[
+                 'class'=>'btn btn-success',
+                 'title'=>'Button for create application',
+             ]
+         ]);
+        ?>
     </p>
+    <?php
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'open_vragen_ID',
-            'open_vragen_name',
-            'event_ID',
-            'route_ID',
-            'vraag_volgorde',
-            'omschrijving:ntext',
-            'vraag',
-            'goede_antwoord',
-            'score',
-            'create_time',
-            'create_user_ID',
-            'update_time',
-            'update_user_ID',
-        ],
-    ]) ?>
+    $query = app\models\OpenVragen::find();
 
+    $dataProvider = new ActiveDataProvider([
+        'query' => $query,
+    ]);
+
+    echo ListView::widget([
+        'summary' => FALSE,
+        'pager' => FALSE,
+        'dataProvider' => $dataProvider,
+        'itemView' => '/openvraag/_list',
+        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+    ]);
+?>
 </div>

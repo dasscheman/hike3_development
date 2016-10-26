@@ -31,70 +31,84 @@ $this->title = Yii::t('app', 'Routes');
 
     $count=0;
     $gridColumns = [
+        'route_name',
+        'route_volgorde',
         [
-            'header' => 'View Qr',
+            'header' => Yii::t('app', '#Questions'),
+            'value' => function($key){
+                return Route::findOne($key)->getOpenVragenCount();
+            },
+        ],
+        [
+            'header' => Yii::t('app', 'View Questions'),
             'class'=>'kartik\grid\ExpandRowColumn',
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
                 return GridView::ROW_COLLAPSED;
             },
             'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('view', ['model'=>$model]);
+                return Yii::$app->controller->renderPartial('/openvragen/view', ['model'=>$model]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
-            'expandTitle' => 'LALAAL',
-            'collapseTitle' => 'LOLOLO',
-        ],
-        'event_ID' =>
-        [
-            'class'=>'kartik\grid\ExpandRowColumn',
-            'width'=>'50px',
-            'value'=>function ($model, $key, $index, $column) {
-                return GridView::ROW_COLLAPSED;
-            },
-            'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('view', ['model' => $model]);
-            },
-            'headerOptions'=>['class'=>'kartik-sheet-style'],
-            'expandOneOnly'=>true,
-            'expandTitle' => 'LALAAL',
-            'collapseTitle' => 'LOLOLO',
+            'expandTitle' => Yii::t('app', 'Open view questions'),
+            'collapseTitle' => Yii::t('app', 'Close view questions'),
         ],
         [
-            'header' => '#Vragen',
-            'value' => function($key){
-                return Route::findOne($key)->getOpenVragenCount();
-            },
-        ],
-        [
-            'header' => '#Hints',
+            'header' => Yii::t('app', '#Hints'),
             'value' => function($key){
                 return Route::findOne($key)->getNoodEnvelopCount();
             },
         ],
         [
-            'header' => '#Stille posten',
+            'header' => Yii::t('app', 'View hints'),
+            'class'=>'kartik\grid\ExpandRowColumn',
+            'width'=>'50px',
+            'value'=> function ($model, $key, $index, $column) {
+                return GridView::ROW_COLLAPSED;
+            },
+            'detail'=>function ($model, $key, $index, $column) {
+                return Yii::$app->controller->renderPartial('/noodenvelop/view', ['model'=>$model]);
+            },
+            'headerOptions'=>['class'=>'kartik-sheet-style'],
+            'expandOneOnly'=>true,
+            'expandTitle' => Yii::t('app', 'Open view hints'),
+            'collapseTitle' => Yii::t('app', 'Close view hints'),
+        ],
+        [
+            'header' => Yii::t('app', '#Silent posts'),
             'value' => function($key){
                 return Route::findOne($key)->getQrCount();
             },
         ],
         [
-            'header' => 'Aangemaakt',
-            'value' => function($key){
-                return Route::findOne($key)->getCreateUser()->username;
+            'header' => Yii::t('app', 'View silent posts'),
+            'class'=>'kartik\grid\ExpandRowColumn',
+            'width'=>'50px',
+            'value'=> function ($model, $key, $index, $column) {
+                return GridView::ROW_COLLAPSED;
             },
-        ],
-        [
-            'header' => 'Laatst Bijgewerkt',
-            'value' => function($key){
-                return Route::findOne($key)->getUpdateUser()->username;
+            'detail'=>function ($model, $key, $index, $column) {
+                return Yii::$app->controller->renderPartial('/qr/view', ['model'=>$model]);
             },
-
+            'headerOptions'=>['class'=>'kartik-sheet-style'],
+            'expandOneOnly'=>true,
+            'expandTitle' => Yii::t('app', 'Open view hints'),
+            'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
-        'route_name',
-        'day_date',
-        'route_volgorde'
+//        [
+//            'header' => 'Aangemaakt',
+//            'value' => function($key){
+//                return Route::findOne($key)->getCreateUser()->username;
+//            },
+//        ],
+//        [
+//            'header' => 'Laatst Bijgewerkt',
+//            'value' => function($key){
+//                return Route::findOne($key)->getUpdateUser()->username;
+//            },
+//
+//        ],
     ];
     $bordered = FALSE;
     $striped = TRUE;
@@ -102,17 +116,65 @@ $this->title = Yii::t('app', 'Routes');
     $responsive = FALSE;
     $hover = TRUE;
     $pageSummary = FALSE;
-    $heading = TRUE;
+    $heading = FALSE;
     $exportConfig = TRUE;
+
+    $dataArray[$count]=array(
+        'label' => Yii::t('app', 'Introduction'),
+        'content' => GridView::widget([
+            'id' => 'kv-grid-0000-00-00',
+            'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => '0000-00-00']]),
+            'columns'=>$gridColumns,
+            'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+            'headerRowOptions'=>['class'=>'kartik-sheet-style'],
+            'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+            'pjax'=>true, // pjax is set to always true for this demo
+            // set your toolbar
+            'toolbar'=> [
+                ['content'=>
+                    ButtonAjax::widget([
+                        'name'=>'Create',
+                        'route'=>['route/create', 'date' => '0000-00-00'],
+                        'modalId'=>'#main-modal',
+                        'modalContent'=>'#main-content-modal',
+                        'options'=>[
+                            'class'=>'btn btn-success',
+                            'title'=>'Button for create application',
+                        ]
+                    ]),
+                ],
+                '{export}',
+                '{toggleData}',
+            ],
+            // set export properties
+            'export'=>[
+                'fontAwesome'=>true
+            ],
+            // parameters from the demo form
+            'bordered'=>$bordered,
+            'striped'=>$striped,
+            'condensed'=>$condensed,
+            'responsive'=>$responsive,
+            'hover'=>$hover,
+            'showPageSummary'=>$pageSummary,
+            'panel'=>[
+                'type'=>GridView::TYPE_INFO,
+                'heading'=>$heading,
+            ],
+            'persistResize'=>false,
+            //'exportConfig'=>$exportConfig,
+        ])
+    );
+    $count++;
 
     while(strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count]=array(
 		    'label' =>$startDate,
 		    'content' => GridView::widget([
-                'id' => 'kv-grid-demo',
+                'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => $startDate]]),
                 'columns'=>$gridColumns,
-                'containerOptions'=>FALSE, //['style'=>'overflow: auto'], // only set when $responsive = false
+                'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],
                 'filterRowOptions'=>['class'=>'kartik-sheet-style'],
                 'pjax'=>true, // pjax is set to always true for this demo
@@ -121,7 +183,7 @@ $this->title = Yii::t('app', 'Routes');
                     ['content'=>
                         ButtonAjax::widget([
                             'name'=>'Create',
-                            'route'=>['route/create'],
+                            'route'=>['route/create', 'date' => $startDate],
                             'modalId'=>'#main-modal',
                             'modalContent'=>'#main-content-modal',
                             'options'=>[

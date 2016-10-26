@@ -26,10 +26,9 @@ use Yii;
  */
 class Route extends HikeActiveRecord
 {	
-    public $routeMoveUpAllowed = false;
-	public $routeMoveDownAllowed = false;
-	private $_activeTab;
-    
+    private $event_ID;
+    private $day_date;
+
     /**
      * @inheritdoc
      */
@@ -73,6 +72,28 @@ class Route extends HikeActiveRecord
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
     }
+
+    public function getEventID()
+    {
+        return $this->event_ID;
+    }
+
+    public function setEventID($value)
+    {
+        $this->event_ID = $value;
+    }
+
+    public function getDayDate()
+    {
+        return $this->day_date;
+    }
+
+    public function setDayDate($value)
+    {
+        $this->day_date = $value;
+    }
+
+
 
     /**
      * @return \yii\db\ActiveQuery
@@ -139,6 +160,21 @@ class Route extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID'])->one();
     }
 
+    public function setRouteOrder()
+    {var_dump($this->day_date);exit;
+        $max_order = Route::find()
+            ->select('route_volgorde')
+            ->where('event_ID=:event_id')
+            ->andwhere('day_date=:day_date')
+            ->addParams(
+                [
+                    ':event_ID' => $this->event_ID,
+                    ':day_date' => $this->day_date,
+                ])
+            ->max('route_volgorde');
+        $this->route_volgorde = $max_order++;
+    }
+
 	public function getDayOfRouteId($id)
 	{
 		$data = Route::find('route_ID =:route_id', array(':route_id' => $id));
@@ -184,44 +220,6 @@ class Route extends HikeActiveRecord
 			return true;
 		}
 		return false;
-	}
-
-	public function getNewOrderForIntroductieRoute($event_id)
-	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_name =:route_name';
-		$criteria->params=array(':event_id' => $event_id, ':route_name' =>'introductie');
-		$criteria->order = "route_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (Route::exists($criteria))
-		{	$data = Route::findAll($criteria);
-			$newOrder = $data[0]->route_volgorde+1;
-		}
-		else
-		{
-				$newOrder = 1;
-		}
-		return $newOrder;
-	}
-
-	public function getNewOrderForDateRoute($event_id, $date)
-	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND day_date =:date AND route_name !=:route_name';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':route_name' =>'introductie');
-		$criteria->order = "route_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (Route::exists($criteria))
-		{	$data = Route::findAll($criteria);
-			$newOrder = $data[0]->route_volgorde+1;
-		}
-		else
-		{
-				$newOrder = 1;
-		}
-		return $newOrder;
 	}
 
 	public function lowererOrderNumberExists($event_id,
