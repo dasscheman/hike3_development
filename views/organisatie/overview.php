@@ -148,7 +148,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
         //'options' => ['class'=>'slide'],
         ]
     );
-    echo $this->render('/eventnames/_form', ['model' => $eventModel]);
+    echo $this->render('/event-names/_form', ['model' => $eventModel]);
     Modal::end();
     ?>
 
@@ -167,7 +167,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
         //'options' => ['class'=>'slide'],
         ]
     );
-    echo $this->render('/eventnames/_form', ['model' => $eventModel]);
+    echo $this->render('/event-names/_form', ['model' => $eventModel]);
     Modal::end();
     
     echo ButtonAjax::widget([

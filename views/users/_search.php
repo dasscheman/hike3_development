@@ -43,7 +43,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'update_user_ID') ?>
 
-    <?php // echo $form->field($model, 'selected_event_ID') ?>
+    <?php // echo $form->field($model, 'selected') ?>
 
     <?php // echo $form->field($model, 'authKey') ?>
 

@@ -57,12 +57,12 @@ class OrganisatieController extends Controller
      */
     public function actionOverview()
     {
-            if (isset($_POST['hasEditable'])) {
-                var_dump($_POST); exit;
-            }
+//            if (isset($_POST['hasEditable'])) {
+//                var_dump($_POST); exit;
+//            }
         
         
-        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $event_id = Yii::$app->user->identity->selected;
 
         $queryOrganisatie = DeelnemersEvent::find()
             ->where(['=', 'event_ID', $event_id])

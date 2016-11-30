@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\GeneralFunctions; 
 use yii\filters\AccessControl;
+use app\models\EventNames;
 
 /**
  * UsersController implements the CRUD actions for TblUsers model.

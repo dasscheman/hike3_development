@@ -30,7 +30,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php     
     NavBar::begin([
-        'brandLabel' => !Yii::$app->user->isGuest ? 'Geselecteerde hike: ' . Yii::$app->user->identity->selected_event_ID: 'Hike-app.nl',
+        'brandLabel' => !Yii::$app->user->isGuest ? 'Geselecteerde hike: ' . Yii::$app->user->identity->selected: 'Hike-app.nl',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -72,8 +72,8 @@ AppAsset::register($this);
                     ],
                     [
                         'label' => Yii::t('app','Select Hike'), 
-                        'url' => ['/users/selectHike'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'selectHike'),
+                        'url' => ['/event-names/select-hike'],
+                        'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
 //                    Leave this for now, only implement this when modal popup is not usable on mobile.
 //                    [
@@ -106,7 +106,7 @@ AppAsset::register($this);
                 'items' => [
                     [
                         'label'=> Yii::t('app','Check Answers'),
-                        'url'=> ['openVragenAntwoorden/viewControle'],
+                        'url'=> ['open-vragen-antwoorden/viewControle'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'viewControle')
                     ],
                     [
@@ -118,13 +118,13 @@ AppAsset::register($this);
                         'label'=> Yii::t('app','Answered Questions'),
                         'url'=>
                         [
-                            'openVragenAntwoorden/index',
+                            'openVragen-antwoorden/index',
                         ],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'index')
                     ],
                     [
                         'label'=> Yii::t('app','Opened Hints'),
-                        'url'=>['openNoodEnvelop/index',
+                        'url'=>['open-nood-envelop/index',
                             'previous'=>'game/gameOverview'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openNoodEnvelop', 'index')
                     ],
@@ -224,7 +224,7 @@ AppAsset::register($this);
                     ],                    
                 ],
             ],
-            ['label' => 'About', 'url' => ['/site/about']],
+            //['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ?
                 ['label' => 'Login', 'url' => ['/site/login']] :

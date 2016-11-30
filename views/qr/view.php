@@ -23,6 +23,7 @@ $this->title = 'Qr\'s for' . ' ' . $model->route_name;
     </p>
     <?php
 
+    // EXAMPLE
     $dataProvider = new yii\data\ArrayDataProvider([
         'allModels' => $model->qrs,
     ]);

@@ -51,9 +51,9 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if (!\Yii::$app->user->isGuest) {
-            $this->redirect(array('/users/view', 'id' => Yii::$app->user->id));
-        }
+//        if (!\Yii::$app->user->isGuest) {
+//            $this->redirect(array('/users/view', 'id' => Yii::$app->user->id));
+//        }
         return $this->render('index');
     }
 

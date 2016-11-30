@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'create_user_ID',
             // 'update_time',
             // 'update_user_ID',
-            // 'selected_event_ID',
+            // 'selected',
             // 'authKey',
             // 'accessToken',
 

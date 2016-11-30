@@ -16,7 +16,7 @@ use yii\web\HttpException;
 use \yii\helpers\Json;
 
 /**
- * EventNamesController implements the CRUD actions for TblEventNames model.
+ * EventNamesController implements the CRUD actions for EventNames model.
  */
 class EventNamesController extends Controller
 {
@@ -55,7 +55,7 @@ class EventNamesController extends Controller
     }
     
     /**
-     * Lists all TblEventNames models.
+     * Lists all EventNames models.
      * @return mixed
      */
     public function actionIndex()
@@ -70,7 +70,7 @@ class EventNamesController extends Controller
     }
     
     /**
-     * Displays a single TblEventNames model.
+     * Displays a single EventNames model.
      * @param integer $id
      * @return mixed
      */
@@ -82,7 +82,7 @@ class EventNamesController extends Controller
     }
 
     /**
-     * Creates a new TblEventNames model.
+     * Creates a new EventNames model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -140,30 +140,30 @@ class EventNamesController extends Controller
     }
 
     /**
-     * Updates an existing TblEventNames model.
+     * Updates an existing EventNames model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
     public function actionUpdate()
     {
-        if (!isset(Yii::$app->user->identity->selected_event_ID)) { // No hike set
+        if (!isset(Yii::$app->user->identity->selected)) { // No hike set
             throw new \yii\web\HttpException(418, Yii::t('app', 'No hike selected.'));
         }
      
-        $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
+        $model = $this->findModel(Yii::$app->user->identity->selected);
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['organisatie/overview']);
         } else {
-            return $this->render('/eventnames/update', [
+            return $this->render('/update', [
                 'model' => $model,
             ]);
         }
     }
     
     /**
-     * Deletes an existing TblEventNames model.
+     * Deletes an existing EventNames model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -258,8 +258,24 @@ class EventNamesController extends Controller
         ));
     }
 
+    public function actionSelectHike() {
+        // EXAMPLE
+        $modelEvents = EventNames::find()
+            ->where(['user_ID' => Yii::$app->user->id])
+            ->joinwith('deelnemersEvents');
+
+        if (NULL !== Yii::$app->request->get('id')  ) {
+            Yii::$app->user->identity->setSelected(Yii::$app->request->get('id'));
+            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('id'));
+        }
+
+        return $this->render('select-hike', [
+            'modelEvents' => $modelEvents,
+        ]);
+    }
+
     /**
-     * Finds the TblEventNames model based on its primary key value.
+     * Finds the EventNames model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return EventNames the loaded model

@@ -11,7 +11,7 @@ use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
+$this->title = Yii::t('app', 'Questions for') . ' ' . $model->open_vragen_name;
 ?>
 <div class="tbl-open-vragen-view">
 
@@ -21,7 +21,7 @@ $this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['openvraag/create'],
+             'route'=>['open-vraag/create'],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
@@ -43,7 +43,7 @@ $this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
         'summary' => FALSE,
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
-        'itemView' => '/openvraag/_list',
+        'itemView' => '/open-vragen/_list',
         'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
     ]);
 ?>

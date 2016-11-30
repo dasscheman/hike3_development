@@ -27,7 +27,6 @@ use yii\helpers\ArrayHelper;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
- * @property integer $selected_event_ID 
  * @property string $authKey 
  * @property string $accessToken 
  *
@@ -65,7 +64,6 @@ use yii\helpers\ArrayHelper;
  */
 class Users extends AccessControl implements IdentityInterface {
 
-    public $selected_event_ID = 1;
     public $password_repeat;
 
     /**
@@ -122,7 +120,6 @@ class Users extends AccessControl implements IdentityInterface {
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
-            'selected_event_ID' => Yii::t('app', 'Selected Event ID'),
             'authKey' => Yii::t('app', 'Auth Key'),
             'accessToken' => Yii::t('app', 'Access Token'),
         ];
@@ -459,17 +456,6 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function removePasswordResetToken() {
         $this->password_reset_token = null;
-    }
-
-    /**
-     * 
-     */
-    public function getSelectedEventID() {
-        $this->selected_event_ID = 22 /* (new \yii\db\Query())
-          ->from('tbl_users')
-          ->where(['user_ID' => Yii::$app->user->id])
-          ->one() */;
-        return $this->selected_event_ID;
     }
 
     /**

@@ -47,7 +47,7 @@ $this->title = Yii::t('app', 'Routes');
                 return GridView::ROW_COLLAPSED;
             },
             'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/openvragen/view', ['model'=>$model]);
+                return Yii::$app->controller->renderPartial('/open-vragen/view', ['model'=>$model]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Routes');
                 return GridView::ROW_COLLAPSED;
             },
             'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/noodenvelop/view', ['model'=>$model]);
+                return Yii::$app->controller->renderPartial('/nood-envelop/view', ['model'=>$model]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
@@ -96,19 +96,6 @@ $this->title = Yii::t('app', 'Routes');
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
-//        [
-//            'header' => 'Aangemaakt',
-//            'value' => function($key){
-//                return Route::findOne($key)->getCreateUser()->username;
-//            },
-//        ],
-//        [
-//            'header' => 'Laatst Bijgewerkt',
-//            'value' => function($key){
-//                return Route::findOne($key)->getUpdateUser()->username;
-//            },
-//
-//        ],
     ];
     $bordered = FALSE;
     $striped = TRUE;

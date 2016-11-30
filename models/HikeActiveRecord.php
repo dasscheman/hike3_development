@@ -5,9 +5,9 @@ namespace app\models;
 use yii\db\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
 
-
 abstract class HikeActiveRecord extends ActiveRecord
 {
+
     /**
     * Attaches the timestamp behavior to update our create and update times
     */
@@ -30,4 +30,3 @@ abstract class HikeActiveRecord extends ActiveRecord
         ];
     }
 }
-?>

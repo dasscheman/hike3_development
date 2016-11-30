@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * DeelnemersEventController implements the CRUD actions for TblDeelnemersEvent model.
+ * DeelnemersEventController implements the CRUD actions for DeelnemersEvent model.
  */
 class DeelnemersEventController extends Controller
 {
@@ -54,7 +54,7 @@ class DeelnemersEventController extends Controller
     }
 
     /**
-     * Lists all TblDeelnemersEvent models.
+     * Lists all DeelnemersEvent models.
      * @return mixed
      */
     public function actionIndex()
@@ -69,7 +69,7 @@ class DeelnemersEventController extends Controller
     }
 
     /**
-     * Displays a single TblDeelnemersEvent model.
+     * Displays a single DeelnemersEvent model.
      * @param integer $id
      * @return mixed
      */
@@ -81,7 +81,7 @@ class DeelnemersEventController extends Controller
     }
     
     /**
-     * Creates a new TblDeelnemersEvent model.
+     * Creates a new DeelnemersEvent model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -114,7 +114,7 @@ class DeelnemersEventController extends Controller
     }
     
     /**
-     * Updates an existing TblDeelnemersEvent model.
+     * Updates an existing DeelnemersEvent model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -139,7 +139,7 @@ class DeelnemersEventController extends Controller
     }    
     
     /**
-     * Deletes an existing TblDeelnemersEvent model.
+     * Deletes an existing DeelnemersEvent model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -176,15 +176,15 @@ class DeelnemersEventController extends Controller
 	}
 
     /**
-     * Finds the TblDeelnemersEvent model based on its primary key value.
+     * Finds the DeelnemersEvent model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblDeelnemersEvent the loaded model
+     * @return DeelnemersEvent the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblDeelnemersEvent::findOne($id)) !== null) {
+        if (($model = DeelnemersEvent::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

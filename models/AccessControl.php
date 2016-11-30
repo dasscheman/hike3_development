@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\Cookie;
 
 class AccessControl extends HikeActiveRecord {
 
@@ -14,8 +15,40 @@ class AccessControl extends HikeActiveRecord {
     public $hikeStatus;
     public $rolPlayer;
     public $groupOfPlayer;
+    private $_selected;
+
+    public function init() {
+        if (Yii::$app->user->identity !== NULL) {
+            return;
+        }
+        $this->setSelected($this->getSelectedCookie());
+    }
+
+        /**
+     *
+     */
+    public function setSelectedCookie($value) {
+
+        $cookies = Yii::$app->getResponse()->getCookies();
+
+        $cookies->remove('selected_event_ID'    );
+
+        $cookie = new Cookie([
+            'name' => 'selected_event_ID',
+            'value' => $value,
+            'expire' => time() + 86400 * 365,
+        ]);
+
+        $cookies->add($cookie);
+
+    }
+
+    function getSelectedCookie() {
+        $cookies = Yii::$app->getRequest()->getCookies();
+        return (int) $cookies->getValue('selected_event_ID');
+    }
     
-    function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {  
+    function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {
         AccessControl::setControllerId($controller_id);
         AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
@@ -24,7 +57,7 @@ class AccessControl extends HikeActiveRecord {
         AccessControl::setHikeStatus();
         AccessControl::setRolPlayer();
         AccessControl::setGroupOfPlayer();
-        
+
         switch ($this->action_id) {
             case 'create':
                 return AccessControl::createAllowed();
@@ -39,7 +72,8 @@ class AccessControl extends HikeActiveRecord {
             case 'update':
             case 'updateImage':
                 return AccessControl::updateAllowed();
-                break;
+            case 'overview':
+                return AccessControl::overviewAllowed();
             case 'view':
                 return AccessControl::viewAllowed();
             case 'ViewIntroductie':
@@ -49,6 +83,15 @@ class AccessControl extends HikeActiveRecord {
             default:
                 return AccessControl::defaultAllowed();
         }
+    }
+
+    public function setSelected($value) {
+        $id = (int) $value;
+        $this->_selected = $id;
+    }
+
+    public function getSelected() {
+        return $this->_selected;
     }
 
     function setControllerId($controller_id) {
@@ -76,11 +119,11 @@ class AccessControl extends HikeActiveRecord {
     }
     
     function setEventId() {
-        if (!isset(Yii::$app->user->identity->selected_event_ID)) {
+        if (!isset(Yii::$app->user->identity->selected)) {
             $this->event_id = FALSE;
             return;
         }
-        $this->event_id = Yii::$app->user->identity->selected_event_ID;
+        $this->event_id = Yii::$app->user->identity->selected;
     }
     
     function setHikeStatus() {
@@ -92,7 +135,7 @@ class AccessControl extends HikeActiveRecord {
     }
     
     function setRolPlayer() {
-        $this->rolPlayer = DeelnemersEvent::getRolOfPlayer(Yii::$app->user->id);
+        $this->rolPlayer = DeelnemersEvent::getRolOfPlayer();
     }
     
     function setGroupOfPlayer(){
@@ -307,6 +350,40 @@ class AccessControl extends HikeActiveRecord {
                     return TRUE;
                 }
                 break;
+            default:
+                return FALSE;
+        }
+    }
+    function overviewAllowed() {
+        switch ($this->controller_id) {
+//            case 'users':
+//                if ($this->controller_id === 'users' &&
+//                    Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
+//                    return TRUE;
+//                }
+//                return FALSE;
+//            case 'nood-envelop':
+//            case 'open-vragen':
+//            case 'posten':
+//            case 'qr':
+//            case 'route':
+//            case 'chart':
+//            case 'groups':
+//            case 'deelnemers-event':
+//            case 'event-names':
+//            case 'groups':
+//            case 'open-nood-envelop':
+//            case 'open-vragen-antwoorden':
+//            case 'post-passage':
+//            case 'qr-check':
+              case 'organisatie':
+                if (!isset($this->event_id)) {
+                    return FALSE;
+                }
+
+                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                    return TRUE;
+                }
             default:
                 return FALSE;
         }

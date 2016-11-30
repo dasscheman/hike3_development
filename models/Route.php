@@ -113,6 +113,7 @@ class Route extends HikeActiveRecord
      */
     public function getOpenVragens()
     {
+        // EXAMPLE
         return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])->all();
     }
 
@@ -141,7 +142,7 @@ class Route extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID'])->one();
+        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
     }
 
     /**
@@ -157,11 +158,12 @@ class Route extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID'])->one();
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
     public function setRouteOrder()
-    {var_dump($this->day_date);exit;
+    {
+//        var_dump($this->day_date);exit;
         $max_order = Route::find()
             ->select('route_volgorde')
             ->where('event_ID=:event_id')

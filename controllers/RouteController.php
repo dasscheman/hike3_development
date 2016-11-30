@@ -60,7 +60,7 @@ class RouteController extends Controller
             Route::setActiveTab($_GET['date']);
         }
 
-        $event_Id = Yii::$app->user->identity->selected_event_ID;
+        $event_Id = Yii::$app->user->identity->selected;
         $startDate=EventNames::getStartDate($event_Id);
         $endDate=EventNames::getEndDate($event_Id);
 
@@ -137,7 +137,7 @@ class RouteController extends Controller
 
         if (Yii::$app->request->post('Route') && $model->load(Yii::$app->request->post())) {
             $model->setAttributes([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'event_ID' => Yii::$app->user->identity->selected,
                 'day_date' => Yii::$app->request->get('date')
             ]);
             var_dump(Yii::$app->request->get('date'));

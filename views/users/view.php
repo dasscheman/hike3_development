@@ -71,10 +71,10 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
                 [
-                    'attribute' => 'selected_event_ID',
+                    'attribute' => 'selected',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
-                    'value' => EventNames::getEventName($model->selected_event_ID),
+                    'value' => EventNames::getEventName($model->selected),
                 ],
             ],
         ],
