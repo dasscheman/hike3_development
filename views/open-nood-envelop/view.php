@@ -11,17 +11,17 @@ use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
+$this->title = Yii::t('app', 'Hints for') . ' ' . $model->route_name;
 ?>
-<div class="tbl-open-vragen-view">
+<div class="tbl-nood-envelop-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?php
         echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['open-vraag/create'],
+            'name'=>Yii::t('app', 'Create new hint'),
+             'route'=>['noodenvelop/create'],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
@@ -33,7 +33,7 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
     </p>
     <?php
 
-    $query = app\models\OpenVragen::find();
+    $query = app\models\NoodEnvelop::find();
 
     $dataProvider = new ActiveDataProvider([
         'query' => $query,
@@ -43,8 +43,7 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         'summary' => FALSE,
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
-        'itemView' => '/open-vragen/_list',
-        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+        'itemView' => '/noodenvelop/_list',
     ]);
 ?>
 </div>

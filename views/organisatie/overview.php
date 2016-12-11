@@ -1,16 +1,13 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
-use kartik\detail\DetailView;
-use yii\widgets\ListView;
-use app\models\EventNames;
 use app\models\Users;
-use yii\bootstrap\Modal;
-use kartik\file\FileInput;
-use kartik\widgets\ActiveForm;
 use kartik\builder\Form;
+use kartik\detail\DetailView;
+use kartik\widgets\ActiveForm;
 use prawee\widgets\ButtonAjax;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
@@ -20,8 +17,8 @@ $this->title = Yii::t('app', 'Hike overzicht');
 <div class="organisatie-overview">
 
     <?php
-    $form2 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
-    $form2->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
+    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
+    $form->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
         'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
         'pluginOptions' => [
             'previewFileType' => 'image',
@@ -102,7 +99,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'format' => 'raw',
             'value' => Form::widget([       // 1 column layout
                 'model' => $eventModel,
-                'form' => $form2,
+                'form' =>$form,
                 'columns' => 1,
                 'attributes' => [
                     'image' => [

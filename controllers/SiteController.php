@@ -9,7 +9,8 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\controllers\Cookie;
-
+use app\models\EventNames;
+use app\models\RouteSearch;
 
 class SiteController extends Controller
 {
@@ -51,10 +52,29 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-//        if (!\Yii::$app->user->isGuest) {
-//            $this->redirect(array('/users/view', 'id' => Yii::$app->user->id));
-//        }
-        return $this->render('index');
+        if (Yii::$app->user->identity !== NULL) {
+            $cookies = Yii::$app->getRequest()->getCookies();
+            $cookies->getValue('selected_event_ID');
+
+            $event_id = Yii::$app->user->identity->selected;
+            $startDate=EventNames::getStartDate($event_id);
+            $endDate=EventNames::getEndDate($event_id);
+
+            $searchModel = new RouteSearch();
+            $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
+            $queryParams["RouteSearch"]["event_ID"] = $event_id ;
+            $dataProvider = $searchModel->search($queryParams);
+
+   
+            return $this->render('/game/overview',[
+                'eventModel' => EventNames::find($event_id)->one(),
+                'searchModel' => $searchModel,
+                'dataProvider'=>$dataProvider,
+                'startDate'=>$startDate,
+                'endDate'=>$endDate
+            ]);
+        }
+        return $this->render('login');
     }
 
     public function actionLogin()

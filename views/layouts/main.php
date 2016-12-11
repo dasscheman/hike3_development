@@ -102,20 +102,18 @@ AppAsset::register($this);
                 ],
             ],
             Yii::$app->user->isGuest ? '':
-            ['label' => Yii::t('app','Deelnemer'),                 
+            ['label' => Yii::t('app','Game'),
                 'items' => [
+//                    [
+//                        'label'=> Yii::t('app','Answered Questions'),
+//                        'url'=>
+//                        [
+//                            'openVragen-antwoorden/index',
+//                        ],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'index')
+//                    ],
                     [
-                        'label'=> Yii::t('app','Check Answers'),
-                        'url'=> ['open-vragen-antwoorden/viewControle'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'viewControle')
-                    ],
-                    [
-                        'label'=> Yii::t('app','Assign Bonus Points'),
-                        'url'=>['bonuspunten/create'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'create')
-                    ],
-                    [
-                        'label'=> Yii::t('app','Answered Questions'),
+                        'label'=> Yii::t('app','Game overview'),
                         'url'=>
                         [
                             'openVragen-antwoorden/index',
@@ -128,21 +126,21 @@ AppAsset::register($this);
                             'previous'=>'game/gameOverview'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openNoodEnvelop', 'index')
                     ],
-                    [
-                        'label'=> Yii::t('app','Bonus Points'),
-                        'url'=>['bonuspunten/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
-                    ],
+//                    [
+//                        'label'=> Yii::t('app','Bonus Points'),
+//                        'url'=>['bonuspunten/index'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
+//                    ],
                     [
                         'label'=> Yii::t('app','Checked Stations'),
                         'url'=>['postPassage/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('postPassage', 'index')
                     ],
-                    [
-                        'label'=> Yii::t('app','Qr'),
-                        'url'=>['QrCheck/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qrCheck', 'index')
-                    ],       
+//                    [
+//                        'label'=> Yii::t('app','Qr'),
+//                        'url'=>['QrCheck/index'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qrCheck', 'index')
+//                    ],
                 ],
             ],            
             Yii::$app->user->isGuest ? '':
@@ -158,15 +156,15 @@ AppAsset::register($this);
                         'url'=>['/organisatie/overview'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
                     ], 
+//                    [
+//                        'label'=>Yii::t('app', 'Introductie'),
+//                        'url'=>[
+//                            '/Route/viewIntroductie',
+//                            'introduction'=>true],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'viewIntroductie')
+//                    ],
                     [
-                        'label'=>Yii::t('app', 'Introductie'),
-                        'url'=>[
-                            '/Route/viewIntroductie',
-                            'introduction'=>true],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'viewIntroductie')
-                    ],
-                    [
-                        'label'=>'Route Overzict',
+                        'label'=>'Route Overzicht',
                         'url'=>['/route/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'index')
                     ],
@@ -175,40 +173,50 @@ AppAsset::register($this);
                         'url'=>['/posten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('posten', 'index')
                     ],
+//                    [
+//                        'label'=>'Vragen Overzicht',
+//                        'url'=>['/openVragen/index'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragen', 'index')
+//                    ],
+//                    [
+//                        'label'=>'Hints Overzicht',
+//                        'url'=>['/noodEnvelop/index'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('noodEnvelop', 'index')
+//                    ],
+//                    [
+//                        'label'=>'Stille Posten Overzicht',
+//                        'url'=>['/qr/index'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
+//                    ],
+//                    [
+//                        'label'=>'Deelnemers Toevoegen',
+//                        'url'=>['/deelnemersEvent/create'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('deelnemersEvent', 'create')
+//                    ],
+//                    [
+//                        'label'=>'Groep Aanmaken',
+//                        'url'=>['/groups/create'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'create')
+//                    ],
+//                    [
+//                        'label'=>'Dag Veranderen',
+//                        'url'=>['/eventNames/changeDay'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeDay')
+//                    ],
+//                    [
+//                        'label'=>'Status Veranderen',
+//                        'url'=>['/eventNames/changeStatus'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeStatus')
+//                    ],
                     [
-                        'label'=>'Vragen Overzicht',
-                        'url'=>['/openVragen/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragen', 'index')
+                        'label'=> Yii::t('app','Check Answers'),
+                        'url'=> ['open-vragen-antwoorden/viewControle'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'viewControle')
                     ],
                     [
-                        'label'=>'Hints Overzicht',
-                        'url'=>['/noodEnvelop/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('noodEnvelop', 'index')
-                    ],
-                    [
-                        'label'=>'Stille Posten Overzicht',
-                        'url'=>['/qr/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
-                    ],
-                    [
-                        'label'=>'Deelnemers Toevoegen',
-                        'url'=>['/deelnemersEvent/create'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('deelnemersEvent', 'create')
-                    ],
-                    [
-                        'label'=>'Groep Aanmaken',
-                        'url'=>['/groups/create'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'create')
-                    ],
-                    [
-                        'label'=>'Dag Veranderen',
-                        'url'=>['/eventNames/changeDay'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeDay')
-                    ],
-                    [
-                        'label'=>'Status Veranderen',
-                        'url'=>['/eventNames/changeStatus'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeStatus')
+                        'label'=> Yii::t('app','Assign Bonus Points'),
+                        'url'=>['bonuspunten/create'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'create')
                     ],
                 ]
             ],

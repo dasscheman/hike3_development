@@ -18,7 +18,7 @@ class AccessControl extends HikeActiveRecord {
     private $_selected;
 
     public function init() {
-        if (Yii::$app->user->identity !== NULL) {
+        if (isset(Yii::$app->user->identity) && Yii::$app->user->identity !== NULL) {
             return;
         }
         $this->setSelected($this->getSelectedCookie());

@@ -11,7 +11,7 @@ use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = Yii::t('app', 'Questions for') . ' ' . $model->open_vragen_name;
+$this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
 ?>
 <div class="tbl-open-vragen-view">
 

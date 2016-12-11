@@ -3,15 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblPosten;
-use app\models\TblPostenSearch;
+use app\models\Posten;
+use app\models\PostenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\EventNames;
 
 /**
- * PostenController implements the CRUD actions for TblPosten model.
+ * PostenController implements the CRUD actions for Posten model.
  */
 class PostenController extends Controller
 {
@@ -48,7 +49,7 @@ class PostenController extends Controller
     }
 
     /**
-     * Lists all TblPosten models.
+     * Lists all Posten models.
      * @return mixed
      */
     public function actionIndex()
@@ -56,23 +57,26 @@ class PostenController extends Controller
         if (isset($_GET['date'])) {
 			Posten::setActiveTab($_GET['date']);
 		}
-        $event_Id = $_GET['event_id'];
-		$startDate=EventNames::model()->getStartDate($event_Id);
-		$endDate=EventNames::model()->getEndDate($event_Id);
+        $event_Id = Yii::$app->user->identity->selected;
+		$startDate=EventNames::getStartDate($event_Id);
+		$endDate=EventNames::getEndDate($event_Id);
         
         $searchModel = new PostenSearch();
-        $postenData = $searchModel->searchPostDate(Yii::$app->request->queryParams);
+        
+        $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
+        $queryParams["PostenSearch"]["event_ID"] = $event_Id ;
+        $postenData = $searchModel->search($queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-			'postenData'=>$postenData,
+			'dataProvider'=>$postenData,
 			'startDate'=>$startDate,
 			'endDate'=>$endDate
         ]);
     }
 
     /**
-     * Displays a single TblPosten model.
+     * Displays a single Posten model.
      * @param integer $id
      * @return mixed
      */
@@ -84,7 +88,7 @@ class PostenController extends Controller
     }
     
     /**
-     * Creates a new TblPosten model.
+     * Creates a new Posten model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -110,7 +114,7 @@ class PostenController extends Controller
     }
     
     /**
-     * Updates an existing TblPosten model.
+     * Updates an existing Posten model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -129,7 +133,7 @@ class PostenController extends Controller
     }
     
     /**
-     * Deletes an existing TblPosten model.
+     * Deletes an existing Posten model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -152,15 +156,15 @@ class PostenController extends Controller
     }
 
     /**
-     * Finds the TblPosten model based on its primary key value.
+     * Finds the Posten model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblPosten the loaded model
+     * @return Posten the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblPosten::findOne($id)) !== null) {
+        if (($model = Posten::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

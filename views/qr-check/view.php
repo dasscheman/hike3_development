@@ -1,42 +1,39 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-
+//use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use yii\widgets\ListView;
+use app\models\Qr;
+use yii\data\ActiveDataProvider;
+use yii\bootstrap\Modal;
+use prawee\widgets\ButtonAjax;
+use yii\data\ArrayDataProvider;
 /* @var $this yii\web\View */
-/* @var $model app\models\TblQrCheck */
+/* @var $model app\models\Route */
 
-$this->title = $model->qr_check_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Qr Checks'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Qr\'s for' . ' ' . $model->route_name;
 ?>
-<div class="tbl-qr-check-view">
+<div class="tbl-qr-view" <?php $model->route_ID ?>>
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->qr_check_ID], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->qr_check_ID], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a(Yii::t('app', 'Create new qr'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>
     </p>
+    <?php
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'qr_check_ID',
-            'qr_ID',
-            'event_ID',
-            'group_ID',
-            'create_time',
-            'create_user_ID',
-            'update_time',
-            'update_user_ID',
-        ],
-    ]) ?>
+    // EXAMPLE
+    $dataProvider = new yii\data\ArrayDataProvider([
+        'allModels' => $model->qrs,
+    ]);
 
+    echo ListView::widget([
+        'summary' => FALSE,
+        'pager' => FALSE,
+        'dataProvider' => $dataProvider,
+        'itemView' => '/qr/_list',
+        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+    ]);
+?>
 </div>
