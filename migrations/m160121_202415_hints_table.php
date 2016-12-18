@@ -30,8 +30,9 @@ class m160121_202415_hints_table extends Migration
 
         $this->createIndex(
             'envelop_ID', 
-            'tbl_nood_envelop', 
-            ['nood_envelop_name', 'event_ID'], 
+            'tbl_nood_envelop',
+            'route_ID',
+            ['nood_envelop_name', 'event_ID', 'route_ID'],
             true);
 
         /*********************** table friens_list ****************************/
