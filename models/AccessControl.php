@@ -31,7 +31,7 @@ class AccessControl extends HikeActiveRecord {
 
         $cookies = Yii::$app->getResponse()->getCookies();
 
-        $cookies->remove('selected_event_ID'    );
+        $cookies->remove('selected_event_ID');
 
         $cookie = new Cookie([
             'name' => 'selected_event_ID',
@@ -135,13 +135,13 @@ class AccessControl extends HikeActiveRecord {
     }
     
     function setRolPlayer() {
-        $this->rolPlayer = DeelnemersEvent::getRolOfPlayer();
+        $this->rolPlayer = DeelnemersEvent::getRolOfCurrentPlayerCurrentGame();
     }
     
     function setGroupOfPlayer(){
         if ($this->rolPlayer === DeelnemersEvent::ROL_deelnemer &&
             isset($this->event_id)) {
-            $this->groupOfPlayer = DeelnemersEvent::getGroupOfPlayer($this->event_id, Yii::app()->user->id);
+            $this->groupOfPlayer = DeelnemersEvent::getGroupOfPlayer($this->event_id, Yii::$app->user->identity->id);
         }
     }
     
@@ -154,7 +154,6 @@ class AccessControl extends HikeActiveRecord {
         if (!isset($this->event_id)) {
             return FALSE;
         }
-    
         switch ($this->controller_id) {
             case 'nood-envelop':
             case 'open-vragen':
@@ -167,14 +166,14 @@ class AccessControl extends HikeActiveRecord {
                 if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
-                break;
+                return FALSE;
             case 'open-nood-envelop':
             case 'post-passage':
                 if ($this->hikeStatus > EventNames::STATUS_introductie AND
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
-                break;
+                return FALSE;
             case 'qr-check':
             case 'bonuspunten':
             case 'open-vragen-antwoorden':
@@ -258,11 +257,13 @@ class AccessControl extends HikeActiveRecord {
             return FALSE;
         }
 
+        $isAllowed = FALSE;
+
         switch ($this->controller_id) {
             case 'bonuspunten':
                 if ($this->hikeStatus >= EventNames::STATUS_introductie and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
                 break;
             case 'nood-envelop':
@@ -273,36 +274,36 @@ class AccessControl extends HikeActiveRecord {
                 if (($this->hikeStatus == EventNames::STATUS_opstart or
                     $this->hikeStatus == EventNames::STATUS_introductie) and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
                 break;
             case 'deelnemers-event':
                 if (($this->hikeStatus == EventNames::STATUS_opstart or
                     $this->hikeStatus == EventNames::STATUS_introductie) and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
                 break;
             case 'route':
                 if ($this->hikeStatus == EventNames::STATUS_opstart and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
                 break;
             case 'event-names':
             case 'users':
-                return TRUE;
+                $isAllowed = TRUE;
                 break;
             case 'qr-check':
             case 'open-vragen-antwoorden':
                 if ($this->hikeStatus == EventNames::STATUS_introductie and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
 
                 if ($this->hikeStatus == EventNames::STATUS_gestart and
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
             // Hier geen break. OpenNoodenvelop en post-passage moeten uitgesloten worden voor de introductie.
             case 'open-nood-envelop':
@@ -311,12 +312,14 @@ class AccessControl extends HikeActiveRecord {
                     $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
                     $this->groupOfPlayer === $this->ids['group_id'] and
                     PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
-                    return TRUE;
+                    $isAllowed = TRUE;
                 }
                 break;
             default:
-                return FALSE;
+                break;
         }
+
+        return $isAllowed;
     }
 
     function deleteAllowed() {
