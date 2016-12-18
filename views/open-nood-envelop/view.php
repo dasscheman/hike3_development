@@ -43,7 +43,7 @@ $this->title = Yii::t('app', 'Hints for') . ' ' . $model->route_name;
         'summary' => FALSE,
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
-        'itemView' => '/noodenvelop/_list',
+        'itemView' => '/nood-envelop/_list',
     ]);
 ?>
 </div>

@@ -140,7 +140,7 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de rol van een speler tijdens een bepaalde hike
      */
-    public function getRolOfPlayer()
+    public function getRolOfCurrentPlayerCurrentGame()
     {
         $data = DeelnemersEvent::findOne([
             'event_ID' => Yii::$app->user->identity->selected,
@@ -155,14 +155,31 @@ class DeelnemersEvent extends HikeActiveRecord
     }
 
     /**
+     * @return de rol van een speler tijdens een bepaalde hike
+     */
+    public function getRolOfCurrentPlayer($event_id)
+    {
+        $data = DeelnemersEvent::findOne([
+            'event_ID' => $event_id,
+            'user_ID' => Yii::$app->user->identity->id
+        ]);
+
+        if(isset($data->rol))
+        {
+            return $data->getRolText($data->rol);
+        }
+        return FALSE;
+    }
+
+    /**
      * @return de group van een speler tijdens een bepaalde hike
      */
     public function getGroupOfPlayer(	$event_Id,
                                         $user_Id)
     {
-        $data = DeelnemersEvent::model()->find('event_ID = :event_Id AND user_ID=:user_Id',
-                                            array(':event_Id' => $event_Id,
-                                                  ':user_Id' => $user_Id));
+        $data = DeelnemersEvent::findOne(
+            'event_ID = :event_Id AND user_ID=:user_Id',
+            array(':event_Id' => $event_Id, ':user_Id' => $user_Id));
         if(!isset($data->rol))
         {
             return;

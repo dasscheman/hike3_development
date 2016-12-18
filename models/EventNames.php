@@ -278,8 +278,11 @@ class EventNames extends HikeActiveRecord {
     /**
      * Retrieves a event name
      */
-    public function getEventName($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
+    public function getEventName($event_id) {
+        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_id))->one();
+
+//        dd($data);
+
         if (isset($data->event_name)) {
             return $data->event_name;
         } else {

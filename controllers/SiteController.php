@@ -54,27 +54,26 @@ class SiteController extends Controller
     {
         if (Yii::$app->user->identity !== NULL) {
             $cookies = Yii::$app->getRequest()->getCookies();
-            $cookies->getValue('selected_event_ID');
+            if($cookies->getValue('selected_event_ID' !== NULL)) {
+                $event_id = Yii::$app->user->identity->selected;
+                $startDate=EventNames::getStartDate($event_id);
+                $endDate=EventNames::getEndDate($event_id);
 
-            $event_id = Yii::$app->user->identity->selected;
-            $startDate=EventNames::getStartDate($event_id);
-            $endDate=EventNames::getEndDate($event_id);
+                $searchModel = new RouteSearch();
+                $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
+                $queryParams["RouteSearch"]["event_ID"] = $event_id ;
+                $dataProvider = $searchModel->search($queryParams);
 
-            $searchModel = new RouteSearch();
-            $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
-            $queryParams["RouteSearch"]["event_ID"] = $event_id ;
-            $dataProvider = $searchModel->search($queryParams);
-
-   
-            return $this->render('/game/overview',[
-                'eventModel' => EventNames::find($event_id)->one(),
-                'searchModel' => $searchModel,
-                'dataProvider'=>$dataProvider,
-                'startDate'=>$startDate,
-                'endDate'=>$endDate
-            ]);
+                return $this->render('/game/overview',[
+                    'eventModel' => EventNames::find($event_id)->one(),
+                    'searchModel' => $searchModel,
+                    'dataProvider'=>$dataProvider,
+                    'startDate'=>$startDate,
+                    'endDate'=>$endDate
+                ]);
+            }
         }
-        return $this->render('login');
+        return $this->render('index');
     }
 
     public function actionLogin()
@@ -96,6 +95,10 @@ class SiteController extends Controller
 
     public function actionLogout()
     {
+        $cookies = Yii::$app->getResponse()->getCookies();
+
+        $cookies->remove('selected_event_ID');
+
         Yii::$app->user->logout();
 
         return $this->goHome();

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Route;
 use app\models\Users;
 use kartik\builder\Form;
 use kartik\detail\DetailView;
@@ -92,6 +93,12 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     'attribute' => 'create_user_ID',
                     'format' => 'raw',
                     'value' => Users::getUserName($eventModel->create_user_ID),
+                    'valueColOptions' => ['style' => 'width:30%'],
+                ],
+                [
+                    'attribute' => 'create_user_ID',
+                    'format' => 'raw',
+                    'value' => Users::getUserName($eventModel->rol),
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
             ],

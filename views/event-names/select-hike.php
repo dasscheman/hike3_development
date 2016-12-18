@@ -1,11 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\Modal;
 use yii\data\ActiveDataProvider;
 use kartik\grid\GridView;
 use prawee\widgets\ButtonAjax;
 use app\models\EventNames;
+use app\models\DeelnemersEvent;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -18,7 +18,6 @@ $this->title = Yii::t('app', 'Select hike');
     <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
-
 
     $dataProvider = new ActiveDataProvider([
         'query' => $modelEvents,
@@ -35,6 +34,12 @@ $this->title = Yii::t('app', 'Select hike');
             },
         ],
         'active_day',
+        [
+            'header' => 'Rol',
+            'value' => function($key){
+                return DeelnemersEvent::getRolOfCurrentPlayer($key);
+            },
+        ],
         'organisatie',
         'website',
         [

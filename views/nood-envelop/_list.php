@@ -48,11 +48,11 @@ use yii\bootstrap\Modal;
     <?php echo Html::encode($model->getAttributeLabel('nood_envelop_volgorde')); ?>
     <?php echo Html::encode($model->nood_envelop_volgorde); ?></br>
     <?php echo Html::encode($model->getAttributeLabel('$coordinaat')); ?>
-    <?php echo Html::encode($model->$coordinaat); ?></br>
+    <?php echo Html::encode($model->coordinaat); ?></br>
     <?php echo Html::encode($model->getAttributeLabel('score')); ?>
     <?php echo Html::encode($model->score); ?></br>
     <?php echo Html::encode($model->getAttributeLabel('$opmerkingen')); ?>
-    <?php echo Html::encode($model->$opmerkingen); ?></br>
+    <?php echo Html::encode($model->opmerkingen); ?></br>
         
     </div>
 </div>

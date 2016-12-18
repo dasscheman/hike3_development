@@ -25,12 +25,12 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <body>
-<?php $this->beginBody() ?>
+<?php $this->beginBody(); ?>
 
 <div class="wrap">
     <?php     
     NavBar::begin([
-        'brandLabel' => !Yii::$app->user->isGuest ? 'Geselecteerde hike: ' . Yii::$app->user->identity->selected: 'Hike-app.nl',
+        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ? 'Geselecteerde hike: ' . (Yii::$app->user->identity->selected): 'Hike-app.nl',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -101,6 +101,8 @@ AppAsset::register($this);
                     ],                   
                 ],
             ],
+            // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
+            // Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
             Yii::$app->user->isGuest ? '':
             ['label' => Yii::t('app','Game'),
                 'items' => [
@@ -142,7 +144,9 @@ AppAsset::register($this);
 //                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qrCheck', 'index')
 //                    ],
                 ],
-            ],            
+            ],
+            // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
+            // Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
             Yii::$app->user->isGuest ? '':
             ['label' => Yii::t('app','Organisatie'),                
                 'items' => [
