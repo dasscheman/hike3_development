@@ -106,7 +106,7 @@ $this->title = Yii::t('app', 'Routes');
         'label' => Yii::t('app', 'Introduction'),
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
-            'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => '0000-00-00']]),
+            'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => '0000-00-00']]),
             'columns'=>$gridColumns,
             'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
             'headerRowOptions'=>['class'=>'kartik-sheet-style'],
@@ -155,7 +155,7 @@ $this->title = Yii::t('app', 'Routes');
 		    'label' =>$startDate,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
-                'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => $startDate]]),
+                'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),
                 'columns'=>$gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],

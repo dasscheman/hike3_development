@@ -65,12 +65,12 @@ class RouteController extends Controller
         $endDate=EventNames::getEndDate($event_Id);
 
         $searchModel = new RouteSearch();
-        $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
-        $queryParams["RouteSearch"]["event_ID"] = $event_Id ;
-        $dataProvider = $searchModel->search($queryParams);
+//        $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
+//        $queryParams["RouteSearch"]["event_ID"] = $event_Id ;
+//        $dataProvider = $searchModel->search($queryParams);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+//            'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'startDate' => $startDate,
             'endDate' => $endDate

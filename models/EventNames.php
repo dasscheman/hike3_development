@@ -279,7 +279,9 @@ class EventNames extends HikeActiveRecord {
      * Retrieves a event name
      */
     public function getEventName($event_id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_id))->one();
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
 
 //        dd($data);
 
@@ -294,7 +296,9 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStatusHike($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
         if (isset($data->status)) {
             return $data->status;
         } else {
@@ -306,7 +310,9 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStartDate($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
         if (isset($data->status)) {
             return $data->start_date;
         } else {
@@ -318,7 +324,9 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getEndDate($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id))->one();
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
         if (isset($data->status)) {
             return $data->end_date;
         } else {
@@ -327,7 +335,9 @@ class EventNames extends HikeActiveRecord {
     }
 
     public function maxTimeSet($event_Id) {
-        $data = EventNames::find('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
         if (isset($data->max_time)) {
             return $data->max_time;
         } else {
@@ -339,7 +349,9 @@ class EventNames extends HikeActiveRecord {
      * Returns de actieve dag.
      */
     public function getActiveDayOfHike($event_id) {
-        $data = EventNames::find('event_ID =:event_id', array(':event_id' => $event_id));
+        $data = EventNames::find()
+            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->one();
         if (isset($data->active_day)) {
             return $data->active_day;
         } else {
