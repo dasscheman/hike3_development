@@ -36,7 +36,7 @@ $this->title = Yii::t('app', 'Routes');
             },
         ],
         [
-            'header' => Yii::t('app', 'View Questions'),
+            'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
@@ -47,6 +47,7 @@ $this->title = Yii::t('app', 'Routes');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
+            'allowBatchToggle' => FALSE,
             'expandTitle' => Yii::t('app', 'Open view questions'),
             'collapseTitle' => Yii::t('app', 'Close view questions'),
         ],
@@ -57,7 +58,7 @@ $this->title = Yii::t('app', 'Routes');
             },
         ],
         [
-            'header' => Yii::t('app', 'View hints'),
+            'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
@@ -66,8 +67,10 @@ $this->title = Yii::t('app', 'Routes');
             'detail'=>function ($model, $key, $index, $column) {
                 return Yii::$app->controller->renderPartial('/nood-envelop/view', ['model'=>$model]);
             },
+            'allowBatchToggle' => FALSE,
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
+            'expandAllTitle' => Yii::t('app', 'Open all view hints'),
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
@@ -78,7 +81,7 @@ $this->title = Yii::t('app', 'Routes');
             },
         ],
         [
-            'header' => Yii::t('app', 'View silent posts'),
+            'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
@@ -89,6 +92,7 @@ $this->title = Yii::t('app', 'Routes');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
+            'allowBatchToggle' => FALSE,
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
@@ -101,7 +105,8 @@ $this->title = Yii::t('app', 'Routes');
     $pageSummary = FALSE;
     $heading = FALSE;
     $exportConfig = TRUE;
-
+    $resizableColumns = FALSE;
+    
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
         'content' => GridView::widget([
@@ -111,6 +116,7 @@ $this->title = Yii::t('app', 'Routes');
             'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
             'headerRowOptions'=>['class'=>'kartik-sheet-style'],
             'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+            'resizableColumns' => $resizableColumns,
             'pjax'=>true, // pjax is set to always true for this demo
             // set your toolbar
             'toolbar'=> [
@@ -123,6 +129,7 @@ $this->title = Yii::t('app', 'Routes');
                         'options'=>[
                             'class'=>'btn btn-success',
                             'title'=>'Button for create application',
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create', [Yii::$app->user->identity->selected]),
                         ]
                     ]),
                 ],
@@ -160,6 +167,7 @@ $this->title = Yii::t('app', 'Routes');
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],
                 'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+                'resizableColumns' => $resizableColumns,
                 'pjax'=>true, // pjax is set to always true for this demo
                 // set your toolbar
                 'toolbar'=> [
@@ -172,6 +180,7 @@ $this->title = Yii::t('app', 'Routes');
                             'options'=>[
                                 'class'=>'btn btn-success',
                                 'title'=>'Button for create application',
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create', [Yii::$app->user->identity->selected]),
                             ]
                         ]),
                     ],

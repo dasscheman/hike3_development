@@ -6,6 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblGroups */
 
+        dd('sadsafffffffsvdvvvvavlkjf');
 $this->title = $model->group_ID;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Groups'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;

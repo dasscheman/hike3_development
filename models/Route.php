@@ -100,7 +100,7 @@ class Route extends HikeActiveRecord
      */
     public function getNoodEnvelops()
     {
-        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID'])->all();
+        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID']);
     }
 
     public function getNoodEnvelopCount()
@@ -114,7 +114,7 @@ class Route extends HikeActiveRecord
     public function getOpenVragens()
     {
         // EXAMPLE
-        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])->all();
+        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID']);
     }
 
     public function getOpenVragenCount()
@@ -128,7 +128,7 @@ class Route extends HikeActiveRecord
      */
     public function getQrs()
     {
-        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID'])->all();
+        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID']);
     }
 
     public function getQrCount()

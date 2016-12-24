@@ -33,10 +33,8 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
     </p>
     <?php
 
-    $query = app\models\OpenVragen::find();
-
-    $dataProvider = new ActiveDataProvider([
-        'query' => $query,
+    $dataProvider = new yii\data\ArrayDataProvider([
+        'allModels' => $model->openVragens,
     ]);
 
     echo ListView::widget([

@@ -9,6 +9,7 @@ $this->title = Yii::t('app', 'Create new hike');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'action' => 'create'
     ]) ?>
 
 </div>

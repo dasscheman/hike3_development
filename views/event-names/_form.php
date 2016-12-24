@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 use kartik\builder\Form;
 //use kartik\daterange\DateRangePicker;
-use kartik\file\FileInput;
+//use kartik\file\FileInput;
 use kartik\widgets\ActiveForm;
 use kartik\date\DatePicker;
+use app\models\EventNames;
 //use kartik\editable\Editable;
-use yii\bootstrap\Modal;
+//use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\EventNames */
@@ -17,10 +18,11 @@ use yii\bootstrap\Modal;
 <div class="tbl-event-names-form">
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
+
     $attributes['event_name'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
-            //'disabled' => !$model->isNewRecord,
+            'disabled' => $action == 'change_status' && !$model->isNewRecord,
             'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
         ],
     ];
@@ -28,7 +30,7 @@ use yii\bootstrap\Modal;
     $attributes['organisatie'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
-            //'disabled' => !$model->isNewRecord,
+            'disabled' => $action == 'change_status' && !$model->isNewRecord,
             'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
         ]
     ];
@@ -37,7 +39,7 @@ use yii\bootstrap\Modal;
         'type' => Form::INPUT_WIDGET,
         'widgetClass' => 'kartik\daterange\DateRangePicker',
         'options' => [
-            //'disabled' => !$model->isNewRecord,
+            'disabled' => $action == 'change_status' && !$model->isNewRecord,
             'startAttribute' => 'start_date',
             'endAttribute' => 'end_date',
             'pluginOptions' => [
@@ -55,44 +57,51 @@ use yii\bootstrap\Modal;
     $attributes['website'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
-            //'disabled' => !$model->isNewRecord,
+            'disabled' => $action == 'change_status' && !$model->isNewRecord,
             'placeholder' => Yii::t('app', 'Website organisatie')
         ]
     ];
 
-    if (!$model->isNewRecord) {
+    if ($action == 'change_status') {
         $attributes['status'] = [
             'type' => Form::INPUT_DROPDOWN_LIST,
-            'items' => \app\models\EventNames::getStatusOptions(),
+            'items' => EventNames::getStatusOptions(),
             'options' => [
                 'placeholder' => Yii::t('app', 'status'),
-            //'disabled' => !$model->isNewRecord, 
+                'disabled' => $action == 'edit_settings',
             ],
         ];
 
         $attributes['active_day'] = [
             'type' => Form::INPUT_WIDGET,
-            'widgetClass' => 'kartik\daterange\DateRangePicker',
+            'widgetClass' => 'kartik\date\DatePicker',
             'options' => [
-                //'disabled' => !$model->isNewRecord,
+                'disabled' => $action == 'edit_settings',
+                'value' => $model->active_day,
+//                'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
-                    'singleDatePicker' => true,
-                    'autoclose' => true,
-                    'minDate' => $model->start_date,
-                    'maxDate' => $model->end_date,
-                    'locale' => [
-                        'format' => 'YYYY-MM-DD',
-                    ]
+//                    'autoclose'=>true,
+                    'format' => 'dd-M-yyyy',
+//                    'minDate' => date('Y-m-d'),
                 ]
             ]
         ];
+
+
+
+//    'type' => DatePicker::TYPE_INPUT,
+//    'value' => '23-Feb-1982',
+//    'pluginOptions' => [
+//        'autoclose'=>true,
+//        'format' => 'dd-M-yyyy'
+//    ]
 
         $attributes['max_time'] = [
             'type' => Form::INPUT_DROPDOWN_LIST,
             'items' => \app\models\EventNames::getStatusOptions(),
             'options' => [
                 'placeholder' => Yii::t('app', 'status'),
-                //'disabled' => !$model->isNewRecord,
+                'disabled' => $action == 'edit_settings',
             ],
         ];
     }

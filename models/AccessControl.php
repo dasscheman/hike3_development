@@ -70,7 +70,7 @@ class AccessControl extends HikeActiveRecord {
             case 'moveUpDown':
                 return AccessControl::moveUpDownAllowed();
             case 'update':
-            case 'updateImage':
+            case 'upload':
                 return AccessControl::updateAllowed();
             case 'overview':
                 return AccessControl::overviewAllowed();

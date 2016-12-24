@@ -58,6 +58,12 @@ class OrganisatieController extends Controller
     public function actionOverview()
     {
         $event_id = Yii::$app->user->identity->selected;
+        
+        $eventModel = EventNames::find($event_id)
+            ->where('event_ID =:event_id')
+            ->addParams([':event_id' => $event_id])
+            ->one();
+
 
         $queryOrganisatie = DeelnemersEvent::find()
             ->where(['=', 'event_ID', $event_id])
@@ -82,7 +88,7 @@ class OrganisatieController extends Controller
         ]);
         
 		return $this->render('/organisatie/overview', array(
-            'eventModel' => EventNames::find($event_id)->one(),
+            'eventModel' => $eventModel,
 			'organisatieData' => $providerOrganisatie,
 			'groupsData' => $providerGroups,
             'groupModel' => $groupModel,

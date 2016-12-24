@@ -33,10 +33,8 @@ $this->title = Yii::t('app', 'Hints for') . ' ' . $model->route_name;
     </p>
     <?php
 
-    $query = app\models\NoodEnvelop::find();
-
-    $dataProvider = new ActiveDataProvider([
-        'query' => $query,
+    $dataProvider = new yii\data\ArrayDataProvider([
+        'allModels' => $model->noodEnvelops,
     ]);
 
     echo ListView::widget([

@@ -283,8 +283,6 @@ class EventNames extends HikeActiveRecord {
             ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
             ->one();
 
-//        dd($data);
-
         if (isset($data->event_name)) {
             return $data->event_name;
         } else {

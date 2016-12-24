@@ -7,6 +7,7 @@ use app\models\EventNames;
 use app\models\EventNamesSearch;
 use app\models\DeelnemersEvent;
 use app\models\Route;
+use app\models\UploadForm;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
@@ -31,7 +32,7 @@ class EventNamesController extends Controller
             ],            
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create','index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+                'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
                 'rules' => [
                     array(	
                         'actions'=>array('create'),
@@ -39,7 +40,7 @@ class EventNamesController extends Controller
                         'roles'=>array('@'),
                     ),
                     array(
-                        'actions'=>['index', 'view', 'update', 'updateImage', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
@@ -100,10 +101,13 @@ class EventNamesController extends Controller
         $modelRoute = new Route;
         
         if ($model->load(Yii::$app->request->post())) {
-            $model->attributes=Yii::$app->request->post('EventNames');
+            $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = EventNames::determineNewHikeId();
             $model->image=UploadedFile::getInstance($model,'image');           
-            
+
+
+//            dd($model);
+
             $modelDeelnemersEvent->event_ID = $model->event_ID;
             $modelDeelnemersEvent->user_ID = \Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
@@ -115,9 +119,9 @@ class EventNamesController extends Controller
             $modelRoute->route_volgorde = 1;
 
             // validate BOTH $model, $modelDeelnemersEvent and $modelRoute.
-            $valid=$model->validate();
-            $valid=$modelDeelnemersEvent->validate() && $valid;
-            $valid=$modelRoute->validate() && $valid;
+            $valid = $model->validate();
+            $valid = $modelDeelnemersEvent->validate() && $valid;
+            $valid = $modelRoute->validate() && $valid;
             if($valid)
             {
 				$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
@@ -125,18 +129,80 @@ class EventNamesController extends Controller
                 $model->save(false);
                 $modelDeelnemersEvent->save(false);
                 $modelRoute->save(false);
-				if(isset($model->image) && $model->image != ''){
-					$model->image->saveAs('images/event_images/' . $newImageName);
-					$model->image = $newImageName;
-					EventNames::model()->resizeForReport('images/event_images/' . $model->image, $newImageName);
-					$model->save(true);
-				}
-                
-                $this->redirect(array('startup/startupOverview','event_id'=>$model->event_ID));
+                $modelEvents = EventNames::find()
+                     ->where(['user_ID' => Yii::$app->user->id])
+                     ->joinwith('deelnemersEvents');
+
+                if (Yii::$app->request->isAjax) {
+                    return $this->renderAjax('/event-names/select-hike', [
+                        'modelEvents' => $modelEvents]);
+                    }
+                return $this->render('/event-names/select-hike', [
+                    'modelEvents' => $modelEvents
+                ]);
             }
         }
 
-        return $this->render('/eventnames/create',array('model'=>$model)); 
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/event-names/create', ['model' => $model]);
+        }
+
+        return $this->render('/event-names/create',array('model'=>$model));
+    }
+
+    public function actionUpload()
+    {
+        $modelUpload = new UploadForm();
+
+        $model = $this->findModel(Yii::$app->user->identity->selected);
+        if (Yii::$app->request->isPost) {
+
+			$newImageName = 'event_id=' . $model->event_ID . '-logo.jpg';
+            $modelUpload->imageFiles = UploadedFile::getInstances($modelUpload, 'imageFiles');
+
+            //$model->image->saveAs('images/event_images/' . $newImageName);
+            $model->image = $newImageName;
+//            EventNames::resizeForReport('images/event_images/' . $model->image, $newImageName);
+            $model->save(true);
+
+
+//            dd($model);
+            if ($modelUpload->upload($model->event_ID)) {
+                //$model->resize();
+                //$model->rotate();
+                // file is uploaded successfully
+                Yii::$app->session->setFlash('uploadFormSubmitted');
+
+//                return $this->refresh();
+            }
+        }
+
+//        $model = $this->findModel(Yii::$app->user->identity->selected);
+//
+//        if(null !== Yii::$app->request->post('EventNames')) {
+//			$model->image = CUploadedFile::getInstance($model,'image');
+//            $model->attributes = Yii::$app->request->post('EventNames');
+//			$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
+//
+//            if(isset($model->image) && $model->image != ''){
+//                $model->image->saveAs('images/event_images/' . $newImageName);
+//                $model->image = $newImageName;
+//                EventNames::model()->resizeForReport('images/event_images/' . $model->image, $newImageName);
+//                $model->save(true);
+//            }
+//
+                $modelEvents = EventNames::find()
+                     ->where(['user_ID' => Yii::$app->user->id])
+                     ->joinwith('deelnemersEvents');
+
+                if (Yii::$app->request->isAjax) {
+                    return $this->renderAjax('/event-names/select-hike', [
+                        'modelEvents' => $modelEvents]);
+                    }
+                return $this->render('/event-names/select-hike', [
+                    'modelEvents' => $modelEvents
+                ]);
+//        }
     }
 
     /**
@@ -179,36 +245,6 @@ class EventNamesController extends Controller
             throw new CHttpException(400, Yii::t('app/error', 'You cannot remove this hike'));
         }
         $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-    }
-    
-     /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id the ID of the model to be updated
-     */
-    public function actionUpdateImage($event_id)
-    {
-        $model=$this->findModel($event_id);
-        
-        if(null !== Yii::$app->request->post('EventNames')) {
-			$model->image=CUploadedFile::getInstance($model,'image');
-            $model->attributes=Yii::$app->request->post('EventNames');
-			$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
-
-            if($model->save()){
-				if (isset($model->image) && $model->image != '') {
-					$model->image->saveAs('images/event_images/' . $newImageName);
-					$model->image = $newImageName;
-					EventNames::model()->resizeForReport('images/event_images/' . $model->image, $newImageName);
-					$model->save(false);
-				}
-                $this->redirect(array('startup/startupOverview','event_id'=>$model->event_ID));
-			}
-        }
-          
-        $this->render('update',array(
-            'model'=>$model,
-        ));
     }
 
     /**

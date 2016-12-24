@@ -94,6 +94,7 @@ class GroupsController extends Controller
      */
     public function actionCreate()
     {
+        dd('sadsafffffffsvdvvvvavlkjf');
         $model = new Groups();
         if ($model->load(Yii::$app->request->post()) ) {
             
@@ -139,9 +140,10 @@ class GroupsController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
+            return;
+//            return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
         } else {
-            return $this->render('update', [
+            return $this->renderPartial('_form', [
                 'model' => $model,
             ]);
         }

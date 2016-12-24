@@ -1,11 +1,13 @@
 <?php
 
-use yii\helpers\Html;
-use yii\data\ActiveDataProvider;
+
+use app\models\DeelnemersEvent;
+use app\models\EventNames;
 use kartik\grid\GridView;
 use prawee\widgets\ButtonAjax;
-use app\models\EventNames;
-use app\models\DeelnemersEvent;
+use yii\bootstrap\Modal;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -13,11 +15,15 @@ use app\models\DeelnemersEvent;
 $this->title = Yii::t('app', 'Select hike');
 
 ?>
-<div class="users-update">
+<div class="select-hike">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
+
+    Modal::begin(['id'=>'create-hike-modal']);
+    echo '<div id="create-hike-content-modal"></div>';
+    Modal::end();
 
     $dataProvider = new ActiveDataProvider([
         'query' => $modelEvents,
@@ -101,13 +107,13 @@ $this->title = Yii::t('app', 'Select hike');
         'toolbar'=> [
             ['content'=>
                 ButtonAjax::widget([
-                    'name'=>'Create',
-                    'route'=>['event-name/create'],
-                    'modalId'=>'#main-modal',
-                    'modalContent'=>'#main-content-modal',
+                    'name'=>Yii::t('app', 'Create new hike'),
+                    'route'=>['event-names/create'],
+                    'modalId'=>'#create-hike-modal',
+                    'modalContent'=>'#create-hike-content-modal',
                     'options'=>[
                         'class'=>'btn btn-success',
-                        'title'=>'Button for create application',
+                        'title'=>Yii::t('app', 'Create new hike'),
                     ]
                 ]),
             ],

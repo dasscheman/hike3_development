@@ -101,8 +101,6 @@ class RouteSearch extends Route
             'update_user_ID' => $this->update_user_ID,
         ]);
 
-//        $query->andFilterWhere(['like', 'route_name', $this->route_name]);
-
         return $dataProvider;
     }
 

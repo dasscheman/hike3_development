@@ -19,15 +19,18 @@ $this->title = Yii::t('app', 'Hike overzicht');
     <?php
     $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
     $form->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
+
+        'model' => $eventModel,
         'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
         'pluginOptions' => [
-            'previewFileType' => 'image',
-            'showCaption' => false,
-            'showRemove' => true,
-            'showUpload' => true,
-            'browseClass' => 'btn btn-primary btn-block',
-            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-            'browseLabel' => Yii::t('app', 'Select Photo')
+            'uploadUrl' => Url::to(['/event-names/upload']),
+//            'previewFileType' => 'image',
+//            'showCaption' => false,
+//            'showRemove' => true,
+//            'showUpload' => true,
+//            'browseClass' => 'btn btn-primary btn-block',
+//            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+//            'browseLabel' => Yii::t('app', 'Select Photo')
         ]
     ]);
     ActiveForm::end();
@@ -42,7 +45,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'columns' => [
                 [
                     'attribute' => 'organisatie',
-                    'label' => 'Book #',
+                    'label' => 'organisatie',
                     'displayOnly' => true,
                     'valueColOptions' => ['style' => 'width:30%']
                 ],
@@ -72,6 +75,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 [
                     'attribute' => 'status',
                     'valueColOptions' => ['style' => 'width:30%'],
+                    'value' => $eventModel->getStatusText(),
                 ],
                 [
                     'attribute' => 'active_day',
@@ -133,25 +137,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
     Modal::begin(
         [
-            'toggleButton' => [
-                'label' => Yii::t('app', 'Change settings hike'),
-                'class' => 'btn btn-success pull-right'
-            ],
-            'closeButton' => [
-                'label' => 'Close',
-                'class' => 'btn btn-danger btn-sm pull-right',
-            ],
-            'size' => Modal::SIZE_LARGE,
-        //'options' => ['class'=>'slide'],
-        ]
-    );
-    echo $this->render('/event-names/_form', ['model' => $eventModel]);
-    Modal::end();
-    ?>
-
-    <?php
-    Modal::begin(
-        [
+            'id' =>'modalMessage',
             'toggleButton' => [
                 'label' => Yii::t('app', 'Change status hike'),
                 'class' => 'btn btn-success pull-right'
@@ -164,22 +150,40 @@ $this->title = Yii::t('app', 'Hike overzicht');
         //'options' => ['class'=>'slide'],
         ]
     );
-    echo $this->render('/event-names/_form', ['model' => $eventModel]);
+    echo $this->render('/event-names/_form', ['model' => $eventModel, 'action' => 'change_status']);
     Modal::end();
-    
+
+    Modal::begin(
+        [
+            'id' =>'modalMessage',
+            'toggleButton' => [
+                'label' => Yii::t('app', 'Change settings hike'),
+                'class' => 'btn btn-success pull-right'
+            ],
+            'closeButton' => [
+                'label' => 'Close',
+                'class' => 'btn btn-danger btn-sm pull-right',
+            ],
+            'size' => Modal::SIZE_LARGE,
+        //'options' => ['class'=>'slide'],
+        ]
+    );
+    echo $this->render('/event-names/_form', ['model' => $eventModel, 'action' => 'edit_settings']);
+    Modal::end();
+
     echo ButtonAjax::widget([
         'name'=>'Create',
-        'route'=>['groups/create'],
-        'modalId'=>'#main-modal',
-        'modalContent'=>'#group-content-modal',
+        'route'=>['/groups/create'],
+        'modalId'=>'#group-create-modal',
+        'modalContent'=>'#group-create-modal',
         'options'=>[
             'class'=>'btn btn-success',
-            'title'=>'Button for create application',
+            'title' => Yii::t('app', 'Create group'),
         ]
     ]);
 
-    Modal::begin(['id'=>'main-modal']);
-    echo '<div id="group-content-modal"></div>';
+    Modal::begin(['id'=>'group-create-modal']);
+    echo '<div id="group-create-modal"></div>';
     Modal::end();
 
     
