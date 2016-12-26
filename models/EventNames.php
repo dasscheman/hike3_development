@@ -47,7 +47,11 @@ class EventNames extends HikeActiveRecord {
     const STATUS_gestart = 3;
     const STATUS_beindigd = 4;
     const STATUS_geannuleerd = 5;
-
+    /**
+    * @var mixed image the attribute for rendering the file input
+    * widget for upload on the form
+    */
+    public $image_temp;
     public $daterange;
 
     /**
@@ -63,11 +67,11 @@ class EventNames extends HikeActiveRecord {
     public function rules() {
         return [
             [['event_name', 'organisatie', 'status'], 'required'],
-            [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'organisatie', 'website'], 'safe'],
+            [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'organisatie', 'website', 'image_temp'], 'safe'],
             [['status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_name', 'image', 'organisatie', 'website'], 'string', 'max' => 255],
 //            [['image'], 'unsafe', 'on'=>'update'],
-//            [['image'],'file', 'types'=>'jpg, gif, png, jpeg', 'maxSize'=>1024 * 1024 * 2, 'tooLarge'=>'File has to be smaller than 2MB'],       
+            [['image_temp'],'file', 'extensions'=>'jpg, gif, png, jpeg', 'maxSize'=>1024 * 1024 * 2],
         ];
     }
 
@@ -407,6 +411,44 @@ class EventNames extends HikeActiveRecord {
         }
         return $mainarr;
     }
+
+    /**
+    * Process upload of image
+    *
+    * @return mixed the uploaded image instance
+    */
+    public function uploadImage() {
+        // get the uploaded file instance. for multiple file uploads
+        // the following data will return an array (you may need to use
+        // getInstances method)
+        $image = UploadedFile::getInstance($this, 'image');
+
+        // if no image was uploaded abort the upload
+        if (empty($image)) {
+            return false;
+        }
+
+        // store the source file name
+        $this->image = $image->name;
+        $ext = end((explode(".", $image->name)));
+
+        // generate a unique file name
+//        $this->avatar = Yii::$app->security->generateRandomString().".{$ext}";
+
+        // the uploaded image instance
+        return $image;
+    }
+
+
+    /**
+     * fetch stored image file name with complete path 
+     * @return string
+     */
+    public function getImageFile() 
+    {
+        return isset($this->avatar) ? Yii::$app->params['uploadPath'] . $this->avatar : null;
+    }
+
 
     public function resizeForReport($image, $name) {
         $maxsize = 170;

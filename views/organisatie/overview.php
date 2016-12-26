@@ -8,6 +8,8 @@ use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\widgets\ListView;
+use kartik\widgets\FileInput;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
@@ -17,23 +19,33 @@ $this->title = Yii::t('app', 'Hike overzicht');
 <div class="organisatie-overview">
 
     <?php
-    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
-    $form->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
 
-        'model' => $eventModel,
-        'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
-        'pluginOptions' => [
-            'uploadUrl' => Url::to(['/event-names/upload']),
-//            'previewFileType' => 'image',
-//            'showCaption' => false,
-//            'showRemove' => true,
-//            'showUpload' => true,
-//            'browseClass' => 'btn btn-primary btn-block',
-//            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-//            'browseLabel' => Yii::t('app', 'Select Photo')
-        ]
-    ]);
-    ActiveForm::end();
+//    d(Yii::$app->basePath . ''. Yii::$app->params['event_images_path'] . $eventModel->image);
+//
+//    d(Yii::$app->params['event_images_path'] . $eventModel->image);
+//
+//echo Html::img(Yii::$app->params['event_images_url'] . $eventModel->image);
+//
+//echo Html::img('uploads/event_images/aangifte.jpg');
+
+//    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
+//    $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
+//
+//        'model' => $eventModel,
+//        'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
+//        'pluginOptions' => [
+//            'allowedFileExtensions'=>['jpg','gif','png'],
+////            'uploadUrl' => Url::to(['/organisatie/overview']),
+////            'previewFileType' => 'image',
+////            'showCaption' => false,
+////            'showRemove' => true,
+////            'showUpload' => true,
+////            'browseClass' => 'btn btn-primary btn-block',
+////            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+////            'browseLabel' => Yii::t('app', 'Select Photo')
+//        ]
+//    ]);
+//    ActiveForm::end();
 
     $attributes = [
         [
@@ -99,20 +111,10 @@ $this->title = Yii::t('app', 'Hike overzicht');
             ],
         ],
         [
-            'attribute' => 'image',
-            'format' => 'raw',
-            'value' => Form::widget([       // 1 column layout
-                'model' => $eventModel,
-                'form' =>$form,
-                'columns' => 1,
-                'attributes' => [
-                    'image' => [
-                        'type' => Form::INPUT_FILE,
-                    ]
-                ]
-            ]),
-            'options' => ['rows' => 4]
-        ]
+            'attribute'=>'image',
+            'value'=>Yii::$app->params['event_images_url'] . $eventModel->image,
+            'format' => ['image',['width'=>'100','height'=>'100']],
+        ],
     ];
 
     // View file rendering the widget
@@ -131,9 +133,29 @@ $this->title = Yii::t('app', 'Hike overzicht');
         'deleteOptions' => [ // your ajax delete parameters
             'params' => ['id' => 1000, 'kvdelete' => true],
         ],
-        'container' => ['id' => 'kv-demo'],
+        'container' => ['id' => 'hike-overview'],
         'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
     ]);
+
+
+    $form = ActiveForm::begin([
+        'options'=>['enctype'=>'multipart/form-data'] // important
+    ]);
+    // your fileinput widget for single file upload
+    echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
+        'options'=>['accept'=>'image/*'],
+        'pluginOptions'=>['allowedFileExtensions'=>['jpg', 'jpeg', 'gif','png'],
+////            'uploadUrl' => Url::to(['/organisatie/overview']),
+//                'previewFileType' => 'image',
+//                'showCaption' => false,
+//                'showRemove' => true,
+//                'showUpload' => true,
+//                'browseClass' => 'btn btn-primary btn-block',
+                'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+                'browseLabel' => Yii::t('app', 'Select Photo')
+]
+    ]);
+    ActiveForm::end();
 
     Modal::begin(
         [

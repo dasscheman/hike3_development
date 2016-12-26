@@ -11,6 +11,7 @@ use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\Groups;
 use yii\data\ActiveDataProvider;
+use yii\web\UploadedFile;
 
 /**
  * BonuspuntenController implements the CRUD actions for TblBonuspunten model.
@@ -57,13 +58,42 @@ class OrganisatieController extends Controller
      */
     public function actionOverview()
     {
+
         $event_id = Yii::$app->user->identity->selected;
-        
+
         $eventModel = EventNames::find($event_id)
             ->where('event_ID =:event_id')
             ->addParams([':event_id' => $event_id])
             ->one();
 
+        if ($eventModel->load(Yii::$app->request->post())) {
+            // get the uploaded file instance. for multiple file uploads
+            // the following data will return an array
+            $image = UploadedFile::getInstance($eventModel, 'image_temp');
+  
+            // store the source file name
+            $eventModel->image = $image->name;
+            //dd($image);
+
+//            $ext = end((explode(".", $image->name)));
+
+            // generate a unique file name
+//            $model->avatar = Yii::$app->security->generateRandomString().".{$ext}";
+
+            // the path to save file, you can set an uploadPath
+            // in Yii::$app->params (as used in example below)
+//d(Yii::$app->basePath );
+//            dd(Yii::$app->params['event_images_path']);
+
+
+//            dd(Yii::$app->basePath);
+
+            $path = Yii::$app->basePath . ''. Yii::$app->params['event_images_path'] . $eventModel->image;
+//dd($path);
+            if($eventModel->save()){
+                $image->saveAs($path);
+             }
+        }
 
         $queryOrganisatie = DeelnemersEvent::find()
             ->where(['=', 'event_ID', $event_id])

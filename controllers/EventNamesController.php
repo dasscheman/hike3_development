@@ -150,61 +150,6 @@ class EventNamesController extends Controller
         return $this->render('/event-names/create',array('model'=>$model));
     }
 
-    public function actionUpload()
-    {
-        $modelUpload = new UploadForm();
-
-        $model = $this->findModel(Yii::$app->user->identity->selected);
-        if (Yii::$app->request->isPost) {
-
-			$newImageName = 'event_id=' . $model->event_ID . '-logo.jpg';
-            $modelUpload->imageFiles = UploadedFile::getInstances($modelUpload, 'imageFiles');
-
-            //$model->image->saveAs('images/event_images/' . $newImageName);
-            $model->image = $newImageName;
-//            EventNames::resizeForReport('images/event_images/' . $model->image, $newImageName);
-            $model->save(true);
-
-
-//            dd($model);
-            if ($modelUpload->upload($model->event_ID)) {
-                //$model->resize();
-                //$model->rotate();
-                // file is uploaded successfully
-                Yii::$app->session->setFlash('uploadFormSubmitted');
-
-//                return $this->refresh();
-            }
-        }
-
-//        $model = $this->findModel(Yii::$app->user->identity->selected);
-//
-//        if(null !== Yii::$app->request->post('EventNames')) {
-//			$model->image = CUploadedFile::getInstance($model,'image');
-//            $model->attributes = Yii::$app->request->post('EventNames');
-//			$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
-//
-//            if(isset($model->image) && $model->image != ''){
-//                $model->image->saveAs('images/event_images/' . $newImageName);
-//                $model->image = $newImageName;
-//                EventNames::model()->resizeForReport('images/event_images/' . $model->image, $newImageName);
-//                $model->save(true);
-//            }
-//
-                $modelEvents = EventNames::find()
-                     ->where(['user_ID' => Yii::$app->user->id])
-                     ->joinwith('deelnemersEvents');
-
-                if (Yii::$app->request->isAjax) {
-                    return $this->renderAjax('/event-names/select-hike', [
-                        'modelEvents' => $modelEvents]);
-                    }
-                return $this->render('/event-names/select-hike', [
-                    'modelEvents' => $modelEvents
-                ]);
-//        }
-    }
-
     /**
      * Updates an existing EventNames model.
      * If update is successful, the browser will be redirected to the 'view' page.
