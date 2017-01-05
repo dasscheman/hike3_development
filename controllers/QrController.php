@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\QrCheck;
 
 /**
  * QrController implements the CRUD actions for TblQr model.
@@ -96,26 +97,32 @@ class QrController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Qr;
-
-        if(isset($_POST['Qr']))
-		{
-
+        $model = new Qr();
+        if ($model->load(Yii::$app->request->post())) {
+			$model->event_ID = Yii::$app->user->identity->selected;
 			$model->qr_code = Qr::getUniqueQrCode();
-			$model->event_ID = $_GET['event_id'];
-			$model->route_ID = $_GET['route_id'];
-			$model->qr_volgorde = Qr::getNewOrderForQr($_GET['event_id'], $_GET['route_id']);
-			$model->attributes=$_POST['Qr'];
-			if($model->save())
-				return $this->redirect(array(
-					'/route/view',
-					'event_id'=>$model->event_ID,
-					'route_id'=>$model->route_ID));
-		}
-        
-		return $this->render('create',
-					  array('model'=>$model,
-		));
+			$model->route_ID = Yii::$app->request->get(1)['route_id'];
+			$model->qr_volgorde = Qr::getNewOrderForQr($model->route_ID);
+
+			if($model->save()) {
+
+                $event_Id = Yii::$app->user->identity->selected;
+                $startDate = EventNames::getStartDate($event_Id);
+                $endDate = EventNames::getEndDate($event_Id);
+
+                $searchModel = new RouteSearch();
+
+                return $this->render('/route/index', [
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate
+                ]);
+            }
+        } else {
+            return $this->renderPartial('create', [
+                'model' => $model,
+            ]);
+        }
     }
 
     /**
@@ -126,26 +133,44 @@ class QrController extends Controller
      */
     public function actionUpdate($id)
     {
-        $qr_id = $_GET['qr_id'];
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if( Route::model()->routeIdIntroduction($model->route_ID) ){
-                return $this->redirect(array(
-                    '/route/viewIntroductie',
-                    'route_id'=>$model->route_ID,
-                    'event_id'=>$model->event_ID));
-            } else {
-                return $this->redirect(array(
-                    '/route/view',
-                    'route_id'=>$model->route_ID,
-                    'event_id'=>$model->event_ID));
-            }
-        } else {
-            return $this->render('update', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('update', [
                 'model' => $model,
             ]);
         }
+
+        if (Yii::$app->request->post('submit') == 'delete') {
+            $exist = QrCheck::find()
+               ->where('event_ID=:event_id and qr_ID=:qr_id')
+               ->addParams(
+                   [
+                       ':event_id' => Yii::$app->user->identity->selected,
+                       ':qr_id' => $model->qr_ID
+                   ])
+               ->exists();
+
+            if (!$exist) {
+                $model->delete();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it contains items which should be removed first.'));
+            }
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to silent station.'));
+        }
+
+        $event_Id = Yii::$app->user->identity->selected;
+        $startDate = EventNames::getStartDate($event_Id);
+        $endDate = EventNames::getEndDate($event_Id);
+
+        $searchModel = new RouteSearch();
+
+        return $this->render('/route/index', [
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
     }
 
     /**
@@ -156,27 +181,27 @@ class QrController extends Controller
      */
     public function actionDelete($id)
     {
-        $qr_id = $_GET['qr_id'];
-		try
-		{
-			$this->findModel($id)->delete();
-		}
-		catch(CDbException $e)
-		{
-			throw new CHttpException(400,"Je kan deze stille post niet verwijderen.");
-		}
+        dd('NIET MEER NODIG ??');
+        $model = $this->findModel($id);
 
-		if (Route::routeIdIntroduction($_GET['route_id'])){
-			return $this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/route/viewIntroductie',
-									'event_id'=>$_GET['event_id'],
-									'route_id'=>$_GET['route_id']));
-		} else {
-			return $this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/route/view',
-									'event_id'=>$_GET['event_id'],
-									'route_id'=>$_GET['route_id']));
-		}
+        $exist = QrCheck::find()
+           ->where('event_ID=:event_id and qr_ID=:qr_id')
+           ->addParams(
+               [
+                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':qr_id' => $model->qr_ID
+               ])
+           ->exists();
+
+        if (!$exist) {
+            $model->delete();
+        }
+
+        return $this->render('/route/index', [
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
     }
     
     public function actioncreateIntroductie()

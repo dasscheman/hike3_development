@@ -27,14 +27,15 @@ $this->title = Yii::t('app', 'Routes');
 
     $count=0;
     $gridColumns = [
-        'route_name',
-        'route_volgorde',
         [
-            'header' => Yii::t('app', '#Questions'),
-            'value' => function($key){
-                return Route::findOne($key)->getOpenVragenCount();
+            'attribute' => 'route_name',
+            'format' => 'raw',
+           // here comes the problem - instead of parent_region I need to have parent
+            'value'=>function ($model, $key, $index, $column) {
+                return Html::a($model->route_name, ['route/update', 'id' => $key]);
             },
         ],
+        'route_volgorde',
         [
             'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
@@ -52,9 +53,9 @@ $this->title = Yii::t('app', 'Routes');
             'collapseTitle' => Yii::t('app', 'Close view questions'),
         ],
         [
-            'header' => Yii::t('app', '#Hints'),
+            'header' => Yii::t('app', '#Questions'),
             'value' => function($key){
-                return Route::findOne($key)->getNoodEnvelopCount();
+                return Route::findOne($key)->getOpenVragenCount();
             },
         ],
         [
@@ -75,9 +76,9 @@ $this->title = Yii::t('app', 'Routes');
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
         [
-            'header' => Yii::t('app', '#Silent posts'),
+            'header' => Yii::t('app', '#Hints'),
             'value' => function($key){
-                return Route::findOne($key)->getQrCount();
+                return Route::findOne($key)->getNoodEnvelopCount();
             },
         ],
         [
@@ -95,6 +96,55 @@ $this->title = Yii::t('app', 'Routes');
             'allowBatchToggle' => FALSE,
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
+        ],
+        [
+            'header' => Yii::t('app', '#Silent posts'),
+            'value' => function($key){
+                return Route::findOne($key)->getQrCount();
+            },
+        ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header'=>'Actions',
+            'template' => '{up} {down}',
+            'buttons' => [
+                'up' => function ($url, $model) {
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-chevron-up"></span>',
+                        [
+                            'route/move-up-down',
+                            'id' => $model->route_ID,
+                            'up_down' => 'up',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Move up'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                },
+                'down' => function ($url, $model) {
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-chevron-down"></span>',
+                        [
+                            'route/move-up-down',
+                            'id' => $model->route_ID,
+                            'up_down' => 'down',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Mode down'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                },
+            ],
+            'visibleButtons' => [
+                'up' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'up', 'date' => $model->day_date]);
+                 },
+                'down' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'down', 'date' => $model->day_date]);
+                 }
+            ]
         ],
     ];
     $bordered = FALSE;

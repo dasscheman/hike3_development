@@ -27,7 +27,6 @@ use Yii;
 class Route extends HikeActiveRecord
 {	
     private $event_ID;
-    private $day_date;
 
     /**
      * @inheritdoc
@@ -185,38 +184,40 @@ class Route extends HikeActiveRecord
     
 	public function getRouteName($id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'route_ID =:id';
-		$criteria->params=array(':id' => $id);
+		$data = Route::find()
+            ->where('route_ID =:id')
+            ->params([':id' => $id])
+            ->one();
 
-		if (Route::exists($criteria))
-		{	$data = Route::find($criteria);
-			return $data->route_name;
+		if ($data)
+		{	
+            return "nvt";
 		} else {
-			return "nvt";}
+			return $data->route_name;
+        }
 	}
 
-	public function getIntroductieRouteId($event_id)
+	public function getIntroductieRouteId()
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_name =:route_name';
-		$criteria->params=array(':event_id' => $event_id, ':route_name' =>'Introductie');
-		$criteria->order = "route_volgorde DESC";
-		$criteria->limit = 1;
+        $data = Route::find()
+            ->where('event_ID =:event_id AND route_name =:route_name')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_name' =>'Introductie'])
+            ->order('route_volgorde DESC')
+            ->one();
 
-		if (Route::exists($criteria))
-		{
+		if ($data) {
+			$introductie_id = 1;
+        } else {
 			$data = Route::findAll($criteria);
-			$introductieID = $data[0]->route_ID;
-		} else {
-			$introductieID = 1;}
+			$introductie_id = $data->route_ID;
+		}
 
-		return $introductieID;
+		return $introductie_id;
 	}
 
 	public function routeIdIntroduction($route_id)
 	{
-		$data = Route::findByPk($route_id);
+		$data = Route::find($route_id);
 		if ($data->route_name == "Introductie")
 		{
 			return true;
@@ -224,32 +225,33 @@ class Route extends HikeActiveRecord
 		return false;
 	}
 
-	public function lowererOrderNumberExists($event_id,
-                                        $date,
-                                        $route_order)
+	public function lowererOrderNumberExists($route_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND day_date =:date AND route_volgorde >:order';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $route_order);
+        $data = Route::findOne($route_id);
+        $dataNext = Route::find()
+            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->orderBy('route_volgorde DESC')
+            ->exists();
 
-		if (Route::exists($criteria))
-			return true;
-		else
-			return false;
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
-	public function higherOrderNumberExists($event_id,
-                                        $date,
-                                        $route_order)
+	public function higherOrderNumberExists($route_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND day_date =:date AND route_volgorde <:order';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $route_order);
-
-		if (Route::exists($criteria))
-			return true;
-		else
-			return false;
+        $data = Route::findOne($route_id);
+        $dataNext = Route::find()
+            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde <:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->orderBy('route_volgorde ASC')
+            ->exists();
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
 	public function setActiveTab($date)

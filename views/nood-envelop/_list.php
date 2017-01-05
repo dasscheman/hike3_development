@@ -15,7 +15,7 @@ use yii\bootstrap\Modal;
         <?php
          echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Modify hint'),
-            'route'=>['/noodenvelop/update', 'id' => $model->nood_envelop_ID],
+            'route'=>['/nood-envelop/update', 'id' => $model->nood_envelop_ID],
             'modalId'=>'#main-modal',
             'modalContent'=>'#main-content-modal',
             'options'=>[
@@ -28,7 +28,7 @@ use yii\bootstrap\Modal;
         <?php
          echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Delete hint'),
-            'route'=>['/noodenvelop/delete', 'id' => $model->nood_envelop_ID],
+            'route'=>['/nood-envelop/delete', 'id' => $model->nood_envelop_ID],
                 'modalId'=>'#main-modal',
                 'modalContent'=>'#main-content-modal',
             'options'=>[

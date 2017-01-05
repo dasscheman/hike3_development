@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\EventNames;
+use app\models\RouteSearch;
+use app\models\OpenVragenAntwoorden;
 
 /**
  * OpenVragenController implements the CRUD actions for TblOpenVragen model.
@@ -88,23 +91,27 @@ class OpenVragenController extends Controller
     public function actionCreate()
     {
         $model = new OpenVragen();
+        if ($model->load(Yii::$app->request->post())) {
+			$model->event_ID = Yii::$app->user->identity->selected;
+			$model->route_ID = Yii::$app->request->get(1)['route_id'];
+			$model->vraag_volgorde = OpenVragen::getNewOrderForVragen($model->route_ID);
 
-        if ($model->load(Yii::$app->request->post('OpenVragen'))) {
-            
-            $model->attributes=$_POST['OpenVragen'];
-			$model->event_ID = $_GET['event_id'];
-			$model->route_ID = $_GET['route_id'];
-			$model->vraag_volgorde = OpenVragen::getNewOrderForVragen(
-				$_GET['event_id'],
-				$_GET['route_id']);
+			if($model->save()) {
 
-			if($model->save())
-            return $this->redirect([
-					'/route/view',
-					'event_id'=>$model->event_ID,
-                    'route_id'=>$model->route_ID]);
+                $event_Id = Yii::$app->user->identity->selected;
+                $startDate = EventNames::getStartDate($event_Id);
+                $endDate = EventNames::getEndDate($event_Id);
+
+                $searchModel = new RouteSearch();
+
+                return $this->render('/route/index', [
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate
+                ]);
+            }
         } else {
-            return $this->render('create', [
+            return $this->renderPartial('create', [
                 'model' => $model,
             ]);
         }
@@ -119,22 +126,42 @@ class OpenVragenController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if (Route::model()->routeIdIntroduction($model->route_ID)){
-                return $this->redirect(array('/route/viewIntroductie',
-							'route_id'=>$model->route_ID,
-							'event_id'=>$model->event_ID));
-            } else {
-                return $this->redirect(array('/route/view',
-							'route_id'=>$model->route_ID,
-							'event_id'=>$model->event_ID));
-            }
-        } else {
-            return $this->render('update', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('update', [
                 'model' => $model,
             ]);
         }
+
+        if (Yii::$app->request->post('submit') == 'delete') {
+            $exist = OpenVragenAntwoorden::find()
+           ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
+           ->addParams(
+               [
+                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':open_vragen_id' => $model->open_vragen_ID
+               ])
+           ->exists();
+
+            if (!$exist) {
+                $model->delete();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it contains items which should be removed first.'));
+            }
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to question.'));
+        }
+        $event_Id = Yii::$app->user->identity->selected;
+        $startDate = EventNames::getStartDate($event_Id);
+        $endDate = EventNames::getEndDate($event_Id);
+
+        $searchModel = new RouteSearch();
+
+        return $this->render('/route/index', [
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
     }
 		
     /**
@@ -145,22 +172,27 @@ class OpenVragenController extends Controller
      */
     public function actionDelete($id)
     {
-        try {
-            $this->findModel($id)->delete();
-        }catch (Exception $ex) {
-            throw new CHttpException(400,"Je kan deze vraag niet verwijderen.");
+        dd('NIEET MEER NODIG?');
+        $model = $this->findModel($id);
+
+        $exist = OpenVragenAntwoorden::find()
+           ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
+           ->addParams(
+               [
+                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':open_vragen_id' => $model->open_vragen_ID
+               ])
+           ->exists();
+
+        if (!$exist) {
+            $model->delete();
         }
-		if (Route::routeIdIntroduction($_GET['route_id'])){
-			$this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/route/viewIntroductie',
-									'event_id'=>$_GET['event_id'],
-									'route_id'=>$_GET['route_id']));
-		} else {
-			$this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/route/view',
-									'event_id'=>$_GET['event_id'],
-									'route_id'=>$_GET['route_id']));
-        }
+
+        return $this->renderAjax('/route/index', [
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
     }
     
     /**

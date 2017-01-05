@@ -10,30 +10,19 @@ use yii\widgets\ActiveForm;
 
 <div class="tbl-qr-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'action' => $model->isNewRecord ? ['qr/create'] : ['qr/update', 'id' => $model->route_ID]]); ?>
 
     <?= $form->field($model, 'qr_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'qr_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'event_ID')->textInput() ?>
-
-    <?= $form->field($model, 'route_ID')->textInput() ?>
-
-    <?= $form->field($model, 'qr_volgorde')->textInput() ?>
-
     <?= $form->field($model, 'score')->textInput() ?>
 
-    <?= $form->field($model, 'create_time')->textInput() ?>
-
-    <?= $form->field($model, 'create_user_ID')->textInput() ?>
-
-    <?= $form->field($model, 'update_time')->textInput() ?>
-
-    <?= $form->field($model, 'update_user_ID')->textInput() ?>
-
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
+
+        if (!$model->isNewRecord) {
+            echo Html::submitButton(Yii::t('app', 'Delete'), ['class' => 'btn btn-delete', 'value'=>'delete', 'name'=>'submit']);
+        } ?>
     </div>
 
     <?php ActiveForm::end(); ?>

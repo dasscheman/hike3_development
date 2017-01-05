@@ -180,38 +180,37 @@ class Posten extends HikeActiveRecord
 		return $newOrder;
 	}
 
-	public function lowererOrderNumberExists(   $event_id,
-                                                $date,
-                                                $post_order)
+	public function lowererOrderNumberExists($post_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date AND post_volgorde >:order';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $post_order);
+        $data = Posten::findOne($post_id);
+        $dataNext = Posten::find()
+            ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->exists();
 
-		if (Posten::exists($criteria)){
-			return true;
-		} else {
-			return false;
-		}
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
-	public function higherOrderNumberExists($event_id,
-											$date,
-											$post_order)
+	public function higherOrderNumberExists($post_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date AND post_volgorde <:order';
-		$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $post_order);
+        $data = Posten::findOne($post_id);
+        $dataNext = Posten::find()
+            ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->exists();
 
-		if (Posten::exists($criteria)){
-			return true;
-		} else {
-			return false;
-		}
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
 	public function getStartPost($event_id)
 	{
+        dd('NIET MEER NODIG??');
 		$date = EventNames::getActiveDayOfHike($event_id);
 
 		$criteria = new CDbCriteria();
@@ -230,6 +229,7 @@ class Posten extends HikeActiveRecord
 
 	public function existPostForActiveDay($event_id)
 	{
+        dd('NIET MEER NODIG??');
 		$date = EventNames::getActiveDayOfHike($event_id);
 
 		$criteria = new CDbCriteria();
@@ -246,14 +246,14 @@ class Posten extends HikeActiveRecord
 		}
 	}
 
-	public function startPostExist($event_id, $date)
+	public function startPostExist($date)
 	{
         $exists = Posten::find()
             ->where('event_ID=:event_id')
             ->andwhere('day_date=:day_date')
             ->addParams(
                 [
-                    ':event_ID' => $event_id,
+                    ':event_ID' => Yii::$app->user->identity->selected,
                     ':day_date' => $date,
                 ])
             ->exists();

@@ -11,6 +11,9 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\Qr;
 use app\models\EventNames;
+use app\models\Bonuspunten;
+use app\models\NoodEnvelop;
+use app\models\OpenVragen;
 
 /**
  * RouteController implements the CRUD actions for TblRoute model.
@@ -211,22 +214,55 @@ class RouteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
 
-		if(isset($_POST['Route']))
-		{
-			$model->attributes=$_POST['Route'];
-			if($model->save())
-			{
-				return $this->redirect(array(
-                    '/route/index',
-                    'event_id'=>$model->event_ID));
-			}
-		}
-        
-		return $this->render(
-            'update',array(
-			'model'=>$model,
-		));
+        if (Yii::$app->request->post('submit') == 'delete') {
+             $exist = Qr::find()
+                ->where('event_ID=:event_id and route_id=:route_id')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':route_id' => $model->route_ID
+                    ])
+                ->exists();
+            
+            if (!$exist) {
+                $exist = OpenVragen::find()
+                    ->where('event_ID=:event_id and route_id=:route_id')
+                    ->addParams(
+                        [
+                            ':event_id' => Yii::$app->user->identity->selected,
+                            ':route_id' => $model->route_ID
+                        ])
+                    ->exists();
+            }
+
+            if (!$exist) {
+                $exist = NoodEnvelop::find()
+                    ->where('event_ID=:event_id and route_id=:route_id')
+                    ->addParams(
+                        [
+                            ':event_id' => Yii::$app->user->identity->selected,
+                            ':route_id' => $model->route_ID
+                        ])
+                    ->exists();
+            }
+
+            if (!$exist) {
+                $model->delete();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
+            }
+        }
+
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to route.'));
+        }
+        return $this->redirect(['route/index']);
     }
 
     /**
@@ -237,6 +273,8 @@ class RouteController extends Controller
      */
     public function actionDelete($id)
     {
+
+        dd('NIET MEER NODIG?');
         try {
             $this->findModel($id)->delete();
         }
@@ -295,44 +333,44 @@ class RouteController extends Controller
 	/*
 	 * Deze actie wordt gebruikt voor de grid velden. 
 	 */
-	public function actionMoveUpDown()
+	public function actionMoveUpDown($id, $up_down)
 	{
-		$event_id = $_GET['event_id'];
-		$route_id = $_GET['route_id'];
-		$date = $_GET['date'];
-		$route_volgorde = $_GET['volgorde'];
-		$up_down = $_GET['up_down'];
+        $model = $this->findModel($id);
+        if ($up_down === 'up') {
+            $previousModel = Route::find()
+                ->where('event_ID =:event_id and day_date =:date and route_volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->day_date, ':order' => $model->route_volgorde])
+                ->orderBy('route_volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = Route::find()
+                ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->day_date, ':order' => $model->route_volgorde])
+                ->orderBy('route_volgorde ASC')
+                ->one();
+        }
 
-		$currentModel = Route::findByPk($route_id);
+        $tempCurrentVolgorde = $model->route_volgorde;
+        $model->route_volgorde = $previousModel->route_volgorde;
+        $previousModel->route_volgorde = $tempCurrentVolgorde;
 
-		$criteria = new CDbCriteria;
+        $model->save();
+        $previousModel->save();
 
-		if ($up_down=='up')
-		{
-			$criteria->condition = 'event_ID =:event_id AND day_date =:date AND route_volgorde <:order';
-			$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $route_volgorde);
-			$criteria->order= 'route_volgorde DESC';
-		}
-		if ($up_down=='down')
-		{
-			$criteria->condition = 'event_ID =:event_id AND day_date =:date AND route_volgorde >:order';
-			$criteria->params=array(':event_id' => $event_id, ':date' => $date, ':order' => $route_volgorde);
-			$criteria->order= 'route_volgorde ASC';
-		}
-		$criteria->limit=1;
-		$previousModel = Route::findAll($criteria);
+        $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected);
+        $endDate=EventNames::getEndDate(Yii::$app->user->identity->selected);
+        $searchModel = new RouteSearch();
 
-		$tempCurrentVolgorde = $currentModel->route_volgorde;
-		$currentModel->route_volgorde = $previousModel[0]->route_volgorde;
-		$previousModel[0]->route_volgorde = $tempCurrentVolgorde;
-
-		$currentModel->save();
-		$previousModel[0]->save();
-
-        return $this->redirect(array(
-            '/route/index',
-            'event_id'=>$event_id,
-            'date'=>$date));
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate]);
+        }
+        return $this->render('/route/index',[
+            'searchModel' => $searchModel,
+            'startDate' => $startDate,
+            'endDate' => $endDate]);
 	}
     
     /**

@@ -14,8 +14,8 @@ use yii\bootstrap\Modal;
     <p>
         <?php
          echo ButtonAjax::widget([
-            'name' => Yii::t('app', 'Create new question'),
-            'route' => ['/openvraag/create', 'id' => $model->open_vragen_ID],
+            'name' => Yii::t('app', 'Edit question'),
+            'route' => ['/open-vragen/update', 'id' => $model->open_vragen_ID],
             'modalId' => '#main-modal',
             'modalContent'=>'#main-content-modal',
             'options' => [
@@ -26,21 +26,21 @@ use yii\bootstrap\Modal;
 
 
         <?php
-         echo ButtonAjax::widget([
-            'name' => 'Delete',
-            'route' => ['/openvraag/delete', 'id' => $model->open_vragen_ID],
-                'modalId' => '#main-modal',
-                'modalContent' => '#main-content-modal',
-            'options' => [
-                'class' => 'btn btn-danger',
-                'title' => Yii::t('app', 'Remove this question'),
+//         echo ButtonAjax::widget([
+//            'name' => 'Delete',
+//            'route' => ['/open-vragen/delete'],
+//                'modalId' => '#main-modal',
+//                'modalContent' => '#main-content-modal',
+//            'options' => [
+//                'class' => 'btn btn-danger',
+//                'title' => Yii::t('app', 'Remove this question'),
 //                'data' => [
 //                    'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
 //                    'method' => 'post',
 //
 //                ],
-            ]
-        ]); ?>
+//            ]
+//        ]); ?>
 
     </p>
 	<?php echo Html::encode($model->getAttributeLabel('open_vragen_name')); ?>

@@ -166,6 +166,7 @@ class OpenVragen extends HikeActiveRecord
 	  */
 	 public function getOpenVragenName($vraag_id)
 	 {
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		return $data->open_vragen_name;
@@ -173,6 +174,7 @@ class OpenVragen extends HikeActiveRecord
 
 	public function getOpenVraag($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		return $data->vraag;
@@ -183,6 +185,7 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function getOpenVraagAntwoord($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		//$list = CHtml::listData($data, 'open_vragen_ID', 'goede_antwoord');
@@ -194,6 +197,7 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function getOpenVraagScore($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
         return isset($data->score) ?
@@ -205,6 +209,7 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function	getVraagVolgorde($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		return $data->vraag_volgorde;
@@ -215,6 +220,8 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function	getVraagDag($vraag_id)
 	{
+
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 
@@ -232,6 +239,7 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function	getRouteOnderdeelVraag($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		$day = Route::getRouteName($data->route_ID);
@@ -243,6 +251,7 @@ class OpenVragen extends HikeActiveRecord
 	 */
 	public function	getRouteIdVraag($vraag_id)
 	{
+        dd('NIET MEER NODIG??');
 		$data = OpenVragen::find('open_vragen_ID =:vraag_id',
 						  array(':vraag_id' => $vraag_id));
 		if(isset($data->route_ID)){
@@ -254,6 +263,7 @@ class OpenVragen extends HikeActiveRecord
 
 	public function getNewOrderForIntroductieVragen($event_id)
 	{
+        dd('NIET MEER NODIG??');
         $route_id = Route::getIntroductieRouteId($event_id);
 
 		$criteria = new CDbCriteria();
@@ -272,25 +282,43 @@ class OpenVragen extends HikeActiveRecord
 	}
 
 
-	public function getNewOrderForVragen($event_id, $route_id)
-	{
-        $criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-		$criteria->order = "vraag_volgorde DESC";
-		$criteria->limit = 1;
+	public function getNewOrderForVragen($route_id)
+	{        
+        $data = OpenVragen::find()
+            ->where('event_ID =:event_id AND route_ID =:route_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' =>$route_id])
+            ->orderBy('vraag_volgorde DESC')
+            ->one();
 
-		if (OpenVragen::exists($criteria))
-		{	$data = OpenVragen::findAll($criteria);
-			$newOrder = $data[0]->vraag_volgorde+1;
+		if ($data)
+		{	$newOrder = $data->vraag_volgorde+1;
 		} else {
 			$newOrder = 1;}
 
 		return $newOrder;
 	}
 
-	public function lowerOrderNumberExists($event_id, $id, $vraag_order, $route_id)
+	public function lowerOrderNumberExists($id)
 	{
+        dd('NIET MEER NODIG??');
+        $data = OpenVragen::find($id);
+        $dataNext = OpenVragen::find()
+            ->where('event_ID =:event_id AND open_vragen_ID !=:id AND route_ID=:route_id AND vraag_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected,
+								':id' => $id,
+								':route_id' => $route_id,
+								':order' => $vraag_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->exist();
+
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
+
+
+
+
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND open_vragen_ID !=:id AND route_ID=:route_id AND vraag_volgorde >=:order';
 		$criteria->params=array(':event_id' => $event_id,
@@ -307,6 +335,23 @@ class OpenVragen extends HikeActiveRecord
 
 	public function higherOrderNumberExists($event_id, $id, $vraag_order, $route_id)
 	{
+        dd('NIET MEER NODIG??');
+                $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->exists();
+
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
+
+
+
+
+
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND open_vragen_ID !=:id AND route_ID =:route_id AND vraag_volgorde <=:order';
 		$criteria->params=array(':event_id' => $event_id,

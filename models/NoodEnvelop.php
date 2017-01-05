@@ -138,6 +138,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getCoordinaten($envelop_id)
 	{
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);
@@ -149,6 +150,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getOpmerkingen($envelop_id)
 	{
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);
@@ -160,6 +162,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getEventDayOfEnvelop($envelop_id)
 	{
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);
@@ -185,6 +188,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getNoodEnvelopVolgnummer($envelop_id)
 	{
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);
@@ -196,6 +200,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getNumberNoodEnvelopRouteId($event_id, $route_id)
 	{
+        dd('NIET MEER NODIG??');
         $criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
 		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
@@ -205,6 +210,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getRouteNameOfEnvelopId($envelop_id)
 	{
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);
@@ -216,6 +222,7 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function getNewOrderForNoodEnvelop($event_id, $route_id)
 	{
+        dd('NIET MEER NODIG??');
         $criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
 		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
@@ -234,6 +241,23 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function lowererOrderNumberExists($event_id, $id, $envelop_order, $route_id)
 	{
+        dd('NIET MEER NODIG??');
+                $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->exist();
+
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
+
+
+
+
+
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID=:route_id AND nood_envelop_volgorde >=:order';
 		$criteria->params=array(':event_id' => $event_id,
@@ -249,6 +273,26 @@ class NoodEnvelop extends HikeActiveRecord
 
 	public function higherOrderNumberExists($event_id, $id, $envelop_order, $route_id)
 	{
+        dd('NIET MEER NODIG??');
+                $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->exist();
+
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
+
+
+
+
+
+
+
+
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID =:route_id AND nood_envelop_volgorde <=:order';
 		$criteria->params=array(':event_id' => $event_id,

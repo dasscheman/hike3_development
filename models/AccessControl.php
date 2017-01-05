@@ -514,71 +514,51 @@ class AccessControl extends HikeActiveRecord {
     }   
 
     function moveUpDownAllowed(){
-        
-        if (!isset($this->parameters['date']) || !isset($this->parameters['move'])){
+
+        if (!isset($this->parameters['date']) || !isset($this->parameters['move_action'])){
             return FALSE;
         }
         if ($this->hikeStatus != EventNames::STATUS_opstart or
             $this->rolPlayer != DeelnemersEvent::ROL_organisatie) {
                 return FALSE;
         }
-        
+
         switch ($this->controller_id) {
             case 'qr':
-                if ($move == 'up'){
-                    $nextOrderExist = Qr::higherOrderNumberExists($event_id,
-                                                                           $model_id,
-                                                                           $order,
-                                                                           $route_id);
+                if ($this->parameters['move_action'] == 'up'){
+                    return Qr::higherOrderNumberExists($this->ids[0]);
                 }
-                if ($move == 'down'){
-                    $nextOrderExist = Qr::lowererOrderNumberExists($event_id,
-                                                                            $model_id,
-                                                                            $order,
-                                                                            $route_id);
+                if ($this->parameters['move_action'] == 'down'){
+                    return Qr::lowererOrderNumberExists($this->ids[0]);
                 }
             case 'open-vragen':
-                 if ($move == 'up') {
-                    $nextOrderExist = OpenVragen::higherOrderNumberExists($event_id,
-                                                                        $model_id,
-                                                                        $order,
-                                                                        $route_id);
+                 if ($this->parameters['move_action'] == 'up') {
+                    return OpenVragen::higherOrderNumberExists($this->ids[0]);
                 }
-                if ($move == 'down') {
-                    $nextOrderExist = OpenVragen::lowerOrderNumberExists($event_id,
-                                                                        $model_id,
-                                                                        $order,
-                                                                        $route_id);
+                if ($this->parameters['move_action'] == 'down') {
+                    return OpenVragen::lowerOrderNumberExists($this->ids[0]);
                 }
             case 'posten':
-                if ($move == 'up') {
-                    $nextOrderExist = Posten::higherOrderNumberExists($event_id, $date, $order);
+                if ($this->parameters['move_action'] == 'up') {
+                    return Posten::higherOrderNumberExists($this->ids[0]);
                 }
-                if ($move == 'down') {
-                    $nextOrderExist = Posten::lowererOrderNumberExists($event_id, $date, $order);
+                if ($this->parameters['move_action'] == 'down') {
+                    return Posten::lowererOrderNumberExists($this->ids[0]);
                 }
             case 'nood-envelop':
-                if ($move == 'up'){
-                    $nextOrderExist = NoodEnvelop::model()->higherOrderNumberExists($event_id,
-                                                                                    $model_id,
-                                                                                    $order);
+                if ($this->parameters['move_action'] == 'up'){
+                    return NoodEnvelop::higherOrderNumberExists($this->ids[0]);
                 }
-                if ($move == 'down'){
-                    $nextOrderExist = NoodEnvelop::model()->lowererOrderNumberExists($event_id,
-                                                                                     $model_id,
-                                                                                     $order);
+                if ($this->parameters['move_action'] == 'down'){
+                    return NoodEnvelop::lowererOrderNumberExists($this->ids[0]);
                 }
         
             case 'route':
-                if ($move == 'up'){
-                    $nextOrderExist = Route::higherOrderNumberExists($event_id,
-                                                                     $date,
-                                                                     $order);
+                if ($this->parameters['move_action'] == 'up'){
+                    return Route::higherOrderNumberExists($this->ids[0]);
                 }
-                if ($move == 'down'){
-                    $nextOrderExist = Route::lowererOrderNumberExists($event_id,
-                                                                               $date,
-                                                                               $order);
+                if ($this->parameters['move_action'] == 'down'){
+                    return Route::lowererOrderNumberExists($this->ids[0]);
                 }
                 if ($nextOrderExist) {
                     return TRUE;

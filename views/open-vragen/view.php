@@ -21,7 +21,7 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['open-vraag/create'],
+             'route'=>['open-vragen/create', ['route_id' => $model->route_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
@@ -37,6 +37,8 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         'allModels' => $model->openVragens,
     ]);
 
+    yii\widgets\Pjax::begin(['id' => 'route-vragen-view', 'enablePushState' => TRUE]);
+
     echo ListView::widget([
         'summary' => FALSE,
         'pager' => FALSE,
@@ -44,5 +46,7 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         'itemView' => '/open-vragen/_list',
         'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
     ]);
+
+    yii\widgets\Pjax::end();
 ?>
 </div>

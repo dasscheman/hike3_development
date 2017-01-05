@@ -115,6 +115,8 @@ class Qr extends HikeActiveRecord
 
 	public function getUniqueQrCode()
 	{
+
+        dd('NIET MEER NODIG??');
 		$UniqueQrCode = 99;
 		$event_id = $_GET['event_id'];
 		while($UniqueQrCode == 99)
@@ -135,6 +137,8 @@ class Qr extends HikeActiveRecord
 
 	public function getQrCode($event_id, $qr_id)
 	{
+
+        dd('NIET MEER NODIG??');
 		$data = Qr::find('event_ID = :event_Id AND qr_ID=:qr_id',
 						    array(':event_Id' => $event_id,
 							  ':qr_id' => $qr_id));
@@ -143,6 +147,8 @@ class Qr extends HikeActiveRecord
 
 	public function getQrRouteID($qr_id)
 	{
+
+        dd('NIET MEER NODIG??');
 		$data = Qr::find('qr_ID=:qr_id',
 						    array(':qr_id' => $qr_id));
 		if(isset($data->route_ID)){
@@ -154,6 +160,8 @@ class Qr extends HikeActiveRecord
 
 	public function getQrId($event_id, $qr_code)
 	{
+
+        dd('NIET MEER NODIG??');
 		$data = Qr::find('event_ID = :event_Id AND qr_code=:qr_code',
 						    array(':event_Id' => $event_id,
 							  ':qr_code' => $qr_code));
@@ -161,8 +169,10 @@ class Qr extends HikeActiveRecord
 	}
 
 
-	public function getQrCodeNAme($event_id, $qr_id)
+	public function getQrCodeName($event_id, $qr_id)
 	{
+
+        dd('NIET MEER NODIG??');
 		$data = Qr::find('event_ID = :event_Id AND qr_ID=:qr_id',
 						    array(':event_Id' => $event_id,
 							  ':qr_id' => $qr_id));
@@ -171,6 +181,9 @@ class Qr extends HikeActiveRecord
 
 	public function getNewOrderForIntroductieQr($event_id)
 	{
+
+        dd('NIET MEER NODIG??');
+
         $route_id = Route::getIntroductieRouteId($event_id);
 
 		$criteria = new CDbCriteria();
@@ -190,6 +203,8 @@ class Qr extends HikeActiveRecord
 
 	public function getNewOrderForQr($event_id, $route_id)
 	{
+
+        dd('NIET MEER NODIG??');
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
 		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
@@ -205,55 +220,57 @@ class Qr extends HikeActiveRecord
 		return $newOrder;
 	}
 
-	public function getNumberQrRouteId($event_id, $route_id)
+	public function getNumberQrRouteId($route_id)
 	{
-        $criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
+        dd('NIET MEER NODIG??');
+        $data = Qr::find()
+            ->where('event_ID =:event_id AND route_ID =:route_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' =>$route_id])
+            ->count();
 
-		return Qr::count($criteria);
+		return $data;
 	}
 
-	public function lowererOrderNumberExists($event_id, $id, $qr_order, $route_id)
+	public function lowererOrderNumberExists($qr_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order';
-		$criteria->params=array(':event_id' => $event_id,
-								':id' => $id,
-								':route_id' => $route_id ,
-								':order' => $qr_order);
+        $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
+            ->exist();
 
-		if (Qr::exists($criteria))
-			return true;
-		else
-			return false;
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
 	public function higherOrderNumberExists($event_id, $id, $qr_order, $route_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND qr_ID !=:id AND route_ID =:route_id AND qr_volgorde <=:order';
-		$criteria->params=array(':event_id' => $event_id,
-								':id' => $id,
-								':route_id' => $route_id,
-								':order' => $qr_order);
+        $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
+            ->exist();
 
-		if (Qr::exists($criteria))
-			return true;
-		else
-			return false;
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
 	public function qrExistForRouteId($event_id, $route_id)
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' => $route_id);
+        $data = Qr::find($qr_id);
+        $dataNext = Qr::find()
+            ->where('route_ID =:event_id AND route_ID =:route_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' => $data->route_ID])
+            ->exist();
 
-		if (Qr::exists($criteria))
-			return true;
-		else
-			return false;
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
 	}
 
     /**

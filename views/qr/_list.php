@@ -34,11 +34,11 @@ use yii\bootstrap\Modal;
             'options'=>[
                 'class'=>'btn btn-danger',
                 'title'=>'Remove this qr',
-//                'data' => [
-//                    'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-//                    'method' => 'post',
-//
-//                ],
+                'data' => [
+                    'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+
+                ],
             ]
         ]); ?>
 
