@@ -60,6 +60,8 @@ class AccessControl extends HikeActiveRecord {
 
         switch ($this->action_id) {
             case 'create':
+            case 'createPlayer' :
+            case 'createOrganisation':
                 return AccessControl::createAllowed();
             case 'createIntroductie':
                 return AccessControl::createIntroductieAllowed();
@@ -70,6 +72,8 @@ class AccessControl extends HikeActiveRecord {
             case 'moveUpDown':
                 return AccessControl::moveUpDownAllowed();
             case 'update':
+            case 'updateOrganistion':
+            case 'updatePlayer':
             case 'upload':
                 return AccessControl::updateAllowed();
             case 'overview':
@@ -242,8 +246,7 @@ class AccessControl extends HikeActiveRecord {
                 }
                 break;
             case 'event-names':
-                if ($this->hikeStatus == EventNames::STATUS_opstart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
                 break;
@@ -270,17 +273,19 @@ class AccessControl extends HikeActiveRecord {
             case 'open-vragen':
             case 'posten':
             case 'qr':
-            case 'groups':
                 if (($this->hikeStatus == EventNames::STATUS_opstart or
                     $this->hikeStatus == EventNames::STATUS_introductie) and
                     $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     $isAllowed = TRUE;
                 }
                 break;
+            case 'groups':
+                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                    $isAllowed = TRUE;
+                }
+                break;
             case 'deelnemers-event':
-                if (($this->hikeStatus == EventNames::STATUS_opstart or
-                    $this->hikeStatus == EventNames::STATUS_introductie) and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     $isAllowed = TRUE;
                 }
                 break;
@@ -600,6 +605,18 @@ class AccessControl extends HikeActiveRecord {
         }
         
         switch ($this->controller_id) {
+            case 'event-names':
+                if ($this->action_id == 'changeStatus'){
+                    if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                        return TRUE;
+                    }
+                }
+                if ($this->action_id == 'set-max-time'){
+                    if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie &&
+                        $this->hikeStatus == EventNames::STATUS_gestart) {
+                        return TRUE;
+                    }
+                }
             case 'users':
             case 'friend-list':      
                 if (in_array($this->action_id, ['decline', 'accept', 'connect', 'search-friends', 'search-new-friends', 'search-friend-requests'])) {

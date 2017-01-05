@@ -66,7 +66,7 @@ class EventNames extends HikeActiveRecord {
      */
     public function rules() {
         return [
-            [['event_name', 'organisatie', 'status'], 'required'],
+            [['event_name', 'status'], 'required'],
             [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'organisatie', 'website', 'image_temp'], 'safe'],
             [['status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_name', 'image', 'organisatie', 'website'], 'string', 'max' => 255],
@@ -234,16 +234,12 @@ class EventNames extends HikeActiveRecord {
      */
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
-            if ($this->status <> self::STATUS_gestart) {
+            if ($this->status != self::STATUS_gestart) {
                 // Als de status anders dan 2 (opgestart) dan moet active day geleegd worden
-                $this->active_day = "";
-                $this->max_time = null;
+                $this->max_time = NULL;
+                $this->active_day = NULL;
             }
 
-            if ($this->status == self::STATUS_introductie) {
-                // Als de status 1 (introductie) dan moet avtive day introductie worden
-                $this->active_day = "0000-00-00";
-            }
             return(true);
         }
         return(false);

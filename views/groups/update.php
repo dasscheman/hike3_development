@@ -5,12 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblGroups */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Groups',
-]) . ' ' . $model->group_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Groups'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->group_ID, 'url' => ['view', 'id' => $model->group_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'Update {groupName}: ', [
+    'groupName' => $model->group_name,
+]);
 ?>
 <div class="tbl-groups-update">
 

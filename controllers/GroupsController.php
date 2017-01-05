@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\DeelnemersEvent;
 
 /**
  * GroupsController implements the CRUD actions for Groups model.
@@ -94,39 +95,25 @@ class GroupsController extends Controller
      */
     public function actionCreate()
     {
-        dd('sadsafffffffsvdvvvvavlkjf');
-        $model = new Groups();
-        if ($model->load(Yii::$app->request->post()) ) {
-            
-            $model->event_ID = 1;
-            var_dump($model->save());
-            
-       // var_dump('een'); exit;
-        return $this->redirect(['view', 'id' => (string) $model->id]);
-        
-        } elseif ($model->load(Yii::$app->request->get()) && $model->save()) {
-            
-        return $this->redirect(['view', 'id' => (string) $model->id]);
-        }elseif (Yii::$app->request->isAjax) {
-            return $this->renderAjax('create', [
-                        'model' => $model
-            ]);
-        } else {
-        var_dump('drie'); exit;
-            return $this->render('_form', [
-                        'model' => $model
-            ]);
-        }
-        
+
+
+
         $model = new Groups();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
-        } else {
-            return $this->render('create', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('_form', [
                 'model' => $model,
             ]);
         }
+
+        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
+        }
+
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+        }
+        return $this->redirect(['organisatie/overview']);
     }
     
     /**
@@ -138,37 +125,44 @@ class GroupsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (!$model->load(Yii::$app->request->post())) {
+            $group_members = array();
+            foreach ($model->deelnemersEvents as $item) {
+                $model->users_temp[] = $item->user_ID;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return;
-//            return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
-        } else {
-            return $this->renderPartial('_form', [
+            }
+            return $this->render('update', [
                 'model' => $model,
             ]);
         }
-    }
-		
-    /**
-     * Deletes an existing Groups model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id, $event_id)
-    {		
-        try
-		{
-            $this->findModel($id)->delete();
-        }
-		catch(CDbException $e)
-		{		
-			throw new CHttpException(400,"Je kan deze groep niet verwijderen.");
-		}
 
-        return $this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/startup/startupOverview',
-								    'event_id'=>$event_id));
+        if (Yii::$app->request->post('submit') == 'delete' ||
+            $model->load(Yii::$app->request->post())) {
+            // Eerst verwijderen we alle leden van huidige group, om ze
+            // vervolgens weer toe tevoegen. indien nodig
+            $groups_leden = DeelnemersEvent::find()
+                ->where(['group_ID' => $model->group_ID])
+                ->andWhere(['event_ID' => Yii::$app->user->identity->selected])
+                ->all();
+            if ($groups_leden) {
+                foreach ($groups_leden as $player) {
+                    $player->delete();
+                }
+            }
+        }
+        
+        if (Yii::$app->request->post('submit') == 'delete') {
+            $model->delete();
+            return $this->redirect(['organisatie/overview']);
+        }
+
+        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+        }
+        return $this->redirect(['organisatie/overview']);
     }
 
 	/**

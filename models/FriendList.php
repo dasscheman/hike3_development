@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\db\Query;
-
+use app\models\ArrayHelper;
 /**
  * This is the model class for table "tbl_friend_list".
  *
@@ -177,31 +177,50 @@ class FriendList extends HikeActiveRecord
                 FROM tbl_users
                 WHERE tbl_users.user_ID <>' . Yii::$app->user->id;
         $model = Users::findBySql($sql)->all();      
-//
-//        var_dump($model); exit;
-////        
-//        
-//        
-//        $users = new    Users;
-//        $connection = \Yii::$app->db;
-//        $friends = $connection->createCommand('tbl_users.user_ID IN ( SELECT friends_with_user_ID
-//								FROM `tbl_friend_list`
-//								WHERE user_ID =:currentuser AND status =2   )
-//                                FROM tbl_users
-//                                WHERE t.user_ID <>:currentuser');
-//
-//        $friends->bindValue(':currentuser', Yii::$app->user->id);
-//        $model = $friends->queryAll();
-//        var_dump($model); exit;
-////        $sql = 'SELECT * FROM tbl_user';
-////        $model = User::findBySql($sql)->all(); 
-        
-        
         
 		foreach($model as $m)
 		{
 			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
 		}
 		return $results;  
+	}
+
+    /**
+	* Retrieves a list of users
+	* @return array an of available friendusers which are not subscribed to current event.'.
+    * When the group_id is set, the users in this group will be included.
+	*/
+	public function getFriendsForEvent($group_id = NULL)
+	{
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
+                        ->addParams([':user_id' => Yii::$app->user->id]);
+
+        $queryDeelnemersEvent = DeelnemersEvent::find();
+
+        if ($group_id) {
+            $queryDeelnemersEvent->select('user_ID')
+                ->where('event_ID=:event_id and (group_ID!=:group_id or rol!=:rol)')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':group_id' => $group_id,
+                        ':rol' => DeelnemersEvent::ROL_deelnemer,
+                    ]);
+        } else {
+            $queryDeelnemersEvent->select('user_ID')
+                ->where('event_ID=:event_id')
+                ->addParams([':event_id' => Yii::$app->user->identity->selected]);
+        }
+
+        $result = Users::find()
+            ->where(['in', 'tbl_users.user_ID', $queryFriendList])
+            ->andwhere(['not in', 'tbl_users.user_ID', $queryDeelnemersEvent])
+            ->all();
+
+        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');
+        return $arrayRestuls;
 	}
 }

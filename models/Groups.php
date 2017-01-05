@@ -39,7 +39,8 @@ class Groups extends HikeActiveRecord
 	public $time_left;
 	public $last_post;
 	public $last_post_time;
-    
+    public $users_temp;
+
     /**
      * @inheritdoc
      */
@@ -78,6 +79,18 @@ class Groups extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
+    }
+
+
+    /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
     }
 
     /**
@@ -241,4 +254,32 @@ class Groups extends HikeActiveRecord
 			$temp_score = $key_value;
 		}
 	}
+
+    public function addMembersToGroup($group, $members = []) 
+    {
+        if (!$members) {
+            return TRUE;
+        }
+        foreach ($members as $player) {
+            // First check if we can find this user in
+            $inschrijving = DeelnemersEvent::find()
+                ->where(['user_ID' => $player])
+                ->andWhere(['event_ID' => Yii::$app->user->identity->selected])
+                ->one();
+
+            if (!$inschrijving) {
+                //inschrijving bestaat niet dus we maken een nieuwe aan:
+                $inschrijving = new DeelnemersEvent;
+            }
+            // Voor nu schrijven we alles over. De aanname is dat in de
+            // selectie alleen de juiste namen zichtbaar zijn.
+            $inschrijving->group_ID = $group;
+            $inschrijving->user_ID = $player;
+            $inschrijving->rol = DeelnemersEvent::ROL_deelnemer;
+            if (!$inschrijving->save()) {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
 }

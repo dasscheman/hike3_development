@@ -7,8 +7,10 @@ use app\models\DeelnemersEvent;
 use app\models\DeelnemersEventSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\HttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 
 /**
  * DeelnemersEventController implements the CRUD actions for DeelnemersEvent model.
@@ -90,24 +92,27 @@ class DeelnemersEventController extends Controller
         $model = new DeelnemersEvent();
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->attributes=$_POST['DeelnemersEvent'];
-			$message = new YiiMailMessage(); 
-			$message->view = "sendInschrijving"; 
-			$params = array('mailEventId'=>$model->event_ID,
-							'mailUsersId'=>$model->user_ID,
-							'mailRol'=>$model->rol,
-							'mailGroupId'=>$model->group_ID,
-							'mailOrganisatie'=>$model->create_user_ID);  
-			
-			$message->subject = 'Inschrijving Hike';
-			$message->from = 'noreply@biologenkantoor.nl';
-			$message->setBody($params, 'text/html');
-
             if($model->save()) {
-                return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
+                Yii::$app->mailer->compose('sendInschrijving', [
+                    'mailEventName' => $model->event->event_name,
+                    'mailUsersName' => $model->user->username,
+                    'mailUsersNameSender' => $model->createUser->username,
+                    'mailUsersEmailSender' => $model->createUser->email,
+                    'mailRol' => $model->rol,
+                    'mailRolText' => DeelnemersEvent::getRolText($model->rol),
+                    'mailGroupName' => $model->group_ID,
+                ])
+                ->setFrom('noreply@biologenkantoor.nl')
+                ->setTo($model->user->email)
+                ->setSubject('Inschrijving Hike')
+                ->send();
+                return $this->redirect(['organisatie/overview']);
+            }
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
             }
         } else {
-            return $this->render('_formAdd', [
+            return $this->renderpartial('_form', [
                 'model' => $model,
             ]);
         }
@@ -122,58 +127,34 @@ class DeelnemersEventController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if ($model->user_ID == Yii::$app->user->identity->id) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'You cannot change your own account'));
+            return $this->redirect(['organisatie/overview']);
+        }
+        if (Yii::$app->request->post('submit') == 'delete') {
+           try
+            {
+                $model->delete();
+            }
+            catch(CDbException $e)
+            {
+                throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
+            }
 
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->rol <> DeelnemersEvent::ROL_deelnemer) {
-				$model->group_ID = "";
-			}
-            
-            if($model->save()) {
-                return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
+            return $this->redirect(['organisatie/overview']);
+        } elseif ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirect(['organisatie/overview']);
+            }
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
             }
         } else {
-            return $this->render('update', [
+            return $this->renderPartial('_form', [
                 'model' => $model,
             ]);
         }
-    }    
-    
-    /**
-     * Deletes an existing DeelnemersEvent model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        try
-        {
-            $this->findModel($id)->delete();
-        }
-		catch(CDbException $e)
-		{		
-			throw new CHttpException(400,"Je kan deze deelnemer niet verwijderen.");
-		}
-        $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array(
-            '/startup/startupOverview',
-            'event_id'=>$_GET['event_id']));
     }
-    
-    /*
-	 * Deze actie wordt gebruikt voor de form velden. Op basis van een hike
-	 * en een dag wordt bepaald welke posten er beschikbaar zijn. 
-	 */
-	public function actionDynamicRol()
-	{
-		if(Yii::$app->request->post('rol')==DeelnemersEvent::ROL_deelnemer)
-		{
-			$data = Groups::getGroupOptionsForEvent(Yii::$app->request->post('event_id'));
-			foreach($data as $value=>$name)
-			{
-				echo CHtml::tag('option', array('value'=>$value), CHtml::encode($name),true);
-			}
-		}
-	}
 
     /**
      * Finds the DeelnemersEvent model based on its primary key value.

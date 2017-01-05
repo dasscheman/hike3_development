@@ -46,7 +46,7 @@ class DeelnemersEvent extends HikeActiveRecord
         return [
             [['event_ID', 'user_ID'], 'required'],
             [['event_ID', 'user_ID', 'rol', 'group_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['create_time', 'update_time'], 'safe'],
+            [['event_ID','create_time', 'update_time'], 'safe'],
             [
                 ['event_ID', 'user_ID'], 
                 'unique', 
@@ -112,7 +112,18 @@ class DeelnemersEvent extends HikeActiveRecord
     {
         return $this->hasOne(Users::className(), ['user_ID' => 'user_ID']);
     }
-    
+
+    /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
+    }
+
     /**
     * Retrieves een lijst met mogelijke rollen die een deelnemer tijdens een hike kan hebben
     * @return array an array of available rollen.
@@ -128,13 +139,36 @@ class DeelnemersEvent extends HikeActiveRecord
     }
 
     /**
+    * Retrieves een lijst met mogelijke rollen die een deelnemer tijdens een hike kan hebben
+    * @return array an array of available rollen.
+    */
+    public function getOrganisationRolOptions()
+    {
+        return array(
+            self::ROL_organisatie=>'Organisatie',
+            self::ROL_post=>'Post',
+            self::ROL_toeschouwer=>'Toeschouwer',
+        );
+    }
+
+    /**
     * @return string de rol text display
     */
     public function getRolText($rol)
     {
-        $rolOptions=$this->getRolOptions();
+        $rolOptions = self::getRolOptions();
         return isset($rolOptions[$rol]) ?
             $rolOptions[$rol] : "Onbekende rol";
+    }
+
+    /**
+    * @return string de rol text display
+    */
+    public function getRolTextObj()
+    {
+        $rolOptions=$this->getRolOptions();
+        return isset($rolOptions[$this->rol]) ?
+            $rolOptions[$this->rol] : "Onbekende rol";
     }
 
     /**
@@ -217,4 +251,32 @@ class DeelnemersEvent extends HikeActiveRecord
         }
         return;
     }
+
+    /**
+	* Retrieves a list of users
+	* @return array an of available friendusers which are not subscribed to current event.'.
+	*/
+	public function getFriendsForEvent()
+	{
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
+                        ->addParams([':user_id' => Yii::$app->user->id]);
+
+        $queryDeelnemersEvent = DeelnemersEvent::find();
+        $queryDeelnemersEvent->select('user_ID')
+            ->where('event_ID=:event_id')
+            ->addParams([':event_id' => Yii::$app->user->identity->selected]);
+
+
+        $result = Users::find()
+           // ->select('id,name')->asArray()
+            ->where(['in', 'tbl_users.user_ID', $queryFriendList])
+            ->andwhere(['not in', 'tbl_users.user_ID', $queryDeelnemersEvent])
+            ->all();
+
+        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');
+        return $arrayRestuls;
+	}
 }

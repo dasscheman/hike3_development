@@ -10,42 +10,21 @@ use yii\helpers\Url;
 use yii\widgets\ListView;
 use kartik\widgets\FileInput;
 use yii\helpers\Html;
+use app\models\Groups;
+use kartik\editable\Editable;
+use app\models\EventNames;
+use kartik\time\TimePicker;
+use kartik\datetime\DateTimePicker;
+use app\models\DeelnemersEvent;
 
 /* @var $this yii\web\View */
-$this->title = Yii::t('app', 'Hike overzicht');
+$this->title = Yii::t('app', 'Hike overview');
 ?>
 
 
 <div class="organisatie-overview">
 
     <?php
-
-//    d(Yii::$app->basePath . ''. Yii::$app->params['event_images_path'] . $eventModel->image);
-//
-//    d(Yii::$app->params['event_images_path'] . $eventModel->image);
-//
-//echo Html::img(Yii::$app->params['event_images_url'] . $eventModel->image);
-//
-//echo Html::img('uploads/event_images/aangifte.jpg');
-
-//    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
-//    $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
-//
-//        'model' => $eventModel,
-//        'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
-//        'pluginOptions' => [
-//            'allowedFileExtensions'=>['jpg','gif','png'],
-////            'uploadUrl' => Url::to(['/organisatie/overview']),
-////            'previewFileType' => 'image',
-////            'showCaption' => false,
-////            'showRemove' => true,
-////            'showUpload' => true,
-////            'browseClass' => 'btn btn-primary btn-block',
-////            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-////            'browseLabel' => Yii::t('app', 'Select Photo')
-//        ]
-//    ]);
-//    ActiveForm::end();
 
     $attributes = [
         [
@@ -58,14 +37,14 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 [
                     'attribute' => 'organisatie',
                     'label' => 'organisatie',
-                    'displayOnly' => true,
+                    'displayOnly' => TRUE,
                     'valueColOptions' => ['style' => 'width:30%']
                 ],
                 [
                     'attribute' => 'website',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
-                    'displayOnly' => true
+                    'displayOnly' => TRUE,
                 ],
             ],
         ],
@@ -74,11 +53,13 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 [
                     'attribute' => 'start_date',
                     'valueColOptions' => ['style' => 'width:30%'],
+                    'displayOnly' => TRUE,
                 ],
                 [
                     'attribute' => 'end_date',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
+                    'displayOnly' => TRUE,
                 ],
             ],
         ],
@@ -86,13 +67,68 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'columns' => [
                 [
                     'attribute' => 'status',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                    'value' => $eventModel->getStatusText(),
+                    'format' => 'raw',
+                    'value' => Editable::widget([
+                        'model'=> $eventModel,
+                        'attribute' => 'status',
+                        'formOptions' => [
+                            'action' => Url::to(['/event-names/change-status']),
+                        ],
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
+                            'class' => 'btn btn-sm btn-primary',
+                            'label' => Yii::t('app', 'Save')
+                        ],
+                        // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
+                        // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
+                        // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
+                        'showAjaxErrors' => FALSE,
+                        'asPopover' => TRUE,
+                        'format' => Editable::FORMAT_BUTTON,
+                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                        'data' => $eventModel->getStatusOptions(),
+                        'options' => [
+                            'class'=>'form-control',
+                            'id' => $eventModel->event_ID.'-is_active_status'
+                        ],
+                        'displayValue' => $eventModel->getStatusText(),
+                    ]),
+                    'valueColOptions'=>['style'=>'width:30%']
                 ],
                 [
                     'attribute' => 'active_day',
                     'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
+                    'value' => Editable::widget([
+                        'name'=>'active_day',
+                        'model'=> $eventModel,
+                        'attribute' => 'active_day',
+                        'formOptions' => [
+                            'action' => Url::to(['/event-names/change-day']),
+                        ],
+                        'buttonsTemplate' => '{submit}',
+                        'submitButton' => [
+                            'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
+                            'class' => 'btn btn-sm btn-primary',
+                            'label' => Yii::t('app', 'Save')
+                        ],
+                        // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
+                        // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
+                        // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
+                        'showAjaxErrors' => FALSE,
+                        'asPopover' => TRUE,
+                        'format' => Editable::FORMAT_BUTTON,
+                        'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                        'data' => $eventModel->getDatesAvailable($eventModel->event_ID),
+                        'options' =>
+                        [
+                            'id' => $eventModel->event_ID.'-is_active_day',
+//                            'class'=>'form-control',
+                        ],
+                        'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
+                        'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
+                    ]),
+                    'valueColOptions'=>['style'=>'width:30%']
                 ],
             ],
         ],
@@ -101,11 +137,30 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 [
                     'attribute' => 'max_time',
                     'valueColOptions' => ['style' => 'width:30%'],
+//                    'format' => 'raw',
+//                    'value' => Editable::widget([
+//                        'model'=> $eventModel,
+//                        'attribute' => 'max_time',
+//                        'formOptions' => [
+//                            'action' => Url::to(['/event-names/change-day']),
+//                        ],
+//                        'asPopover' => TRUE,
+//                        'format' => Editable::FORMAT_BUTTON,
+//                        'inputType' => Editable::INPUT_TIME,
+//                        'pluginOptions'=>[
+//                            'format' => 'hh:ss'
+//                        ],
+//                        'options' => [
+//                            'id' => $eventModel->event_ID.'-is_active_6',  'class'=>'form-control'],
+////                        'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->actie_day : 'nvt',
+//                    ]),
+                    'valueColOptions'=>['style'=>'width:30%']
+
                 ],
                 [
                     'attribute' => 'create_user_ID',
-                    'format' => 'raw',
-                    'value' => Users::getUserName($eventModel->create_user_ID),
+//                    'format' => 'raw',
+                    'value' => $eventModel->createUser->username,
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
             ],
@@ -121,7 +176,8 @@ $this->title = Yii::t('app', 'Hike overzicht');
     echo DetailView::widget([
         'model' => $eventModel,
         'attributes' => $attributes,
-        'mode' => 'view',
+        'mode' => 'edit',
+        'enableEditMode' => FALSE,
 //        'bordered' => $bordered,
 //        'striped' => $striped,
 //        'condensed' => $condensed,
@@ -139,18 +195,20 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
 
     $form = ActiveForm::begin([
-        'options'=>['enctype'=>'multipart/form-data'] // important
+        'options'=>['enctype'=>'multipart/form-data'],
+        'action' => ['event-names/upload'],// important
     ]);
     // your fileinput widget for single file upload
     echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
         'options'=>['accept'=>'image/*'],
+        'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload'),
         'pluginOptions'=>['allowedFileExtensions'=>['jpg', 'jpeg', 'gif','png'],
 ////            'uploadUrl' => Url::to(['/organisatie/overview']),
 //                'previewFileType' => 'image',
 //                'showCaption' => false,
 //                'showRemove' => true,
 //                'showUpload' => true,
-//                'browseClass' => 'btn btn-primary btn-block',
+                'browseClass' => 'btn btn-primary btn-block',
                 'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
                 'browseLabel' => Yii::t('app', 'Select Photo')
 ]
@@ -159,10 +217,11 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
     Modal::begin(
         [
-            'id' =>'modalMessage',
+            'id' =>'modalEditMaxTime',
             'toggleButton' => [
-                'label' => Yii::t('app', 'Change status hike'),
-                'class' => 'btn btn-success pull-right'
+                'label' => Yii::t('app', 'Change max time hike'),
+                'class' => 'btn btn-success pull-right',
+                'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'set-max-time'),
             ],
             'closeButton' => [
                 'label' => 'Close',
@@ -172,15 +231,16 @@ $this->title = Yii::t('app', 'Hike overzicht');
         //'options' => ['class'=>'slide'],
         ]
     );
-    echo $this->render('/event-names/_form', ['model' => $eventModel, 'action' => 'change_status']);
+    echo $this->render('/event-names/_form', ['model' => $eventModel, 'action' => 'set_max_time']);
     Modal::end();
 
     Modal::begin(
         [
-            'id' =>'modalMessage',
+            'id' =>'modalEditSettings',
             'toggleButton' => [
                 'label' => Yii::t('app', 'Change settings hike'),
-                'class' => 'btn btn-success pull-right'
+                'class' => 'btn btn-success pull-right',
+                'disabled' => $eventModel->status !== EventNames::STATUS_opstart,
             ],
             'closeButton' => [
                 'label' => 'Close',
@@ -190,36 +250,62 @@ $this->title = Yii::t('app', 'Hike overzicht');
         //'options' => ['class'=>'slide'],
         ]
     );
-    echo $this->render('/event-names/_form', ['model' => $eventModel, 'action' => 'edit_settings']);
+    echo $this->render('/event-names/_form', ['model' => $eventModel]);
     Modal::end();
 
-    echo ButtonAjax::widget([
-        'name'=>'Create',
-        'route'=>['/groups/create'],
-        'modalId'=>'#group-create-modal',
-        'modalContent'=>'#group-create-modal',
-        'options'=>[
-            'class'=>'btn btn-success',
-            'title' => Yii::t('app', 'Create group'),
+
+    Modal::begin(
+        [
+            'id' =>'modalCreateGroup',
+            'toggleButton' => [
+                'label' => Yii::t('app', 'Add group to hike'),
+                'class' => 'btn btn-success pull-right',
+                'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'create'),
+            ],
+            'closeButton' => [
+                'label' => 'Close',
+                'class' => 'btn btn-danger btn-sm pull-right',
+            ],
+            'size' => Modal::SIZE_LARGE,
+        //'options' => ['class'=>'slide'],
         ]
-    ]);
-
-    Modal::begin(['id'=>'group-create-modal']);
-    echo '<div id="group-create-modal"></div>';
+    );
+    $modelNewGroups = new Groups();
+    echo $this->render('/groups/_form', ['model' => $modelNewGroups]);
     Modal::end();
 
-    
-    
-     
-    ?>
-
-
+    Modal::begin(
+        [
+            'id' =>'modal-add-organisation',
+            'options' => [
+                'id' => 'modal-add-organisation',
+                'tabindex' => true // important for Select2 to work properly
+            ],
+            'toggleButton' => [
+                'label' => Yii::t('app', 'Add organisation to hike'),
+                'class' => 'btn btn-success pull-right',
+                'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
+            ],
+            'closeButton' => [
+                'label' => 'Close',
+                'class' => 'btn btn-danger btn-sm pull-right',
+            ],
+            'size' => Modal::SIZE_LARGE,
+        ]
+    );
+    $modelNewDeelnemer = new DeelnemersEvent;
+    echo $this->render('/deelnemers-event/_form', ['model' => $modelNewDeelnemer]);
+    Modal::end();?>
 
 </div>
+<br>
+<br>
 <div class="groups-overview">
     <td style="vertical-align:top">
+        <h2>
         <?php
-        echo "Groepen die ingeschreven staan"; ?>
+        echo Yii::t('app', 'Registered groups'); ?>
+        </h2>
         <div class="row">
             <?php
             echo ListView::widget([
@@ -232,5 +318,22 @@ $this->title = Yii::t('app', 'Hike overzicht');
             ?>
         </div>
     </td>
+	<td style="vertical-align:top">
+        <h2>
+        <?php
+        echo Yii::t('app', 'Registered organisation'); ?>
+        </h2>
+        <div class="row">
+            <?php
+            echo ListView::widget([
+                'summary' => FALSE,
+                'pager' => FALSE,
+                'dataProvider' => $organisatieData,
+                'itemView' => '/deelnemers-event/_list',
+                'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+            ]);
+            ?>
+        </div>
+	    </br>
+	</td>
 </div>
-<?= Yii::$app->language ?>

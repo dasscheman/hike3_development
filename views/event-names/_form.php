@@ -7,6 +7,8 @@ use kartik\builder\Form;
 use kartik\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use app\models\EventNames;
+use yii\helpers\Url;
+use kartik\widgets\DepDrop;
 //use kartik\editable\Editable;
 //use yii\bootstrap\Modal;
 
@@ -18,95 +20,68 @@ use app\models\EventNames;
 <div class="tbl-event-names-form">
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
+    
 
-    $attributes['event_name'] = [
-        'type' => Form::INPUT_TEXT,
-        'options' => [
-            'disabled' => $action == 'change_status' && !$model->isNewRecord,
-            'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
-        ],
-    ];
 
-    $attributes['organisatie'] = [
-        'type' => Form::INPUT_TEXT,
-        'options' => [
-            'disabled' => $action == 'change_status' && !$model->isNewRecord,
-            'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
-        ]
-    ];
-
-    $attributes['daterange'] = [
-        'type' => Form::INPUT_WIDGET,
-        'widgetClass' => 'kartik\daterange\DateRangePicker',
-        'options' => [
-            'disabled' => $action == 'change_status' && !$model->isNewRecord,
-            'startAttribute' => 'start_date',
-            'endAttribute' => 'end_date',
-            'pluginOptions' => [
-                'minDate' => date('Y-m-d'),
-                "dateLimit" => [
-                    'days' => 10
-                ],
-                'locale' => [
-                    'format' => 'YYYY-MM-DD',
-                    'separator' => Yii::t('app', ' t/m ')],
-            ]
-        ]
-    ];
-
-    $attributes['website'] = [
-        'type' => Form::INPUT_TEXT,
-        'options' => [
-            'disabled' => $action == 'change_status' && !$model->isNewRecord,
-            'placeholder' => Yii::t('app', 'Website organisatie')
-        ]
-    ];
-
-    if ($action == 'change_status') {
-        $attributes['status'] = [
-            'type' => Form::INPUT_DROPDOWN_LIST,
-            'items' => EventNames::getStatusOptions(),
+    if (isset($action) && $action == 'set_max_time') {
+        $attributes['max_time'] = [
+            'type' => Form::INPUT_WIDGET,
+            'widgetClass' => 'kartik\time\TimePicker',
             'options' => [
-                'placeholder' => Yii::t('app', 'status'),
-                'disabled' => $action == 'edit_settings',
+                'attribute' => 'max_time',
+                'pluginOptions' => [
+                    'showSeconds' => FALSE,
+                    'showMeridian' => FALSE,
+                    'minuteStep' => 5,
+                    'defaultTime' => '10:00'
+                ]
+            ]
+        ];
+    } else {
+        $attributes['event_name'] = [
+            'type' => Form::INPUT_TEXT,
+            'options' => [
+                'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
             ],
         ];
 
-        $attributes['active_day'] = [
-            'type' => Form::INPUT_WIDGET,
-            'widgetClass' => 'kartik\date\DatePicker',
+        $attributes['organisatie'] = [
+            'type' => Form::INPUT_TEXT,
             'options' => [
-                'disabled' => $action == 'edit_settings',
-                'value' => $model->active_day,
-//                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
+            ]
+        ];
+
+        $attributes['daterange'] = [
+            'type' => Form::INPUT_WIDGET,
+            'widgetClass' => 'kartik\daterange\DateRangePicker',
+            'options' => [
+                'startAttribute' => 'start_date',
+                'endAttribute' => 'end_date',
                 'pluginOptions' => [
-//                    'autoclose'=>true,
-                    'format' => 'dd-M-yyyy',
-//                    'minDate' => date('Y-m-d'),
+                    'minDate' => date('Y-m-d'),
+                    "dateLimit" => [
+                        'days' => 10
+                    ],
+                    'locale' => [
+                        'format' => 'YYYY-MM-DD',
+                        'separator' => Yii::t('app', ' t/m ')],
                 ]
             ]
         ];
 
-
-
-//    'type' => DatePicker::TYPE_INPUT,
-//    'value' => '23-Feb-1982',
-//    'pluginOptions' => [
-//        'autoclose'=>true,
-//        'format' => 'dd-M-yyyy'
-//    ]
-
-        $attributes['max_time'] = [
-            'type' => Form::INPUT_DROPDOWN_LIST,
-            'items' => \app\models\EventNames::getStatusOptions(),
+        $attributes['website'] = [
+            'type' => Form::INPUT_TEXT,
             'options' => [
-                'placeholder' => Yii::t('app', 'status'),
-                'disabled' => $action == 'edit_settings',
-            ],
+                'placeholder' => Yii::t('app', 'Website organisatie')
+            ]
         ];
     }
-
-    $form = ActiveForm::begin(['type' => ActiveForm::TYPE_VERTICAL, 'formConfig' => ['labelSpan' => 20]]);
+    
+    $form = ActiveForm::begin([
+        'type' => ActiveForm::TYPE_VERTICAL,
+        'formConfig' => ['labelSpan' => 20],
+        'action' => $model->isNewRecord ? ['event-names/create'] : ['event-names/update']]);
     echo Form::widget([
         'model' => $model,
         'form' => $form,
@@ -117,6 +92,5 @@ use app\models\EventNames;
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
 </div>

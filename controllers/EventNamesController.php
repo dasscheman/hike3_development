@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\HttpException;
 use \yii\helpers\Json;
+use yii\helpers\Url;
 
 /**
  * EventNamesController implements the CRUD actions for EventNames model.
@@ -32,10 +33,10 @@ class EventNamesController extends Controller
             ],            
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+                'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'selectDay', 'setMaxTime'],
                 'rules' => [
                     array(	
-                        'actions'=>array('create'),
+                        'actions'=>array('create', 'selectDay', 'setMaxTime'    ),
                         'allow' => TRUE,
                         'roles'=>array('@'),
                     ),
@@ -158,19 +159,14 @@ class EventNamesController extends Controller
      */
     public function actionUpdate()
     {
-        if (!isset(Yii::$app->user->identity->selected)) { // No hike set
-            throw new \yii\web\HttpException(418, Yii::t('app', 'No hike selected.'));
-        }
-     
         $model = $this->findModel(Yii::$app->user->identity->selected);
-        
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['organisatie/overview']);
-        } else {
-            return $this->render('/update', [
-                'model' => $model,
-            ]);
+
+        if ($model->load(Yii::$app->request->post())) {
+            if(!$model->save()){
+                throw new \yii\web\HttpException(400, Yii::t('app', 'cannot save record'));
+             }
         }
+        return $this->redirect(['organisatie/overview']);
     }
     
     /**
@@ -192,29 +188,58 @@ class EventNamesController extends Controller
         $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
     }
 
+    public function actionUpload()
+    {
+        $model = $this->findModel(Yii::$app->user->identity->selected);
+
+        if ($model->load(Yii::$app->request->post())) {
+            // get the uploaded file instance. for multiple file uploads
+            // the following data will return an array
+            $image = UploadedFile::getInstance($model, 'image_temp');
+
+            // store the source file name
+            $model->image = $image->name;
+
+            $path = Yii::$app->basePath . ''. Yii::$app->params['event_images_path'] . $model->image;
+            if($model->save()){
+                $image->saveAs($path);
+             }
+        }
+        return $this->redirect(['organisatie/overview']);
+    }
+
+
     /**
      * Updates a particular model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionChangeStatus($event_id)
+    public function actionChangeStatus()
     {
-        $model=$this->findModel($event_id);
+        $model=$this->findModel(Yii::$app->user->identity->selected);
 
-        if(null !== Yii::$app->request->post('EventNames')) {
-            $model->attributes=Yii::$app->request->post('EventNames');
-            if($model->save()){
-				if ($model->status == EventNames::STATUS_gestart){
-					$this->redirect(array('eventNames/changeDay','event_id'=>$model->event_ID));
-				} else {
-					$this->redirect(array('startup/startupOverview','event_id'=>$model->event_ID));
-				}
-            }
+        if(null === Yii::$app->request->post('EventNames')) {
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            return $this->redirect(['organisatie/overview'], 404);
         }
 
-        $this->render('changeStatus',array(
-            'model'=>$model,
-        ));
+        $model->load(Yii::$app->request->post());
+        if ($model->status != EventNames::STATUS_gestart) {
+            $model->active_day = $model->start_date;
+        }
+
+        if ($model->save()) {
+            if ($model->status == EventNames::STATUS_gestart){
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
+            }
+        } else {
+            // validation failed: $errors is an array containing error messages
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
+            }
+        }
+        
+        return $this->redirect(['organisatie/overview'], 200);
     }
 
     /**
@@ -222,21 +247,58 @@ class EventNamesController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionChangeDay($event_id)
+    public function actionChangeDay()
     {
-        $model=$this->findModel($event_id);
+        $model=$this->findModel(Yii::$app->user->identity->selected);
 
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-        if(null !== Yii::$app->request->post('EventNames')) {
-            $model->attributes=Yii::$app->request->post('EventNames');
-            if($model->save())
-                $this->redirect(array('startup/startupOverview','event_id'=>$model->event_ID));
+        if(null === Yii::$app->request->post('EventNames')) {
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            return $this->redirect(['organisatie/overview'], 404);
         }
 
-        $this->render('changeDay',array(
-            'model'=>$model,
-        ));
+        $model->load(Yii::$app->request->post());
+        $model->active_day = Yii::$app->setupdatetime->storeFormat(Yii::$app->request->post('EventNames')['active_day'], 'date');
+        if ($model->save()) {           // validation failed: $errors is an array containing error messages
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Don\'t forget to set the max time.'));
+        } else {
+            // validation failed: $errors is an array containing error messages
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
+            }
+        }
+
+        return $this->redirect(['organisatie/overview'], 200);
+    }
+
+    /**
+     * Updates a particular model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id the ID of the model to be updated
+     */
+    public function actionSetMaxTime()
+    {
+        $model=$this->findModel(Yii::$app->user->identity->selected);
+
+        if(null === Yii::$app->request->post('EventNames')) {
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            return $this->redirect(['organisatie/overview'], 404);
+        }
+
+        $model->load(Yii::$app->request->post());
+
+        if ($model->validate()) {
+            $model->save(FALSE);
+            if ($model->status == EventNames::STATUS_gestart){
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
+            }
+        } else {
+            // validation failed: $errors is an array containing error messages
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
+            }
+        }
+
+        return $this->redirect(['organisatie/overview'], 200);
     }
 
     public function actionSelectHike() {
