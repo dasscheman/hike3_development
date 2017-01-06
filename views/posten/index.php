@@ -31,9 +31,9 @@ $this->title = Yii::t('app', 'Posten');
         'post_volgorde',
         'score',
         [
-            'header' => Yii::t('app', '#passed'),
-            'value' => function($key){
-                return app\models\PostPassage::findOne($key)->countGroupsPassed();
+            'header' => Yii::t('app', '#groups passed'),
+            'value' => function($model, $key, $index, $column){
+                return Posten::findOne($key)->getPostPassagesCount();
             },
         ],
         [

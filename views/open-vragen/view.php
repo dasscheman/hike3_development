@@ -1,13 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-//use yii\widgets\DetailView;
-use kartik\detail\DetailView;
-use yii\widgets\ListView;
-use app\models\Qr;
-use yii\data\ActiveDataProvider;
-use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
+use yii\helpers\Html;
+use yii\widgets\ListView;
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 

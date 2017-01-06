@@ -1,45 +1,48 @@
 <?php
 
+use prawee\widgets\ButtonAjax;
+use yii\widgets\ListView;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblPostPassage */
 
-$this->title = $model->posten_passage_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Post Passages'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Groups passed') . ' ' . $model->post_name;
 ?>
 <div class="tbl-post-passage-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->posten_passage_ID], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->posten_passage_ID], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+       <p>
+        <?php
+        echo ButtonAjax::widget([
+            'name'=>Yii::t('app', 'Check group in station'),
+             'route'=>['post-passagae/create', ['post_id' => $model->post_ID]],
+             'modalId'=>'#main-modal',
+             'modalContent'=>'#main-content-modal',
+             'options'=>[
+                 'class'=>'btn btn-success',
+                 'title'=>'Button for create application',
+             ]
+         ]);
+        ?>
     </p>
+    <?php
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'posten_passage_ID',
-            'post_ID',
-            'event_ID',
-            'group_ID',
-            'gepasseerd',
-            'binnenkomst',
-            'vertrek',
-            'create_time',
-            'create_user_ID',
-            'update_time',
-            'update_user_ID',
-        ],
-    ]) ?>
+    $dataProvider = new yii\data\ArrayDataProvider([
+        'allModels' => $model->postPassages,
+    ]);
 
+    yii\widgets\Pjax::begin(['id' => 'post-passage-view', 'enablePushState' => TRUE]);
+
+    echo ListView::widget([
+        'summary' => FALSE,
+        'pager' => FALSE,
+        'dataProvider' => $dataProvider,
+        'itemView' => '/post-passage/_list',
+        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+    ]);
+
+    yii\widgets\Pjax::end();
+?>
 </div>

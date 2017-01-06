@@ -89,6 +89,12 @@ class Posten extends HikeActiveRecord
         return $this->hasMany(PostPassage::className(), ['post_ID' => 'post_ID']);
     }
 
+    public function getPostPassagesCount()
+    {
+        return $this->hasMany(PostPassage::className(), ['post_ID' => 'post_ID'])->count();
+    }
+
+
     /**
      * @return \yii\db\ActiveQuery
      */

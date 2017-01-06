@@ -1,7 +1,6 @@
 <?php
-use yii\helpers\Html;
 use prawee\widgets\ButtonAjax;
-use yii\bootstrap\Modal;
+use yii\helpers\Html;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
@@ -23,24 +22,6 @@ use yii\bootstrap\Modal;
                 'title' => 'Button for create application',
             ]
         ]); ?>
-
-
-        <?php
-//         echo ButtonAjax::widget([
-//            'name' => 'Delete',
-//            'route' => ['/open-vragen/delete'],
-//                'modalId' => '#main-modal',
-//                'modalContent' => '#main-content-modal',
-//            'options' => [
-//                'class' => 'btn btn-danger',
-//                'title' => Yii::t('app', 'Remove this question'),
-//                'data' => [
-//                    'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-//                    'method' => 'post',
-//
-//                ],
-//            ]
-//        ]); ?>
 
     </p>
 	<?php echo Html::encode($model->getAttributeLabel('open_vragen_name')); ?>

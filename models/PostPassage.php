@@ -83,7 +83,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
     }
 
     /**
@@ -91,7 +91,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getEvent()
     {
-        return $this->hasOne(TblEventNames::className(), ['event_ID' => 'event_ID']);
+        return $this->hasOne(EventNames::className(), ['event_ID' => 'event_ID']);
     }
 
     /**
@@ -99,7 +99,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getGroup()
     {
-        return $this->hasOne(TblGroups::className(), ['group_ID' => 'group_ID']);
+        return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID']);
     }
 
     /**
@@ -107,7 +107,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getPost()
     {
-        return $this->hasOne(TblPosten::className(), ['post_ID' => 'post_ID']);
+        return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID']);
     }
 
     /**
@@ -115,7 +115,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
 	/**
@@ -129,10 +129,9 @@ class PostPassage extends HikeActiveRecord
 			{
 				$this->gepasseerd = 1;
 			}
-			return true;
+			return TRUE;
 		}
-		else
-			return false;
+        return FALSE;
     }
 	
 	public function postPassageGroupDataProvider($event_id, $group_id)
