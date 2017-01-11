@@ -208,21 +208,22 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de group van een speler tijdens een bepaalde hike
      */
-    public function getGroupOfPlayer(	$event_Id,
-                                        $user_Id)
+    public function getGroupOfPlayer($event_id, $user_id)
     {
-        $data = DeelnemersEvent::findOne(
-            'event_ID = :event_Id AND user_ID=:user_Id',
-            array(':event_Id' => $event_Id, ':user_Id' => $user_Id));
+        $data = DeelnemersEvent::find()
+            ->where('event_ID = :event_Id AND user_ID=:user_Id')
+            ->params([':event_Id' => $event_id, ':user_Id' => $user_id])
+            ->one();
+
         if(!isset($data->rol))
         {
-            return;
+            return FALSE;
         }
 
-        if($data->rol<>DeelnemersEvent::ROL_deelnemer or
+        if($data->rol <> DeelnemersEvent::ROL_deelnemer ||
            !isset($data->group_ID))
         {
-            return;
+            return FALSE;
         }
 
         return $data->group_ID;

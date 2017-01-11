@@ -283,4 +283,45 @@ class Qr extends HikeActiveRecord
             $data->score : 0;
     }
 
+
+    /**
+     * Score ophalen voor een group.
+     */
+    public function isSilentStationCkeckedByGroup()
+    {
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id AND user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $data = QrCheck::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND qr_ID =:qr_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
+            ->exists();
+
+        return $data;
+    }
+
+    /**
+     * Score ophalen voor een group.
+     */
+    public function getSilentStationCkeckedByGroup()
+    {
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id AND user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $data = QrCheck::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND qr_ID =:qr_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
+            ->one();
+
+        return $data;
+    }
+
+
+
 }

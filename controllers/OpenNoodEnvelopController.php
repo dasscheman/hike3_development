@@ -3,12 +3,14 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblOpenNoodEnvelop;
-use app\models\TblOpenNoodEnvelopSearch;
+use app\models\OpenNoodEnvelop;
+use app\models\OpenNoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\DeelnemersEvent;
+use app\models\NoodEnvelop;
 
 /**
  * OpenNoodEnvelopController implements the CRUD actions for TblOpenNoodEnvelop model.
@@ -31,6 +33,11 @@ class OpenNoodEnvelopController extends Controller
                     array(
                         'allow' => FALSE,
                         'roles'=>array('?'),
+                    ),
+                    array(
+                        'allow' => TRUE,
+                        'actions'=>array('open', 'cancel-opening'),
+                        'roles'=>array('@'),
                     ),
                     array(	
                         'allow' => TRUE,
@@ -77,34 +84,68 @@ class OpenNoodEnvelopController extends Controller
     }
 
     /**
-     * Creates a new TblOpenNoodEnvelop model.
+     * Creates a new OpenNoodEnvelop model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $nood_envelop_id=$_GET['nood_envelop_id'];
-        $event_id=$_GET['event_id'];
-        $group_id=$_GET['group_id'];
-        $model = new OpenNoodEnvelop();
-        $noodEnvelop = NoodEnvelop::model()->find('nood_envelop_ID =:nood_envelop_Id',
-                        array(':nood_envelop_Id' => $nood_envelop_id));
-
-        $model->event_ID = $event_id;
-        $model->nood_envelop_ID = $nood_envelop_id;
-        $model->group_ID = $group_id;
-        $model->opened = 1;
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect([
-                '/game/groupOverview',
-                'event_id'=>$_GET['event_id'],
-                'group_id'=>$_GET['group_id']]);
-        } else {
-            return $this->render('create', [
+        $model = new OpenNoodEnvelop;
+        $modelEnvelop = NoodEnvelop::findOne($id);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
                 'model' => $model,
+                'modelEnvelop' => $modelEnvelop,
             ]);
         }
+        return $this->render('create', [
+             'model' => $model,
+             'modelEnvelop' => $modelEnvelop,
+        ]);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionOpen($id)
+    {
+        $model = new OpenNoodEnvelop;
+        $modelEvent = NoodEnvelop::findOne($id);
+
+        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+        $model->nood_envelop_ID = $id;
+        $model->opened = 1;
+
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $modelEvent,
+            ]);
+        }
+        return $this->redirect(['site/index']);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCancelOpening($id)
+    {
+        $modelEvent = NoodEnvelop::findOne($id);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $modelEvent,
+            ]);
+        }
+        return $this->redirect(['site/index']);
     }
 
     /**
@@ -148,7 +189,7 @@ class OpenNoodEnvelopController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = TblOpenNoodEnvelop::findOne($id)) !== null) {
+        if (($model = OpenNoodEnvelop::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

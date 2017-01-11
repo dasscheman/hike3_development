@@ -137,19 +137,17 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     /**
      * Score ophalen voor een group.
      */
-    public function getOpenVragenScore($event_id, $group_id)
+    public function getOpenVragenScore($group_id)
     {
-        $criteria = new CDbCriteria;
-        $criteria->condition= 
-            "group_ID = $group_id AND
-            event_ID = $event_id AND
-            checked  = 1 AND
-            correct  = 1";
-        $data = OpenVragenAntwoorden::findAll($criteria);
+        $data = OpenVragenAntwoorden::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND checked =:checked AND correct =:correct')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':checked' => TRUE, ':correct' => TRUE])
+            ->all();
+
         $score = 0;
-        foreach($data as $obj)
+    	foreach($data as $item)
         {
-            $score = $score + OpenVragen::getOpenVraagScore($obj->open_vragen_ID);
+            $score = $score + $item->openVragen->score;
         }
         return $score;
     }

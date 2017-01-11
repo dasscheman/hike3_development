@@ -12,6 +12,16 @@ use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$bordered = FALSE;
+$striped = TRUE;
+$condensed = TRUE;
+$responsive = FALSE;
+$hover = TRUE;
+$pageSummary = FALSE;
+$heading = FALSE;
+$exportConfig = TRUE;
+$responsiveWrap = FALSE;
+
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
 ?>
@@ -20,37 +30,27 @@ $this->title = Yii::t('app', 'Hike overzicht');
 <div class="organisatie-overview">
 
     <?php
-    $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
-    $form->field($eventModel, 'image')->widget(kartik\widgets\FileInput::classname(), [
-        'options' => ['multiple' => false, 'accept' => 'image/*', 'maxFileSize' => 10280,],
-        'pluginOptions' => [
-            'previewFileType' => 'image',
-            'showCaption' => false,
-            'showRemove' => true,
-            'showUpload' => true,
-            'browseClass' => 'btn btn-primary btn-block',
-            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-            'browseLabel' => Yii::t('app', 'Select Photo')
-        ]
-    ]);
-    ActiveForm::end();
 
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
+    
     $attributes = [
         [
             'group' => true,
-            'label' => $eventModel->event_name,
+            'label' => $groupModel->group_name,
             'rowOptions' => ['class' => 'info']
         ],
         [
             'columns' => [
                 [
-                    'attribute' => 'organisatie',
-                    'label' => 'Book #',
+                    'attribute' => 'group_members',
+//                    'label' => 'Book #',
                     'displayOnly' => true,
                     'valueColOptions' => ['style' => 'width:30%']
                 ],
                 [
-                    'attribute' => 'website',
+                    'attribute' => 'rank',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
                     'displayOnly' => true
@@ -60,11 +60,11 @@ $this->title = Yii::t('app', 'Hike overzicht');
         [
             'columns' => [
                 [
-                    'attribute' => 'start_date',
+                    'attribute' => 'time_walking',
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
                 [
-                    'attribute' => 'end_date',
+                    'attribute' => 'time_left',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
@@ -73,11 +73,12 @@ $this->title = Yii::t('app', 'Hike overzicht');
         [
             'columns' => [
                 [
-                    'attribute' => 'status',
+                    'attribute' => 'bonus_score',
+//                    'value' => $groupModel,
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
                 [
-                    'attribute' => 'active_day',
+                    'attribute' => 'post_score',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
@@ -86,50 +87,41 @@ $this->title = Yii::t('app', 'Hike overzicht');
         [
             'columns' => [
                 [
-                    'attribute' => 'max_time',
+                    'attribute' => 'qr_score',
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
                 [
-                    'attribute' => 'create_user_ID',
+                    'attribute' => 'vragen_score',
                     'format' => 'raw',
-                    'value' => Users::getUserName($eventModel->create_user_ID),
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'create_user_ID',
-                    'format' => 'raw',
-                    'value' => Users::getUserName($eventModel->rol),
                     'valueColOptions' => ['style' => 'width:30%'],
                 ],
             ],
         ],
         [
-            'attribute' => 'image',
-            'format' => 'raw',
-            'value' => Form::widget([       // 1 column layout
-                'model' => $eventModel,
-                'form' => $form,
-                'columns' => 1,
-                'attributes' => [
-                    'image' => [
-                        'type' => Form::INPUT_FILE,
-                    ]
-                ]
-            ]),
-            'options' => ['rows' => 4]
-        ]
+            'columns' => [
+                [
+                    'attribute' => 'hint_score',
+                    'valueColOptions' => ['style' => 'width:30%'],
+                ],
+                [
+                    'attribute' => 'total_score',
+                    'format' => 'raw',
+                    'valueColOptions' => ['style' => 'width:30%'],
+                ],
+            ],
+        ],
     ];
 
     // View file rendering the widget
     echo DetailView::widget([
-        'model' => $eventModel,
+        'model' => $groupModel,
         'attributes' => $attributes,
         'mode' => 'view',
-//        'bordered' => $bordered,
-//        'striped' => $striped,
-//        'condensed' => $condensed,
-//        'responsive' => $responsive,
-//        'hover' => $hover,
+        'bordered' => $bordered,
+        'striped' => $striped,
+        'condensed' => $condensed,
+        'responsive' => $responsive,
+        'hover' => $hover,
 //        'hAlign'=>$hAlign,
 //        'vAlign'=>$vAlign,
 //        'fadeDelay'=>$fadeDelay,
@@ -139,62 +131,8 @@ $this->title = Yii::t('app', 'Hike overzicht');
         'container' => ['id' => 'kv-demo'],
         'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
     ]);
-
-    Modal::begin(
-        [
-            'toggleButton' => [
-                'label' => Yii::t('app', 'Change settings hike'),
-                'class' => 'btn btn-success pull-right'
-            ],
-            'closeButton' => [
-                'label' => 'Close',
-                'class' => 'btn btn-danger btn-sm pull-right',
-            ],
-            'size' => Modal::SIZE_LARGE,
-        //'options' => ['class'=>'slide'],
-        ]
-    );
-    echo $this->render('/event-names/_form', ['model' => $eventModel]);
-    Modal::end();
-    ?>
-
-    <?php
-    Modal::begin(
-        [
-            'toggleButton' => [
-                'label' => Yii::t('app', 'Change status hike'),
-                'class' => 'btn btn-success pull-right'
-            ],
-            'closeButton' => [
-                'label' => 'Close',
-                'class' => 'btn btn-danger btn-sm pull-right',
-            ],
-            'size' => Modal::SIZE_LARGE,
-        //'options' => ['class'=>'slide'],
-        ]
-    );
-    echo $this->render('/event-names/_form', ['model' => $eventModel]);
-    Modal::end();
-    
-    echo ButtonAjax::widget([
-        'name'=>'Create',
-        'route'=>['groups/create'],
-        'modalId'=>'#main-modal',
-        'modalContent'=>'#group-content-modal',
-        'options'=>[
-            'class'=>'btn btn-success',
-            'title'=>'Button for create application',
-        ]
-    ]);
-
-    Modal::begin(['id'=>'main-modal']);
-    echo '<div id="group-content-modal"></div>';
-    Modal::end();
-
-    
-    
-     
-    ?>
+ 
+?>
 
 
 
@@ -206,20 +144,14 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
     <?php
 
-    Modal::begin(['id'=>'main-modal']);
-    echo '<div id="main-content-modal"></div>';
-    Modal::end();
+//    Modal::begin(['id'=>'main-modal']);
+//    echo '<div id="main-content-modal"></div>';
+//    Modal::end();
 
     $count=0;
     $gridColumns = [
         'route_name',
         'route_volgorde',
-        [
-            'header' => Yii::t('app', '#Questions'),
-            'value' => function($key){
-                return Route::findOne($key)->getOpenVragenCount();
-            },
-        ],
         [
             'header' => Yii::t('app', 'View Questions'),
             'class'=>'kartik\grid\ExpandRowColumn',
@@ -236,9 +168,9 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'collapseTitle' => Yii::t('app', 'Close view questions'),
         ],
         [
-            'header' => Yii::t('app', '#Hints'),
-            'value' => function($key){
-                return Route::findOne($key)->getNoodEnvelopCount();
+            'header' => Yii::t('app', '#Questions'),
+            'value' => function($model, $key){
+                return Route::findOne($key)->getOpenVragenCount();
             },
         ],
         [
@@ -257,9 +189,9 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
         [
-            'header' => Yii::t('app', '#Silent posts'),
-            'value' => function($key){
-                return Route::findOne($key)->getQrCount();
+            'header' => Yii::t('app', '#Hints'),
+            'value' => function($model, $key){
+                return Route::findOne($key)->getNoodEnvelopCount();
             },
         ],
         [
@@ -277,21 +209,23 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
+
+        // Aantal stille posten moet verborgen blijven. Misschien moet er komen
+        // te staan hoeveel er gevonden zijn. Voor nu helemaal weg laten om onduidelijkheden te voorkomen.
+//        [
+//
+//            'header' => Yii::t('app', '#Silent posts'),
+//            'value' => function($model, $key){
+//                return Route::findOne($key)->getQrCount();
+//            },
+//        ],
     ];
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
 
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
-            'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => '0000-00-00']]),
+            'dataProvider'=>$searchRouteModel->search(['RouteSearch' => ['day_date' => '0000-00-00']]),
             'columns'=>$gridColumns,
             'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
             'headerRowOptions'=>['class'=>'kartik-sheet-style'],
@@ -299,19 +233,6 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'pjax'=>true, // pjax is set to always true for this demo
             // set your toolbar
             'toolbar'=> [
-                ['content'=>
-                    ButtonAjax::widget([
-                        'name'=>'Create',
-                        'route'=>['route/create', 'date' => '0000-00-00'],
-                        'modalId'=>'#main-modal',
-                        'modalContent'=>'#main-content-modal',
-                        'options'=>[
-                            'class'=>'btn btn-success',
-                            'title'=>'Button for create application',
-                        ]
-                    ]),
-                ],
-                '{export}',
                 '{toggleData}',
             ],
             // set export properties
@@ -323,6 +244,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'striped'=>$striped,
             'condensed'=>$condensed,
             'responsive'=>$responsive,
+            'responsiveWrap' => $responsiveWrap,
             'hover'=>$hover,
             'showPageSummary'=>$pageSummary,
             'panel'=>[
@@ -340,7 +262,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
 		    'label' =>$startDate,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
-                'dataProvider'=>$searchModel->search(['RouteSearch' => ['day_date' => $startDate]]),
+                'dataProvider'=>$searchRouteModel->search(['RouteSearch' => ['day_date' => $startDate]]),
                 'columns'=>$gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],
@@ -348,19 +270,6 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 'pjax'=>true, // pjax is set to always true for this demo
                 // set your toolbar
                 'toolbar'=> [
-                    ['content'=>
-                        ButtonAjax::widget([
-                            'name'=>'Create',
-                            'route'=>['route/create', 'date' => $startDate],
-                            'modalId'=>'#main-modal',
-                            'modalContent'=>'#main-content-modal',
-                            'options'=>[
-                                'class'=>'btn btn-success',
-                                'title'=>'Button for create application',
-                            ]
-                        ]),
-                    ],
-                    '{export}',
                     '{toggleData}',
                 ],
                 // set export properties
@@ -372,6 +281,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 'striped'=>$striped,
                 'condensed'=>$condensed,
                 'responsive'=>$responsive,
+                'responsiveWrap' => $responsiveWrap,
                 'hover'=>$hover,
                 'showPageSummary'=>$pageSummary,
                 'panel'=>[

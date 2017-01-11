@@ -12,7 +12,7 @@ use yii\filters\AccessControl;
 use app\models\EventNames;
 use app\models\RouteSearch;
 use app\models\OpenVragenAntwoorden;
-
+use app\models\Route;
 /**
  * OpenVragenController implements the CRUD actions for TblOpenVragen model.
  */
@@ -91,28 +91,27 @@ class OpenVragenController extends Controller
     public function actionCreate()
     {
         $model = new OpenVragen();
-        if ($model->load(Yii::$app->request->post())) {
-			$model->event_ID = Yii::$app->user->identity->selected;
-			$model->route_ID = Yii::$app->request->get(1)['route_id'];
-			$model->vraag_volgorde = OpenVragen::getNewOrderForVragen($model->route_ID);
-
-			if($model->save()) {
-
-                $event_Id = Yii::$app->user->identity->selected;
-                $startDate = EventNames::getStartDate($event_Id);
-                $endDate = EventNames::getEndDate($event_Id);
-
-                $searchModel = new RouteSearch();
-
-                return $this->render('/route/index', [
-                    'searchModel' => $searchModel,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate
-                ]);
-            }
-        } else {
+        if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('create', [
                 'model' => $model,
+            ]);
+        }
+        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->route_ID = Yii::$app->request->get(1)['route_id'];
+        $model->vraag_volgorde = OpenVragen::getNewOrderForVragen($model->route_ID);
+
+        if($model->save()) {
+
+            $event_Id = Yii::$app->user->identity->selected;
+            $startDate = EventNames::getStartDate($event_Id);
+            $endDate = EventNames::getEndDate($event_Id);
+
+            $searchModel = new RouteSearch();
+
+            return $this->render('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
             ]);
         }
     }
@@ -134,13 +133,13 @@ class OpenVragenController extends Controller
 
         if (Yii::$app->request->post('submit') == 'delete') {
             $exist = OpenVragenAntwoorden::find()
-           ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
-           ->addParams(
-               [
-                   ':event_id' => Yii::$app->user->identity->selected,
-                   ':open_vragen_id' => $model->open_vragen_ID
-               ])
-           ->exists();
+                ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':open_vragen_id' => $model->open_vragen_ID
+                    ])
+                ->exists();
 
             if (!$exist) {
                 $model->delete();

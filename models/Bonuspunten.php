@@ -131,16 +131,19 @@ class Bonuspunten extends HikeActiveRecord
 	/**
 	 * Returns de totale score die een groep heeft gehaald met bnuspunten. 
 	 */	
-	public function getBonuspuntenScore($event_id, $group_id)
+	public function getBonuspuntenScore($group_id)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->select='SUM(score) as score';
-		$criteria->condition="event_ID = $event_id AND
-				      group_ID = $group_id";
-		$data = Bonuspunten::model()->find($criteria);
+        $data = Bonuspunten::find()
+            ->select('SUM(score) as score')
+            ->where('event_ID =:event_id AND group_ID =:group_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id])
+            ->one();
+
 	    if(isset($data->score))
-			{return (int) $data->score;}
-		else
-			{return 0;}	
+        {
+            return (int) $data->score;
+        } else {
+            return 0;
+        }
 	}
 }

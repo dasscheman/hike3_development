@@ -1,21 +1,15 @@
 <?php
 
 use yii\helpers\Html;
-//use yii\widgets\DetailView;
-use kartik\detail\DetailView;
 use yii\widgets\ListView;
-use app\models\Qr;
-use yii\data\ActiveDataProvider;
-use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = Yii::t('app', 'Hints for') . ' ' . $model->route_name;
 ?>
 <div class="tbl-nood-envelop-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Hints for') . ' ' . $model->route_name) ?></h1>
 
     <p>
         <?php

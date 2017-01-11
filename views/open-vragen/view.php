@@ -7,11 +7,10 @@ use yii\widgets\ListView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
 ?>
 <div class="tbl-open-vragen-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Questions for') . ' ' . $model->route_name) ?></h1>
 
     <p>
         <?php
@@ -33,8 +32,6 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         'allModels' => $model->openVragens,
     ]);
 
-    yii\widgets\Pjax::begin(['id' => 'route-vragen-view', 'enablePushState' => TRUE]);
-
     echo ListView::widget([
         'summary' => FALSE,
         'pager' => FALSE,
@@ -43,6 +40,5 @@ $this->title = Yii::t('app', 'Questions') . ' ' . $model->route_name;
         'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
     ]);
 
-    yii\widgets\Pjax::end();
 ?>
 </div>

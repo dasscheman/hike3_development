@@ -33,7 +33,7 @@ class Groups extends HikeActiveRecord
 	public $qr_score;
 	public $vragen_score;
 	public $hint_score;
-	public $totaal_score;
+	public $total_score;
 	public $rank;
 	public $time_walking;
 	public $time_left;
@@ -190,6 +190,7 @@ class Groups extends HikeActiveRecord
 	*/
 	public function getGroupName($group_Id)
 	{
+        dd('NOG NODIG ?');
 	    $data = Groups::find('group_ID =:group_Id', array(':group_Id' => $group_Id));
 	   
 	    return isset($data->group_name) ?
@@ -197,55 +198,63 @@ class Groups extends HikeActiveRecord
 	}
 
 	/**
-	 * Returns total score van een group.
-	 * TODO: deze functie moet naar een generieke plek.
+	 * set scores van een group.
 	 */
-	public function getTotalScoreGroup(	$event_id,
-										$group_id)
+
+    public function setScores()
 	{
-		$post_score = PostPassage::getPostScore($event_id, $group_id);
-		$qr_score = QrCheck::getQrScore($event_id, $group_id);
-		$vragen_score = OpenVragenAntwoorden::getOpenVragenScore($event_id, $group_id); 
-		$bonus_score = Bonuspunten::getBonuspuntenScore($event_id, $group_id);
-		$OpenEnvelopStrafpunten = OpenNoodEnvelop::getOpenEnvelopScore($event_id, $group_id);
+		$this->post_score = PostPassage::getPostScore($this->group_ID);
+		$this->qr_score = QrCheck::getQrScore($this->group_ID);
+		$this->vragen_score = OpenVragenAntwoorden::getOpenVragenScore($this->group_ID);
+		$this->bonus_score = Bonuspunten::getBonuspuntenScore($this->group_ID);
+		$this->hint_score = OpenNoodEnvelop::getOpenEnvelopScore($this->group_ID);
 
-		$total_score = 	$post_score + $qr_score + $vragen_score + $bonus_score - $OpenEnvelopStrafpunten;
+		$this->total_score = $this->post_score + $this->qr_score + $this->vragen_score + $this->bonus_score - $this->hint_score;
+	}
 
-		if(isset($total_score))	{
-			return($total_score);
-		} else {
-			return(0);
-		}	
+    /**
+	 * set scores van een group.
+	 */
+
+    public function setTimes()
+	{
+//        $group_members;
+
+		$this->time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
+		$this->time_left = PostPassage::getTimeLeftToday($this->group_ID);
+//		$this->last_post_time = PostPassage::getTimeLastPostPassage($this->group_ID);
 	}
 		
-	public function getRankGroup($event_id,
-								 $group_id)
+	public function setRank()
 	{
 		$counter = 0;
 		$temp_score = 0;
 		
-		$data = Groups::findAll('event_ID =:event_ID',
-										 array(':event_ID' => $event_id));
-	
-		foreach($data as $obj)
+		$data = Groups::find()
+            ->where('event_ID =:event_ID')
+            ->params([':event_ID' => Yii::$app->user->identity->selected])
+            ->all();
+
+		foreach($data as $item)
 		{
-			$groupsArray[$obj->group_ID] = Groups::getTotalScoreGroup(
-				$event_id,
-				$obj->group_ID);
+            $item->setScores();
+			$groupsArray[$item->group_ID] = $item->total_score;
 		}
 		
 		arsort($groupsArray);
 		foreach($groupsArray as $key=>$key_value)
 		{			
-			if($key == $group_id)
+			if($key == $this->group_ID)
 			{
 				if($temp_score == $key_value)
 				{
-					return($counter);
+                    $this->rank = $counter;
+                    return;
 				}
 				$temp_score = $key_value;
 				$counter++;
-				return($counter);
+                $this->rank = $counter;
+                return;
 			}
 			if($temp_score != $key_value)
 			{
@@ -254,6 +263,18 @@ class Groups extends HikeActiveRecord
 			$temp_score = $key_value;
 		}
 	}
+
+    public function setGroupMembers(){
+        foreach ($this->deelnemersEvents as $item) {
+            if (!isset($this->group_members)) {
+                $this->group_members =  $item->user->username;
+            } else {
+                $this->group_members .=  ', ' . $item->user->username;
+            }
+        }
+    }
+
+
 
     public function addMembersToGroup($group, $members = []) 
     {

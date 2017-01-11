@@ -95,9 +95,6 @@ class GroupsController extends Controller
      */
     public function actionCreate()
     {
-
-
-
         $model = new Groups();
 
         if (!$model->load(Yii::$app->request->post())) {
@@ -106,12 +103,15 @@ class GroupsController extends Controller
             ]);
         }
 
-        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
-        }
-
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+        }
+
+        // Group should be saved first to get a group_ID.
+        // It is not a problem when group is saved and the save of the group members fail.
+        // Because it is very easy to at them
+        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
         }
         return $this->redirect(['organisatie/overview']);
     }

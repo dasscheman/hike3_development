@@ -3,15 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblOpenVragenAntwoorden;
-use app\models\TblOpenVragenAntwoordenSearch;
+use app\models\OpenVragen;
+use app\models\OpenVragenAntwoorden;
+use app\models\OpenVragenAntwoordenSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * OpenVragenAntwoordenController implements the CRUD actions for TblOpenVragenAntwoorden model.
+ * OpenVragenAntwoordenController implements the CRUD actions for OpenVragenAntwoorden model.
  */
 class OpenVragenAntwoordenController extends Controller
 {
@@ -26,12 +27,17 @@ class OpenVragenAntwoordenController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
+                'only' => ['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout', 'beantwoorden', 'cancel-beantwoording'],
                 'rules' => [ 
                     [
                         'allow' => FALSE,
                         'roles'=>['?'],
                     ],
+                    array(
+                        'allow' => TRUE,
+                        'actions'=>array('beantwoorden', 'cancel-beantwoording'),
+                        'roles'=>array('@'),
+                    ),
                     [	
                         'allow' => TRUE,
                         'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
@@ -39,8 +45,8 @@ class OpenVragenAntwoordenController extends Controller
                             return Yii::$app->user->identity->isActionAllowed();
                         }
                     ],
-                    [   
-                        'deny',  // deny all users
+                    [
+                        'allow' => FALSE,  // deny all users
                         'roles'=>['*'],
                     ],
                 ],
@@ -64,7 +70,7 @@ class OpenVragenAntwoordenController extends Controller
     }    
     
     /**
-     * Displays a single TblOpenVragenAntwoorden model.
+     * Displays a single OpenVragenAntwoorden model.
      * @param integer $id
      * @return mixed
      */
@@ -76,25 +82,68 @@ class OpenVragenAntwoordenController extends Controller
     }
     
     /**
-     * Creates a new TblOpenVragenAntwoorden model.
+     * Creates a new OpenNoodEnvelop model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $model = new OpenVragenAntwoorden();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(
-                [
-                    '/game/groupOverview',
-                    'event_id'=>$_GET['event_id'],
-                    'group_id'=>$_GET['group_id']]);
-        } else {
-            return $this->render('create', [
+        $model = new OpenVragenAntwoorden;
+        $modelVraag = OpenVragen::findOne($id);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
                 'model' => $model,
+                'modelVraag' => $modelVraag,
             ]);
         }
+        return $this->render('create', [
+             'model' => $model,
+             'modelVraag' => $modelVraag,
+        ]);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionBeantwoorden($id)
+    {
+        $model = new OpenNoodEnvelop;
+        $modelEvent = NoodEnvelop::findOne($id);
+
+        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+        $model->nood_envelop_ID = $id;
+        $model->opened = 1;
+
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $modelEvent,
+            ]);
+        }
+        return $this->redirect(['site/index']);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCancelBeantwoording($id)
+    {
+        $modelEvent = OpenVragen::findOne($id);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $modelEvent,
+            ]);
+        }
+        return $this->redirect(['site/index']);
     }
 
     /**

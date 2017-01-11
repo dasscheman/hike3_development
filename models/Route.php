@@ -121,7 +121,6 @@ class Route extends HikeActiveRecord
         return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])->count();
     }
 
-
     /**
      * @return \yii\db\ActiveQuery
      */

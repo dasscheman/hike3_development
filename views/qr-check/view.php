@@ -12,28 +12,23 @@ use yii\data\ArrayDataProvider;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = 'Qr\'s for' . ' ' . $model->route_name;
 ?>
 <div class="tbl-qr-view" <?php $model->route_ID ?>>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Silent stations for') . ' ' . $model->route_name) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create new qr'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>
-    </p>
     <?php
+        // EXAMPLE
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $model->qrs,
+        ]);
 
-    // EXAMPLE
-    $dataProvider = new yii\data\ArrayDataProvider([
-        'allModels' => $model->qrs,
-    ]);
-
-    echo ListView::widget([
-        'summary' => FALSE,
-        'pager' => FALSE,
-        'dataProvider' => $dataProvider,
-        'itemView' => '/qr/_list',
-        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
-    ]);
-?>
+        echo ListView::widget([
+            'summary' => FALSE,
+            'pager' => FALSE,
+            'dataProvider' => $dataProvider,
+            'itemView' => '/qr-check/_list',
+            'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+        ]);
+    ?>
 </div>

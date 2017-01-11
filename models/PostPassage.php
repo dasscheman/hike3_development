@@ -27,6 +27,9 @@ use Yii;
  */
 class PostPassage extends HikeActiveRecord
 {
+    const STATUS_not_passed = 0;
+    const STATUS_passed = 1;
+
   	public $group_name;
 	public $post_name;
 	public $date;
@@ -133,7 +136,18 @@ class PostPassage extends HikeActiveRecord
 		}
         return FALSE;
     }
-	
+
+    /**
+     * Retrieves a list of statussen
+     * @return array an array of available statussen.
+     */
+    public function getStatusOptions() {
+        return [
+            self::STATUS_not_passed => Yii::t('app', 'Not passed'),
+            self::STATUS_passed => Yii::t('app', 'Passed'),
+        ];
+    }
+
 	public function postPassageGroupDataProvider($event_id, $group_id)
 	{
 	    $where = "event_ID = $event_id AND group_ID = $group_id";
@@ -223,18 +237,17 @@ class PostPassage extends HikeActiveRecord
 	/**
 	 * Returns de score voor het passeren van de posten voor een groep
 	 */
-	public function getPostScore($event_id, $group_id)
+	public function getPostScore($group_id)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="event_ID = $event_id AND
-				      group_ID = $group_id AND
-				      gepasseerd = 1";
-		$data = PostPassage::findAll($criteria);
+        $data = PostPassage::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND gepasseerd =:status')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':status' => self::STATUS_passed])
+            ->all();
 
         $score = 0;
-    	foreach($data as $obj)
+    	foreach($data as $item)
         {
-            $score = $score + Posten::getPostScore($obj->post_ID);
+            $score = $score + $item->post->score;
         }
         return $score;
 	}
@@ -247,25 +260,55 @@ class PostPassage extends HikeActiveRecord
 		return false;
 	}
 
-	public function walkingTimeToday($event_id, $group_id)
+	public function getTimeLeftToday($group_id)
 	{
-		$criteriaEvent = new CDbCriteria;
-		$criteriaEvent->condition = 'event_ID = :event_id';
-		$criteriaEvent->params = array(':event_id'=>$event_id);
-		$dataEvent = EventNames::find($criteriaEvent);
-	
-		$criteriaPostenPassages = new CDbCriteria;
-		$criteriaPostenPassages->with = array('post');
+		$dataEvent = EventNames::find()
+            ->where('event_ID = :event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->one();
 
-		$criteriaPostenPassages->condition = 'group_ID =:group_id AND
-											  post.event_ID =:event_id AND
-											  post.date =:active_date';
-		$criteriaPostenPassages->order = 'binnenkomst ASC';
-		$criteriaPostenPassages->params = array(':group_id'=>$group_id,
-												':event_id'=>$event_id,
-												':active_date'=>$dataEvent->active_day);
-		$dataPostPassages = PostPassage::findAll($criteriaPostenPassages);	
-		$aantalPosten = PostPassage::count($criteriaPostenPassages);	
+		$totalTime = PostPassage::getWalkingTimeToday($group_id);
+		if ((strtotime("1970-01-01 $dataEvent->max_time UTC") - $totalTime) < 0 ) {
+			return 0;
+		}
+		return strtotime("1970-01-01 $dataEvent->max_time UTC") - $totalTime;
+
+
+		return $this->convertToHoursMinute($this->timeLeftToday($event_id, $group_id));
+	}
+
+//	public function convertToHoursMinute($timestamp)
+//	{
+//		$time = sprintf('%02d',floor($timestamp / 60 / 60))  . ':' . sprintf('%02d',($timestamp / 60) %60);
+//		return $time;
+//	}
+
+	public function getWalkingTimeToday($group_id)
+	{
+        $dataEvent = EventNames::find()
+            ->where('event_ID = :event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->one();
+
+        if ($dataEvent->active_day === NULL || $dataEvent->active_day === '0000-00-00') {
+            //return (bool)strtotime($myDateString);
+			return Yii::t('app', 'No day selected');
+		}
+
+        $queryPosten = Posten::find()
+            ->select('post_ID')
+            ->where('event_ID =:event_id AND date =:active_date')
+            ->Params([':event_id' => Yii::$app->user->identity->selected, ':active_date' => $dataEvent->active_day]);
+
+
+        $queryPassage = PostenPassage::find()
+            ->where(['in', 'posten_ID', $queryPosten])
+            ->andwhere('group_ID =:group_id')
+            ->Params([':group_id' => $group_id])
+            ->orderBy('binnenkomst ASC');
+
+        $postPassagesData = $queryPassage->all();
+		$aantalPosten = $queryPassage->count();
 
 		$totalTime = 0;
 		$timeLastStint = 0;
@@ -273,18 +316,18 @@ class PostPassage extends HikeActiveRecord
 		$atPost = false;
 		$count = 1;
 
-		foreach($dataPostPassages as $obj)
+		foreach($postPassagesData as $obj)
 		{
 			if ($aantalPosten == 1 && (strtotime($obj->vertrek))) {
-				// Als $aantalPosten 1 is dan is het de start post en moeten 
+				// Als $aantalPosten 1 is dan is het de start post en moeten
 				// we alleen naar de vertrektijd gebruiken.
 				// De deelnemers zijn niet op een post, dus ze zijn nog aan het lopen.
-				// Daarom moet de huidige tijd min de laatste vertrektijd van elkaar 
+				// Daarom moet de huidige tijd min de laatste vertrektijd van elkaar
 				// afgetrokken worden en opgeteld worden bij totaltime.
-				$timeLastStint = strtotime(date('Y-m-d H:i:s')) - strtotime($obj->vertrek);		
+				$timeLastStint = strtotime(date('Y-m-d H:i:s')) - strtotime($obj->vertrek);
 				$totalTime = $totalTime + $timeLastStint;
 			}
-			
+
 			if ($count > 1) {
 				$to_time = strtotime($obj->binnenkomst);
 				$from_time = strtotime($timeLeftLastPost);
@@ -295,9 +338,9 @@ class PostPassage extends HikeActiveRecord
 
 					// Hier wordt de laatste post gecontroleerd.
 					// De deelnemers zijn niet op een post, dus ze zijn nog aan het lopen.
-					// Daarom moet de huidige tijd min de laatste vertrektijd van elkaar 
+					// Daarom moet de huidige tijd min de laatste vertrektijd van elkaar
 					// afgetrokken worden en opgeteld worden bij totaltime.
-					$timeLastStint = strtotime(date('Y-m-d H:i:s')) - strtotime($obj->vertrek);		
+					$timeLastStint = strtotime(date('Y-m-d H:i:s')) - strtotime($obj->vertrek);
 					$totalTime = $totalTime + $timeLastStint;
 				}
 			}
@@ -306,77 +349,19 @@ class PostPassage extends HikeActiveRecord
 			$count++;
         }
 		return $totalTime;
-	}
-
-	public function timeLeftToday($event_id, $group_id)
-	{
-		$criteriaEvent = new CDbCriteria;
-		$criteriaEvent->condition = 'event_ID = :event_id';
-		$criteriaEvent->params = array(':event_id'=>$event_id);
-		$dataEvent = EventNames::find($criteriaEvent);
-
-		$totalTime = PostPassage::walkingTimeToday($event_id, $group_id);
-		if ((strtotime("1970-01-01 $dataEvent->max_time UTC") - $totalTime) < 0 ) {
-			return 0;
-		}
-		return strtotime("1970-01-01 $dataEvent->max_time UTC") - $totalTime;
-	}
-
-	public function convertToHoursMinute($timestamp)
-	{
-		$time = sprintf('%02d',floor($timestamp / 60 / 60))  . ':' . sprintf('%02d',($timestamp / 60) %60);
-		return $time;
-	}
-
-	public function displayWalkingTime($event_id, $group_id)
-	{
-		$criteriaEvent = new CDbCriteria;
-		$criteriaEvent->condition = 'event_ID = :event_id';
-		$criteriaEvent->params = array(':event_id'=>$event_id);
-		$dataEvent = EventNames::find($criteriaEvent);
-		
-		$criteriaPostenPassages = new CDbCriteria;
-		$criteriaPostenPassages->with = array('post');
-
-		$criteriaPostenPassages->condition = 'group_ID =:group_id AND
-											  post.event_ID =:event_id AND
-											  post.date =:active_date';
-
-		if ($dataEvent->active_day == null || $dataEvent->active_day == '0000-00-00') {
-			return 'Geen dag geactiveerd';
-		}	
-		$criteriaPostenPassages->order = 'binnenkomst ASC';
-		$criteriaPostenPassages->params = array(':group_id'=>$group_id,
-												':event_id'=>$event_id,
-												':active_date'=>$dataEvent->active_day);
-		$aantalPosten = PostPassage::count($criteriaPostenPassages);	
-
-		if ($aantalPosten == 0){
-			return 'nog niet gestart';
-		}
-
-		if ($this->timeLeftToday($event_id, $group_id) == 0){
-			return $this->convertToHoursMinute(strtotime("1970-01-01 $dataEvent->max_time UTC"));
-		}		
-
-		return $this->convertToHoursMinute($this->walkingTimeToday($event_id, $group_id));
-	}
-
-	public function displayTimeLeft($event_id, $group_id)
-	{
-		$criteriaEvent = new CDbCriteria;
-		$criteriaEvent->condition = 'event_ID = :event_id';
-		$criteriaEvent->params = array(':event_id'=>$event_id);
-		$dataEvent = EventNames::find($criteriaEvent);
-		if ($dataEvent->max_time == null || $dataEvent->max_time == '00:00:00') {
-			return 'Er is geen maximum tijd voor vandaag';
-		}
-		return $this->convertToHoursMinute($this->timeLeftToday($event_id, $group_id));
+//		if ($this->timeLeftToday($event_id, $group_id) == 0){
+//			return $this->convertToHoursMinute(strtotime("1970-01-01 $dataEvent->max_time UTC"));
+//		}
+//
+//		return $this->convertToHoursMinute($this->walkingTimeToday($event_id, $group_id));
 	}
 
 	public function isFirstPostOfDayForGroup($event_id, $group_id)
 	{
-		$date = EventNames::model()->getActiveDayOfHike($event_id);
+        $dataEvent = EventNames::find()
+            ->where('event_ID = :event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->one();
 
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'event_ID =:event_id AND date =:date';

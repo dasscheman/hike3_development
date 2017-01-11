@@ -280,7 +280,7 @@ class EventNames extends HikeActiveRecord {
      */
     public function getEventName($event_id) {
         $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->where('event_ID =:event_Id', [':event_Id' => $event_id])
             ->one();
 
         if (isset($data->event_name)) {

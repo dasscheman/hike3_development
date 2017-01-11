@@ -149,6 +149,43 @@ class OpenVragen extends HikeActiveRecord
 
 	 }
 
+    /**
+     * Score ophalen voor een group.
+     */
+    public function isQuestionAwnseredByGroup()
+    {
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id AND user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $data = OpenVragenAntwoorden::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND open_vragen_ID =:vraag_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
+            ->exists();
+
+        return $data;
+    }
+
+    /**
+     * Score ophalen voor een group.
+     */
+    public function getAwnserByGroup()
+    {
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id AND user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $data = OpenVragenAntwoorden::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND open_vragen_ID =:vraag_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
+            ->one();
+
+        return $data;
+    }
 
 	/**
 	 * Returns lijst met beschikbare vragenen.

@@ -25,6 +25,9 @@ use Yii;
  */
 class OpenNoodEnvelop extends HikeActiveRecord
 {
+    const STATUS_closed = 0;
+    const STATUS_open = 1;
+
     public $nood_envelop_name;
 	public $day_date;
 	public $group_name;
@@ -80,7 +83,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
     }
 
     /**
@@ -88,7 +91,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function getNoodEnvelop()
     {
-        return $this->hasOne(TblNoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
+        return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
     }
 
     /**
@@ -96,7 +99,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
     /**
@@ -104,7 +107,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function getEvent()
     {
-        return $this->hasOne(TblEventNames::className(), ['event_ID' => 'event_ID']);
+        return $this->hasOne(EventNames::className(), ['event_ID' => 'event_ID']);
     }
 
     /**
@@ -112,8 +115,20 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function getGroup()
     {
-        return $this->hasOne(TblGroups::className(), ['group_ID' => 'group_ID']);
+        return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID']);
     }
+
+    /**
+     * Retrieves a list of statussen
+     * @return array an array of available statussen.
+     */
+    public function getStatusOptions() {
+        return [
+            self::STATUS_closed => Yii::t('app', 'Closed'),
+            self::STATUS_open => Yii::t('app', 'Opened'),
+        ];
+    }
+
 
 	public function envelopIsOpenedByAnyGroup($nood_envelop_id,
 					     $event_id)
@@ -145,19 +160,17 @@ class OpenNoodEnvelop extends HikeActiveRecord
 			{return(false);}
 	}
 
-	public function getOpenEnvelopScore($event_id,
-					    $group_id)
+	public function getOpenEnvelopScore($group_id)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="event_ID = $event_id AND
-				      group_ID = $group_id AND
-				      opened = 1";
-		$data = OpenNoodEnvelop::findAll($criteria);
+		$data = OpenNoodEnvelop::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id AND opened =:status')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':status' => self::STATUS_open])
+            ->all();
 
         $score = 0;
-    	foreach($data as $obj)
+    	foreach($data as $item)
         {
-            $score = $score + NoodEnvelop::getNoodEnvelopScore($obj->nood_envelop_ID);
+            $score = $score + $item->noodEnvelop->score;
         }
         return $score;
 	}

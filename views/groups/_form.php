@@ -17,8 +17,6 @@ use app\models\FriendList;
 
     <?= $form->field($model, 'group_name')->textInput(['maxlength' => true]);
 
-//        d(FriendList::getFriendsForEvent());
-//        dd($model->users_temp);
     echo $form->field($model, 'users_temp')->widget(Select2::classname(), [
         'value' => $model->users_temp,
         'id' => $model->group_ID,
@@ -28,15 +26,9 @@ use app\models\FriendList;
             'id' => $model->group_ID,
             'class' => "form-control",
             'multiple' => TRUE,
-//        'initValueText' => $model->users_temp,
-//        'value' => $model->users_temp,
         ],
         'pluginOptions' => [
               'tags' => true,
-//        'initSelection' => function (){
-//        return $model->users_temp;},
-//        'value' => $model->users_temp,
-//            S'allowClear' => true
         ]
     ]);
     ?>

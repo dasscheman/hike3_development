@@ -35,7 +35,7 @@ use yii\bootstrap\Modal;
                 'class'=>'btn btn-danger',
                 'title'=>Yii::t('app', 'Remove this hint'),
 //                'data' => [
-//                    'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+//                    'confirm' => Yii::t('app', 'Are you sure you want to delete this Hint?'),
 //                    'method' => 'post',
 //
 //                ],

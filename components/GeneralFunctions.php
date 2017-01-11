@@ -121,4 +121,13 @@ class GeneralFunctions
 		$chars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";
 		return substr(str_shuffle($chars),0,$length);
 	}
+
+
+    public function printGlyphiconCheck($check){
+        if($check) {
+            return '<span class="glyphicon glyphicon-ok"></span>';
+        } else {
+            return '<span class="glyphicon glyphicon-remove"></span>';
+        }
+    }
 }

@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-open-vragen-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['open-vragen/create'] : ['open-vragen/update', 'id' => $model->route_ID]]); ?>
+        'action' => $model->isNewRecord ? ['open-vragen/create'] : ['open-vragen/update', 'id' => $model->open_vragen_ID]]); ?>
 
     <?= $form->field($model, 'open_vragen_name')->textInput(['maxlength' => true]) ?>
 

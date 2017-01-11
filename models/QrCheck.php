@@ -139,17 +139,17 @@ class QrCheck extends HikeActiveRecord
 	/**
 	 * Returns de score voor het checken van de stillen posten voor een groep
 	 */
-	public function getQrScore($event_id, $group_id)
+	public function getQrScore($group_id)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="event_ID = $event_id AND
-				      group_ID = $group_id";
-		$data = QrCheck::findAll($criteria);
+        $data = QrCheck::find()
+            ->where('event_ID =:event_id AND group_ID =:group_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id])
+            ->all();
 
         $score = 0;
-    	foreach($data as $obj)
+    	foreach($data as $item)
         {
-            $score = $score + Qr::getQrScore($obj->qr_ID);
+            $score = $score + $item->qr->score;
         }
         return $score;
 	}

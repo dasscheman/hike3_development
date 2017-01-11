@@ -12,11 +12,10 @@ use yii\data\ArrayDataProvider;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
-$this->title = 'Qr\'s for' . ' ' . $model->route_name;
 ?>
 <div class="tbl-qr-view" <?php $model->route_ID ?>>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Silent stations for') . ' ' . $model->route_name) ?></h1>
 
     <p>
         <?= Html::a(Yii::t('app', 'Create new qr'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>

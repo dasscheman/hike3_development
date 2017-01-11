@@ -75,15 +75,6 @@ AppAsset::register($this);
                         'url' => ['/event-names/select-hike'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
-//                    Leave this for now, only implement this when modal popup is not usable on mobile.
-//                    [
-//                        'label' => Yii::t('app','Account Settings') . ' ' . \Yii::$app->user->id, 
-//                        'url' => [
-//                            'users/update', 
-//                            'id' => Yii::$app->user->id
-//                        ],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'update'),
-//                    ],
                     [
                         'label' => Yii::t('app','Change Password'), 
                         'url' => ['/users/changePassword'],
@@ -159,14 +150,7 @@ AppAsset::register($this);
                         'label' => Yii::t('app','Hike overzicht'), 
                         'url'=>['/organisatie/overview'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
-                    ], 
-//                    [
-//                        'label'=>Yii::t('app', 'Introductie'),
-//                        'url'=>[
-//                            '/Route/viewIntroductie',
-//                            'introduction'=>true],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'viewIntroductie')
-//                    ],
+                    ],
                     [
                         'label'=>'Route Overzicht',
                         'url'=>['/route/index'],
@@ -191,26 +175,6 @@ AppAsset::register($this);
 //                        'label'=>'Stille Posten Overzicht',
 //                        'url'=>['/qr/index'],
 //                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
-//                    ],
-//                    [
-//                        'label'=>'Deelnemers Toevoegen',
-//                        'url'=>['/deelnemersEvent/create'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('deelnemersEvent', 'create')
-//                    ],
-//                    [
-//                        'label'=>'Groep Aanmaken',
-//                        'url'=>['/groups/create'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'create')
-//                    ],
-//                    [
-//                        'label'=>'Dag Veranderen',
-//                        'url'=>['/eventNames/changeDay'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeDay')
-//                    ],
-//                    [
-//                        'label'=>'Status Veranderen',
-//                        'url'=>['/eventNames/changeStatus'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'changeStatus')
 //                    ],
                     [
                         'label'=> Yii::t('app','Check Answers'),
