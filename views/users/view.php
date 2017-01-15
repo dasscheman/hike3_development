@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use app\models\EventNames;
 
+$responsive = FALSE;
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 
@@ -26,7 +27,6 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
             'columns' => [
                 [
                     'attribute' => 'username',
-                    'label' => 'Book #',
                     'displayOnly' => true,
                     'valueColOptions' => ['style' => 'width:30%']
                 ],
@@ -74,20 +74,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                     'attribute' => 'selected',
                     'format' => 'raw',
                     'valueColOptions' => ['style' => 'width:30%'],
-                    'value' => EventNames::getEventName($model->selected),
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'authKey',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'accessToken',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
+                    'value' => EventNames::getEventName(Yii::$app->user->identity->selected),
                 ],
             ],
         ],
@@ -101,7 +88,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
 //        'bordered' => $bordered,
 //        'striped' => $striped,
 //        'condensed' => $condensed,
-//        'responsive' => $responsive,
+        'responsive' => $responsive,
 //        'hover' => $hover,
 //        'hAlign'=>$hAlign,
 //        'vAlign'=>$vAlign,
@@ -114,21 +101,34 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
     ]); 
     
     
-        Modal::begin(
-        [
-            'toggleButton' => [
-                'label' => Yii::t('app', 'Change settings user'),
-                'class' => 'btn btn-success pull-right'
-            ],
-            'closeButton' => [
-                'label' => 'Close',
-                'class' => 'btn btn-danger btn-sm pull-right',
-            ],
-            'size' => Modal::SIZE_LARGE,
-        //'options' => ['class'=>'slide'],
-        ]
-    );
+    Modal::begin(
+    [
+        'toggleButton' => [
+            'label' => Yii::t('app', 'Edit settings user'),
+            'class' => 'btn btn-success pull-right'
+        ],
+        'closeButton' => [
+            'label' => 'Close',
+            'class' => 'btn btn-danger btn-sm pull-right',
+        ],
+        'size' => Modal::SIZE_LARGE,
+    ]);
     echo $this->render('_form', ['model' => $model]);
+    Modal::end();
+
+    Modal::begin(
+    [
+        'toggleButton' => [
+            'label' => Yii::t('app', 'Change password'),
+            'class' => 'btn btn-success pull-right'
+        ],
+        'closeButton' => [
+            'label' => 'Close',
+            'class' => 'btn btn-danger btn-sm pull-right',
+        ],
+        'size' => Modal::SIZE_LARGE,
+    ]);
+    echo $this->render('_change-password', ['model' => $model]);
     Modal::end();
     ?>
 </div>

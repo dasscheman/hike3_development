@@ -28,16 +28,9 @@ use Yii;
 class Groups extends HikeActiveRecord
 {
 	public $group_members;
-	public $bonus_score;
-	public $post_score;
-	public $qr_score;
-	public $vragen_score;
-	public $hint_score;
-	public $total_score;
-	public $rank;
-	public $time_walking;
-	public $time_left;
-	public $last_post;
+	private $_rank;
+    private $_time_walking;
+	private $_time_left;
 	public $last_post_time;
     public $users_temp;
 
@@ -73,11 +66,14 @@ class Groups extends HikeActiveRecord
         return [
             'group_ID' => Yii::t('app', 'Group ID'),
             'group_name' => Yii::t('app', 'Group Name'),
+//            'rank' => Yii::t('app', 'Rank'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
+            'bonus_score' => Yii::t('app', 'Bonus Score'),
+            'hint_score' => Yii::t('app', 'Hint Score')
         ];
     }
 
@@ -99,6 +95,15 @@ class Groups extends HikeActiveRecord
     public function getBonuspuntens()
     {
         return $this->hasMany(Bonuspunten::className(), ['group_ID' => 'group_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBonus_score()
+    {
+        return $this->hasMany(Bonuspunten::className(), ['group_ID' => 'group_ID'])
+            ->sum('score');
     }
 
     /**
@@ -141,12 +146,26 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(OpenNoodEnvelop::className(), ['group_ID' => 'group_ID']);
     }
 
+    public function getHint_score()
+    {
+        return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
+            ->via('openNoodEnvelops')
+            ->sum('score');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getOpenVragenAntwoordens()
     {
         return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID']);
+    }
+
+    public function getVragen_score()
+    {
+        return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
+            ->via('openVragenAntwoordens')
+            ->sum('score');
     }
 
     /**
@@ -157,12 +176,34 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(PostPassage::className(), ['group_ID' => 'group_ID']);
     }
 
+    public function getPost_score()
+    {
+        return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID'])
+            ->via('postPassages')
+            ->sum('score');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSQrChecks()
+    public function getQrChecks()
     {
         return $this->hasMany(QrCheck::className(), ['group_ID' => 'group_ID']);
+    }
+
+    public function getQr_score()
+    {
+        return $this->hasOne(Qr::className(), ['qr_ID' => 'qr_ID'])
+            ->via('qrChecks')
+            ->sum('score');
+    }
+
+    public function getTotal_score()
+    {
+        return $this->bonus_score + $this->post_score +
+            $this->qr_score + $this->vragen_score -
+            $this->hint_score;
+
     }
 
 	/**
@@ -197,39 +238,38 @@ class Groups extends HikeActiveRecord
 		$data->group_name : "";        
 	}
 
-	/**
+    /**
 	 * set scores van een group.
 	 */
-
-    public function setScores()
+    public function getLast_post_time()
 	{
-		$this->post_score = PostPassage::getPostScore($this->group_ID);
-		$this->qr_score = QrCheck::getQrScore($this->group_ID);
-		$this->vragen_score = OpenVragenAntwoorden::getOpenVragenScore($this->group_ID);
-		$this->bonus_score = Bonuspunten::getBonuspuntenScore($this->group_ID);
-		$this->hint_score = OpenNoodEnvelop::getOpenEnvelopScore($this->group_ID);
-
-		$this->total_score = $this->post_score + $this->qr_score + $this->vragen_score + $this->bonus_score - $this->hint_score;
+		$this->_last_post_time = PostPassage::getTimeLastPostPassage($this->group_ID);
+        return $this->_last_post_time;
 	}
 
     /**
 	 * set scores van een group.
 	 */
-
-    public function setTimes()
+    public function getTime_left()
 	{
-//        $group_members;
-
-		$this->time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
-		$this->time_left = PostPassage::getTimeLeftToday($this->group_ID);
-//		$this->last_post_time = PostPassage::getTimeLastPostPassage($this->group_ID);
+		$this->_time_left = PostPassage::getTimeLeftToday($this->group_ID);
+        return $this->_time_left;
 	}
-		
-	public function setRank()
+
+    /**
+	 * set scores van een group.
+	 */
+    public function getTime_walking()
+	{
+		$this->_time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
+        return $this->_time_walking;
+	}
+
+	public function getRank()
 	{
 		$counter = 0;
 		$temp_score = 0;
-		
+
 		$data = Groups::find()
             ->where('event_ID =:event_ID')
             ->params([':event_ID' => Yii::$app->user->identity->selected])
@@ -237,24 +277,24 @@ class Groups extends HikeActiveRecord
 
 		foreach($data as $item)
 		{
-            $item->setScores();
+//            $item->setScores();
 			$groupsArray[$item->group_ID] = $item->total_score;
 		}
-		
+
 		arsort($groupsArray);
 		foreach($groupsArray as $key=>$key_value)
-		{			
+		{
 			if($key == $this->group_ID)
 			{
 				if($temp_score == $key_value)
 				{
-                    $this->rank = $counter;
-                    return;
+                    $this->_rank = $counter;
+                    return $this->_rank;
 				}
 				$temp_score = $key_value;
 				$counter++;
-                $this->rank = $counter;
-                return;
+                $this->_rank = $counter;
+                return $this->_rank;
 			}
 			if($temp_score != $key_value)
 			{
@@ -273,8 +313,6 @@ class Groups extends HikeActiveRecord
             }
         }
     }
-
-
 
     public function addMembersToGroup($group, $members = []) 
     {
@@ -303,4 +341,27 @@ class Groups extends HikeActiveRecord
         }
         return TRUE;
     }
+
+    /**
+     * Score ophalen voor een group.
+     */
+//    public function getUsersOfGroup()
+//    {
+//        $user_ids = DeelnemersEvent::find()
+//            ->select('group_ID')
+//            ->where('event_ID =:event_id AND group_ID =:group_id')
+//            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $this->group_ID])
+//            ->all();
+//
+//        $data = Users::find()
+//            ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
+//            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
+//            ->all();
+//
+//        if($data === NULL) {
+//            $data = new OpenNoodEnvelop;
+//        }
+//
+//        return $data;
+//    }
 }

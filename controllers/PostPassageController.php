@@ -3,15 +3,15 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblPostPassage;
-use app\models\TblPostPassageSearch;
+use app\models\PostPassage;
+use app\models\PostPassageSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * PostPassageController implements the CRUD actions for TblPostPassage model.
+ * PostPassageController implements the CRUD actions for PostPassage model.
  */
 class PostPassageController extends Controller
 {
@@ -54,12 +54,12 @@ class PostPassageController extends Controller
     }
 
     /**
-     * Lists all TblPostPassage models.
+     * Lists all PostPassage models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new lPostPassageSearch();
+        $searchModel = new PostPassageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -69,7 +69,7 @@ class PostPassageController extends Controller
     }
     
     /**
-     * Displays a single TblPostPassage model.
+     * Displays a single PostPassage model.
      * @param integer $id
      * @return mixed
      */
@@ -81,7 +81,7 @@ class PostPassageController extends Controller
     }
 
     /**
-     * Creates a new TblPostPassage model.
+     * Creates a new PostPassage model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -102,7 +102,7 @@ class PostPassageController extends Controller
     }
     
     /**
-     * Updates an existing TblPostPassage model.
+     * Updates an existing PostPassage model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -124,7 +124,7 @@ class PostPassageController extends Controller
     }
     
     /**
-     * Deletes an existing TblPostPassage model.
+     * Deletes an existing PostPassage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -244,10 +244,10 @@ class PostPassageController extends Controller
     }
 
     /**
-     * Finds the TblPostPassage model based on its primary key value.
+     * Finds the PostPassage model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblPostPassage the loaded model
+     * @return PostPassage the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

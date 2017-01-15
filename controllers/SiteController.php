@@ -8,7 +8,6 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\controllers\Cookie;
 use app\models\EventNames;
 use app\models\RouteSearch;
 use app\models\DeelnemersEvent;
@@ -69,11 +68,8 @@ class SiteController extends Controller
             if(!isset($group_id->group_ID) || null === $group_id->group_ID) {
                return $this->render('index');
             }
-            $groupModel->setScores();
-            $groupModel->setRank();
-            $groupModel->setTimes();
-            $groupModel->setGroupMembers();
 
+            $groupModel->setGroupMembers();
             $searchModel = new RouteSearch();
             $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
             $queryParams["RouteSearch"]["event_ID"] = $event_id ;

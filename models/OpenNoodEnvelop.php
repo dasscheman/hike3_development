@@ -97,6 +97,14 @@ class OpenNoodEnvelop extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getScore()
+    {
+        return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])->score;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getUpdateUser()
     {
         return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);

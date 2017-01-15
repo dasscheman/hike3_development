@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TblPostPassage;
+use app\models\PostPassage;
 
 /**
- * TblPostPassageSearch represents the model behind the search form about `app\models\TblPostPassage`.
+ * PostPassageSearch represents the model behind the search form about `app\models\PostPassage`.
  */
-class TblPostPassageSearch extends TblPostPassage
+class PostPassageSearch extends PostPassage
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ class TblPostPassageSearch extends TblPostPassage
      */
     public function search($params)
     {
-        $query = TblPostPassage::find();
+        $query = PostPassage::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

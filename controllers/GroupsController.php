@@ -39,7 +39,7 @@ class GroupsController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'delete', 'view', 'create'],
+                'only' => ['index', 'index-posten', 'update', 'delete', 'view', 'create'],
                 'rules' => [			
                     array(
                         'allow' => FALSE,  // deny all guest users
@@ -47,7 +47,7 @@ class GroupsController extends Controller
                     ),			
                     array(	
                         'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'update', 'delete', 'view', 'create'),
+                        'actions'=>array('index', 'index-posten', 'update', 'delete', 'view', 'create'),
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         }
@@ -71,6 +71,21 @@ class GroupsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Groups models.
+     * @return mixed
+     */
+    public function actionIndexPosten()
+    {
+        $searchModel = new GroupsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index-posten', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

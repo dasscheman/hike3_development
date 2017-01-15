@@ -142,9 +142,12 @@ class UsersController extends Controller
     public function actionUpdate()
     {
         $model = $this->findModel(Yii::$app->user->id);
-        $model->password_repeat = $model->password;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/game/viewUser']);
+        $model->load(Yii::$app->request->post());
+        $model->scenario = Users::SCENARIO_UPDATE;
+        if ($model->save()) {
+            return $this->render('view', [
+                'model' => $this->findModel(Yii::$app->user->id),
+            ]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -161,11 +164,11 @@ class UsersController extends Controller
     {
         $model=$this->findModel(Yii::$app->user->id);
  
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/game/viewUser']);
+        if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not change password.'));
         }
 
-        return $this->render('changePassword', [
+        return $this->render('view', [
             'model'=>$model,
         ]);
     }	

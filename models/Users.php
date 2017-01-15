@@ -65,6 +65,16 @@ use yii\helpers\ArrayHelper;
 class Users extends AccessControl implements IdentityInterface {
 
     public $password_repeat;
+    const SCENARIO_UPDATE = 'update';
+    const SCENARIO_CREATE = 'create';
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_UPDATE] = ['update'];
+        $scenarios[self::SCENARIO_CREATE] = ['change-password', 'create'];
+        return $scenarios;
+    }
 
     /**
      * @inheritdoc
@@ -78,7 +88,7 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function rules() {
         return [
-            [['username', 'voornaam', 'achternaam', 'email', 'password', 'password_repeat'], 'required'],
+            [['username', 'voornaam', 'achternaam', 'email'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
@@ -87,7 +97,7 @@ class Users extends AccessControl implements IdentityInterface {
             ['email', 'unique'],
             [['email'], 'email'],
             
-            ['password', 'required'], //'on' => ['ChangePassword', 'create']
+            [['password'], 'required', 'on' => self::SCENARIO_CREATE],
             ['password', 'string', 'min' => 6],
             ['password_repeat', 'required'],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],

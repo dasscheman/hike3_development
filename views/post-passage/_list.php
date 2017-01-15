@@ -13,16 +13,18 @@ use yii\bootstrap\Modal;
 
     <p>
         <?php
-         echo ButtonAjax::widget([
-            'name' => Yii::t('app', 'Edit station checkin'),
-            'route' => ['/post-passage/update', 'id' => $model->posten_passage_ID],
-            'modalId' => '#main-modal',
-            'modalContent'=>'#main-content-modal',
-            'options' => [
-                'class' => 'btn btn-success',
-                'title' => 'Button for create application',
-            ]
-        ]); ?>
+        if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update')) {
+            echo ButtonAjax::widget([
+                'name' => Yii::t('app', 'Edit station checkin'),
+                'route' => ['/post-passage/update', 'id' => $model->posten_passage_ID],
+                'modalId' => '#main-modal',
+                'modalContent'=>'#main-content-modal',
+                'options' => [
+                    'class' => 'btn btn-xs btn-success',
+                    'title' => 'Button for create application',
+                ]
+            ]); 
+        }?>
 
     </p>
     

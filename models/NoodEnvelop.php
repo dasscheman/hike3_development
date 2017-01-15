@@ -80,7 +80,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
     }
 
     /**
@@ -88,7 +88,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getEvent()
     {
-        return $this->hasOne(TblEventNames::className(), ['event_ID' => 'event_ID']);
+        return $this->hasOne(EventNames::className(), ['event_ID' => 'event_ID']);
     }
 
     /**
@@ -96,7 +96,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getRoute()
     {
-        return $this->hasOne(TblRoute::className(), ['route_ID' => 'route_ID']);
+        return $this->hasOne(Route::className(), ['route_ID' => 'route_ID']);
     }
 
     /**
@@ -104,19 +104,21 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getTblOpenNoodEnvelops()
+    public function getOpenNoodEnvelops()
     {
-        return $this->hasMany(TblOpenNoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
+        return $this->hasMany(OpenNoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
     }
 
 	public function getNoodEnvelopName($envelop_id)
 	{
+
+        dd('DEZE IS depricated');
 		$criteria = new CDbCriteria;
 		$criteria->condition="nood_envelop_ID = $envelop_id";
 		$data = NoodEnvelop::model()->find($criteria);

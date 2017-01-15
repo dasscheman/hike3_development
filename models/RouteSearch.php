@@ -45,6 +45,7 @@ class RouteSearch extends Route
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['route_volgorde'=>SORT_ASC]]
         ]);
 
         $this->load($params);

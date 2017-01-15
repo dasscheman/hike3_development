@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use kartik\builder\Form;
 use kartik\widgets\ActiveForm;
-//use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -60,16 +59,16 @@ use kartik\widgets\ActiveForm;
             ]
         ]
     ];
-    
-    $attributes['password'] = [
-        'type' => Form::INPUT_PASSWORD,
-        'options' => [
-            'placeholder' => Yii::t('app', 'Password'),
-            'value'=>'',
-        ]
-    ];
 
     if ($model->isNewRecord) {
+        $attributes['password'] = [
+            'type' => Form::INPUT_PASSWORD,
+            'options' => [
+                'placeholder' => Yii::t('app', 'Password'),
+                'value'=>'',
+            ]
+        ];
+
         $attributes['password_repeat'] = [
             'type' => Form::INPUT_PASSWORD,
             'options' => [
@@ -77,11 +76,15 @@ use kartik\widgets\ActiveForm;
             ]
         ];
     }
-    $form = ActiveForm::begin(['type' => ActiveForm::TYPE_VERTICAL, 'formConfig' => ['labelSpan' => 20]]);
+    $form = ActiveForm::begin([
+        'type' => ActiveForm::TYPE_VERTICAL,
+        'formConfig' => ['labelSpan' => 20],
+        'action' => $model->isNewRecord ? ['users/create'] : ['users/update'],
+    ]);
     echo Form::widget([
         'model' => $model,
         'form' => $form,
-        'columns' => 4,
+        'columns' => 3,
         'attributes' => $attributes,
     ]);?>
 

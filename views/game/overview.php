@@ -1,12 +1,8 @@
 <?php
 
 use app\models\Route;
-use app\models\Users;
-use kartik\builder\Form;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
-use kartik\widgets\ActiveForm;
-use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;

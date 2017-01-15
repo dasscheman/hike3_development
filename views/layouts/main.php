@@ -76,18 +76,13 @@ AppAsset::register($this);
                         'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
                     [
-                        'label' => Yii::t('app','Change Password'), 
-                        'url' => ['/users/changePassword'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'changePassword'),
-                    ],  
-                    [
                         'label' => Yii::t('app','Create Account'), 
                         'url' => ['/users/create', 'language'=> 'nl'],
                         'visible' => Yii::$app->user->isGuest,
                     ],  
                     [
                         'label' => Yii::t('app','Forgot Password'), 
-                        'url' => ['/users/resendPasswordUser', 'language'=> 'nl'],
+                        'url' => ['/users/resend-password-user', 'language'=> 'nl'],
                         'visible' => Yii::$app->user->isGuest,
                     ],                   
                 ],
@@ -107,27 +102,24 @@ AppAsset::register($this);
 //                    ],
                     [
                         'label'=> Yii::t('app','Game overview'),
-                        'url'=>
-                        [
-                            'openVragen-antwoorden/index',
-                        ],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'index')
+                        'url' => ['site/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('site', 'index')
                     ],
                     [
-                        'label'=> Yii::t('app','Opened Hints'),
-                        'url'=>['open-nood-envelop/index',
-                            'previous'=>'game/gameOverview'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openNoodEnvelop', 'index')
+                        'label' => Yii::t('app','Overview groups scores'),
+                        'url' => ['groups/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index')
                     ],
 //                    [
-//                        'label'=> Yii::t('app','Bonus Points'),
-//                        'url'=>['bonuspunten/index'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
+//                        'label'=> Yii::t('app','Opened Hints'),
+//                        'url'=>['open-nood-envelop/index',
+//                            'previous'=>'game/gameOverview'],
+//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openNoodEnvelop', 'index')
 //                    ],
                     [
-                        'label'=> Yii::t('app','Checked Stations'),
-                        'url'=>['postPassage/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('postPassage', 'index')
+                        'label'=> Yii::t('app','Passed Stations & bonuspoints'),
+                        'url'=>['groups/index-posten'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index-posten')
                     ],
 //                    [
 //                        'label'=> Yii::t('app','Qr'),

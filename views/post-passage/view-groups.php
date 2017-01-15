@@ -7,26 +7,12 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblPostPassage */
 
-//$this->title = Yii::t('app', 'Groups passed') . ' ' . $model->post_name;
+$this->title = Yii::t('app', 'Stations passed by') . ' ' . $model->group_name;
 ?>
 <div class="tbl-post-passage-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-       <p>
-        <?php
-        echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Check group in station'),
-             'route'=>['post-passagae/create', ['post_id' => $model->post_ID]],
-             'modalId'=>'#main-modal',
-             'modalContent'=>'#main-content-modal',
-             'options'=>[
-                 'class'=>'btn btn-success',
-                 'title'=>'Button for create application',
-             ]
-         ]);
-        ?>
-    </p>
     <?php
 
     $dataProvider = new yii\data\ArrayDataProvider([
