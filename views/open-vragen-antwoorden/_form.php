@@ -18,8 +18,15 @@ use yii\widgets\Pjax;
         'type' => AlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
         'delay' => 4000,
-    ]); $form = ActiveForm::begin(); ?>
+    ]);
+    $form = ActiveForm::begin(); ?>
 
+    <h3>
+    <?php echo Html::encode($modelVraag->open_vragen_name); ?>
+    </h3>
+    <b>
+    <?php echo Html::encode($modelVraag->vraag); ?></br>
+    </b>
     <?= $form->field($model, 'antwoord_spelers')->textarea(['rows' => 6]) ?>
 
     <div class="form-group">
@@ -28,18 +35,18 @@ use yii\widgets\Pjax;
         echo Html::a(
             Yii::t('app', 'Save'),
             ['/open-vragen-antwoorden/beantwoorden', 'id' => $modelVraag->open_vragen_ID],
-            ['class' => 'btn btn-primary'],
+            ['class' => 'btn btn-xs btn-primary'],
             ['data-pjax' => 'open-vragen-antwoorden-list-' . $modelVraag->open_vragen_ID]
         );
 
         echo Html::a(
             Yii::t('app', 'Cancel'),
             ['/open-vragen-antwoorden/cancel-beantwoording', 'id' => $modelVraag->open_vragen_ID],
-            ['class' => 'btn btn-danger'],
+            ['class' => 'btn btn-xs btn-danger'],
             ['data-pjax' => 'open-vragen-antwoorden-list-' . $modelVraag->open_vragen_ID]
         ); ?>
     </div>
     <?php ActiveForm::end();
     Pjax::end(); ?>
-  
+
 </div>

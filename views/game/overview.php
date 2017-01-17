@@ -30,7 +30,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
     Modal::end();
-    
+
     $attributes = [
         [
             'group' => true,
@@ -127,7 +127,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
         'container' => ['id' => 'kv-demo'],
         'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
     ]);
- 
+
 ?>
 
 
@@ -139,10 +139,6 @@ $this->title = Yii::t('app', 'Hike overzicht');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-
-//    Modal::begin(['id'=>'main-modal']);
-//    echo '<div id="main-content-modal"></div>';
-//    Modal::end();
 
     $count=0;
     $gridColumns = [
@@ -208,13 +204,13 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
         // Aantal stille posten moet verborgen blijven. Misschien moet er komen
         // te staan hoeveel er gevonden zijn. Voor nu helemaal weg laten om onduidelijkheden te voorkomen.
-//        [
-//
-//            'header' => Yii::t('app', '#Silent posts'),
-//            'value' => function($model, $key){
-//                return Route::findOne($key)->getQrCount();
-//            },
-//        ],
+        // [
+        //
+        //     'header' => Yii::t('app', '#Silent posts'),
+        //     'value' => function($model, $key){
+        //         return Route::findOne($key)->getQr();
+        //     },
+        // ],
     ];
 
     $dataArray[$count]=array(
@@ -226,7 +222,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
             'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
             'headerRowOptions'=>['class'=>'kartik-sheet-style'],
             'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-            'pjax'=>true, // pjax is set to always true for this demo
+            'pjax'=>TRUE, // pjax is set to always true for this demo
             // set your toolbar
             'toolbar'=> [
                 '{toggleData}',

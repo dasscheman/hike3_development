@@ -20,8 +20,6 @@ use kartik\widgets\DepDrop;
 <div class="tbl-event-names-form">
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
-    
-
 
     if (isset($action) && $action == 'set_max_time') {
         $attributes['max_time'] = [
@@ -77,7 +75,7 @@ use kartik\widgets\DepDrop;
             ]
         ];
     }
-    
+
     $form = ActiveForm::begin([
         'type' => ActiveForm::TYPE_VERTICAL,
         'formConfig' => ['labelSpan' => 20],

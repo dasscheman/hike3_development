@@ -47,9 +47,9 @@ class NoodEnvelop extends HikeActiveRecord
             [['create_time', 'update_time'], 'safe'],
             [['nood_envelop_name', 'coordinaat'], 'string', 'max' => 255],
             [['opmerkingen'], 'string', 'max' => 1050],
-            [   
-                ['nood_envelop_name', 'event_ID'], 
-                'unique', 'targetAttribute' => ['nood_envelop_name', 'event_ID'],   
+            [
+                ['nood_envelop_name', 'event_ID'],
+                'unique', 'targetAttribute' => ['nood_envelop_name', 'event_ID'],
                 'message' => Yii::t('app/error', 'This hint name alrady exists for this Hike')]
         ];
     }
@@ -67,7 +67,7 @@ class NoodEnvelop extends HikeActiveRecord
             'nood_envelop_volgorde' => Yii::t('app', 'Hint Order'),
             'coordinaat' => Yii::t('app', 'Coordinate'),
             'opmerkingen' => Yii::t('app', 'Remarks'),
-            'score' => Yii::t('app', 'Score'),
+            'score' => Yii::t('app', 'Penalty points'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),

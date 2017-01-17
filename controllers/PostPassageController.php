@@ -26,7 +26,7 @@ class PostPassageController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['dynamicpostscore', 'dynamicpostid', 'create', 'createDayStart', 'updateVertrek', 'index', 'update', 'delete'],
+                'only' => ['create', 'createDayStart', 'updateVertrek', 'index', 'update', 'delete', 'cancel'],
                 'rules' => [
                     array(
                         'allow' => FALSE,
@@ -37,9 +37,14 @@ class PostPassageController extends Controller
                         'actions'=>array('dynamicpostscore', 'dynamicpostid'),
                         'roles'=>array('@'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'create', 'createDayStart', 'updateVertrek'),
+                        'actions'=>array( 'update', 'cancel-beantwoording'),
+                        'roles'=>array('@'),
+                    ),
+                    array(
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'delete', 'create', 'createDayStart', 'updateVertrek', 'cancel'),
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         }
@@ -67,7 +72,7 @@ class PostPassageController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single PostPassage model.
      * @param integer $id
@@ -100,7 +105,7 @@ class PostPassageController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Updates an existing PostPassage model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -110,19 +115,28 @@ class PostPassageController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (!$model->load(Yii::$app->request->post())) {
+           if (Yii::$app->request->isAjax) {
+                return $this->renderAjax('_form', [
+                    'model' => $model,
+                ]);
+           }
+           return $this->render('update', [
+               'model' => $model,
+           ]);
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes.'));
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect([
-                '/game/groupOverview',
-                'event_id'=>$model->event_ID,
-                'group_id'=>$model->group_ID]);
-        } else {
-            return $this->render('update', [
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
                 'model' => $model,
             ]);
         }
+        return $this->redirect(['groups/index-posten']);
     }
-    
+
     /**
      * Deletes an existing PostPassage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -133,13 +147,14 @@ class PostPassageController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array(
-            '/game/groupOverview',
-            'event_id'=>$model->event_ID,
-            'group_id'=>$model->group_ID));
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $model,
+            ]);
+        }
+        return $this->redirect(['groups/index-posten']);
     }
 
-    
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'groupOverview' page.
@@ -196,51 +211,21 @@ class PostPassageController extends Controller
         ));
     }
 
-
     /**
-     * Deze actie wordt gebruikt voor de form velden.
-     * Returns score depending on post_ID and event_id
-     * Deze moet anders, want er wordt sowieso altijd maar 1 waarde gereturnd, dus list is niet nodig.
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
      */
-    public function actionDynamicPostScore()
+    public function actionCancel($id)
     {
-        $data=Posten::findAll('post_ID =:post_id, event_ID =:event_id',
-              array(':post_id'=>$_POST['post_ID'],
-                ':event_id'=>$_GET['event_id']));
+        $model = $this->findModel($id);
 
-        $data=CHtml::listData($data,'score','score');
-
-        foreach($data as $value=>$name)
-        {
-            echo CHtml::tag('option', array('value'=>$value), CHtml::encode($name),true);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list', [
+                'model' => $model,
+            ]);
         }
-    }
-
-    /**
-     * Deze actie wordt gebruikt voor de form velden.
-     * Returns list with available posten depending on day and event.
-     */
-    public function actionDynamicPostId()
-    {
-        $day_id = $_POST['day_id'];
-        $event_id = $_POST['event_id'];
-
-
-        $data=Posten::findAll('day_ID =:day_id AND event_ID =:event_id',
-              array(':day_id'=>$day_id,
-                ':event_id'=>$event_id));
-        $mainarr = array();
-
-        foreach($data as $obj)
-        {
-            //De post naam moet gekoppeld worden aan de post_id:
-            $mainarr["$obj->post_ID"] = Posten::getPostName($obj->post_ID);
-        }
-
-        foreach($mainarr as $value=>$name)
-        {
-            echo CHtml::tag('option', array('value'=>$value), CHtml::encode($name),true);
-        }
+    //    return $this->redirect(['groups/index-posten']);
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-use prawee\widgets\ButtonAjax;
 use yii\widgets\ListView;
 use yii\helpers\Html;
+use yii\data\ArrayDataProvider;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblPostPassage */
@@ -15,11 +15,11 @@ $this->title = Yii::t('app', 'Stations passed by') . ' ' . $model->group_name;
 
     <?php
 
-    $dataProvider = new yii\data\ArrayDataProvider([
+    $dataProvider = new ArrayDataProvider([
         'allModels' => $model->postPassages,
     ]);
 
-    yii\widgets\Pjax::begin(['id' => 'post-passage-view', 'enablePushState' => TRUE]);
+    //yii\widgets\Pjax::begin(['id' => 'post-passage-view', 'enablePushState' => TRUE]);
 
     echo ListView::widget([
         'summary' => FALSE,
@@ -29,6 +29,6 @@ $this->title = Yii::t('app', 'Stations passed by') . ' ' . $model->group_name;
         'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
     ]);
 
-    yii\widgets\Pjax::end();
+    //yii\widgets\Pjax::end();
 ?>
 </div>

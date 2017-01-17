@@ -25,7 +25,7 @@ use yii\widgets\Pjax;
     <?php echo Html::encode($modelEnvelop->nood_envelop_name); ?> </br>
     <b>
     <?php
-    if ($model->isNewRecord) { 
+    if ($model->isNewRecord) {
         echo Html::encode(Yii::t('app', 'Are you sure you want to open this hint?'));
     } else { ?>
 
@@ -48,17 +48,17 @@ use yii\widgets\Pjax;
         echo Html::a(
             Yii::t('app', 'Open hint'),
             ['/open-nood-envelop/open', 'id'=>$modelEnvelop->nood_envelop_ID],
-            ['class' => 'btn btn-primary'],
+            ['class' => 'btn btn-xs btn-primary'],
             ['data-pjax' => 'open-nood-envelop-list-' . $model->nood_envelop_ID]
         );
 
         echo Html::a(
             Yii::t('app', 'Cancel'),
             ['/open-nood-envelop/cancel-opening', 'id'=>$modelEnvelop->nood_envelop_ID],
-            ['class' => 'btn btn-danger'],
+            ['class' => 'btn btn-xs btn-danger'],
             ['data-pjax' => 'open-nood-envelop-list-' . $model->nood_envelop_ID]
         ); ?>
     </div>
-    <?php ActiveForm::end(); 
+    <?php ActiveForm::end();
     Pjax::end(); ?>
 </div>

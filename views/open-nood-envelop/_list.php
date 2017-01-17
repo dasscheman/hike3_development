@@ -31,17 +31,16 @@ use kartik\widgets\Alert;
             echo Html::a(
                 Yii::t('app', 'Open Hint'),
                 ['/open-nood-envelop/create', 'id'=>$model->nood_envelop_ID],
-                ['class' => 'btn btn-success'],
+                ['class' => 'btn btn-xs btn-success'],
                 ['data-pjax' => 'open-nood-envelop-list-' . $model->nood_envelop_ID]
             );
         }
 
         ?>
         </p>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('nood_envelop_name')); ?>:
-        </b>
-        <?php echo Html::encode($model->nood_envelop_name); ?> </br>
+        <h3>
+        <?php echo Html::encode($model->nood_envelop_name); ?>
+        </h3>
         <b>
         <?php echo Html::encode($model->getAttributeLabel('score')); ?>:
         </b>

@@ -1,7 +1,8 @@
 <?php
+use app\components\GeneralFunctions;
 use yii\helpers\Html;
-use prawee\widgets\ButtonAjax;
-use yii\bootstrap\Modal;
+use kartik\widgets\AlertBlock;
+use yii\widgets\Pjax;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
@@ -9,35 +10,48 @@ use yii\bootstrap\Modal;
 ?>
 
 <div class="col-sm-3">
-    <div class="view">
+    <div class="row-1">
+        <div class="view">
 
-    <p>
+        <p>
+        <?php
+        Pjax::begin(['id' => 'post-passage-list-' . $model->posten_passage_ID, 'enablePushState' => false]);
+        echo AlertBlock::widget([
+            'type' => AlertBlock::TYPE_ALERT,
+            'useSessionFlash' => true,
+            'delay' => 4000,
+
+        ]);
+        ?>
+
+        </p>
+        <h3>
+        <?php echo Html::encode($model->post->post_name); ?>
+        </h3>
         <?php
         if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update')) {
-            echo ButtonAjax::widget([
-                'name' => Yii::t('app', 'Edit station checkin'),
-                'route' => ['/post-passage/update', 'id' => $model->posten_passage_ID],
-                'modalId' => '#main-modal',
-                'modalContent'=>'#main-content-modal',
-                'options' => [
-                    'class' => 'btn btn-xs btn-success',
-                    'title' => 'Button for create application',
-                ]
-            ]); 
-        }?>
+            echo Html::a(
+                Yii::t('app', 'Edit station checkin'),
+                ['/post-passage/update', 'id' => $model->posten_passage_ID],
+                ['class' => 'btn btn-xs btn-success'],
+                ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+            );
+        } ?>
+        </br>
+        <b>
+        <?php echo Html::encode($model->getAttributeLabel('gepasseerd')); ?>
+        </b>
+        <?php echo GeneralFunctions::printGlyphiconCheck($model->gepasseerd); ?></br>
+        <b>
+        <?php echo Html::encode($model->getAttributeLabel('binnenkomst')); ?>
+        </b>
+        <?php echo Html::encode($model->binnenkomst); ?></br>
+        <b>
+        <?php echo Html::encode($model->getAttributeLabel('vertrek')); ?>
+        </b>
+        <?php echo Html::encode($model->vertrek); ?></br>
 
-    </p>
-    
-	<?php echo Html::encode($model->getAttributeLabel('post_ID')); ?>
-	<?php echo Html::encode($model->post_ID); ?> </br>
-    <?php echo Html::encode($model->getAttributeLabel('group_ID')); ?>
-    <?php echo Html::encode($model->group_ID); ?></br>
-    <?php echo Html::encode($model->getAttributeLabel('gepasseerd')); ?>
-    <?php echo Html::encode($model->gepasseerd); ?></br>
-    <?php echo Html::encode($model->getAttributeLabel('binnenkomst')); ?>
-    <?php echo Html::encode($model->binnenkomst); ?></br>
-    <?php echo Html::encode($model->getAttributeLabel('vertrek')); ?>
-    <?php echo Html::encode($model->vertrek); ?></br>
-        
+        <?php Pjax::end(); ?>
+        </div>
     </div>
 </div>

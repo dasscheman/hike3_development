@@ -1,41 +1,76 @@
 <?php
 
+use kartik\widgets\AlertBlock;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
+use kartik\widgets\DateTimePicker;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblPostPassage */
+/* @var $model app\models\PostPassage */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="tbl-post-passage-form">
+    <?php
+    Pjax::begin(['id' => 'post-passage-form-' . $model->posten_passage_ID, 'enablePushState' => false]);
+    echo AlertBlock::widget([
+        'type' => AlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 4000,
+    ]);
+    $form = ActiveForm::begin(); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
+    <h3>
 
-    <?= $form->field($model, 'post_ID')->textInput() ?>
+    <?php echo Html::encode($model->post->post_name); ?>
+    </h3>
 
-    <?= $form->field($model, 'event_ID')->textInput() ?>
+    <?= $form->field($model, 'gepasseerd')->checkBox(['uncheck' => FALSE, 'selected' => TRUE]); ?>
 
-    <?= $form->field($model, 'group_ID')->textInput() ?>
+    <?= $form->field($model, 'binnenkomst')->widget(
+        DateTimePicker::classname(), [
+        	'options' => ['placeholder' => Yii::t('app', 'Enter incheck time')],
+            'type' => DateTimePicker::TYPE_INPUT,
+        	'pluginOptions' => [
+        		'autoclose' => true
+        	]
+    ]); ?>
 
-    <?= $form->field($model, 'gepasseerd')->textInput() ?>
-
-    <?= $form->field($model, 'binnenkomst')->textInput() ?>
-
-    <?= $form->field($model, 'vertrek')->textInput() ?>
-
-    <?= $form->field($model, 'create_time')->textInput() ?>
-
-    <?= $form->field($model, 'create_user_ID')->textInput() ?>
-
-    <?= $form->field($model, 'update_time')->textInput() ?>
-
-    <?= $form->field($model, 'update_user_ID')->textInput() ?>
+    <?= $form->field($model, 'vertrek')->widget(
+        DateTimePicker::classname(), [
+        	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
+            'type' => DateTimePicker::TYPE_INPUT,
+        	'pluginOptions' => [
+        		'autoclose' => true
+        	]
+    ]); ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php
+
+        echo Html::a(
+            Yii::t('app', 'Save'),
+            ['/post-passage/update', 'id' => $model->posten_passage_ID],
+            ['class' => 'btn btn-xs btn-success'],
+            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+        );
+
+        echo Html::a(
+            Yii::t('app', 'Delete'),
+            ['/post-passage/delete', 'id' => $model->posten_passage_ID],
+            ['class' => 'btn btn-xs btn-danger'],
+            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+        );
+
+        echo Html::a(
+            Yii::t('app', 'Cancel'),
+            ['/post-passage/cancel', 'id' => $model->posten_passage_ID],
+            ['class' => 'btn btn-xs btn-primary'],
+            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+        ); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
-
+    <?php ActiveForm::end();
+    Pjax::end(); ?>
 </div>

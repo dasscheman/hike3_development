@@ -2,7 +2,6 @@
 
 
 use app\models\DeelnemersEvent;
-use app\models\EventNames;
 use kartik\grid\GridView;
 use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
@@ -32,14 +31,12 @@ $this->title = Yii::t('app', 'Select hike');
     $gridColumns = [
         'event_name',
         'start_date',
-        'end_date',
         'status' => [
             'attribute' => 'status',
             'value' => function($model){
                 return $model->getStatusText();
             },
         ],
-        'active_day',
         [
             'header' => 'Rol',
             'value' => function($key){
@@ -48,20 +45,20 @@ $this->title = Yii::t('app', 'Select hike');
         ],
         'organisatie',
         'website',
-        [
-            'header' => 'Aangemaakt',
-            'value' => function($key){
-                return EventNames::findOne($key)->getCreateUser()->one()->username;
-            },
-        ],
-        [
-            // EXAMPLE
-            'header' => 'Laatst Bijgewerkt',
-            'value' => function($key){
-                return EventNames::findOne($key)->getUpdateUser()->one()->username;
-            },
-
-        ],
+//        [
+//            'header' => 'Aangemaakt',
+//            'value' => function($key){
+//                return EventNames::findOne($key)->getCreateUser()->one()->username;
+//            },
+//        ],
+//        [
+//            // EXAMPLE
+//            'header' => 'Laatst Bijgewerkt',
+//            'value' => function($key){
+//                return EventNames::findOne($key)->getUpdateUser()->one()->username;
+//            },
+//
+//        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',
@@ -95,6 +92,8 @@ $this->title = Yii::t('app', 'Select hike');
     $pageSummary = FALSE;
     $heading = FALSE;
     $exportConfig = TRUE;
+    $responsiveWrap = FALSE;
+
     echo GridView::widget([
         'id' => 'kv-grid-hike_select',
         'dataProvider'=>$dataProvider,
@@ -129,6 +128,7 @@ $this->title = Yii::t('app', 'Select hike');
         'striped'=>$striped,
         'condensed'=>$condensed,
         'responsive'=>$responsive,
+        'responsiveWrap' => $responsiveWrap,
         'hover'=>$hover,
         'showPageSummary'=>$pageSummary,
         'panel'=>[

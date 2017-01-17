@@ -146,20 +146,21 @@ class FriendListController extends Controller
 	 */
 	public function actionConnect()
 	{
+        dd('sadf');
 		$friendsWithUser = Yii::$app->request->get('user_id');
         
-		$modelCurrentUser=new FriendList;
+		$modelCurrentUser = new FriendList;
 		$modelCurrentUser->user_ID = Yii::$app->user->id;
 		$modelCurrentUser->friends_with_user_ID = $friendsWithUser;
 		$modelCurrentUser->status = FriendList::STATUS_waiting;
 
-		$modelNewFriendUser=new FriendList;
+		$modelNewFriendUser = new FriendList;
 		$modelNewFriendUser->user_ID = $friendsWithUser;
 		$modelNewFriendUser->friends_with_user_ID = Yii::$app->user->id;
 		$modelNewFriendUser->status = FriendList::STATUS_pending;
 		
-		$valid=$modelCurrentUser->validate();
-        $valid=$modelNewFriendUser->validate() && $valid;
+		$valid = $modelCurrentUser->validate();
+        $valid = $modelNewFriendUser->validate() && $valid;
         
 		if(!$valid)
 		{   

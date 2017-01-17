@@ -28,7 +28,7 @@ class OpenVragenAntwoordenController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout', 'beantwoorden', 'cancel-beantwoording'],
-                'rules' => [ 
+                'rules' => [
                     [
                         'allow' => FALSE,
                         'roles'=>['?'],
@@ -38,7 +38,7 @@ class OpenVragenAntwoordenController extends Controller
                         'actions'=>array('beantwoorden', 'cancel-beantwoording'),
                         'roles'=>array('@'),
                     ),
-                    [	
+                    [
                         'allow' => TRUE,
                         'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
                         'matchCallback'=> function () {
@@ -67,8 +67,8 @@ class OpenVragenAntwoordenController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-    }    
-    
+    }
+
     /**
      * Displays a single OpenVragenAntwoorden model.
      * @param integer $id
@@ -80,7 +80,7 @@ class OpenVragenAntwoordenController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-    
+
     /**
      * Creates a new OpenNoodEnvelop model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -168,14 +168,14 @@ class OpenVragenAntwoordenController extends Controller
         if(isset($data->open_vragen_antwoorden_ID) && $data->checked) {
             throw new CHttpException(403,"Vraag is al gecontroleerd!!");
         }
-        
+
         if(isset($data->open_vragen_antwoorden_ID)) {
             $id = $data->open_vragen_antwoorden_ID;
             $model=$this->findModel($id);
         } else {
             $this->render('update',array('model'=>$model,	));
         }
-        
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -242,7 +242,7 @@ class OpenVragenAntwoordenController extends Controller
                     'pageSize'=>30,
                 ),
             ));
-        
+
         $this->render('viewPlayers',array(
         'openVragenAntwoordenDataProvider'=>$openVragenAntwoordenDataProvider,
         ));
@@ -311,7 +311,7 @@ class OpenVragenAntwoordenController extends Controller
                             )
                       );
     }
-    
+
     /**
      * Finds the TblOpenVragenAntwoorden model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

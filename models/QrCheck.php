@@ -28,7 +28,7 @@ class QrCheck extends HikeActiveRecord
 	public $qr_name;
 	public $score;
 	public $username;
-    
+
     /**
      * @inheritdoc
      */
@@ -47,9 +47,9 @@ class QrCheck extends HikeActiveRecord
             [['qr_ID', 'event_ID', 'group_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [
-                ['qr_ID', 'group_ID'], 
-                'unique', 
-                'targetAttribute' => ['qr_ID', 'group_ID'], 
+                ['qr_ID', 'group_ID'],
+                'unique',
+                'targetAttribute' => ['qr_ID', 'group_ID'],
                 'message' => Yii::t('app/error', 'Qr code is already checked by this group.')]
         ];
     }
@@ -64,8 +64,8 @@ class QrCheck extends HikeActiveRecord
             'qr_ID' => Yii::t('app', 'Qr ID'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'group_ID' => Yii::t('app', 'Group ID'),
-            'create_time' => Yii::t('app', 'Create Time'),
-            'create_user_ID' => Yii::t('app', 'Create User ID'),
+            'create_time' => Yii::t('app', 'Checked at'),
+            'create_user_ID' => Yii::t('app', 'Checked by'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];

@@ -22,19 +22,22 @@ use yii\widgets\Pjax;
             'delay' => 4000,
 
         ]);
-        if ($model->isQuestionAwnseredByGroup()) {
-            echo Html::a(
-                Yii::t('app', 'Awnser question'),
-                ['/open-vragen-antwoorden/create', 'id' => $model->open_vragen_ID],
-                ['class' => 'btn btn-success'],
-                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID]
-            );
-        }
         ?>
         </p>
         <h3>
         <?php echo Html::encode($model->open_vragen_name); ?>
         </h3>
+        <?php
+        if ($model->isQuestionAwnseredByGroup()) {
+            echo Html::a(
+                Yii::t('app', 'Awnser question'),
+                ['/open-vragen-antwoorden/create', 'id' => $model->open_vragen_ID],
+                ['class' => 'btn btn-xs btn-success'],
+                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID]
+            );
+        }
+        ?>
+        </br>
         <b>
         <?php echo Html::encode($model->getAttributeLabel('omschrijving')); ?>:
         </b>

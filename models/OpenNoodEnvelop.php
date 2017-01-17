@@ -29,11 +29,11 @@ class OpenNoodEnvelop extends HikeActiveRecord
     const STATUS_open = 1;
 
     public $nood_envelop_name;
-	public $day_date;
-	public $group_name;
-	public $route_name;
-	public $username;
-	public $score;
+  	public $day_date;
+  	public $group_name;
+  	public $route_name;
+  	public $username;
+  	public $score;
 
     /**
      * @inheritdoc
@@ -52,10 +52,10 @@ class OpenNoodEnvelop extends HikeActiveRecord
             [['nood_envelop_ID', 'event_ID', 'group_ID'], 'required'],
             [['nood_envelop_ID', 'event_ID', 'group_ID', 'opened', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
-            [   
-                ['nood_envelop_ID', 'group_ID'], 
-                'unique', 
-                'targetAttribute' => ['nood_envelop_ID', 'group_ID'], 
+            [
+                ['nood_envelop_ID', 'group_ID'],
+                'unique',
+                'targetAttribute' => ['nood_envelop_ID', 'group_ID'],
                 'message' => Yii::t('app/error', 'This hint is already opened by this group.')]
         ];
     }
@@ -71,8 +71,8 @@ class OpenNoodEnvelop extends HikeActiveRecord
             'event_ID' => Yii::t('app', 'Hike ID'),
             'group_ID' => Yii::t('app', 'Group ID'),
             'opened' => Yii::t('app', 'Opened'),
-            'create_time' => Yii::t('app', 'Create Time'),
-            'create_user_ID' => Yii::t('app', 'Create User ID'),
+            'create_time' => Yii::t('app', 'Opened at'),
+            'create_user_ID' => Yii::t('app', 'Opened by'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];

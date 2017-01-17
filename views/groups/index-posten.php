@@ -11,15 +11,11 @@ use yii\bootstrap\Modal;
 
 $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
 ?>
-<div class="tbl-groups-index">
+<div class="groups-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-
-    Modal::begin(['id'=>'main-modal']);
-    echo '<div id="main-content-modal"></div>';
-    Modal::end();
 
     $bordered = FALSE;
     $striped = TRUE;
@@ -30,7 +26,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
-    
+
     $gridColumns = [
         'group_name',
         [
@@ -55,26 +51,6 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'visible'=> TRUE,
             'filter' => FALSE,
         ],
-//        [
-//            'attribute' => 'bonus_score',
-//            'visible'=> TRUE,
-//            'filter' => FALSE,
-//        ],
-//        [
-//            'attribute' => 'post_score',
-//            'visible'=> TRUE,
-//            'filter' => FALSE,
-//        ],
-//        [
-//            'attribute' => 'qr_score',
-//            'visible'=> TRUE,
-//            'filter' => FALSE,
-//        ],
-//        [
-//            'attribute' => 'vragen_score',
-//            'visible'=> TRUE,
-//            'filter' => FALSE,
-//        ],
         [
             'attribute' => 'time_walking',
             'visible'=> TRUE,
@@ -85,24 +61,6 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'visible'=> TRUE,
             'filter' => FALSE,
         ],
-
-
-
-//        [
-//            'attribute' => 'route_name',
-//            'format' => 'raw',
-//           // here comes the problem - instead of parent_region I need to have parent
-//            'value'=>function ($model, $key, $index, $column) {
-//                return Html::a($model->route_name, ['route/update', 'id' => $key]);
-//            },
-//        ],
-
-//        [
-//            'header' => Yii::t('app', '#Questions'),
-//            'value' => function($key){
-//                return Route::findOne($key)->getOpenVragenCount();
-//            },
-//        ],
         [
             'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
@@ -120,12 +78,12 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'expandTitle' => Yii::t('app', 'Open view stations'),
             'collapseTitle' => Yii::t('app', 'Close view stations'),
         ],
-//        [
-//            'header' => Yii::t('app', '#Hints'),
-//            'value' => function($key){
-//                return Route::findOne($key)->getNoodEnvelopCount();
-//            },
-//        ],
+      //  [
+      //      'header' => Yii::t('app', '#Hints'),
+      //      'value' => function($key){
+      //          return Route::findOne($key)->getNoodEnvelops();
+      //      },
+      //  ],
         [
             'attribute' => 'bonus_score',
             'visible'=> TRUE,
@@ -206,6 +164,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
 
 
     echo GridView::widget([
+        'id' => 'kv-grid-posts',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => $gridColumns,
@@ -213,7 +172,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
         'headerRowOptions' => ['class'=>'kartik-sheet-style'],
         'filterRowOptions' => ['class'=>'kartik-sheet-style'],
         'resizableColumns' => $resizableColumns,
-        'pjax' => true, // pjax is set to always true for this demo
+        'pjax' => TRUE, // pjax is set to always true for this demo
         // set your toolbar
         'toolbar'=> [
             '{export}',

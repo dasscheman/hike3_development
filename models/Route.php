@@ -25,7 +25,7 @@ use Yii;
  * @property Users $updateUser
  */
 class Route extends HikeActiveRecord
-{	
+{
     private $event_ID;
 
     /**
@@ -47,9 +47,9 @@ class Route extends HikeActiveRecord
             [['day_date', 'create_time', 'update_time'], 'safe'],
             [['route_name'], 'string', 'max' => 255],
             [
-                ['event_ID', 'day_date', 'route_name'], 
-                'unique', 
-                'targetAttribute' => ['event_ID', 'day_date', 'route_name'], 
+                ['event_ID', 'day_date', 'route_name'],
+                'unique',
+                'targetAttribute' => ['event_ID', 'day_date', 'route_name'],
                 'message' => Yii::t('app', 'Route  name already exists for this day.')]
         ];
     }
@@ -91,8 +91,6 @@ class Route extends HikeActiveRecord
     {
         $this->day_date = $value;
     }
-
-
 
     /**
      * @return \yii\db\ActiveQuery
@@ -180,7 +178,7 @@ class Route extends HikeActiveRecord
 		$data = Route::find('route_ID =:route_id', array(':route_id' => $id));
 		return $data->day_date;
 	}
-    
+
 	public function getRouteName($id)
 	{
 		$data = Route::find()
@@ -189,7 +187,7 @@ class Route extends HikeActiveRecord
             ->one();
 
 		if ($data)
-		{	
+		{
             return "nvt";
 		} else {
 			return $data->route_name;
