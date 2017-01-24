@@ -15,7 +15,7 @@ use prawee\widgets\ButtonAjax;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new hint'),
-             'route'=>['noodenvelop/create'],
+             'route'=>['nood-envelop/create', ['route_id' => $model->route_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
@@ -36,6 +36,7 @@ use prawee\widgets\ButtonAjax;
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
         'itemView' => '/nood-envelop/_list',
+        'emptyText' => Yii::t('app', 'There are no hints for this route section'),
     ]);
 ?>
 </div>

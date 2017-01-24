@@ -54,7 +54,7 @@ $this->title = Yii::t('app', 'Routes');
         ],
         [
             'header' => Yii::t('app', '#Questions'),
-            'value' => function($key){
+            'value' => function($model, $key){
                 return Route::findOne($key)->getOpenVragenCount();
             },
         ],
@@ -77,7 +77,7 @@ $this->title = Yii::t('app', 'Routes');
         ],
         [
             'header' => Yii::t('app', '#Hints'),
-            'value' => function($key){
+            'value' => function($model, $key){
                 return Route::findOne($key)->getNoodEnvelopCount();
             },
         ],
@@ -99,7 +99,7 @@ $this->title = Yii::t('app', 'Routes');
         ],
         [
             'header' => Yii::t('app', '#Silent posts'),
-            'value' => function($key){
+            'value' => function($model, $key){
                 return Route::findOne($key)->getQrCount();
             },
         ],
@@ -156,7 +156,7 @@ $this->title = Yii::t('app', 'Routes');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
-    
+
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
         'content' => GridView::widget([

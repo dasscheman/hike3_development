@@ -18,7 +18,18 @@ use yii\data\ArrayDataProvider;
     <h1><?= Html::encode(Yii::t('app', 'Silent stations for') . ' ' . $model->route_name) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create new qr'), ['update', 'id' => $model->route_ID], ['class' => 'btn btn-primary']) ?>
+        <?php
+        echo ButtonAjax::widget([
+            'name'=>Yii::t('app', 'Create new question'),
+             'route'=>['qr/create', ['route_id' => $model->route_ID]],
+             'modalId'=>'#main-modal',
+             'modalContent'=>'#main-content-modal',
+             'options'=>[
+                 'class'=>'btn btn-success',
+                 'title'=>'Button for create silent station',
+             ]
+         ]);
+        ?>
     </p>
     <?php
 
@@ -32,7 +43,7 @@ use yii\data\ArrayDataProvider;
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
         'itemView' => '/qr/_list',
-        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+        'emptyText' => Yii::t('app', 'There are no silent stations for this route section'),
     ]);
 ?>
 </div>
