@@ -3,16 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblQr;
-use app\models\TblQrSearch;
+use app\models\Qr;
+use app\models\QrSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\QrCheck;
+use kartik\mpdf\Pdf;
+use dosamigos\qrcode\QrCode;
 
 /**
- * QrController implements the CRUD actions for TblQr model.
+ * QrController implements the CRUD actions for Qr model.
  */
 class QrController extends Controller
 {
@@ -27,14 +29,15 @@ class QrController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'delete', 'create', 'report', 'createIntroductie','moveUpDown'],
-                'rules' => [			
-                    array(
+                'only' => ['index', 'update', 'delete', 'create', 'report', 'createIntroductie','moveUpDown', 'qrcode'],
+                'rules' => [
+                    [
                         'allow' => FALSE,
-                        'users'=>array('?'),),
-                    array(	
+                        'roles'=>['?'],
+                    ],
+                    array(
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie', 'moveUpDown'),
+                        'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie', 'moveUpDown', 'qrcode'),
                         'matchCallback' => function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         },
@@ -49,14 +52,14 @@ class QrController extends Controller
     }
 
     /**
-     * Lists all TblQr models.
+     * Lists all Qr models.
      * @return mixed
      */
     public function actionIndex()
     {
 		$event_id = $_GET['event_id'];
 		$where = "event_ID = $event_id";
-        
+
         $searchModel = new QrSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -70,14 +73,14 @@ class QrController extends Controller
 //				'pageSize'=>15,
 //			),
 //		));
-        
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-		
+
     /**
      * Displays a single TblQr model.
      * @param integer $id
@@ -174,7 +177,7 @@ class QrController extends Controller
     }
 
     /**
-     * Deletes an existing TblQr model.
+     * Deletes an existing Qr model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -203,7 +206,7 @@ class QrController extends Controller
             'endDate' => $endDate
         ]);
     }
-    
+
     public function actioncreateIntroductie()
 	{
 		$model = new Qr;
@@ -222,17 +225,65 @@ class QrController extends Controller
 			}
 		}
 	}
+    public function actionQrcode() {
+        $qr_code = Yii::$app->Request->get('qr_code');
+        $event_id = Yii::$app->Request->get('event_id');
 
-	
-	public function actionReport()
+    	$link = "www.hike-app.nl/index.php?r=qrCheck/create&event_id=".$event_id."&qr_code=".$qr_code;
+        return QrCode::jpg(
+            $link,
+            Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',
+            1,
+            3,
+            1,
+            TRUE);
+    }
+
+	public function actionReport($id)
 	{
-		$id = $_GET['id'];
-		$model=Qr::findByPk($id);
-		if ($model->qr_code == $_GET['qr_code'] and
-			$model->event_ID == $_GET['event_id']) {
-			$this->renderPartial("reportview", $id);
-		}
-		throw new CHttpException(404,'Ongeldige QR code, daarom kun je deze QR niet printen.');
+	    $model = $this->findModel($id);
+        if (isset($model)) {
+            $content = $this->renderPartial('reportview', ['model' => $model]);
+           // setup kartik\mpdf\Pdf component
+           $pdf = new Pdf([
+               // set to use core fonts only
+               'mode' => Pdf::MODE_CORE,
+               // A5 paper format
+               'format' => [100, 200],
+               'marginLeft' => 0,
+               'marginRight' => 0,
+               'marginTop' => 0,
+               'marginBottom' => 0,
+               'defaultFont' => 'arial',
+               // portrait orientation
+               'orientation' => Pdf::ORIENT_LANDSCAPE,
+               // stream to browser inline
+               'destination' => Pdf::DEST_BROWSER,
+               // your html content input
+               'content' => $content,
+               // format content from your own css file if needed or use the
+               // enhanced bootstrap css built by Krajee for mPDF formatting
+               'cssFile' => 'css/qrreport.css',
+               //'@web/css/qrreport.css',
+            //   'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+               // any css to be embedded if required
+            //    'cssInline' => '.kv-heading-1{font-size:18px}',
+                // set mPDF properties on the fly
+               'options' => [
+                   'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                   'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
+               ],
+                // call mPDF methods on the fly
+            //    'methods' => [
+            //        'SetHeader'=>[$model->qr_name],
+            //        'SetFooter'=>[$model->qr_code],
+            //    ]
+           ]);
+
+            // return the pdf output as per the destination setting
+            return $pdf->render();
+        }
 	}
 
 	public function actionMoveUpDown()

@@ -15,6 +15,7 @@ use app\models\Bonuspunten;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
 
+use dosamigos\qrcode\QrCode;
 /**
  * RouteController implements the CRUD actions for TblRoute model.
  */
@@ -37,7 +38,7 @@ class RouteController extends Controller
                         'allow' => FALSE,
                         'roles' => array('?'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'),
                         'matchCallback'=> function () {
@@ -54,7 +55,7 @@ class RouteController extends Controller
     }
 
     /**
-     * Lists all TblRoute models.
+     * Lists all Route models.
      * @return mixed
      */
     public function actionIndex()
@@ -229,7 +230,7 @@ class RouteController extends Controller
                         ':route_id' => $model->route_ID
                     ])
                 ->exists();
-            
+
             if (!$exist) {
                 $exist = OpenVragen::find()
                     ->where('event_ID=:event_id and route_id=:route_id')
@@ -282,7 +283,7 @@ class RouteController extends Controller
 		{
 			throw new CHttpException(400,"Je kan dit routeonderdeel niet verwijderen. Verwijder eerst alle onderdelen van deze route (vragen, stille posten)");
 		}
-        
+
         return $this->redirect(isset($_POST['returnUrl']) ?
 			$_POST['returnUrl'] : array('/startup/startupOverview',
 							'event_id'=>$_GET['event_id']));
@@ -372,7 +373,7 @@ class RouteController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate]);
 	}
-    
+
     /**
      * Finds the TblRoute model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

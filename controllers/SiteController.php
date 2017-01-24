@@ -12,6 +12,7 @@ use app\models\EventNames;
 use app\models\RouteSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
+use yii\web\Cookie;
 
 class SiteController extends Controller
 {
@@ -91,7 +92,7 @@ class SiteController extends Controller
         if (!\Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        
+
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $last_login = $model->previous_login_time;
@@ -142,21 +143,19 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
-    
+
     public function actionLanguage()
     {
         $language = Yii::$app->request->get('language');
         Yii::$app->language = $language;
-
-//        $languageCookie = new Cookie([
-//            'name' => 'language',
-//            'value' => $language,
-//            'expire' => time() + 60 * 60 * 24 * 30, // 30 days
-//        ]);
-//        Yii::$app->response->cookies->add($languageCookie);
-        
+        $languageCookie = new Cookie([
+            'name' => 'language',
+            'value' => $language,
+            'expire' => time() + 60 * 60 * 24 * 30, // 30 days
+            ]);
+        Yii::$app->response->cookies->add($languageCookie);
         return $this->render('index');
-    }    
+    }
 
 	/**
 	 * This is the default 'index' action that is invoked

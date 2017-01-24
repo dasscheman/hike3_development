@@ -37,7 +37,7 @@ use yii\widgets\ListView;
         'pager' => FALSE,
         'dataProvider' => $dataProvider,
         'itemView' => '/open-vragen/_list',
-        'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+        'emptyText' => Yii::t('app', 'There are no questions for this route section'),
     ]);
 
 ?>

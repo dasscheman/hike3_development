@@ -26,13 +26,13 @@ use Yii;
  * @property Users $updateUser
  */
 class Bonuspunten extends HikeActiveRecord
-{ 
+{
 	public $group_name;
 	public $post_name;
 	public $route_name;
 	public $username;
 
-    
+
     /**
      * @inheritdoc
      */
@@ -66,8 +66,8 @@ class Bonuspunten extends HikeActiveRecord
 			      'with'=>'group_ID,event_ID,date,post_ID'),
 		);
 	}
-    
-    
+
+
     /**
      * @inheritdoc
      */
@@ -81,8 +81,8 @@ class Bonuspunten extends HikeActiveRecord
             'group_ID' => Yii::t('app', 'Group ID'),
             'omschrijving' => Yii::t('app', 'Description'),
             'score' => Yii::t('app', 'Score'),
-            'create_time' => Yii::t('app', 'Create Time'),
-            'create_user_ID' => Yii::t('app', 'Create User ID'),
+            'create_time' => Yii::t('app', 'Given at'),
+            'create_user_ID' => Yii::t('app', 'Given by'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
@@ -129,8 +129,8 @@ class Bonuspunten extends HikeActiveRecord
     }
 
 	/**
-	 * Returns de totale score die een groep heeft gehaald met bnuspunten. 
-	 */	
+	 * Returns de totale score die een groep heeft gehaald met bnuspunten.
+	 */
 	public function getBonuspuntenScore($group_id)
 	{
         $data = Bonuspunten::find()

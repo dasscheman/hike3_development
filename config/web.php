@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__.'/debug.php');
 $params = require(__DIR__ . '/params.php');
 
 $config = [
@@ -9,7 +10,14 @@ $config = [
     ],
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        [
+            'class' => 'app\components\LanguageSelector',
+            'supportedLanguages' => ['en_US', 'nl_NL'],
+        ],
+        'app\components\Bootstrap',
+    ],
     'modules' => [
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
@@ -32,6 +40,7 @@ $config = [
                         'app' => 'app.php',
                         'app/error' => 'error.php',
                     ],
+                    'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation']
                 ],
                 'kvgrid' => [
                     'class' => 'yii\i18n\PhpMessageSource',
@@ -60,12 +69,12 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
-            'transport' => [                
+            'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host'=>'biologenkantoor.nl',
                 'username'=>'noreply@biologenkantoor.nl',
                 'password'=>'Vzvr074$',
-                'port'=>'587', 
+                'port'=>'587',
                 //'encryption' => 'tls',
             ],
         ],
