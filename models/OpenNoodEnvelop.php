@@ -28,13 +28,6 @@ class OpenNoodEnvelop extends HikeActiveRecord
     const STATUS_closed = 0;
     const STATUS_open = 1;
 
-    public $nood_envelop_name;
-  	public $day_date;
-  	public $group_name;
-  	public $route_name;
-  	public $username;
-  	public $score;
-
     /**
      * @inheritdoc
      */

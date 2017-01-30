@@ -74,7 +74,49 @@ class TblOpenVragenSearch extends TblOpenVragen
 
         return $dataProvider;
     }
-    
+
+    public function searchQuestionNotAnsweredByGroup($params)
+    {
+
+        $queryAntwoorden = OpenVragenAntwoorden::find();
+        $queryAntwoorden->select('open_vragen_ID')
+                        ->where('user_ID=:user_id')
+                        ->addParams([':user_id' => Yii::$app->user->id]);
+
+        $query = OpenVragen::find();
+        $query->where(['not in', 'tbl_open_vragen.user_ID', $queryAntwoorden]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'open_vragen_ID' => $this->open_vragen_ID,
+            'event_ID' => $this->event_ID,
+            'route_ID' => $this->route_ID,
+            'vraag_volgorde' => $this->vraag_volgorde,
+            'score' => $this->score,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        $query->andFilterWhere(['like', 'open_vragen_name', $this->open_vragen_name])
+            ->andFilterWhere(['like', 'omschrijving', $this->omschrijving])
+            ->andFilterWhere(['like', 'vraag', $this->vraag])
+            ->andFilterWhere(['like', 'goede_antwoord', $this->goede_antwoord]);
+
+        return $dataProvider;
+    }
     /**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -104,7 +146,7 @@ class TblOpenVragenSearch extends TblOpenVragen
 //			'criteria'=>$criteria,
 //		));
 //	}
-    
+
 	public function searchOpenVragen($event_id)
 	{
 		// Warning: Please modify the following code to remove attributes that
@@ -133,5 +175,5 @@ class TblOpenVragenSearch extends TblOpenVragen
 			'criteria'=>$criteria,
 		));
 	}
-    
+
 }

@@ -11,7 +11,7 @@ use yii\helpers\Html;
 
     <h1><?= Html::encode(Yii::t('app', 'Open hint') . ' ' . $modelEnvelop->nood_envelop_name) ?></h1>
 
-    <?= $this->render('_form', [
+    <?= $this->render('_form-open', [
         'model' => $model,
         'modelEvent' => $modelEnvelop,
     ]) ?>

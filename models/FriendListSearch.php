@@ -68,29 +68,4 @@ class FriendListSearch extends FriendList
 
         return $dataProvider;
     }
-    
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-		$user_id = Yii::app()->user->id; 
-	    $criteria=new CDbCriteria;
-	   
-	    $criteria->compare('friend_list_ID',$this->friend_list_ID);
-	    $criteria->compare('user_ID',$this->user_ID);
-	    $criteria->compare('friends_with_user_ID',$this->friends_with_user_ID);
-	    $criteria->compare('status',$this->status);
-	    $criteria->compare('create_time',$this->create_time,true);
-	    $criteria->compare('create_user_ID',$this->create_user_ID);
-	    $criteria->compare('update_time',$this->update_time,true);
-	    $criteria->compare('update_user_ID',$this->update_user_ID);
-	    return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-	    ));
-	}
-
 }

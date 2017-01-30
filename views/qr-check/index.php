@@ -1,40 +1,42 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\TblQrCheckSearch */
+/* @var $searchModel app\models\QrCheckSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tbl Qr Checks');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Overview checked silent stations');
 ?>
-<div class="tbl-qr-check-index">
+<div class="qr-check-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Tbl Qr Check'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'qr_check_ID',
-            'qr_ID',
-            'event_ID',
-            'group_ID',
+            [
+            'attribute' => 'qr_name',
+            'value' => 'qr.qr_name'
+            ],
+            [
+            'attribute' => 'group_name',
+            'value' => 'group.group_name'
+            ],
+            [
+            'attribute' => 'route_name',
+            'value' => 'qr.route.route_name'
+            ],
             'create_time',
-            // 'create_user_ID',
-            // 'update_time',
-            // 'update_user_ID',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+            'attribute' => 'score',
+            'value' => 'qr.score'
+            ],
+            [
+            'attribute' => 'username',
+            'value' => 'createUser.username'
+            ],
         ],
     ]); ?>
 

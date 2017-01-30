@@ -9,6 +9,7 @@ use yii\filters\AccessControl;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\Groups;
+use app\models\OpenVragenAntwoorden;
 use yii\data\ActiveDataProvider;
 use yii\web\UploadedFile;
 
@@ -45,12 +46,12 @@ class OrganisatieController extends Controller
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
                     ],
-                    
+
                 ],
             ],
         ];
     }
-    
+
     /**
      * Displays the overview of a hike event
      * @return mixed
@@ -69,14 +70,14 @@ class OrganisatieController extends Controller
             ->where(['=', 'event_ID', $event_id])
             ->andWhere(['<=', 'rol', DeelnemersEvent::ROL_post])
             ->orderby('rol ASC');
-        
+
         $providerOrganisatie = new ActiveDataProvider([
             'query' => $queryOrganisatie,
             'pagination' => [
                 'pageSize' => 50,
             ],
         ]);
-        $groupModel = new Groups;        
+        $groupModel = new Groups;
         $queryGroups = Groups::find()
             ->where(['=', 'event_ID', $event_id])
             ->orderby('group_name ASC');
@@ -86,12 +87,24 @@ class OrganisatieController extends Controller
                 'pageSize' => 20,
             ],
         ]);
-        
+
+        $queryCheckQuestions = OpenVragenAntwoorden::find()
+            ->where('event_ID=:event_id and checked=:checked')
+            ->addParams([
+                'event_id' => Yii::$app->user->identity->selected,
+                'checked' => 0,
+            ]);
+        $dataProviderCheck = new ActiveDataProvider([
+            'query' => $queryCheckQuestions
+        ]);
+
+
 		return $this->render('/organisatie/overview', array(
             'eventModel' => $eventModel,
 			'organisatieData' => $providerOrganisatie,
 			'groupsData' => $providerGroups,
             'groupModel' => $groupModel,
+            'dataProviderCheck' => $dataProviderCheck,
 		));
 	}
 }

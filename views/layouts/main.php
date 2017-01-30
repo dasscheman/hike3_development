@@ -28,7 +28,7 @@ AppAsset::register($this);
 <?php $this->beginBody(); ?>
 
 <div class="wrap">
-    <?php     
+    <?php
     NavBar::begin([
         'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ? 'Geselecteerde hike: ' . (Yii::$app->user->identity->selected): 'Hike-app.nl',
         'brandUrl' => Yii::$app->homeUrl,
@@ -36,55 +36,55 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => Yii::t('app','Profiel'),                 
+            ['label' => Yii::t('app','Profiel'),
                 'items' => [
                     [
-                        'label' => Yii::t('app','Overview'), 
-                        'url'=>['/users/view', 
+                        'label' => Yii::t('app','Overview'),
+                        'url'=>['/users/view',
                             'id' => Yii::$app->user->id
                         ],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'view'),
                     ],
                     [
-                        'label' => Yii::t('app','Search New Friends'), 
+                        'label' => Yii::t('app','Search New Friends'),
                         'url'=>[
-                            '/users/search-new-friends', 
+                            '/users/search-new-friends',
                             'id' => Yii::$app->user->id],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-new-friends'),
                     ],
                     [
-                        'label' => Yii::t('app','Friends'), 
+                        'label' => Yii::t('app','Friends'),
                         'url'=>[
-                            '/users/search-friends', 
+                            '/users/search-friends',
                             'id' => Yii::$app->user->id],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-friends'),
                     ],
                     [
-                        'label' => Yii::t('app','Friend Requests'), 
+                        'label' => Yii::t('app','Friend Requests'),
                         'url'=>[
-                            '/users/search-friend-requests', 
+                            '/users/search-friend-requests',
                             'id' => Yii::$app->user->id],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-friend-requests'),
                     ],
                     [
-                        'label' => Yii::t('app','Select Hike'), 
+                        'label' => Yii::t('app','Select Hike'),
                         'url' => ['/event-names/select-hike'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
                     [
-                        'label' => Yii::t('app','Create Account'), 
+                        'label' => Yii::t('app','Create Account'),
                         'url' => ['/users/create', 'language'=> 'nl'],
                         'visible' => Yii::$app->user->isGuest,
-                    ],  
+                    ],
                     [
-                        'label' => Yii::t('app','Forgot Password'), 
+                        'label' => Yii::t('app','Forgot Password'),
                         'url' => ['/users/resend-password-user', 'language'=> 'nl'],
                         'visible' => Yii::$app->user->isGuest,
-                    ],                   
+                    ],
                 ],
             ],
             // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
@@ -102,7 +102,7 @@ AppAsset::register($this);
 //                    ],
                     [
                         'label'=> Yii::t('app','Game overview'),
-                        'url' => ['site/index'],
+                        'url' => ['site/game-overview'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('site', 'index')
                     ],
                     [
@@ -131,51 +131,46 @@ AppAsset::register($this);
             // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
             // Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
             Yii::$app->user->isGuest ? '':
-            ['label' => Yii::t('app','Organisatie'),                
+            ['label' => Yii::t('app','Organisatie'),
                 'items' => [
                     [
-                        'label' => Yii::t('app','Start New Hike'), 
+                        'label' => Yii::t('app','Start New Hike'),
                         'url'=>['/event-names/create'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('eventNames', 'create'),
-                    ], 
+                    ],
                     [
-                        'label' => Yii::t('app','Hike overzicht'), 
+                        'label' => Yii::t('app','Hike overview'),
                         'url'=>['/organisatie/overview'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
                     ],
                     [
-                        'label'=>'Route Overzicht',
+                        'label'=> Yii::t('app','Route Overview'),
                         'url'=>['/route/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'index')
                     ],
                     [
-                        'label'=>'Posten Beheren',
+                        'label'=>Yii::t('app','Stations'),
                         'url'=>['/posten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('posten', 'index')
                     ],
-//                    [
-//                        'label'=>'Vragen Overzicht',
-//                        'url'=>['/openVragen/index'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragen', 'index')
-//                    ],
-//                    [
-//                        'label'=>'Hints Overzicht',
-//                        'url'=>['/noodEnvelop/index'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('noodEnvelop', 'index')
-//                    ],
-//                    [
-//                        'label'=>'Stille Posten Overzicht',
-//                        'url'=>['/qr/index'],
-//                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
-//                    ],
+                   [
+                       'label'=>Yii::t('app', 'Overview opened hints'),
+                       'url'=>['/open-nood-envelop/index'],
+                       'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('noodEnvelop', 'index')
+                   ],
+                   [
+                       'label'=>Yii::t('app', 'Overview checked silent stations'),
+                       'url'=>['/qr-check/index'],
+                       'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
+                   ],
                     [
-                        'label'=> Yii::t('app','Check Answers'),
-                        'url'=> ['open-vragen-antwoorden/viewControle'],
+                        'label'=> Yii::t('app','Answers overview'),
+                        'url'=> ['open-vragen-antwoorden/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('openVragenAntwoorden', 'viewControle')
                     ],
                     [
-                        'label'=> Yii::t('app','Assign Bonus Points'),
-                        'url'=>['bonuspunten/create'],
+                        'label'=> Yii::t('app','Bonus Points overview'),
+                        'url'=>['bonuspunten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'create')
                     ],
                 ]
@@ -183,13 +178,13 @@ AppAsset::register($this);
             ['label' => Yii::t('app','Language'),
                 'items' => [
                     [
-                        'label' => Yii::t('app','English'), 
+                        'label' => Yii::t('app','English'),
                         'url' => ['/site/language', 'language'=> 'en'],
                     ],
                     [
-                        'label' => Yii::t('app','Dutch'), 
+                        'label' => Yii::t('app','Dutch'),
                         'url' => ['/site/language', 'language'=> 'nl'],
-                    ],                    
+                    ],
                 ],
             ],
             //['label' => 'About', 'url' => ['/site/about']],
@@ -214,7 +209,7 @@ AppAsset::register($this);
             'type' => AlertBlock::TYPE_ALERT,
             'useSessionFlash' => true,
             'delay' => 4000,
-            
+
         ]); ?>
         <?= $content ?>
     </div>

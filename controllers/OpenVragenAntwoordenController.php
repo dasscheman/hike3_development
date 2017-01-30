@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\data\ActiveDataProvider;
 
 /**
  * OpenVragenAntwoordenController implements the CRUD actions for OpenVragenAntwoorden model.
@@ -27,7 +28,7 @@ class OpenVragenAntwoordenController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout', 'beantwoorden', 'cancel-beantwoording'],
+                'only' => ['index', 'delete', 'view-controle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout', 'beantwoorden', 'cancel-beantwoording'],
                 'rules' => [
                     [
                         'allow' => FALSE,
@@ -40,7 +41,7 @@ class OpenVragenAntwoordenController extends Controller
                     ),
                     [
                         'allow' => TRUE,
-                        'actions'=>['index', 'delete', 'viewControle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
+                        'actions'=>['index', 'delete', 'view-controle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         }
@@ -55,13 +56,13 @@ class OpenVragenAntwoordenController extends Controller
     }
 
     /**
-     * Lists all TblOpenVragenAntwoorden models.
+     * Lists all OpenVragenAntwoorden models.
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new OpenVragenAntwoordenSearch();
-        $dataProvider = $searchModel->searchAnswered(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -173,7 +174,7 @@ class OpenVragenAntwoordenController extends Controller
             $id = $data->open_vragen_antwoorden_ID;
             $model=$this->findModel($id);
         } else {
-            $this->render('update',array('model'=>$model,	));
+            $this->render('update',array('model'=>$model));
         }
 
         $model = $this->findModel($id);
@@ -201,29 +202,6 @@ class OpenVragenAntwoordenController extends Controller
 
         return $this->redirect(['index']);
     }
-
-    /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
-     */
-    public function actionViewControle()
-    {
-        $event_id = $_GET['event_id'];
-        $where = "event_ID = $event_id AND
-			  checked = 0 ";
-
-        $DataProvider=new CActiveDataProvider('OpenVragenAntwoorden',
-						       array('criteria'=>array('condition'=>$where,
-									       'order'=>'group_ID DESC',
-										),
-							     'pagination'=>array('pageSize'=>10,),
-							     )
-						       );
-        $this->render('viewControle',array(
-            'dataProvider'=>$DataProvider,
-        ));
-    }
-
 
     public function actionViewPlayers()
     {

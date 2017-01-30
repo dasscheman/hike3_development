@@ -52,8 +52,8 @@ class Groups extends HikeActiveRecord
             [['event_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['group_name'], 'string', 'max' => 255],
-            [   ['event_ID', 'group_name'], 
-                'unique', 'targetAttribute' => ['event_ID', 'group_name'], 
+            [   ['event_ID', 'group_name'],
+                'unique', 'targetAttribute' => ['event_ID', 'group_name'],
                 'message' => Yii::t('app', 'This group is already assigned to this hike')]
         ];
     }
@@ -161,6 +161,12 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID']);
     }
 
+    public function getVraag()
+    {
+        return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
+            ->via('openVragenAntwoordens');
+    }
+
     public function getVragen_score()
     {
         return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
@@ -215,7 +221,7 @@ class Groups extends HikeActiveRecord
 		$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
 		return $groupsArray;
 	}
-	
+
 	/**
 	 * Get al available group name options for a particular event.
 	 */
@@ -225,7 +231,7 @@ class Groups extends HikeActiveRecord
 		$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
 		return $groupsArray;
 	}
-       
+
 	/**
 	* Get group name.
 	*/
@@ -233,9 +239,9 @@ class Groups extends HikeActiveRecord
 	{
         dd('NOG NODIG ?');
 	    $data = Groups::find('group_ID =:group_Id', array(':group_Id' => $group_Id));
-	   
+
 	    return isset($data->group_name) ?
-		$data->group_name : "";        
+		$data->group_name : "";
 	}
 
     /**
@@ -314,7 +320,7 @@ class Groups extends HikeActiveRecord
         }
     }
 
-    public function addMembersToGroup($group, $members = []) 
+    public function addMembersToGroup($group, $members = [])
     {
         if (!$members) {
             return TRUE;
