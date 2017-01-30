@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\DeelnemersEvent;
 use app\models\NoodEnvelop;
+use app\models\EventNames;
 
 /**
  * OpenNoodEnvelopController implements the CRUD actions for TblOpenNoodEnvelop model.
@@ -39,7 +40,7 @@ class OpenNoodEnvelopController extends Controller
                         'actions'=>array('open', 'cancel-opening'),
                         'roles'=>array('@'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('create', 'index', 'update', 'delete'),
                         'matchCallback'=> function () {
@@ -50,7 +51,7 @@ class OpenNoodEnvelopController extends Controller
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
-                    ],                  
+                    ],
                 ],
             ]
         ];
@@ -65,12 +66,18 @@ class OpenNoodEnvelopController extends Controller
         $searchModel = new OpenNoodEnvelopSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $event_id = Yii::$app->user->identity->selected;
+		$startDate=EventNames::getStartDate($event_id);
+		$endDate=EventNames::getEndDate($event_id);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+			'startDate'=>$startDate,
+			'endDate'=>$endDate
         ]);
     }
-    
+
     /**
      * Displays a single TblOpenNoodEnvelop model.
      * @param integer $id
@@ -166,7 +173,7 @@ class OpenNoodEnvelopController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Deletes an existing TblOpenNoodEnvelop model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

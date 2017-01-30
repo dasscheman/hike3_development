@@ -8,12 +8,8 @@ use yii\bootstrap\Modal;
 
 ?>
 
-<div class="col-sm-3">
-    <div class="view">
-    
-	<b>
-        <?php echo Html::encode($model->getRolTextObj()); ?>:
-    </b>
+
+<div class="well">
     <?php
     echo ButtonAjax::widget([
         'name' => $model->user->username,
@@ -29,11 +25,6 @@ use yii\bootstrap\Modal;
             'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'update'),
         ]
     ]);
-    
-    ?>
-
-    <br/>
-    <?php
     Modal::begin([
         'id' => 'deelnemer-update-modal',
         'options' => [
@@ -45,6 +36,7 @@ use yii\bootstrap\Modal;
             'class' => 'btn btn-danger btn-sm pull-right',
         ]]);
     echo '<div id="deelnemer-update-modal"></div>';
-    Modal::end();?>
-    </div>
+    Modal::end(); ?>
+    <br/>
+    <?php echo Html::encode($model->getRolTextObj()); ?>
 </div>

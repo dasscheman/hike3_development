@@ -1,41 +1,44 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\TblOpenNoodEnvelopSearch */
+/* @var $searchModel app\models\OpenNoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tbl Open Nood Envelops');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Overview opened hints');
 ?>
-<div class="tbl-open-nood-envelop-index">
+<div class="open-nood-envelop-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Tbl Open Nood Envelop'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'summary' => FALSE,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'open_nood_envelop_ID',
-            'nood_envelop_ID',
-            'event_ID',
-            'group_ID',
-            'opened',
-            // 'create_time',
-            // 'create_user_ID',
-            // 'update_time',
-            // 'update_user_ID',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+            'attribute' => 'nood_envelop_name',
+            'value' => 'noodEnvelop.nood_envelop_name'
+            ],
+            [
+            'attribute' => 'group_name',
+            'value' => 'group.group_name'
+            ],
+            [
+            'attribute' => 'route_name',
+            'value' => 'noodEnvelop.route.route_name'
+            ],
+            'create_time',
+            [
+            'attribute' => 'score',
+            'value' => 'noodEnvelop.score'
+            ],
+            [
+            'attribute' => 'username',
+            'value' => 'createUser.username'
+            ],  
         ],
     ]); ?>
 

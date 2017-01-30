@@ -5,13 +5,19 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TblQrCheck;
+use app\models\QrCheck;
 
 /**
- * TblQrCheckSearch represents the model behind the search form about `app\models\TblQrCheck`.
+ * QrCheckSearch represents the model behind the search form about `app\models\QrCheck`.
  */
-class TblQrCheckSearch extends TblQrCheck
+class QrCheckSearch extends QrCheck
 {
+    public $qr_name;
+    public $group_name;
+    public $route_name;
+    public $username;
+    public $score;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +25,7 @@ class TblQrCheckSearch extends TblQrCheck
     {
         return [
             [['qr_check_ID', 'qr_ID', 'event_ID', 'group_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['create_time', 'update_time'], 'safe'],
+            [['create_time', 'update_time', 'group_name', 'nood_envelop_name', 'score', 'username', 'route_name'], 'safe'],
         ];
     }
 
@@ -41,11 +47,45 @@ class TblQrCheckSearch extends TblQrCheck
      */
     public function search($params)
     {
-        $query = TblQrCheck::find();
+        $query = QrCheck::find();
+        $query->joinWith(['qr', 'group', 'createUser' , 'qr.route']);
+        $query->where(
+            'tbl_qr_check.event_ID = :event_id',
+            [':event_id'=>Yii::$app->user->identity->selected]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_time'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
+
+        $dataProvider->sort->attributes['group_name'] =
+        [
+            'asc' => ['tbl_groups.group_name' => SORT_ASC],
+            'desc' => ['tbl_groups.group_name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['qr_name'] =
+        [
+            'asc' => ['tbl_qr.qr_name' => SORT_ASC],
+            'desc' => ['tbl_qr.qr_name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['score'] =
+        [
+            'asc' => ['tbl_qr.score' => SORT_ASC],
+            'desc' => ['tbl_qr.score' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['username'] =
+        [
+            'asc' => ['tbl_users.username' => SORT_ASC],
+            'desc' => ['tbl_users.username' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['route_name'] =
+        [
+            'asc' => ['tbl_route.route_name' => SORT_ASC],
+            'desc' => ['tbl_route.route_name' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -64,12 +104,17 @@ class TblQrCheckSearch extends TblQrCheck
             'create_user_ID' => $this->create_user_ID,
             'update_time' => $this->update_time,
             'update_user_ID' => $this->update_user_ID,
-        ]);
+        ])
+            ->andFilterWhere(['like', 'tbl_groups.group_name', $this->group_name])
+            ->andFilterWhere(['like', 'tbl_qr.qr_name', $this->qr_name])
+            ->andFilterWhere(['like', 'tbl_qr.score', $this->score])
+            ->andFilterWhere(['like', 'tbl_users.username', $this->username])
+            ->andFilterWhere(['like', 'tbl_route.route_name', $this->route_name]);
 
         return $dataProvider;
     }
-    
-    
+
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.

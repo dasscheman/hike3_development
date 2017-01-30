@@ -3,15 +3,15 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TblQrCheck;
-use app\models\TblQrCheckSearch;
+use app\models\QrCheck;
+use app\models\QrCheckSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * QrCheckController implements the CRUD actions for TblQrCheck model.
+ * QrCheckController implements the CRUD actions for QrCheck model.
  */
 class QrCheckController extends Controller
 {
@@ -32,7 +32,7 @@ class QrCheckController extends Controller
                         'allow' => FALSE,
                         'roles'=>array('?'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'index', 'delete', 'create', 'update'),
                         'matchCallback'=> function () {
@@ -49,7 +49,7 @@ class QrCheckController extends Controller
     }
 
     /**
-     * Lists all TblQrCheck models.
+     * Lists all QrCheck models.
      * @return mixed
      */
     public function actionIndex()
@@ -64,7 +64,7 @@ class QrCheckController extends Controller
     }
 
     /**
-     * Displays a single TblQrCheck model.
+     * Displays a single QrCheck model.
      * @param integer $id
      * @return mixed
      */
@@ -76,7 +76,7 @@ class QrCheckController extends Controller
     }
 
     /**
-     * Creates a new TblQrCheck model.
+     * Creates a new QrCheck model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -101,7 +101,7 @@ class QrCheckController extends Controller
             throw new CHttpException(403,"Deze Qr code is niet voor vandaag...");
         }
 
-        $qrCheck = QrCheck::find('event_ID =:event_id AND qr_ID =:qr_id AND group_ID =:group_id', 
+        $qrCheck = QrCheck::find('event_ID =:event_id AND qr_ID =:qr_id AND group_ID =:group_id',
             [
                 ':event_id' => $qr->event_ID,
                 ':qr_id'  => $qr->qr_ID,
@@ -126,7 +126,7 @@ class QrCheckController extends Controller
     }
 
     /**
-     * Updates an existing TblQrCheck model.
+     * Updates an existing QrCheck model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -145,7 +145,7 @@ class QrCheckController extends Controller
     }
 
     /**
-     * Deletes an existing TblQrCheck model.
+     * Deletes an existing QrCheck model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -156,7 +156,7 @@ class QrCheckController extends Controller
 
         return $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
     }
-    
+
     /**
     * Displays a particular model.
     * @param integer $id the ID of the model to be displayed
@@ -179,22 +179,22 @@ class QrCheckController extends Controller
                 'pageSize'=>40,
             ),
         ));
-        
+
         return $this->render('viewPlayers',array(
             'qrCheckDataProvider'=>$qrCheckDataProvider,
         ));
     }
 
     /**
-     * Finds the TblQrCheck model based on its primary key value.
+     * Finds the QrCheck model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblQrCheck the loaded model
+     * @return QrCheck the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TblQrCheck::findOne($id)) !== null) {
+        if (($model = QrCheck::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

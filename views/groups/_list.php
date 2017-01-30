@@ -8,10 +8,10 @@ use kartik\widgets\Select2;
 /* @var $data Groups */
 
 ?>
-<div class="col-sm-3">
-    <div class="row-1">
-        <br>
-        <br>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="well">
+        <p>
         <?php
         echo Html::a(
             $model->group_name,
@@ -19,9 +19,9 @@ use kartik\widgets\Select2;
                 '/groups/update',
                 'id'=>$model->group_ID
             ],
-            ['class'=>'btn btn-primary']);
+            ['class'=>'btn btn-xs btn-primary']);
         ?>
-
+        <br/>
         <br/>
         <?php
 
@@ -34,6 +34,7 @@ use kartik\widgets\Select2;
             echo $player->user->username;
             $printSeparator = true;
         }?>
+        </p>
+      </div>
     </div>
-<br>
 </div>

@@ -5,13 +5,19 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TblOpenNoodEnvelop;
+use app\models\OpenNoodEnvelop;
 
 /**
- * TblOpenNoodEnvelopSearch represents the model behind the search form about `app\models\TblOpenNoodEnvelop`.
+ * OpenNoodEnvelopSearch represents the model behind the search form about `app\models\OpenNoodEnvelop`.
  */
-class TblOpenNoodEnvelopSearch extends TblOpenNoodEnvelop
+class OpenNoodEnvelopSearch extends OpenNoodEnvelop
 {
+    public $nood_envelop_name;
+  	public $group_name;
+  	public $route_name;
+  	public $username;
+  	public $score;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +25,7 @@ class TblOpenNoodEnvelopSearch extends TblOpenNoodEnvelop
     {
         return [
             [['open_nood_envelop_ID', 'nood_envelop_ID', 'event_ID', 'group_ID', 'opened', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['create_time', 'update_time'], 'safe'],
+            [['create_time', 'update_time', 'group_name', 'nood_envelop_name', 'score', 'username', 'route_name'], 'safe'],
         ];
     }
 
@@ -41,11 +47,44 @@ class TblOpenNoodEnvelopSearch extends TblOpenNoodEnvelop
      */
     public function search($params)
     {
-        $query = TblOpenNoodEnvelop::find();
+        $query = OpenNoodEnvelop::find();
+        $query->joinWith(['noodEnvelop', 'group', 'createUser' , 'noodEnvelop.route']);
+        $query->where(
+            'tbl_open_nood_envelop.event_ID = :event_id',
+            [':event_id'=>Yii::$app->user->identity->selected]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_time'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
+        $dataProvider->sort->attributes['group_name'] =
+        [
+            'asc' => ['tbl_groups.group_name' => SORT_ASC],
+            'desc' => ['tbl_groups.group_name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['nood_envelop_name'] =
+        [
+            'asc' => ['tbl_nood_envelop.nood_envelop_name' => SORT_ASC],
+            'desc' => ['tbl_nood_envelop.nood_envelop_name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['score'] =
+        [
+            'asc' => ['tbl_nood_envelop.score' => SORT_ASC],
+            'desc' => ['tbl_nood_envelop.score' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['username'] =
+        [
+            'asc' => ['tbl_users.username' => SORT_ASC],
+            'desc' => ['tbl_users.username' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['route_name'] =
+        [
+            'asc' => ['tbl_route.route_name' => SORT_ASC],
+            'desc' => ['tbl_route.route_name' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -65,106 +104,13 @@ class TblOpenNoodEnvelopSearch extends TblOpenNoodEnvelop
             'create_user_ID' => $this->create_user_ID,
             'update_time' => $this->update_time,
             'update_user_ID' => $this->update_user_ID,
-        ]);
+        ])
+            ->andFilterWhere(['like', 'tbl_groups.group_name', $this->group_name])
+            ->andFilterWhere(['like', 'tbl_nood_envelop.nood_envelop_name', $this->nood_envelop_name])
+            ->andFilterWhere(['like', 'tbl_nood_envelop.score', $this->score])
+            ->andFilterWhere(['like', 'tbl_users.username', $this->username])
+            ->andFilterWhere(['like', 'tbl_route.route_name', $this->route_name]);
 
         return $dataProvider;
     }
-    
-    	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-//	public function search()
-//	{
-//		// Warning: Please modify the following code to remove attributes that
-//		// should not be searched.
-//
-//		$criteria=new CDbCriteria;
-//
-//		$criteria->compare('open_nood_envelop_ID',$this->open_nood_envelop_ID);
-//		$criteria->compare('event_ID',$this->event_ID);
-//		$criteria->compare('nood_envelop_ID',$this->nood_envelop_ID);
-//		$criteria->compare('group_ID',$this->group_ID);
-//		$criteria->compare('opened',$this->opened);
-//		$criteria->compare('create_time',$this->create_time,true);
-//		$criteria->compare('create_user_ID',$this->create_user_ID);
-//		$criteria->compare('update_time',$this->update_time,true);
-//		$criteria->compare('update_user_ID',$this->update_user_ID);
-//
-//		return new CActiveDataProvider($this, array(
-//			'criteria'=>$criteria,
-//		));
-//	}
-//
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function searchOpened($event_id)
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->with=array('noodEnvelop', 'group', 'createUser', 'noodEnvelop.route');
-		$criteria->compare('open_nood_envelop_ID',$this->open_nood_envelop_ID);
-		$criteria->compare('t.event_ID',$event_id);
-		$criteria->compare('nood_envelop_ID',$this->nood_envelop_ID);
-		$criteria->compare('group_ID',$this->group_ID);
-		$criteria->compare('opened',$this->opened);
-		$criteria->compare('t.create_time',$this->create_time,true);
-		$criteria->compare('create_user_ID',$this->create_user_ID);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('update_user_ID',$this->update_user_ID);
-		$criteria->compare('group.group_name', $this->group_name,true);
-
-		$criteria->compare('noodEnvelop.nood_envelop_name', $this->nood_envelop_name,true);
-
-		$criteria->compare('route.day_date', $this->day_date,true);
-		$criteria->compare('route.route_name', $this->route_name,true);
-
-		$criteria->compare('noodEnvelop.score', $this->score,true);
-		$criteria->compare('createUser.username', $this->username,true);
-
-		$sort = new CSort();
-		$sort->attributes = array(
-			//'defaultOrder'=>'t.create_time ASC',
-			'group_name'=>array(
-				'asc'=>'group.group_name',
-				'desc'=>'group.group_name desc',
-			),
-			'nood_envelop_name'=>array(
-				'asc'=>'noodEnvelop.nood_envelop_name',
-				'desc'=>'noodEnvelop.nood_envelop_name desc',
-			),
-			'day_date'=>array(
-				'asc'=>'route.day_date',
-				'desc'=>'route.day_date desc',
-			),
-			'route_name'=>array(
-				'asc'=>'route.route_name',
-				'desc'=>'route.route_name desc',
-			),
-			'username'=>array(
-				'asc'=>'createUser.username',
-				'desc'=>'createUser.username desc',
-			),
-			'score'=>array(
-				'asc'=>'noodEnvelop.score',
-				'desc'=>'noodEnvelop.score desc',
-			),
-			'create_time'=>array(
-				'asc'=>'t.create_time',
-				'desc'=>'t.create_time asc',
-			),
-		);
-
-	    return new CActiveDataProvider($this, array(
-		    'criteria'=>$criteria,
-			'sort'=>$sort
-	    ));
-	}
-
 }
