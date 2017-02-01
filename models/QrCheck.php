@@ -24,11 +24,6 @@ use Yii;
  */
 class QrCheck extends HikeActiveRecord
 {
-    public $group_name;
-	public $qr_name;
-	public $score;
-	public $username;
-
     /**
      * @inheritdoc
      */

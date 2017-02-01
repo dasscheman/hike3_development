@@ -9,13 +9,16 @@ use yii\widgets\Pjax;
 
 ?>
 
-<div class="col-sm-3">
-    <div class="row-1">
-        <div class="view">
 
         <p>
         <?php
         Pjax::begin(['id' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID, 'enablePushState' => false]);
+        ?>
+
+        <div class="col-sm-3">
+            <div class="row-1">
+                <div class="view">
+                    <?php
         echo AlertBlock::widget([
             'type' => AlertBlock::TYPE_ALERT,
             'useSessionFlash' => true,
@@ -32,8 +35,10 @@ use yii\widgets\Pjax;
             echo Html::a(
                 Yii::t('app', 'Awnser question'),
                 ['/open-vragen-antwoorden/create', 'id' => $model->open_vragen_ID],
-                ['class' => 'btn btn-xs btn-success'],
-                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID]
+                [
+                    'class' => 'btn btn-xs btn-success',
+                    'data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID
+                ]
             );
         }
         ?>

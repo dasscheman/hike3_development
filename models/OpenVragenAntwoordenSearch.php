@@ -13,6 +13,7 @@ use app\models\OpenVragenAntwoorden;
 class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
 {
     public $open_vragen_name;
+    public $vraag;
   	public $group_name;
   	public $route_name;
   	public $username;
@@ -23,25 +24,12 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
     public function rules()
     {
         return [
-            [['open_vragen_antwoorden_ID', 'open_vragen_ID', 'event_ID', 'group_ID', 'checked', 'correct', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['antwoord_spelers', 'create_time', 'update_time'], 'safe'],
-            [
-                [
-                    'open_vragen_antwoorden_ID', 'event_ID', 'open_vragen_ID',
-                    'group_ID', 'antwoord_spelers', 'checked', 'correct', 'create_time',
-                    'create_user_ID', 'update_time', 'update_user_ID', 'group_name',
-                    'group_name', 'open_vragen_name', 'score', 'username', 'route_name'
-                ],
-                'safe', 'on'=>'search'
-            ],
-            [
-                [
-                    'event_ID', 'antwoord_spelers', 'checked', 'correct', 'create_time',
-                    'create_user_ID', 'update_time', 'update_user_ID', 'group_name',
-                    'open_vraag', 'open_vragen_name', 'goede_antwoord', 'username', 'score'
-                ],
-                'safe', 'on'=>'searchAnswered'
-            ],
+            [[
+                'open_vragen_antwoorden_ID', 'open_vragen_ID', 'event_ID', 'group_ID',
+                'checked', 'correct', 'create_user_ID', 'update_user_ID'], 'integer'],
+            [[
+                'antwoord_spelers', 'create_time', 'update_time', 'group_name',
+                'open_vragen_name', 'score', 'username', 'route_name', 'vraag'], 'safe'],
         ];
     }
 

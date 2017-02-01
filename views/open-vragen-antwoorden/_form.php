@@ -13,13 +13,20 @@ use yii\widgets\Pjax;
 <div class="tbl-open-vragen-antwoorden-form">
 
     <?php
-    Pjax::begin(['id' => 'open-vragen-antwoorden-form-' . $model->open_vragen_ID, 'enablePushState' => false]);
+    Pjax::begin([
+        'id' => 'open-vragen-antwoorden-form-' . $model->open_vragen_ID,
+        'enablePushState' => false
+    ]);
     echo AlertBlock::widget([
         'type' => AlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
         'delay' => 4000,
     ]);
-    $form = ActiveForm::begin(); ?>
+    $form = ActiveForm::begin([
+        'options'=>[
+            'data-pjax'=>TRUE,
+        ]
+    ]); ?>
 
     <h3>
     <?php echo Html::encode($modelVraag->open_vragen_name); ?>
@@ -27,23 +34,34 @@ use yii\widgets\Pjax;
     <b>
     <?php echo Html::encode($modelVraag->vraag); ?></br>
     </b>
-    <?= $form->field($model, 'antwoord_spelers')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'antwoord_spelers')->textarea(['style'=>'width: 20%', 'rows' => 6]) ?>
 
     <div class="form-group">
         <?php
-
         echo Html::a(
             Yii::t('app', 'Save'),
-            ['/open-vragen-antwoorden/beantwoorden', 'id' => $modelVraag->open_vragen_ID],
-            ['class' => 'btn btn-xs btn-primary'],
-            ['data-pjax' => 'open-vragen-antwoorden-list-' . $modelVraag->open_vragen_ID]
+            [
+                '/open-vragen-antwoorden/beantwoorden',
+                'id' => $modelVraag->open_vragen_ID
+            ],
+            [
+                'class' => 'btn btn-xs btn-primary',
+                'data-method'=>'post',
+                'data-pjax' => 'open-vragen-antwoorden-form-' . $modelVraag->open_vragen_ID
+            ]
         );
 
         echo Html::a(
             Yii::t('app', 'Cancel'),
-            ['/open-vragen-antwoorden/cancel-beantwoording', 'id' => $modelVraag->open_vragen_ID],
-            ['class' => 'btn btn-xs btn-danger'],
-            ['data-pjax' => 'open-vragen-antwoorden-list-' . $modelVraag->open_vragen_ID]
+            [
+                '/open-vragen-antwoorden/cancel-beantwoording',
+                'id' => $modelVraag->open_vragen_ID
+            ],
+            [
+                'class' => 'btn btn-xs btn-danger',
+                'data-method'=>'post',
+                'data-pjax' => 'open-vragen-antwoorden-list-' . $modelVraag->open_vragen_ID
+            ]
         ); ?>
     </div>
     <?php ActiveForm::end();
