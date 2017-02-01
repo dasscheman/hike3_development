@@ -48,9 +48,9 @@ class OpenVragenAntwoorden extends HikeActiveRecord
             [['create_time', 'update_time'], 'safe'],
             [['antwoord_spelers'], 'string', 'max' => 255],
             [   ['open_vragen_ID', 'group_ID'],
-                'unique', 
-                'targetAttribute' => ['open_vragen_ID', 'group_ID'], 
-                'message' => Yii::t('app/error', 'This group already answered this question')]
+                'unique',
+                'targetAttribute' => ['open_vragen_ID', 'group_ID'],
+                'message' => Yii::t('app', 'This group already answered this question')]
         ];
     }
 
@@ -113,7 +113,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     {
         return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID']);
     }
-    
+
     /**
      * Als een nieuwe record aangemaakt wordt dan moeten deze waarden gezet worden.
      * Ook bedenken wat er met het score veld moet gebeuren... Als deze toch gezet wordt moet
@@ -121,7 +121,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
      */
     public function beforeSave($insert)
     {
-        if(!parent::beforeSave($innsert))
+        if(!parent::beforeSave($insert))
         {
             return false;
         }
