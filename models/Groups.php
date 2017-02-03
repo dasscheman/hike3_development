@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_groups".
@@ -225,11 +226,17 @@ class Groups extends HikeActiveRecord
 	/**
 	 * Get al available group name options for a particular event.
 	 */
-	public function getGroupOptionsForEvent($event_ID)
+	public function getGroupOptionsForEvent()
 	{
-		$data = Groups::findAll('event_ID =:event_ID', array(':event_ID' => $event_ID));
-		$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
-		return $groupsArray;
+		$event_id = Yii::$app->user->identity->selected;
+		$data = Groups::find()
+			->where('event_ID =:event_ID')
+			->addParams([':event_ID' => $event_id])
+			->all();
+
+		$listData=ArrayHelper::map($data,'group_ID','group_name');
+
+		return $listData;
 	}
 
 	/**

@@ -69,7 +69,6 @@ $this->title = Yii::t('app', 'Overview opened hints');
         ],
         'persistResize'=>false,
         'exportConfig'=>$exportConfig,
-
     ]); ?>
 
 </div>

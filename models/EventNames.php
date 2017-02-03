@@ -346,9 +346,10 @@ class EventNames extends HikeActiveRecord {
     /**
      * Returns de actieve dag.
      */
-    public function getActiveDayOfHike($event_id) {
+    public function getActiveDayOfHike() {
+        $event_id = Yii::$app->user->identity->selected;
         $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+            ->where('event_ID =:event_Id', [':event_Id' => $event_id])
             ->one();
         if (isset($data->active_day)) {
             return $data->active_day;
@@ -387,9 +388,11 @@ class EventNames extends HikeActiveRecord {
         return true;
     }
 
-    public function getDatesAvailable($event_Id) {
-        $StartDate = EventNames::getStartDate($event_Id);
-        $EndDate = EventNames::getEndDate($event_Id);
+    public function getDatesAvailable() {
+        $event_id = Yii::$app->user->identity->selected;
+
+        $StartDate = EventNames::getStartDate($event_id);
+        $EndDate = EventNames::getEndDate($event_id);
         $mainarr = array();
         $date = $StartDate;
         $count = 0;
@@ -437,10 +440,10 @@ class EventNames extends HikeActiveRecord {
 
 
     /**
-     * fetch stored image file name with complete path 
+     * fetch stored image file name with complete path
      * @return string
      */
-    public function getImageFile() 
+    public function getImageFile()
     {
         return isset($this->avatar) ? Yii::$app->params['uploadPath'] . $this->avatar : null;
     }

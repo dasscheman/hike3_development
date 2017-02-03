@@ -9,8 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use app\models\EventNames;
-
 /**
  * PostenController implements the CRUD actions for Posten model.
  */
@@ -27,12 +27,13 @@ class PostenController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'delete', 'create', 'view',  'moveUpDown'],
+                'only' => ['index', 'update', 'delete', 'create', 'view',  'moveUpDown', 'listsPosts'],
                 'rules' => [
                     array(
-                        'allow' => FALSE,
+                        'allow' => TRUE,
+                        'actions'=>array('listsPosts'),
                         'roles'=>array('?'),),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'view', 'moveUpDown'),
                         'matchCallback'=> function () {
@@ -54,15 +55,12 @@ class PostenController extends Controller
      */
     public function actionIndex()
     {
-        if (isset($_GET['date'])) {
-			Posten::setActiveTab($_GET['date']);
-		}
         $event_Id = Yii::$app->user->identity->selected;
 		$startDate=EventNames::getStartDate($event_Id);
 		$endDate=EventNames::getEndDate($event_Id);
-        
+
         $searchModel = new PostenSearch();
-        
+
         $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
         $queryParams["PostenSearch"]["event_ID"] = $event_Id ;
         $postenData = $searchModel->search($queryParams);
@@ -86,7 +84,7 @@ class PostenController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-    
+
     /**
      * Creates a new Posten model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -112,7 +110,7 @@ class PostenController extends Controller
 		}
         return $this->render('create', ['model' => $model,]);
     }
-    
+
     /**
      * Updates an existing Posten model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -131,7 +129,7 @@ class PostenController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Deletes an existing Posten model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -150,7 +148,7 @@ class PostenController extends Controller
 		{
 			throw new CHttpException(400,"Je kan deze post niet verwijderen.");
 		}
-		
+
         return $this->redirect(isset($_POST['returnUrl']) ?
             $_POST['returnUrl'] : array('/posten/index', 'event_id'=>$event_id));
     }
@@ -211,5 +209,23 @@ class PostenController extends Controller
 		$this->redirect(array('/posten/index',
 						'event_id'=>$event_id,
 						'date'=>$date));
+   }
+
+   public function actionListsPosts()
+   {
+       $out = [];
+       if (null !== Yii::$app->request->post('depdrop_parents')) {
+           $parents = Yii::$app->request->post('depdrop_parents');
+           if ($parents != null) {
+           $date = $parents[0];
+               $data = Posten::getPostNameOptionsToday($date);
+               foreach ($data as $key => $item) {
+                     $out[] = ['id' => $key, 'name' => $item];
+                 }
+               echo Json::encode(['output'=>$out, 'selected'=>'']);
+               return;
+           }
+       }
+       echo Json::encode(['output'=>'', 'selected'=>'']);
    }
 }
