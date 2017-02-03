@@ -25,10 +25,10 @@ class DeelnemersEventController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                 ],
-            ],       
+            ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['dynamicrol', 'index','view', 'update', 'delete', 'viewPlayers', 'create'],
+                'only' => ['index','view', 'update', 'delete', 'viewPlayers', 'create'],
                 'rules' => [
                     [
                         'allow' => FALSE,  // deny all guest users
@@ -38,8 +38,8 @@ class DeelnemersEventController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('dynamicrol'),
                         'roles'=>array('@'),
-                    ),			
-                    array(	
+                    ),
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
                         'matchCallback'=> function () {
@@ -81,7 +81,7 @@ class DeelnemersEventController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-    
+
     /**
      * Creates a new DeelnemersEvent model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -117,7 +117,7 @@ class DeelnemersEventController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Updates an existing DeelnemersEvent model.
      * If update is successful, the browser will be redirected to the 'view' page.

@@ -32,7 +32,6 @@ class Bonuspunten extends HikeActiveRecord
 	public $route_name;
 	public $username;
 
-
     /**
      * @inheritdoc
      */
@@ -48,23 +47,18 @@ class Bonuspunten extends HikeActiveRecord
 	{
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		return array(
-			array('event_ID, group_ID, omschrijving', 'required'),
-			//array('event_ID, day_ID, post_ID, group_ID, score, create_user_ID, update_user_ID', 'numerical', 'integerOnly'=>true),
-			array('event_ID, post_ID, group_ID, score', 'numerical',
-			      'integerOnly'=>true),
-			array('omschrijving', 'length', 'max'=>255),
-			//array('create_time, update_time', 'safe'),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('bouspunten_ID, event_ID, date, post_ID, group_ID,
-				omschrijving, score, create_time, create_user_ID,
-				update_time, update_user_ID, username,
-				group_name, post_name, route_name;', 'safe', 'on'=>'search'),
-		    array('omschrijving',
-			      'ext.UniqueAttributesValidator',
-			      'with'=>'group_ID,event_ID,date,post_ID'),
-		);
+		return [
+			[['event_ID', 'group_ID', 'omschrijving',], 'required'],
+			[['event_ID', 'post_ID', 'group_ID', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
+			[['event_ID', 'post_ID', 'group_ID', 'score','create_time', 'update_time', 'date', 'create_time', 'update_time'], 'safe'],
+			[['omschrijving'], 'string', 'max' => 255],
+			[
+			    ['omschrijving', 'group_ID', 'event_ID'],
+                'unique',
+                'targetAttribute' => ['omschrijving', 'group_ID', 'event_ID'],
+                'message' => Yii::t('app', 'These points are already assigned to this group.')
+			]
+		];
 	}
 
 

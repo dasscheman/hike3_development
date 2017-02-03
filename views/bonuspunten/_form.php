@@ -1,7 +1,17 @@
 <?php
 
+use app\components\SetupDateTime;
+use app\models\EventNames;
+use app\models\Posten;
+use app\models\Groups;
+use kartik\date\DatePicker;
+use kartik\widgets\DepDrop;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use kartik\widgets\AlertBlock;
+use yii\widgets\Pjax;
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblBonuspunten */
@@ -10,32 +20,73 @@ use yii\widgets\ActiveForm;
 
 <div class="tbl-bonuspunten-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php
+    Pjax::begin([
+        'id' => 'bonuspunten-form-' . $model->bouspunten_ID,
+        'enablePushState' => FALSE,
+    ]);
 
-    <?= $form->field($model, 'event_ID')->textInput() ?>
+    echo AlertBlock::widget([
+        'type' => AlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 4000,
+    ]);
 
-    <?= $form->field($model, 'date')->textInput() ?>
+    $form = ActiveForm::begin([
+        'options'=>[
+            'data-pjax'=>TRUE,
+        ],
+    ]); ?>
+    <?php
+    echo $form->field($model, 'date')->dropDownList(
+        EventNames::getDatesAvailable(),
+        [
+            'prompt'=>'Select...',
+            'id' => 'date-' . $model->bouspunten_ID
+        ]);
 
-    <?= $form->field($model, 'post_ID')->textInput() ?>
+    // EXAMPLE Dependent Dropdown
+    echo $form->field($model, 'post_ID')->widget(DepDrop::classname(), [
+        'options' => ['id' => 'post_ID-' . $model->bouspunten_ID],
+        'pluginOptions' => [
+            'depends' => ['date-' . $model->bouspunten_ID],
+            'placeholder' => 'Select...',
+            'url' => Url::to(['/posten/lists-posts'])
+        ]
+    ]);
 
-    <?= $form->field($model, 'group_ID')->textInput() ?>
-
-    <?= $form->field($model, 'omschrijving')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'score')->textInput() ?>
-
-    <?= $form->field($model, 'create_time')->textInput() ?>
-
-    <?= $form->field($model, 'create_user_ID')->textInput() ?>
-
-    <?= $form->field($model, 'update_time')->textInput() ?>
-
-    <?= $form->field($model, 'update_user_ID')->textInput() ?>
-
+    echo $form->field($model, 'omschrijving')->textInput();
+    echo $form->field($model, 'score')->textInput(['type' =>  'number']);
+    ?>
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+        <?php
+        echo Html::a(
+            Yii::t('app', 'Save'),
+            [
+                '/bonuspunten/update',
+                'id' => $model->bouspunten_ID
+            ],
+            [
+                'class' => 'btn btn-xs btn-primary',
+                'data-method'=>'post',
+                'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+            ]
+        );
 
-    <?php ActiveForm::end(); ?>
+        echo Html::a(
+            Yii::t('app', 'Cancel'),
+            [
+                '/bonuspunten/cancel',
+                'id' => $model->bouspunten_ID],
+            [
+                'class' => 'btn btn-xs btn-danger',
+                'data-method'=>'post',
+                'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+            ]
+        ); ?>
+    </div>
+    <?php
+    ActiveForm::end();
+    Pjax::end(); ?>
 
 </div>

@@ -42,7 +42,18 @@ class BonuspuntenSearch extends Bonuspunten
     public function search($params)
     {
         $query = Bonuspunten::find();
+        $query->joinWith(['group', 'createUser']);
+        $query->where(
+            'tbl_bonuspunten.event_ID = :event_id',
+            [':event_id'=>Yii::$app->user->identity->selected]);
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_time'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -72,8 +83,8 @@ class BonuspuntenSearch extends Bonuspunten
 
         return $dataProvider;
     }
-    
-    
+
+
 //	/**
 //	 * Retrieves a list of models based on the current search/filter conditions.
 //	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -109,7 +120,7 @@ class BonuspuntenSearch extends Bonuspunten
 //		$criteria->compare('group.group_name', $this->group_name,true);
 //		$criteria->compare('post.post_name', $this->post_name,true);
 //		$criteria->compare('createUser.username', $this->username,true);
-//		
+//
 //		$sort = new CSort();
 //		$sort->attributes = array(
 //			//'defaultOrder'=>'t.create_time ASC',

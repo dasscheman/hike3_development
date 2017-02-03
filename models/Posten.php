@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use app\Components\SetupDateTime;
 
 /**
  * This is the model class for table "tbl_posten".
@@ -47,9 +49,9 @@ class Posten extends HikeActiveRecord
             [['date', 'create_time', 'update_time'], 'safe'],
             [['post_name'], 'string', 'max' => 255],
             [
-                ['post_name', 'event_ID', 'date'], 
-                'unique', 
-                'targetAttribute' => ['post_name', 'event_ID', 'date'], 
+                ['post_name', 'event_ID', 'date'],
+                'unique',
+                'targetAttribute' => ['post_name', 'event_ID', 'date'],
                 'message' => Yii::t('app/error', 'This station name exist for this day.')]
         ];
     }
@@ -130,15 +132,21 @@ class Posten extends HikeActiveRecord
         return $list;
     }
 
-    public function getPostNameOptionsToday($event_id)
+    public function getPostNameOptionsToday($date)
     {
-		$active_day = EventNames::getActiveDayOfHike($event_id);
-
-    	$data = Posten::findAll('event_ID =:event_id AND
-										  date =:active_day', array(':event_id' => $event_id,
-																    ':active_day' => $active_day));
-        $list = CHtml::listData($data, 'post_ID', 'post_name');
-        return $list;
+        $event_id = Yii::$app->user->identity->selected;
+		// $active_day = EventNames::getActiveDayOfHike($event_id);
+        $date = Yii::$app->setupdatetime->convert($date);
+    	$data = Posten::find()
+            ->where('event_ID =:event_id AND date =:date')
+            ->addParams([
+                ':event_id' => $event_id,
+			    ':date' => $date
+            ])
+            ->asArray()
+           ->all();
+        $listData = ArrayHelper::map($data,'post_ID','post_name');
+        return $listData;
     }
 
     /**
@@ -283,5 +291,4 @@ class Posten extends HikeActiveRecord
 		else
 			return $date;
 	}
-
 }
