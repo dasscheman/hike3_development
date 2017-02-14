@@ -27,7 +27,7 @@ script:
   # - ls -la
   - cd tests
   # - ls -la
-  - ../vendor/bin/codecept bootstrap
+  - ../vendor/bin/codecept build
   - ../vendor/bin/codecept run
 ##notifications:
 ##  email:
