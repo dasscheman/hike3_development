@@ -22,123 +22,13 @@ $responsiveWrap = FALSE;
 $this->title = Yii::t('app', 'Hike overzicht');
 ?>
 
-
-<div class="organisatie-overview">
-
-    <?php
-
-    Modal::begin(['id'=>'main-modal']);
-    echo '<div id="main-content-modal"></div>';
-    Modal::end();
-
-    $attributes = [
-        [
-            'group' => true,
-            'label' => $groupModel->group_name,
-            'rowOptions' => ['class' => 'info']
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'group_members',
-//                    'label' => 'Book #',
-                    'displayOnly' => true,
-                    'valueColOptions' => ['style' => 'width:30%']
-                ],
-                [
-                    'attribute' => 'rank',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                    'displayOnly' => true
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'time_walking',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'time_left',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'bonus_score',
-//                    'value' => $groupModel,
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'post_score',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'qr_score',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'vragen_score',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'hint_score',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-                [
-                    'attribute' => 'total_score',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-            ],
-        ],
-    ];
-
-    // View file rendering the widget
-    echo DetailView::widget([
-        'model' => $groupModel,
-        'attributes' => $attributes,
-        'mode' => 'view',
-        'bordered' => $bordered,
-        'striped' => $striped,
-        'condensed' => $condensed,
-        'responsive' => $responsive,
-        'hover' => $hover,
-//        'hAlign'=>$hAlign,
-//        'vAlign'=>$vAlign,
-//        'fadeDelay'=>$fadeDelay,
-        'deleteOptions' => [ // your ajax delete parameters
-            'params' => ['id' => 1000, 'kvdelete' => true],
-        ],
-        'container' => ['id' => 'kv-demo'],
-        'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
-    ]);
-
-?>
-
-
-
-</div>
-
 <div class="route-index">
-
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
 
     $count=0;
     $gridColumns = [
@@ -244,7 +134,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 'heading'=>$heading,
             ],
             'persistResize'=>false,
-            //'exportConfig'=>$exportConfig,
+            'exportConfig'=>$exportConfig,
         ])
     );
     $count++;

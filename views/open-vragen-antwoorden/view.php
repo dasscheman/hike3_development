@@ -9,7 +9,6 @@ use yii\data\ArrayDataProvider;
 
 ?>
 <div class="tbl-open-vragen-view">
-
     <h1><?= Html::encode(Yii::t('app', 'Questions for') . ' ' . $model->route_name) ?></h1>
     <?php
         $dataProvider = new ArrayDataProvider([
@@ -23,5 +22,5 @@ use yii\data\ArrayDataProvider;
             'itemView' => '/open-vragen-antwoorden/_list',
             'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
         ]);
-    ?>
+    ?>    
 </div>

@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use kartik\widgets\AlertBlock;
+use app\models\EventNames;
 
 use Yii;
 
@@ -30,7 +31,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ? 'Geselecteerde hike: ' . (Yii::$app->user->identity->selected): 'Hike-app.nl',
+        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ? 'Geselecteerde hike: ' . (EventNames::getEventName(Yii::$app->user->identity->selected)): 'Hike-app.nl',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -140,7 +141,7 @@ AppAsset::register($this);
                     ],
                     [
                         'label' => Yii::t('app','Hike overview'),
-                        'url'=>['/organisatie/overview'],
+                        'url'=>['/site/overview'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
                     ],
                     [
