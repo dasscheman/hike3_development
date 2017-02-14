@@ -25,9 +25,9 @@ before_script:
 
 script:
   - ls -la
-  - cd tests
+  - cd tests/codeception
   - ls -la
-  - ../vendor/bin/codecept run
+  - ../../vendor/bin/codecept run
 ##notifications:
 ##  email:
 ##    - dasscheman@hotmail.com
