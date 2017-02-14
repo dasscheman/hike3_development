@@ -113,4 +113,52 @@ class QrCheckSearch extends QrCheck
 
         return $dataProvider;
     }
+
+
+    public function searchByGroup($params)
+    {
+        // Get group id of current user.
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        // Find all answers for founr group id
+        $query = QrCheck::find()
+            // ->select('qr_check_ID')
+            ->where('event_ID=:event_id AND group_ID=:group_id')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected,
+                ':group_id' => $group_id->group_ID
+            ]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_time'=>SORT_DESC]],
+            'pagination' => [
+                'pageSize' => 1,
+            ],
+        ]);
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'qr_check_ID' => $this->qr_check_ID,
+            'qr_ID' => $this->qr_ID,
+            'event_ID' => $this->event_ID,
+            'group_ID' => $this->group_ID,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        return $dataProvider;
+    }
 }

@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TblOpenVragen;
+use app\models\OpenVragen;
 
 /**
- * TblOpenVragenSearch represents the model behind the search form about `app\models\TblOpenVragen`.
+ * OpenVragenSearch represents the model behind the search form about `app\models\OpenVragen`.
  */
-class TblOpenVragenSearch extends TblOpenVragen
+class OpenVragenSearch extends OpenVragen
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ class TblOpenVragenSearch extends TblOpenVragen
      */
     public function search($params)
     {
-        $query = TblOpenVragen::find();
+        $query = OpenVragen::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -77,17 +77,36 @@ class TblOpenVragenSearch extends TblOpenVragen
 
     public function searchQuestionNotAnsweredByGroup($params)
     {
+        // Get group id of current user.
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
 
+        // Find all answers for founr group id
         $queryAntwoorden = OpenVragenAntwoorden::find();
         $queryAntwoorden->select('open_vragen_ID')
-                        ->where('user_ID=:user_id')
-                        ->addParams([':user_id' => Yii::$app->user->id]);
+                        ->where('event_ID=:event_id AND group_ID=:group_id')
+                        ->addParams([
+                            ':event_id' => Yii::$app->user->identity->selected,
+                            ':group_id' => $group_id->group_ID
+                        ]);
 
-        $query = OpenVragen::find();
-        $query->where(['not in', 'tbl_open_vragen.user_ID', $queryAntwoorden]);
+        // Find all questions NOT answered by found group id.
+        $query = OpenVragen::find()
+            ->where(['not in', 'tbl_open_vragen.open_vragen_ID', $queryAntwoorden])
+            ->andWhere('event_ID=:event_id')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['vraag_volgorde'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 1,
+            ],
         ]);
 
         $this->load($params);
@@ -117,63 +136,4 @@ class TblOpenVragenSearch extends TblOpenVragen
 
         return $dataProvider;
     }
-    /**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-//	public function search()
-//	{
-//		// Warning: Please modify the following code to remove attributes that
-//		// should not be searched.
-//
-//		$criteria=new CDbCriteria;
-//
-//		$criteria->compare('open_vragen_ID',$this->open_vragen_ID);
-//		$criteria->compare('open_vragen_name',$this->open_vragen_name,true);
-//		$criteria->compare('event_ID',$this->event_ID);
-//		$criteria->compare('route_ID',$this->route_ID);
-//		$criteria->compare('vraag_volgorde',$this->vraag_volgorde);
-//		$criteria->compare('omschrijving',$this->omschrijving,true);
-//		$criteria->compare('vraag',$this->vraag,true);
-//		$criteria->compare('goede_antwoord',$this->goede_antwoord,true);
-//		$criteria->compare('score',$this->score);
-//		$criteria->compare('create_time',$this->create_time,true);
-//		$criteria->compare('create_user_ID',$this->create_user_ID);
-//		$criteria->compare('update_time',$this->update_time,true);
-//		$criteria->compare('update_user_ID',$this->update_user_ID);
-//
-//		return new CActiveDataProvider($this, array(
-//			'criteria'=>$criteria,
-//		));
-//	}
-
-	public function searchOpenVragen($event_id)
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('open_vragen_ID',$this->open_vragen_ID);
-		$criteria->compare('open_vragen_name',$this->open_vragen_name,true);
-		$criteria->compare('event_ID',$this->event_ID);
-		$criteria->condition = 'event_ID=:event_id';
-		$criteria->params=array(':event_id'=>$event_id);
-		$criteria->order= 'route_ID ASC, vraag_volgorde ASC';
-		$criteria->compare('route_ID',$this->route_ID);
-		$criteria->compare('vraag_volgorde',$this->vraag_volgorde);
-		$criteria->compare('omschrijving',$this->omschrijving,true);
-		$criteria->compare('vraag',$this->vraag,true);
-		$criteria->compare('goede_antwoord',$this->goede_antwoord,true);
-		$criteria->compare('score',$this->score);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('create_user_ID',$this->create_user_ID);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('update_user_ID',$this->update_user_ID);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
 }

@@ -48,9 +48,9 @@ class DeelnemersEvent extends HikeActiveRecord
             [['event_ID', 'user_ID', 'rol', 'group_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_ID','create_time', 'update_time'], 'safe'],
             [
-                ['event_ID', 'user_ID'], 
-                'unique', 
-                'targetAttribute' => ['event_ID', 'user_ID'], 
+                ['event_ID', 'user_ID'],
+                'unique',
+                'targetAttribute' => ['event_ID', 'user_ID'],
                 'message' => Yii::t('app', 'This user is already added to this hike.')]
         ];
     }
@@ -72,7 +72,7 @@ class DeelnemersEvent extends HikeActiveRecord
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -214,7 +214,6 @@ class DeelnemersEvent extends HikeActiveRecord
             ->where('event_ID = :event_Id AND user_ID=:user_Id')
             ->params([':event_Id' => $event_id, ':user_Id' => $user_id])
             ->one();
-
         if(!isset($data->rol))
         {
             return FALSE;

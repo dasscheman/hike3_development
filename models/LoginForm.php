@@ -44,14 +44,14 @@ class LoginForm extends Model
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            
+
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             } else {
                 $this->previous_login_time = $user->last_login_time;
-                $user->last_login_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime'); 
-                $user->save(FALSE);                    
+                $user->last_login_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
+                $user->save(FALSE);
             }
         }
     }

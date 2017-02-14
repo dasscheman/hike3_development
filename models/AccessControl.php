@@ -6,7 +6,6 @@ use Yii;
 use yii\web\Cookie;
 
 class AccessControl extends HikeActiveRecord {
-
     public $controller_id;
     public $action_id;
     public $ids;
@@ -24,32 +23,26 @@ class AccessControl extends HikeActiveRecord {
         $this->setSelected($this->getSelectedCookie());
     }
 
-        /**
+    /**
      *
      */
     public function setSelectedCookie($value) {
-
         $cookies = Yii::$app->getResponse()->getCookies();
-
         $cookies->remove('selected_event_ID');
-
         $cookie = new Cookie([
             'name' => 'selected_event_ID',
             'value' => $value,
             'expire' => time() + 86400 * 365,
         ]);
-
         $cookies->add($cookie);
-
     }
 
     function getSelectedCookie() {
         $cookies = Yii::$app->getRequest()->getCookies();
         return (int) $cookies->getValue('selected_event_ID');
     }
-    
+
     function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {
-        return TRUE;
         AccessControl::setControllerId($controller_id);
         AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
@@ -118,11 +111,11 @@ class AccessControl extends HikeActiveRecord {
     function setIds($ids) {
         $this->ids = $ids;
     }
-    
+
     function setParameters($parameters) {
         $this->parameters = $parameters;
     }
-    
+
     function setEventId() {
         if (!isset(Yii::$app->user->identity->selected)) {
             $this->event_id = FALSE;
@@ -130,7 +123,7 @@ class AccessControl extends HikeActiveRecord {
         }
         $this->event_id = Yii::$app->user->identity->selected;
     }
-    
+
     function setHikeStatus() {
         if (!isset($this->event_id)) {
             $this->hikeStatus = FALSE;
@@ -138,24 +131,24 @@ class AccessControl extends HikeActiveRecord {
         }
         $this->hikeStatus = EventNames::getStatusHike($this->event_id);
     }
-    
+
     function setRolPlayer() {
         $this->rolPlayer = DeelnemersEvent::getRolOfCurrentPlayerCurrentGame();
     }
-    
+
     function setGroupOfPlayer(){
         if ($this->rolPlayer === DeelnemersEvent::ROL_deelnemer &&
             isset($this->event_id)) {
             $this->groupOfPlayer = DeelnemersEvent::getGroupOfPlayer($this->event_id, Yii::$app->user->identity->id);
         }
     }
-    
+
     function indexAllowed() {
         if ($this->controller_id === 'users' &&
             Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
             return TRUE;
         }
-        
+
         if (!isset($this->event_id)) {
             return FALSE;
         }
@@ -191,7 +184,7 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
-    function updateAllowed() {        
+    function updateAllowed() {
         if ($this->controller_id === 'users' &&
             Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
             return TRUE;
@@ -500,7 +493,7 @@ class AccessControl extends HikeActiveRecord {
         if (!isset($this->event_id)) {
             return FALSE;
         }
-        
+
         switch ($this->controller_id) {
             case 'open-vragen':
             case 'qr':
@@ -512,7 +505,7 @@ class AccessControl extends HikeActiveRecord {
             default:
                 return FALSE;
         }
-    }   
+    }
 
     function moveUpDownAllowed(){
 
@@ -553,7 +546,7 @@ class AccessControl extends HikeActiveRecord {
                 if ($this->parameters['move_action'] == 'down'){
                     return NoodEnvelop::lowererOrderNumberExists($this->ids[0]);
                 }
-        
+
             case 'route':
                 if ($this->parameters['move_action'] == 'up'){
                     return Route::higherOrderNumberExists($this->ids[0]);
@@ -568,7 +561,7 @@ class AccessControl extends HikeActiveRecord {
                 return FALSE;
         }
     }
-    
+
     function viewIntroductieAllowed() {
         switch ($this->controller_id) {
             case 'route':
@@ -579,12 +572,12 @@ class AccessControl extends HikeActiveRecord {
                 return FALSE;
         }
     }
-    
+
     function defaultAllowed() {
         if (!isset($this->event_id)) {
             return FALSE;
         }
-        
+
         switch ($this->controller_id) {
             case 'event-names':
                 if ($this->action_id == 'changeStatus'){
@@ -599,7 +592,7 @@ class AccessControl extends HikeActiveRecord {
                     }
                 }
             case 'users':
-            case 'friend-list':      
+            case 'friend-list':
                 if (in_array($this->action_id, ['decline', 'accept', 'connect', 'search-friends', 'search-new-friends', 'search-friend-requests'])) {
                     return TRUE;
                 }
@@ -698,11 +691,11 @@ class AccessControl extends HikeActiveRecord {
                 return TRUE;
             }
         }
-        
-        
-        
-        if ($this->controller_id === 'qr' 
-            && $this->action_id == 'report' 
+
+
+
+        if ($this->controller_id === 'qr'
+            && $this->action_id == 'report'
             && $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                 $actionAllowed = true;
         }
