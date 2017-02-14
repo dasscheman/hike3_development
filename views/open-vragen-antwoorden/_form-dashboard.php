@@ -39,7 +39,7 @@ use yii\widgets\Pjax;
         echo Html::a(
             Yii::t('app', 'Save'),
             [
-                '/open-vragen-antwoorden/beantwoorden',
+                '/open-vragen-antwoorden/beantwoorden-dashboard',
                 'id' => $modelVraag->open_vragen_ID
             ],
             [
@@ -52,7 +52,7 @@ use yii\widgets\Pjax;
         echo Html::a(
             Yii::t('app', 'Cancel'),
             [
-                '/open-vragen-antwoorden/cancel-beantwoording',
+                '/open-vragen-antwoorden/cancel-beantwoording-dashboard',
                 'id' => $modelVraag->open_vragen_ID
             ],
             [
