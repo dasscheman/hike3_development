@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TblNoodEnvelop;
+use app\models\NoodEnvelop;
 
 /**
- * TblNoodEnvelopSearch represents the model behind the search form about `app\models\TblNoodEnvelop`.
+ * NoodEnvelopSearch represents the model behind the search form about `app\models\NoodEnvelop`.
  */
-class TblNoodEnvelopSearch extends TblNoodEnvelop
+class NoodEnvelopSearch extends NoodEnvelop
 {
     /**
      * @inheritdoc
@@ -39,12 +39,52 @@ class TblNoodEnvelopSearch extends TblNoodEnvelop
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function searchNotOpenedByGroup($params)
     {
-        $query = TblNoodEnvelop::find();
+        // Get group id of current user.
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $active_day = EventNames::find()
+                ->select('active_day')
+                ->where('event_ID =:event_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected])
+                ->one();
+
+        // Get route id's for current day.
+        $queryRoute = Route::find()
+            ->select('route_ID')
+            ->where('event_ID =:event_id and day_date =:day_date')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':day_date' => $active_day->active_day]);
+
+        // Find all open hints for founr group id
+        $queryOpenHints = OpenNoodEnvelop::find()
+            ->select('nood_envelop_ID')
+            ->where('event_ID=:event_id AND group_ID=:group_id AND opened=:opened')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected,
+                ':group_id' => $group_id->group_ID,
+                ':opened' => OpenNoodEnvelop::STATUS_open
+            ]);
+
+        // Find all hinits NOT opened by found group id.
+        $query = NoodEnvelop::find()
+            ->where(['not in', 'tbl_nood_envelop.nood_envelop_ID', $queryOpenHints])
+            ->andwhere(['in', 'tbl_nood_envelop.route_ID', $queryRoute])
+            ->andWhere('event_ID=:event_id')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['nood_envelop_volgorde'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 1,
+            ],
         ]);
 
         $this->load($params);
@@ -73,60 +113,4 @@ class TblNoodEnvelopSearch extends TblNoodEnvelop
 
         return $dataProvider;
     }
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('nood_envelop_ID',$this->nood_envelop_ID);
-		$criteria->compare('nood_envelop_name',$this->nood_envelop_name,true);
-		$criteria->compare('event_ID',$this->event_ID);
-		$criteria->compare('route_ID',$this->route_ID);
-		$criteria->compare('nood_envelop_volgorde',$this->nood_envelop_volgorde);
-		$criteria->compare('coordinaat',$this->coordinaat,true);
-		$criteria->compare('opmerkingen',$this->opmerkingen,true);
-		$criteria->compare('score',$this->score);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('create_user_ID',$this->create_user_ID);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('update_user_ID',$this->update_user_ID);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	public function searchHints($event_id)
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('nood_envelop_ID',$this->nood_envelop_ID);
-		$criteria->compare('nood_envelop_name',$this->nood_envelop_name,true);
-		$criteria->compare('event_ID',$this->event_ID);
-		$criteria->condition = 'event_ID=:event_id';
-		$criteria->params=array(':event_id'=>$event_id);
-		$criteria->order= 'route_ID ASC, nood_envelop_volgorde ASC';
-		$criteria->compare('route_ID',$this->route_ID);
-		$criteria->compare('nood_envelop_volgorde',$this->nood_envelop_volgorde);
-		$criteria->compare('coordinaat',$this->coordinaat,true);
-		$criteria->compare('opmerkingen',$this->opmerkingen,true);
-		$criteria->compare('score',$this->score);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('create_user_ID',$this->create_user_ID);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('update_user_ID',$this->update_user_ID);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
 }

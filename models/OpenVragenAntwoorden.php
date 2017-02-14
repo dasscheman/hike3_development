@@ -43,7 +43,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['open_vragen_ID', 'event_ID', 'group_ID', 'antwoord_spelers'], 'required'],
+            [['open_vragen_ID', 'event_ID', 'group_ID'], 'required'],
             [['open_vragen_ID', 'event_ID', 'group_ID', 'checked', 'correct', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['antwoord_spelers'], 'string', 'max' => 255],

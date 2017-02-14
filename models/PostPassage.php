@@ -53,10 +53,10 @@ class PostPassage extends HikeActiveRecord
             [['post_ID', 'event_ID', 'group_ID', 'gepasseerd'], 'required'],
             [['post_ID', 'event_ID', 'group_ID', 'gepasseerd', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['binnenkomst', 'vertrek', 'create_time', 'update_time'], 'safe'],
-            [   
-                ['post_ID', 'event_ID', 'group_ID'], 
-                'unique', 
-                'targetAttribute' => ['post_ID', 'event_ID', 'group_ID'], 
+            [
+                ['post_ID', 'event_ID', 'group_ID'],
+                'unique',
+                'targetAttribute' => ['post_ID', 'event_ID', 'group_ID'],
                 'message' => Yii::t('app/error', 'This group already checked in on this station.')]
         ];
     }
@@ -151,7 +151,7 @@ class PostPassage extends HikeActiveRecord
 	public function postPassageGroupDataProvider($event_id, $group_id)
 	{
 	    $where = "event_ID = $event_id AND group_ID = $group_id";
-    
+
 	    $dataProvider=new CActiveDataProvider('PostPassage',
 		array(
 		    'criteria'=>array(
@@ -163,13 +163,13 @@ class PostPassage extends HikeActiveRecord
 		    ),
 	    ));
 	    return $dataProvider;
-      
+
 	}
-      
+
 	public function postPassageAllDataProvider($event_id)
 	{
 	    $where = "event_ID = $event_id";
-    
+
 	    $dataProvider=new CActiveDataProvider('PostPassage',
 		array(
 		    'criteria'=>array(
@@ -181,9 +181,9 @@ class PostPassage extends HikeActiveRecord
 		    ),
 	    ));
 	    return $dataProvider;
-      
+
 	}
-	
+
 	/**
 	 * Returns de tijd van de laatste post passage van een groep
 	 * Als groep geen enkele post is gepasserd return = nvt
@@ -194,21 +194,21 @@ class PostPassage extends HikeActiveRecord
 		{
 			return('Geen groepsgegevens');
 		};
-		
+
 		$criteria=new CDbCriteria;
-		$criteria->select = 'binnenkomst';  
+		$criteria->select = 'binnenkomst';
 		$criteria->condition = 'event_ID=:event_id AND group_ID=:group_id';
 		$criteria->order =  'binnenkomst DESC';
-		$criteria->params=array(':event_id'=>$event_id, 
+		$criteria->params=array(':event_id'=>$event_id,
 					':group_id' => $group_id);
-		$data=PostPassage::find($criteria); 
-	
+		$data=PostPassage::find($criteria);
+
 		if(isset($data->binnenkomst))
 			{ return($data->binnenkomst);}
 		else
 			{ return('nvt');}
 	}
-	
+
 	/**
 	 * Returns de post naam van de laatste post passage van een groep
 	 * Als groep geen enkele post is gepasserd return = nvt
@@ -219,21 +219,21 @@ class PostPassage extends HikeActiveRecord
 		{
 			return('Geen groepsgegevens');
 		};
-		
+
 		$criteria=new CDbCriteria;
-		$criteria->select = 'post_ID';  
+		$criteria->select = 'post_ID';
 		$criteria->condition = 'event_ID=:event_id AND group_ID=:group_id';
 		$criteria->order =  'binnenkomst DESC';
 		$criteria->params=array(':event_id'=>$event_id,
 					':group_id' => $group_id);
-		$data=PostPassage::find($criteria); 
-	
+		$data=PostPassage::find($criteria);
+
 		if(isset($data->post_ID))
 			{ return($data->post_ID);}
 		else
 			{ return('nvt');}
 	}
-	
+
 	/**
 	 * Returns de score voor het passeren van de posten voor een groep
 	 */
@@ -251,7 +251,7 @@ class PostPassage extends HikeActiveRecord
         }
         return $score;
 	}
-	
+
 	public function isTimeLeftToday($event_id, $group_id)
 	{
 		if (PostPassage::timeLeftToday($event_id, $group_id) > 0)
@@ -301,8 +301,8 @@ class PostPassage extends HikeActiveRecord
             ->Params([':event_id' => Yii::$app->user->identity->selected, ':active_date' => $dataEvent->active_day]);
 
 
-        $queryPassage = PostenPassage::find()
-            ->where(['in', 'posten_ID', $queryPosten])
+        $queryPassage = PostPassage::find()
+            ->where(['in', 'post_ID', $queryPosten])
             ->andwhere('group_ID =:group_id')
             ->Params([':group_id' => $group_id])
             ->orderBy('binnenkomst ASC');
@@ -368,7 +368,7 @@ class PostPassage extends HikeActiveRecord
 		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
 		$criteria->order = "post_volgorde DESC";
 		$dataPosten = Posten::findAll($criteria);
-		
+
     	foreach($dataPosten as $obj)
         {
             $criteria = new CDbCriteria();
