@@ -12,6 +12,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\data\ActiveDataProvider;
+use app\models\OpenVragenSearch;
+use \yii\helpers\Json;
 
 /**
  * OpenVragenAntwoordenController implements the CRUD actions for OpenVragenAntwoorden model.
@@ -29,7 +31,11 @@ class OpenVragenAntwoordenController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'delete', 'view-controle', 'updateOrganisatie', 'viewPlayers', 'update', 'cancel',  'create', 'antwoordGoedOfFout', 'beantwoorden', 'cancel-beantwoording'],
+                'only' => [
+                    'index', 'delete', 'view-controle', 'updateOrganisatie',
+                    'viewPlayers', 'update', 'cancel',  'create',
+                    'antwoordGoedOfFout', 'beantwoorden', 'beantwoorden-dashboard',
+                    'cancel-beantwoording', 'cancel-beantwoording-dashboard'],
                 'rules' => [
                     [
                         'allow' => FALSE,
@@ -37,12 +43,16 @@ class OpenVragenAntwoordenController extends Controller
                     ],
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('beantwoorden', 'cancel-beantwoording', 'cancel'),
+                        'actions'=>array('cancel-beantwoording', 'cancel-beantwoording-dashboard', 'cancel'),
                         'roles'=>array('@'),
                     ),
                     [
                         'allow' => TRUE,
-                        'actions'=>['index', 'delete', 'view-controle', 'updateOrganisatie', 'viewPlayers', 'update',  'create', 'antwoordGoedOfFout'],
+                        'actions'=>[
+                            'index', 'delete', 'view-controle',
+                            'updateOrganisatie', 'viewPlayers', 'update',
+                            'create', 'antwoordGoedOfFout', 'beantwoorden',
+                            'beantwoorden-dashboard'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         }
@@ -112,6 +122,7 @@ class OpenVragenAntwoordenController extends Controller
     public function actionBeantwoorden($id)
     {
         $model = new OpenVragenAntwoorden;
+        $modelVraag = OpenVragen::findOne($id);
 
         $model->event_ID = $modelVraag->event_ID;
         $model->group_ID = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID, Yii::$app->user->id);
@@ -119,7 +130,9 @@ class OpenVragenAntwoordenController extends Controller
         $model->checked = 0;
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.'));
+            foreach ($model->getErrors() as $error) {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+            }
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
         }
@@ -130,7 +143,42 @@ class OpenVragenAntwoordenController extends Controller
                 'model' => $modelVraag,
             ]);
         }
-        return $this->redirect(['site/game-overview ']);
+        return $this->redirect(['site/index ']);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionBeantwoordenDashboard($id)
+    {
+        $model = new OpenVragenAntwoorden;
+        $modelVraag = OpenVragen::findOne($id);
+
+        $model->event_ID = $modelVraag->event_ID;
+
+        $model->group_ID = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID, Yii::$app->user->id);
+        $model->open_vragen_ID = $id;
+        $model->checked = 0;
+
+        if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
+            foreach ($model->getErrors() as $error) {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+            }
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
+        }
+
+        $searchQuestionsModel = new OpenVragenSearch();
+        $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
+        if (Yii::$app->request->isAjax) {
+            return Yii::$app->controller->renderAjax('/open-vragen-antwoorden/view-dashboard', ['model'=>$questionsData]);
+            // return $this->renderAjax('_list-dashboard', [
+            //     'model' => $modelVraag,
+            // ]);
+        }
+        return $this->redirect(['site/index ']);
     }
 
     /**
@@ -144,6 +192,23 @@ class OpenVragenAntwoordenController extends Controller
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list', [
+                'model' => $model,
+            ]);
+        }
+        return $this->redirect(['site/game-overview']);
+    }
+
+    /**
+     * Creates a new OpenNoodEnvelop model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCancelBeantwoordingDashboard($id)
+    {
+        $model = OpenVragen::findOne($id);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_list-dashboard', [
                 'model' => $model,
             ]);
         }
@@ -178,7 +243,9 @@ class OpenVragenAntwoordenController extends Controller
         $model = $this->findModel($id);
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.'));
+            foreach ($model->getErrors() as $error) {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+            }
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
         }
