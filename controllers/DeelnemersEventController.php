@@ -106,7 +106,7 @@ class DeelnemersEventController extends Controller
                 ->setTo($model->user->email)
                 ->setSubject('Inschrijving Hike')
                 ->send();
-                return $this->redirect(['organisatie/overview']);
+                return $this->redirect(['site/overview']);
             }
             foreach ($model->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));
@@ -129,7 +129,7 @@ class DeelnemersEventController extends Controller
         $model = $this->findModel($id);
         if ($model->user_ID == Yii::$app->user->identity->id) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'You cannot change your own account'));
-            return $this->redirect(['organisatie/overview']);
+            return $this->redirect(['site/overview']);
         }
         if (Yii::$app->request->post('submit') == 'delete') {
            try
@@ -141,10 +141,10 @@ class DeelnemersEventController extends Controller
                 throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
             }
 
-            return $this->redirect(['organisatie/overview']);
+            return $this->redirect(['site/overview']);
         } elseif ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-                return $this->redirect(['organisatie/overview']);
+                return $this->redirect(['site/overview']);
             }
             foreach ($model->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));

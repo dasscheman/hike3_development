@@ -30,12 +30,12 @@ class EventNamesController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                 ],
-            ],            
+            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'selectDay', 'setMaxTime'],
                 'rules' => [
-                    array(	
+                    array(
                         'actions'=>array('create', 'selectDay', 'setMaxTime'    ),
                         'allow' => TRUE,
                         'roles'=>array('@'),
@@ -55,7 +55,7 @@ class EventNamesController extends Controller
             ]
         ];
     }
-    
+
     /**
      * Lists all EventNames models.
      * @return mixed
@@ -70,7 +70,7 @@ class EventNamesController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single EventNames model.
      * @param integer $id
@@ -94,17 +94,17 @@ class EventNamesController extends Controller
         $model->status = 1;
         $model->start_date = date('Y-m-d');
         $model->end_date = date('Y-m-d');
-        
+
         // De gebruiker die de hike aanmaakt moet ook gelijk aangemaakt worden als organisatie
         $modelDeelnemersEvent = new DeelnemersEvent;
         // Het route onderdeel introductie moet ook direct aangemaakt worden.
         // Dit kan later uitgebreid worden met een keuze of de introductie gemaakt moet worden.
         $modelRoute = new Route;
-        
+
         if ($model->load(Yii::$app->request->post())) {
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = EventNames::determineNewHikeId();
-            $model->image=UploadedFile::getInstance($model,'image');           
+            $model->image=UploadedFile::getInstance($model,'image');
 
 
 //            dd($model);
@@ -166,9 +166,9 @@ class EventNamesController extends Controller
                 throw new \yii\web\HttpException(400, Yii::t('app', 'cannot save record'));
              }
         }
-        return $this->redirect(['organisatie/overview']);
+        return $this->redirect(['site/overview']);
     }
-    
+
     /**
      * Deletes an existing EventNames model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -205,7 +205,7 @@ class EventNamesController extends Controller
                 $image->saveAs($path);
              }
         }
-        return $this->redirect(['organisatie/overview']);
+        return $this->redirect(['site/overview']);
     }
 
 
@@ -220,7 +220,7 @@ class EventNamesController extends Controller
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
-            return $this->redirect(['organisatie/overview'], 404);
+            return $this->redirect(['site/overview'], 404);
         }
 
         $model->load(Yii::$app->request->post());
@@ -238,8 +238,8 @@ class EventNamesController extends Controller
                 Yii::$app->session->setFlash('error', Json::encode($error));
             }
         }
-        
-        return $this->redirect(['organisatie/overview'], 200);
+
+        return $this->redirect(['site/overview'], 200);
     }
 
     /**
@@ -253,7 +253,7 @@ class EventNamesController extends Controller
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
-            return $this->redirect(['organisatie/overview'], 404);
+            return $this->redirect(['site/overview'], 404);
         }
 
         $model->load(Yii::$app->request->post());
@@ -267,7 +267,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['organisatie/overview'], 200);
+        return $this->redirect(['site/overview'], 200);
     }
 
     /**
@@ -281,7 +281,7 @@ class EventNamesController extends Controller
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
-            return $this->redirect(['organisatie/overview'], 404);
+            return $this->redirect(['site/overview'], 404);
         }
 
         $model->load(Yii::$app->request->post());
@@ -298,7 +298,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['organisatie/overview'], 200);
+        return $this->redirect(['site/overview'], 200);
     }
 
     public function actionSelectHike() {

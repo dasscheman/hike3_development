@@ -10,12 +10,17 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\EventNames;
 use app\models\RouteSearch;
+use app\models\BonuspuntenSearch;
+use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragen;
+use app\models\OpenVragenSearch;
+use app\models\NoodEnvelopSearch;
 use yii\web\Cookie;
 use yii\data\ActiveDataProvider;
+use app\models\ActivityFeed;
 
 class SiteController extends Controller
 {
@@ -62,34 +67,118 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionOverviewOrganisatie()
+    {
+
+        $event_id = Yii::$app->user->identity->selected;
+
+        $eventModel = EventNames::find($event_id)
+            ->where('event_ID =:event_id')
+            ->addParams([':event_id' => $event_id])
+            ->one();
+
+        $queryOrganisatie = DeelnemersEvent::find()
+            ->where(['=', 'event_ID', $event_id])
+            ->andWhere(['<=', 'rol', DeelnemersEvent::ROL_post])
+            ->orderby('rol ASC');
+
+        $providerOrganisatie = new ActiveDataProvider([
+            'query' => $queryOrganisatie,
+            'pagination' => [
+                'pageSize' => 50,
+            ],
+        ]);
+        $groupModel = new Groups;
+        $queryGroups = Groups::find()
+            ->where(['=', 'event_ID', $event_id])
+            ->orderby('group_name ASC');
+        $providerGroups = new ActiveDataProvider([
+            'query' => $queryGroups,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+        $queryCheckQuestions = OpenVragenAntwoorden::find()
+            ->where('event_ID=:event_id and checked=:checked')
+            ->addParams([
+                'event_id' => Yii::$app->user->identity->selected,
+                'checked' => 0,
+            ]);
+        $dataProviderCheck = new ActiveDataProvider([
+            'query' => $queryCheckQuestions
+        ]);
+
+        $feed = new ActivityFeed;
+        $feed->pageSize = 10;
+
+		return $this->render('/site/index-organisation', array(
+            'eventModel' => $eventModel,
+			'organisatieData' => $providerOrganisatie,
+			'groupsData' => $providerGroups,
+            'groupModel' => $groupModel,
+            'dataProviderCheck' => $dataProviderCheck,
+            'activityFeed' => $feed->getData(),
+		));
+	}
+
     public function actionIndex()
     {
-        // if (isset(Yii::$app->user->identity->selected)) {
-        //     $event_id = Yii::$app->user->identity->selected;
-        //     $group_id = DeelnemersEvent::find()
-        //         ->select('group_ID')
-        //         ->where('event_ID =:event_id and user_ID =:user_id')
-        //         ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
-        //         ->one();
-        //     $groupModel = Groups::findOne($group_id);
-        //
-        //             $queryAntwoorden = OpenVragenAntwoorden::find();
-        //             $queryAntwoorden->select('open_vragen_ID')
-        //                             ->where('group_ID=:user_id')
-        //                             ->addParams([':user_id' => $group_id]);
-        //
-        //             $query = OpenVragen::find();
-        //             $query->where('not in', 'tbl_open_vragen.open_vragen_ID', $queryAntwoorden->open_vragen_ID);
-        //
-        //             $dataProvider = new ActiveDataProvider([
-        //                 'query' => $query,
-        //             ]);
-        //     return $this->render('index-players', [
-        //             'dataProvider' => $dataProvider,
-        //         ]
-        //      );
-        // }
-        return $this->render('index');
+        if (isset(Yii::$app->user->identity->selected)) {
+            $event_id = Yii::$app->user->identity->selected;
+            $user = DeelnemersEvent::find()
+                ->where('event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->one();
+
+            if ($user->rol === DeelnemersEvent::ROL_deelnemer) {
+                return $this->redirect(['/site/overview-players']);
+            }
+            if ($user->rol === DeelnemersEvent::ROL_organisatie) {
+                return $this->redirect(['/site/overview-organisation']);
+            }
+        }
+        return $this->render(['site/index']);
+
+    }
+
+    public function actionOverviewPlayers()
+    {
+        $event_id = Yii::$app->user->identity->selected;
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        $searchQuestionsModel = new OpenVragenSearch();
+        $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
+
+
+        $searchHintsModel = new NoodEnvelopSearch();
+        $hintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
+
+        $searchBonusModel = new BonuspuntenSearch();
+        $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams);
+
+        $searchQrModel = new QrcheckSearch();
+        $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams);
+
+        $groupModel = Groups::findOne($group_id);
+        $groupModel->setGroupMembers();
+
+        $feed = new ActivityFeed;
+        $feed->pageSize = 5;
+        $feed->pageCount = 3;
+
+        return $this->render('index-players',[
+            'groupModel' => $groupModel,
+            'activityFeed' => $feed->getData(),
+            'questionsData' => $questionsData,
+            'hintsData' => $hintsData,
+            'qrCheckData' => $qrCheckData,
+            'bonusData' => $bonusData
+        ]);
     }
 
     public function actionGameOverview()
@@ -103,20 +192,17 @@ class SiteController extends Controller
             ->where('event_ID =:event_id and user_ID =:user_id')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
             ->one();
-        $groupModel = Groups::findOne($group_id);
 
         if(!isset($group_id->group_ID) || null === $group_id->group_ID) {
            return $this->render('index');
         }
 
-        $groupModel->setGroupMembers();
         $searchModel = new RouteSearch();
         $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
         $queryParams["RouteSearch"]["event_ID"] = $event_id ;
         $dataProvider = $searchModel->search($queryParams);
 
         return $this->render('/game/overview',[
-            'groupModel' => $groupModel,
             'searchRouteModel' => $searchModel,
             'dataProvider'=>$dataProvider,
             'startDate'=>$startDate,

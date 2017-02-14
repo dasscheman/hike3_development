@@ -25,27 +25,27 @@ class GroupsController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-            
+
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['index', 'create'],
                 'rules' => [
                     [
                         'actions' => ['create'],
-                        'allow' => TRUE, 
+                        'allow' => TRUE,
                     ],
-                    
+
                 ],
             ],
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['index', 'index-posten', 'update', 'delete', 'view', 'create'],
-                'rules' => [			
+                'rules' => [
                     array(
                         'allow' => FALSE,  // deny all guest users
                         'roles' => array('?'),
-                    ),			
-                    array(	
+                    ),
+                    array(
                         'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'index-posten', 'update', 'delete', 'view', 'create'),
                         'matchCallback'=> function () {
@@ -90,7 +90,7 @@ class GroupsController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-     
+
     /**
      * Displays a single Groups model.
      * @param integer $id
@@ -128,9 +128,9 @@ class GroupsController extends Controller
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
         }
-        return $this->redirect(['organisatie/overview']);
+        return $this->redirect(['site/overview']);
     }
-    
+
     /**
      * Updates an existing Groups model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -165,10 +165,10 @@ class GroupsController extends Controller
                 }
             }
         }
-        
+
         if (Yii::$app->request->post('submit') == 'delete') {
             $model->delete();
-            return $this->redirect(['organisatie/overview']);
+            return $this->redirect(['site/overview']);
         }
 
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
@@ -177,7 +177,7 @@ class GroupsController extends Controller
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
         }
-        return $this->redirect(['organisatie/overview']);
+        return $this->redirect(['site/overview']);
     }
 
 	/**
@@ -191,7 +191,7 @@ class GroupsController extends Controller
 //			'dataProvider'=>$dataProvider,
 //		));
 	}
-    
+
     /**
      * Finds the Groups model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
