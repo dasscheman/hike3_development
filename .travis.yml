@@ -24,7 +24,9 @@ before_script:
   - ./tests/travis/setup/setup_selenium_server.sh
 
 script:
+  - ls -la
   - cd tests
+  - ls -la
   - ../vendor/bin/codecept run
 ##notifications:
 ##  email:
