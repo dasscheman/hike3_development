@@ -17,6 +17,7 @@ before_install:
 
 before_script:
   - pwd
+  - ls -la
   - ./tests/travis/setup/before_script.sh
   - ./tests/travis/setup/setup_apache.sh
   - ./tests/travis/setup/setup_selenium_server.sh
