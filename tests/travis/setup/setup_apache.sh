@@ -14,4 +14,4 @@ sudo sed -i -e "s,AllowOverride[ ]None,AllowOverride All,g" /etc/apache2/sites-a
 sudo /etc/init.d/apache2 restart
 
 ## create the table in the database.
-mysql -u root --password=password hike_v3_01_test < ./hike_development/test/codeception/_data/hike-v2-01.sql;
+mysql -u root --password=password hike_v3_01_test < ./Hike3_development/tests/codeception/_data/hike-v2-01.sql;
