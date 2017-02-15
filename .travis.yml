@@ -7,6 +7,10 @@ php:
 
 sudo: required
 
+addons:
+  hosts:
+    - hike.dev
+
 before_install:
   - mysql -e "create database IF NOT EXISTS hike_v3_01_test;" -u root
   - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';" -u root
