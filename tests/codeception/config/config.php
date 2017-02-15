@@ -17,15 +17,15 @@ return [
             'dsn' => 'mysql:host=localhost;dbname=hike_v3_01_test',
             'username' => 'test',
             'password' => 'test',
-            'dump' => '../_data/hike-v2-01.sql',
-            'populate' => true,
-            'cleanup' => true
+            // 'dump' => 'codeception/_data/hike-v2-01.sql',
+            // 'populate' => true,
+            // 'cleanup' => true
         ],
-        'mailer' => [
-            'useFileTransport' => true,
-        ],
-        'urlManager' => [
-            'showScriptName' => true,
-        ],
+//         'mailer' => [
+//             'useFileTransport' => true,
+//         ],
+//         'urlManager' => [
+//             'showScriptName' => true,
+//         ],
     ],
 ];

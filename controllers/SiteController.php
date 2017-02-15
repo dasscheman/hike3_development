@@ -124,7 +124,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if (isset(Yii::$app->user->identity->selected)) {
+        if (!empty(Yii::$app->user->identity->selected)) {
             $event_id = Yii::$app->user->identity->selected;
             $user = DeelnemersEvent::find()
                 ->where('event_ID =:event_id and user_ID =:user_id')
@@ -138,47 +138,49 @@ class SiteController extends Controller
                 return $this->redirect(['/site/overview-organisation']);
             }
         }
-        return $this->render(['site/index']);
+        return $this->render('/site/index');
 
     }
 
     public function actionOverviewPlayers()
     {
-        $event_id = Yii::$app->user->identity->selected;
-        $group_id = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
-            ->one();
+        if (isset(Yii::$app->user->identity->selected)) {
+            $event_id = Yii::$app->user->identity->selected;
+            $group_id = DeelnemersEvent::find()
+                ->select('group_ID')
+                ->where('event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->one();
 
-        $searchQuestionsModel = new OpenVragenSearch();
-        $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
+            $searchQuestionsModel = new OpenVragenSearch();
+            $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
 
 
-        $searchHintsModel = new NoodEnvelopSearch();
-        $hintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
+            $searchHintsModel = new NoodEnvelopSearch();
+            $hintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
 
-        $searchBonusModel = new BonuspuntenSearch();
-        $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams);
+            $searchBonusModel = new BonuspuntenSearch();
+            $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams);
 
-        $searchQrModel = new QrcheckSearch();
-        $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams);
+            $searchQrModel = new QrcheckSearch();
+            $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams);
 
-        $groupModel = Groups::findOne($group_id);
-        $groupModel->setGroupMembers();
+            $groupModel = Groups::findOne($group_id);
+            $groupModel->setGroupMembers();
 
-        $feed = new ActivityFeed;
-        $feed->pageSize = 5;
-        $feed->pageCount = 3;
+            $feed = new ActivityFeed;
+            $feed->pageSize = 5;
+            $feed->pageCount = 3;
 
-        return $this->render('index-players',[
-            'groupModel' => $groupModel,
-            'activityFeed' => $feed->getData(),
-            'questionsData' => $questionsData,
-            'hintsData' => $hintsData,
-            'qrCheckData' => $qrCheckData,
-            'bonusData' => $bonusData
-        ]);
+            return $this->render('index-players',[
+                'groupModel' => $groupModel,
+                'activityFeed' => $feed->getData(),
+                'questionsData' => $questionsData,
+                'hintsData' => $hintsData,
+                'qrCheckData' => $qrCheckData,
+                'bonusData' => $bonusData
+            ]);
+        }
     }
 
     public function actionGameOverview()
@@ -240,7 +242,7 @@ class SiteController extends Controller
 
     public function actionContact()
     {
-		$model=new ContactForm;
+		$model = new ContactForm;
 		if(isset($_POST['ContactForm']))
 		{
 			$model->attributes=$_POST['ContactForm'];
@@ -258,8 +260,7 @@ class SiteController extends Controller
 				$this->refresh();
 			}
 		}
-		$this->layout='//layouts/column2fb';
-		$this->render('contact',array('model'=>$model));
+		return $this->render('contact',array('model'=>$model));
     }
 
     public function actionAbout()

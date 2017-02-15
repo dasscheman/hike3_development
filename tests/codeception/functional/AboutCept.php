@@ -6,5 +6,6 @@ use tests\codeception\_pages\AboutPage;
 
 $I = new FunctionalTester($scenario);
 $I->wantTo('ensure that about works');
-AboutPage::openBy($I);
-$I->see('About', 'h1');
+$I->amOnPage(Yii::$app->getUrlManager()->createUrl('').'site/about');
+// AboutPage::openBy($I);
+$I->see('Not Found', 'h1');

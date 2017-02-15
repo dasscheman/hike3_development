@@ -28,6 +28,16 @@ $config = [
              // 'i18n' => []
         ],
     ],
+
+    'language' => 'en-US',
+    'controllerMap' => [
+        'fixture' => [
+            'class' => 'yii\faker\FixtureController',
+            'fixtureDataPath' => '@tests/codeception/fixtures',
+            'templatePath' => '@tests/codeception/templates',
+            'namespace' => 'tests\codeception\fixtures',
+        ],
+    ],
     'components' => [
         'i18n' => [
             'translations' => [
@@ -72,10 +82,13 @@ $config = [
                 'class' => 'Swift_SmtpTransport',
                 'host'=>'biologenkantoor.nl',
                 'username'=>'noreply@biologenkantoor.nl',
-                'password'=>'Vzvr074$',
+                'password'=>'test',
                 'port'=>'587',
                 //'encryption' => 'tls',
             ],
+        ],
+        'urlManager' => [
+            'showScriptName' => true,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -89,7 +102,7 @@ $config = [
         'setupdatetime' => [
             'class' => 'app\components\SetupDateTime',
         ],
-        'db' => require(__DIR__ . '/db.php'),
+        'db' => require(__DIR__ . '/db-test.php'),
     ],
     'params' => $params,
 ];

@@ -27,8 +27,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
- * @property string $authKey 
- * @property string $accessToken 
+ * @property string $authKey
+ * @property string $accessToken
  *
  * @property Bonuspunten[] $Bonuspuntens
  * @property Bonuspunten[] $Bonuspuntens0
@@ -96,7 +96,7 @@ class Users extends AccessControl implements IdentityInterface {
             ['username', 'unique'],
             ['email', 'unique'],
             [['email'], 'email'],
-            
+
             [['password'], 'required', 'on' => self::SCENARIO_CREATE],
             ['password', 'string', 'min' => 6],
             ['password_repeat', 'required'],
@@ -134,7 +134,7 @@ class Users extends AccessControl implements IdentityInterface {
             'accessToken' => Yii::t('app', 'Access Token'),
         ];
     }
-    
+
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
@@ -473,7 +473,7 @@ class Users extends AccessControl implements IdentityInterface {
      * @return array an array of all available users'.
      */
     public function getUserNameOptions() {
-        $data = Users::find()->all();        
+        $data = Users::find()->all();
         $list = ArrayHelper::map($data, 'user_ID', 'username');
         return $list;
     }
@@ -520,7 +520,7 @@ class Users extends AccessControl implements IdentityInterface {
         }
         return false;
     }
-    
+
     public function sendEmailWithNewPassword() {
         $message = Yii::$app->mailer->compose('resendPassword', [
                 'newMailUsers' => $this->username,

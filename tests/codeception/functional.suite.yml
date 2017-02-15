@@ -11,6 +11,14 @@ modules:
     enabled:
       - Filesystem
       - Yii2
+      - Db
     config:
         Yii2:
             configFile: 'codeception/config/functional.php'
+        Db:
+            dsn: 'mysql:host=localhost;dbname=hike_v3_01_test'
+            user: 'test'
+            password: 'test'
+            dump: '/codeception/_data/hike-v2-01.sql'
+            populate: true
+            cleanup: true
