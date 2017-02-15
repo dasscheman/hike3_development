@@ -17,7 +17,6 @@ modules:
 # "restart" option is used by the WebDriver to start each time per test-file new session and cookies,
 # it is useful if you want to login in your app in each test.
         - WebDriver:
-            url:
             browser: firefox
         - \Helper\Acceptance
     config:
