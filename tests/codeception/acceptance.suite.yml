@@ -22,7 +22,7 @@ modules:
     config:
         PhpBrowser:
 # PLEASE ADJUST IT TO THE ACTUAL ENTRY POINT WITHOUT PATH INFO
-            url: http://localhost/Hike3_development/
+            url: http://localhost/
 # url: http://localhost:8080/web
 
 #        WebDriver:
