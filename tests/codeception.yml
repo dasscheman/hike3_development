@@ -30,7 +30,18 @@ settings:
     memory_limit: 1024M
     log: true
     colors: true
+modules:
+    enabled:
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=hike_v3_01_test'
+            user: 'test'
+            password: 'test'
+            dump: '/codeception/_data/hike-v2-01.sql'
+            populate: true
+            cleanup: true
 config:
     # the entry script URL (with host info) for functional and acceptance tests
     # PLEASE ADJUST IT TO THE ACTUAL ENTRY SCRIPT URL
+    # test_entry_url: http://localhost:8080/index-test.php
     test_entry_url: http://localhost:8080/index-test.php
+    # test_entry_url: http://localhost:8080/Hike3_development/web/index-test.php
