@@ -17,4 +17,4 @@ sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
 sudo sed -e "s?%TRAVIS_BUILD_DIR%?/home/travis/build/dasscheman/Hike3_development/web?g" --in-place /etc/apache2/sites-available/default
 sudo service apache2 restart
 ## create the table in the database.
-mysql -u root --password=password hike_v3_01_test < ./tests/codeception/_data/hike-v2-01.sql;
+# mysql -u root --password=password hike_v3_01_test < ./tests/codeception/_data/hike-v2-01.sql;
