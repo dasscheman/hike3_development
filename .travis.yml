@@ -7,6 +7,10 @@ php:
 
 sudo: required
 
+addons:
+  hosts:
+    - hike.dev
+
 before_install:
   - mysql -e "create database IF NOT EXISTS hike_v3_01_test;" -u root
   - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';" -u root
@@ -22,6 +26,8 @@ before_script:
   - ./tests/travis/setup/before_script.sh
   - ./tests/travis/setup/setup_apache.sh
   - ./tests/travis/setup/setup_selenium_server.sh
+  - chmod +x ./tests/codeception/bin/yii
+  - ./tests/codeception/bin/yii migrate --interactive=0
 
 script:
   # - ls -la
