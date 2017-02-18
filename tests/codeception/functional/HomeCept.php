@@ -1,11 +1,17 @@
 <?php
+use yii\helpers\Url as Url;
 
-/* @var $scenario Codeception\Scenario */
+class HomeCest
+{
+    public function ensureThatHomePageWorks(AcceptanceTester $I)
+    {
+        $I->amOnPage(Url::toRoute('/site/index'));
+        $I->see('My Company');
 
-$I = new FunctionalTester($scenario);
-$I->wantTo('ensure that home page works');
-$I->amOnPage(Yii::$app->homeUrl);
-$I->see('My Company');
-$I->seeLink('About');
-$I->click('About');
-$I->see('This is the About page.');
+        $I->seeLink('About');
+        $I->click('About');
+        $I->wait(2); // wait for page to be opened
+
+        $I->see('This is the About page.');
+    }
+}
