@@ -15,6 +15,6 @@ modules:
             dsn: 'mysql:host=localhost;dbname=hike_v3_01_test'
             user: 'test'
             password: 'test'
-            dump: '/codeception/_data/hike-v2-01.sql'
-            populate: true
-            cleanup: true
+            # dump: '/codeception/_data/hike-v2-01.sql'
+            # populate: true
+            # cleanup: true
