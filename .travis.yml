@@ -11,6 +11,10 @@ addons:
   hosts:
     - hike.dev
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 before_install:
   - mysql -e "create database IF NOT EXISTS hike_v3_01_test;" -u root
   - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';" -u root
@@ -18,6 +22,10 @@ before_install:
   - mysql -e "FLUSH PRIVILEGES;"
   - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n" -u root
 
+install:
+  - travis_retry composer self-update && composer --version
+  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
+  - travis_retry composer update --dev --prefer-dist --no-interaction
 
 before_script:
   # - chmod +x ./tests/travis/setup/before_script.sh
