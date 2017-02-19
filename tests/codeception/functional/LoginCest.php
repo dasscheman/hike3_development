@@ -38,6 +38,12 @@ class LoginFormCest
 
     public function loginWithWrongCredentials(\FunctionalTester $I)
     {
+        $I->haveFixtures([
+            'user' => [
+                'class' => UserFixture::className(),
+                'dataFile' => '@tests/_data/models/user.php',
+             ],
+        ]);
         $I->submitForm('#login-form', [
             'LoginForm[username]' => 'admin',
             'LoginForm[password]' => 'wrong',
@@ -46,7 +52,7 @@ class LoginFormCest
         $I->see('Incorrect username or password.');
     }
 
-    public function loginSuccessfully(\FunctionalTester $I)
+    public function loginSuccessfully(FunctionalTester $I)
     {
         $I->submitForm('#login-form', [
             'LoginForm[username]' => 'admin',
