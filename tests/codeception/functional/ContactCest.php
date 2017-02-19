@@ -1,4 +1,6 @@
 <?php
+use \FunctionalTester;
+
 class ContactFormCest
 {
     public function _before(\FunctionalTester $I)
@@ -16,10 +18,10 @@ class ContactFormCest
         $I->submitForm('#contact-form', []);
         $I->expectTo('see validations errors');
         $I->see('Contact', 'h1');
-        $I->see('Name cannot be blank');
+        $I->see('Naam cannot be blank');
         $I->see('Email cannot be blank');
-        $I->see('Subject cannot be blank');
-        $I->see('Body cannot be blank');
+        $I->see('Onderwerp cannot be blank');
+        $I->see('Tekst cannot be blank');
         $I->see('The verification code is incorrect');
     }
 

@@ -3,6 +3,9 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+// use Yii; 19 feb 2017: This generates this error in the functional test: 
+// yii\base\ErrorException: The use statement with non-compound name 'Yii' has no effect
+
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -11,7 +14,6 @@ use app\assets\AppAsset;
 use kartik\widgets\AlertBlock;
 use app\models\EventNames;
 
-use Yii;
 
 AppAsset::register($this);
 ?>
