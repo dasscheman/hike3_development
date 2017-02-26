@@ -98,7 +98,6 @@ class QrCheckSearch extends QrCheck
         $query->andFilterWhere([
             'qr_check_ID' => $this->qr_check_ID,
             'qr_ID' => $this->qr_ID,
-            'event_ID' => $this->event_ID,
             'group_ID' => $this->group_ID,
             'create_time' => $this->create_time,
             'create_user_ID' => $this->create_user_ID,

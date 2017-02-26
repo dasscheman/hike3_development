@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 /* @var $model app\models\Route */
 
 ?>
-<div class="tbl-bonuspunte-view-dashboard">
+<div class="tbl-bonuspunten-view-dashboard">
     <h3> <?php echo Yii::t('app', 'Bonus') ?> </h3>
     <p>
         <?php

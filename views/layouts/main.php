@@ -3,7 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-// use Yii; 19 feb 2017: This generates this error in the functional test: 
+// use Yii; 19 feb 2017: This generates this error in the functional test:
 // yii\base\ErrorException: The use statement with non-compound name 'Yii' has no effect
 
 use yii\helpers\Html;
@@ -11,9 +11,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-use kartik\widgets\AlertBlock;
 use app\models\EventNames;
-
 
 AppAsset::register($this);
 ?>
@@ -105,7 +103,7 @@ AppAsset::register($this);
 //                    ],
                     [
                         'label'=> Yii::t('app','Game overview'),
-                        'url' => ['site/game-overview'],
+                        'url' => ['site/overview-players'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('site', 'index')
                     ],
                     [
@@ -143,7 +141,7 @@ AppAsset::register($this);
                     ],
                     [
                         'label' => Yii::t('app','Hike overview'),
-                        'url'=>['/site/overview'],
+                        'url'=>['/site/overview-organisation'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('organisatie', 'overview'),
                     ],
                     [
@@ -208,12 +206,6 @@ AppAsset::register($this);
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
-        <?= AlertBlock::widget([
-            'type' => AlertBlock::TYPE_ALERT,
-            'useSessionFlash' => true,
-            'delay' => 4000,
-
-        ]); ?>
         <?= $content ?>
     </div>
 </div>

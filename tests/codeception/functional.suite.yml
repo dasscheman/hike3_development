@@ -20,5 +20,5 @@ modules:
             user: 'test'
             password: 'test'
             # dump: '/codeception/_data/hike-v2-01.sql'
-            # populate: true
-            # cleanup: true
+            populate: true
+            cleanup: true

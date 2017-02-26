@@ -692,7 +692,7 @@ ALTER TABLE `tbl_qr_check`
 --
 ALTER TABLE `tbl_route`
   ADD PRIMARY KEY (`route_ID`),
-  ADD UNIQUE KEY `event_ID` (`event_ID`,`day_date`,`route_name`),
+  ADD UNIQUE KEY `event_ID` (`event_ID`, `route_name`),
   ADD KEY `fk_route_create_user_name` (`create_user_ID`),
   ADD KEY `fk_route_update_user_name` (`update_user_ID`);
 

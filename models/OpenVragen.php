@@ -48,10 +48,10 @@ class OpenVragen extends HikeActiveRecord
             [['omschrijving'], 'string'],
             [['create_time', 'update_time'], 'safe'],
             [['open_vragen_name', 'vraag', 'goede_antwoord'], 'string', 'max' => 255],
-            [   
-                ['open_vragen_name', 'event_ID', 'route_ID'], 
-                'unique', 
-                'targetAttribute' => ['open_vragen_name', 'event_ID', 'route_ID'], 
+            [
+                ['open_vragen_name', 'event_ID', 'route_ID'],
+                'unique',
+                'targetAttribute' => ['open_vragen_name', 'event_ID', 'route_ID'],
                 'message' => Yii::t('app/error', 'Question name already exists for this route section')]
         ];
     }
@@ -76,6 +76,17 @@ class OpenVragen extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
+    }
+
+    /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
     }
 
     /**
@@ -320,7 +331,7 @@ class OpenVragen extends HikeActiveRecord
 
 
 	public function getNewOrderForVragen($route_id)
-	{        
+	{
         $data = OpenVragen::find()
             ->where('event_ID =:event_id AND route_ID =:route_id')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' =>$route_id])

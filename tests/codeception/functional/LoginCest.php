@@ -1,8 +1,17 @@
 <?php
+use app\tests\codeception\fixtures\UsersFixture;
+
 class LoginFormCest
 {
     public function _before(\FunctionalTester $I)
     {
+        $I->haveFixtures([
+            'users' => [
+                'class' => UsersFixture::className(),
+                'dataFile' => '@tests/codeception/fixtures/data/models/users.php',
+             ],
+        ]);
+
         $I->amOnRoute('site/login');
     }
 
@@ -15,17 +24,18 @@ class LoginFormCest
     // demonstrates `amLoggedInAs` method
     public function internalLoginById(\FunctionalTester $I)
     {
-        $I->amLoggedInAs(100);
+        // $I->
+        $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         $I->amOnPage('/');
-        $I->see('Logout (admin)');
+        $I->see('Logout (organisatie)');
     }
 
     // demonstrates `amLoggedInAs` method
     public function internalLoginByInstance(\FunctionalTester $I)
     {
-        $I->amLoggedInAs(\app\models\User::findByUsername('admin'));
+        $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         $I->amOnPage('/');
-        $I->see('Logout (admin)');
+        $I->see('Logout (organisatie)');
     }
 
     public function loginWithEmptyCredentials(\FunctionalTester $I)
@@ -38,12 +48,6 @@ class LoginFormCest
 
     public function loginWithWrongCredentials(\FunctionalTester $I)
     {
-        $I->haveFixtures([
-            'user' => [
-                'class' => UserFixture::className(),
-                'dataFile' => '@tests/_data/models/user.php',
-             ],
-        ]);
         $I->submitForm('#login-form', [
             'LoginForm[username]' => 'admin',
             'LoginForm[password]' => 'wrong',
@@ -55,10 +59,10 @@ class LoginFormCest
     public function loginSuccessfully(FunctionalTester $I)
     {
         $I->submitForm('#login-form', [
-            'LoginForm[username]' => 'admin',
-            'LoginForm[password]' => 'admin',
+            'LoginForm[username]' => 'organisatie',
+            'LoginForm[password]' => 'test123',
         ]);
-        $I->see('Logout (admin)');
+        $I->see('Logout (organisatie)');
         $I->dontSeeElement('form#login-form');
     }
 }

@@ -27,7 +27,7 @@ use yii\widgets\Pjax;
     ]);
 
     echo AlertBlock::widget([
-        'type' => AlertBlock::TYPE_ALERT,
+        'type' => AlertBlock::TYPE_GROWL,
         'useSessionFlash' => true,
         'delay' => 4000,
     ]);
@@ -38,6 +38,15 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
     <?php
+
+    if($model->isNewRecord) {
+        echo $form->field($model, 'group_ID')->dropDownList(
+            Groups::getGroupOptionsForEvent(),
+            [
+                'prompt'=>'Select...',
+                'id' => 'group-' . $model->bouspunten_ID
+            ]);
+    }
     echo $form->field($model, 'date')->dropDownList(
         EventNames::getDatesAvailable(),
         [
@@ -60,30 +69,57 @@ use yii\widgets\Pjax;
     ?>
     <div class="form-group">
         <?php
-        echo Html::a(
-            Yii::t('app', 'Save'),
-            [
-                '/bonuspunten/update',
-                'id' => $model->bouspunten_ID
-            ],
-            [
-                'class' => 'btn btn-xs btn-primary',
-                'data-method'=>'post',
-                'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
-            ]
-        );
+        if(!$model->isNewRecord) {
 
-        echo Html::a(
-            Yii::t('app', 'Cancel'),
-            [
-                '/bonuspunten/cancel',
-                'id' => $model->bouspunten_ID],
-            [
-                'class' => 'btn btn-xs btn-danger',
-                'data-method'=>'post',
-                'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
-            ]
-        ); ?>
+            echo Html::a(
+                Yii::t('app', 'Save'),
+                [
+                    '/bonuspunten/update',
+                    'id' => $model->bouspunten_ID
+                ],
+                [
+                    'class' => 'btn btn-xs btn-primary',
+                    'data-method'=>'post',
+                    'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+                ]
+            );
+            echo Html::a(
+                Yii::t('app', 'Cancel'),
+                [
+                    '/bonuspunten/cancel',
+                    'id' => $model->bouspunten_ID],
+                [
+                    'class' => 'btn btn-xs btn-danger',
+                    'data-method'=>'post',
+                    'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+                ]
+            );
+            echo Html::a(
+                Yii::t('app', 'Delete'),
+                [
+                    '/bonuspunten/delete',
+                    'id' => $model->bouspunten_ID],
+                [
+                    'class' => 'btn btn-xs btn-danger',
+                    'data-method'=>'post',
+                    'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+                ]
+            );
+        } else {
+
+            echo Html::a(
+                Yii::t('app', 'Save'),
+                [
+                    '/bonuspunten/create',
+                ],
+                [
+                    'class' => 'btn btn-xs btn-primary',
+                    'data-method'=>'post',
+                    'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
+                ]
+            );
+        }
+        ?>
     </div>
     <?php
     ActiveForm::end();

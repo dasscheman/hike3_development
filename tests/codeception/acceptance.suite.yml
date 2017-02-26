@@ -19,7 +19,7 @@ modules:
            restart: true
         Yii2:
             part: orm
-            entryScript: index-test.php
+            entryScript: hike.dev/index-test.php
             cleanup: false
         Db:
             dsn: 'mysql:host=localhost;dbname=hike_v3_01_test'

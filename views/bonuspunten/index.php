@@ -22,13 +22,16 @@ $this->title = Yii::t('app', 'Overview bonuspoints');
         'date',
         [
             'attribute' => 'post_name',
-            'value' => 'post.post_name'
+            'value' => 'post.post_name',
         ],
         'omschrijving',
         'score',
         [
             'header' => Yii::t('app', 'View details'),
             'class'=>'kartik\grid\ExpandRowColumn',
+            'contentOptions' => function ($model, $key, $index, $column) {
+                return ['id' => 'bonus-expand-' . $key];
+            },
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
                 return GridView::ROW_COLLAPSED;
