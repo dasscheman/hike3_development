@@ -82,6 +82,17 @@ class PostPassage extends HikeActiveRecord
     }
 
     /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getCreateUser()

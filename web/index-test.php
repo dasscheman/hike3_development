@@ -12,6 +12,6 @@ require(__DIR__ . '/../vendor/autoload.php');
 require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
 // $config = require(__DIR__ . '/../tests/codeception/config/acceptance.php');
-$config = require(__DIR__ . '/../config/web.php');
+$config = require(__DIR__ . '/../config/web-test.php');
 
 (new yii\web\Application($config))->run();

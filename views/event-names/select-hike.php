@@ -71,6 +71,7 @@ $this->title = Yii::t('app', 'Select hike');
                             'event-names/select-hike',
                             'id' => $model->event_ID],
                         [
+                            'id' => 'select-hike-'. $model->event_ID,
                             'title' => Yii::t('app', 'Select hike'),
                             'class'=>'btn btn-primary btn-xs',
                         ]

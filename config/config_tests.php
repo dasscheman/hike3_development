@@ -9,6 +9,11 @@ return [
     'id' => 'basic-tests',
     'basePath' => dirname(__DIR__),
     'language' => 'en-US',
+    'modules' => [
+        'gridview' =>  [
+             'class' => '\kartik\grid\Module'
+        ],
+    ],
     'components' => [
         'db' => $dbParams,
         'mailer' => [
@@ -33,7 +38,8 @@ return [
             'showScriptName' => true,
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Users',
+            'enableAutoLogin' => true,
         ],
         'request' => [
             'cookieValidationKey' => 'test',
@@ -44,6 +50,9 @@ return [
                 'domain' => 'localhost',
             ],
             */
+        ],
+        'setupdatetime' => [
+            'class' => 'app\components\SetupDateTime',
         ],
     ],
     'controllerMap' => [

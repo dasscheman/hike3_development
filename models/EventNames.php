@@ -396,12 +396,10 @@ class EventNames extends HikeActiveRecord {
         $mainarr = array();
         $date = $StartDate;
         $count = 0;
+        $mainarr[NULL] = Yii::t('app', 'Introduction');
         while ($date <= $EndDate) {
-            $a = strptime($date, '%Y-%m-%d');
-            $timestamp = mktime(0, 0, 0, $a['tm_mon'] + 1, $a['tm_mday'], $a['tm_year'] + 1900);
-            //$timestamp = strtotime($date);
-            $mainarr[$timestamp] = $date;
-            $date++;
+            $mainarr[$date] = $date;
+            $date = date('Y-m-d', strtotime($date. ' + 1 days'));
             $count++;
             // more then 10 days is unlikly, therefore break.
             if ($count == 10) {

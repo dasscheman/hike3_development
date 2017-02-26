@@ -129,7 +129,7 @@ class DeelnemersEventController extends Controller
         $model = $this->findModel($id);
         if ($model->user_ID == Yii::$app->user->identity->id) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'You cannot change your own account'));
-            return $this->redirect(['site/overview']);
+            return $this->redirect(['site/index']);
         }
         if (Yii::$app->request->post('submit') == 'delete') {
            try

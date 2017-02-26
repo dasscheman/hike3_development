@@ -97,7 +97,6 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
         $query->andFilterWhere([
             'open_nood_envelop_ID' => $this->open_nood_envelop_ID,
             'nood_envelop_ID' => $this->nood_envelop_ID,
-            'event_ID' => $this->event_ID,
             'group_ID' => $this->group_ID,
             'opened' => $this->opened,
             'create_time' => $this->create_time,

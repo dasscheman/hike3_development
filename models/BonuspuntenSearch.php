@@ -68,7 +68,6 @@ class BonuspuntenSearch extends Bonuspunten
 
         $query->andFilterWhere([
             'bouspunten_ID' => $this->bouspunten_ID,
-            'event_ID' => $this->event_ID,
             'date' => $this->date,
             'post_ID' => $this->post_ID,
             'group_ID' => $this->group_ID,
@@ -89,14 +88,14 @@ class BonuspuntenSearch extends Bonuspunten
         // Get group id of current user.
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
-            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->where('tbl_deelnemers_event.event_ID =:event_id and user_ID =:user_id')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
             ->one();
 
         // Find all answers for founr group id
         $query = Bonuspunten::find()
             // ->select('open_vragen_ID')
-            ->where('event_ID=:event_id AND group_ID=:group_id')
+            ->where('tbl_bonuspunten.event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected,
                 ':group_id' => $group_id->group_ID

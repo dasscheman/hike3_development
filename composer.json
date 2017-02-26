@@ -26,21 +26,21 @@
         "kartik-v/yii2-widget-select2": "*",
         "kartik-v/yii2-builder": "@dev",
         "kartik-v/yii2-date-range": "*",
-        "kartik-v/yii2-detail-view": "dev-master",      
+        "kartik-v/yii2-detail-view": "dev-master",
         "kartik-v/yii2-editable": "*",
         "kartik-v/yii2-field-range": "*",
-        "kartik-v/yii2-mpdf": "@dev", 
+        "kartik-v/yii2-mpdf": "@dev",
         "prawee/yii2-widgets": "dev-master",
-        "codeception/codeception": "2.0.*",
-        "codeception/specify": "*",
-        "codeception/verify": "*",
         "ext-curl": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
-        "yiisoft/yii2-faker": "*"
+        "yiisoft/yii2-faker": "*",
+        "codeception/codeception": "^2.2.3",
+        "codeception/verify": "~0.3.1",
+        "codeception/specify": "~0.4.3"
     },
     "config": {
         "process-timeout": 1800

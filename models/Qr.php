@@ -47,8 +47,8 @@ class Qr extends HikeActiveRecord
             [['qr_name', 'qr_code'], 'string', 'max' => 255],
             [
                 ['qr_code', 'event_ID'],
-                'unique', 
-                'targetAttribute' => ['qr_code', 'event_ID'], 
+                'unique',
+                'targetAttribute' => ['qr_code', 'event_ID'],
                 'message' => Yii::t('app/error', 'This qr code exists for this hike')]
         ];
     }
@@ -71,6 +71,17 @@ class Qr extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
+    }
+
+    /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
     }
 
     /**

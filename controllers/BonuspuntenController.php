@@ -84,7 +84,7 @@ class BonuspuntenController extends Controller
         $model = new Bonuspunten();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bouspunten_ID]);
+            return $this->redirect(['site/index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -101,6 +101,27 @@ class BonuspuntenController extends Controller
     {
         $model = $this->findModel($id);
 
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
+                'model' => $model,
+            ]);
+        }
+        return $this->redirect(['bonuspunten/index']);
+    }
+
+    /**
+     * Deletes an existing Bonuspunten model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        if ($this->findModel($id)->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspoints are deleted'));
+            return $this->redirect(['bonuspunten/index']);
+        }
+        $model = $this->findModel($id);
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
                 'model' => $model,
@@ -139,19 +160,6 @@ class BonuspuntenController extends Controller
             ]);
         }
         return $this->redirect(['bonuspunten/index']);
-    }
-
-    /**
-     * Deletes an existing Bonuspunten model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**

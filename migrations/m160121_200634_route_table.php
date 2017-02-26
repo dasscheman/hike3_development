@@ -13,7 +13,7 @@ class m160121_200634_route_table extends Migration
         /* route onderdelen aan gemaakt worden. De datum refereerd niet perse naar de
         /* begin en eind datum gedefinieerd in de eventname tabel. Er kunnen namelijk
         /* ook route onderdelen voor en na de hike aangemaakt worden. Dit is vooral om
-        /* de mogelijkheid om introductie vragen, posten en stille posten te ondersteunen. 
+        /* de mogelijkheid om introductie vragen, posten en stille posten te ondersteunen.
         /*****************************************************************************/
 
 	$this->createTable('tbl_route', [
@@ -28,38 +28,38 @@ class m160121_200634_route_table extends Migration
             'update_user_ID'    => $this->integer(11),
 	],
         'ENGINE=InnoDB');
-        
+
         $this->createIndex(
-            'event_ID', 
-            'tbl_route', 
-            ['event_ID', 'day_date', 'route_name'], 
+            'event_ID',
+            'tbl_route',
+            ['event_ID', 'day_date', 'route_name'],
             true);
 
 	$this->addForeignKey(
-            "fk_route_event_id", 
-            "tbl_route", 
+            "fk_route_event_id",
+            "tbl_route",
             "event_ID",
-            "tbl_event_names", 
-            "event_ID", 
-            "RESTRICT", 
+            "tbl_event_names",
+            "event_ID",
+            "RESTRICT",
             "CASCADE");
 
 	$this->addForeignKey(
-            "fk_route_create_user_name", 
-            "tbl_route", 
+            "fk_route_create_user_name",
+            "tbl_route",
             "create_user_ID",
-            "tbl_users", 
-            "user_ID", 
-            "RESTRICT", 
+            "tbl_users",
+            "user_ID",
+            "RESTRICT",
             "CASCADE");
-	
+
 	$this->addForeignKey(
-            "fk_route_update_user_name", 
-            "tbl_route", 
+            "fk_route_update_user_name",
+            "tbl_route",
             "update_user_ID",
-            "tbl_users", 
-            "user_ID", 
-            "RESTRICT", 
+            "tbl_users",
+            "user_ID",
+            "RESTRICT",
             "CASCADE");
     }
 

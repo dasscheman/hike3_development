@@ -67,59 +67,61 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionOverviewOrganisatie()
+    public function actionOverviewOrganisation()
     {
+        if (!empty(Yii::$app->user->identity->selected)) {
+            $event_id = Yii::$app->user->identity->selected;
 
-        $event_id = Yii::$app->user->identity->selected;
+            $eventModel = EventNames::find($event_id)
+                ->where('event_ID =:event_id')
+                ->addParams([':event_id' => $event_id])
+                ->one();
 
-        $eventModel = EventNames::find($event_id)
-            ->where('event_ID =:event_id')
-            ->addParams([':event_id' => $event_id])
-            ->one();
+            $queryOrganisatie = DeelnemersEvent::find()
+                ->where(['=', 'event_ID', $event_id])
+                ->andWhere(['<=', 'rol', DeelnemersEvent::ROL_post])
+                ->orderby('rol ASC');
 
-        $queryOrganisatie = DeelnemersEvent::find()
-            ->where(['=', 'event_ID', $event_id])
-            ->andWhere(['<=', 'rol', DeelnemersEvent::ROL_post])
-            ->orderby('rol ASC');
-
-        $providerOrganisatie = new ActiveDataProvider([
-            'query' => $queryOrganisatie,
-            'pagination' => [
-                'pageSize' => 50,
-            ],
-        ]);
-        $groupModel = new Groups;
-        $queryGroups = Groups::find()
-            ->where(['=', 'event_ID', $event_id])
-            ->orderby('group_name ASC');
-        $providerGroups = new ActiveDataProvider([
-            'query' => $queryGroups,
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
-
-        $queryCheckQuestions = OpenVragenAntwoorden::find()
-            ->where('event_ID=:event_id and checked=:checked')
-            ->addParams([
-                'event_id' => Yii::$app->user->identity->selected,
-                'checked' => 0,
+            $providerOrganisatie = new ActiveDataProvider([
+                'query' => $queryOrganisatie,
+                'pagination' => [
+                    'pageSize' => 50,
+                ],
             ]);
-        $dataProviderCheck = new ActiveDataProvider([
-            'query' => $queryCheckQuestions
-        ]);
+            $groupModel = new Groups;
+            $queryGroups = Groups::find()
+                ->where(['=', 'event_ID', $event_id])
+                ->orderby('group_name ASC');
+            $providerGroups = new ActiveDataProvider([
+                'query' => $queryGroups,
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
 
-        $feed = new ActivityFeed;
-        $feed->pageSize = 10;
+            $queryCheckQuestions = OpenVragenAntwoorden::find()
+                ->where('event_ID=:event_id and checked=:checked')
+                ->addParams([
+                    'event_id' => Yii::$app->user->identity->selected,
+                    'checked' => 0,
+                ]);
+            $dataProviderCheck = new ActiveDataProvider([
+                'query' => $queryCheckQuestions
+            ]);
 
-		return $this->render('/site/index-organisation', array(
-            'eventModel' => $eventModel,
-			'organisatieData' => $providerOrganisatie,
-			'groupsData' => $providerGroups,
-            'groupModel' => $groupModel,
-            'dataProviderCheck' => $dataProviderCheck,
-            'activityFeed' => $feed->getData(),
-		));
+            $feed = new ActivityFeed;
+            $feed->pageSize = 10;
+
+    		return $this->render('/site/index-organisation', array(
+                'eventModel' => $eventModel,
+    			'organisatieData' => $providerOrganisatie,
+    			'groupsData' => $providerGroups,
+                'groupModel' => $groupModel,
+                'dataProviderCheck' => $dataProviderCheck,
+                'activityFeed' => $feed->getData(),
+    		));
+        }
+        return $this->render('/site/index');
 	}
 
     public function actionIndex()
@@ -130,7 +132,9 @@ class SiteController extends Controller
                 ->where('event_ID =:event_id and user_ID =:user_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
                 ->one();
-
+            if(!isset($user->rol)) {
+                return $this->render('/site/index');
+            }
             if ($user->rol === DeelnemersEvent::ROL_deelnemer) {
                 return $this->redirect(['/site/overview-players']);
             }
@@ -181,6 +185,7 @@ class SiteController extends Controller
                 'bonusData' => $bonusData
             ]);
         }
+        return $this->render('/site/index');
     }
 
     public function actionGameOverview()
@@ -242,25 +247,15 @@ class SiteController extends Controller
 
     public function actionContact()
     {
-		$model = new ContactForm;
-		if(isset($_POST['ContactForm']))
-		{
-			$model->attributes=$_POST['ContactForm'];
-			if($model->validate())
-			{
-				$name='=?UTF-8?B?'.base64_encode($model->name).'?=';
-				$subject='=?UTF-8?B?'.base64_encode($model->subject).'?=';
-				$headers="From: $name <{$model->email}>\r\n".
-					"Reply-To: {$model->email}\r\n".
-					"MIME-Version: 1.0\r\n".
-					"Content-type: text/plain; charset=UTF-8";
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
 
-				mail(Yii::app()->params['adminEmail'],$subject,$model->body,$headers);
-				Yii::app()->user->setFlash('contact','Dank voor de mail.');
-				$this->refresh();
-			}
-		}
-		return $this->render('contact',array('model'=>$model));
+            return $this->refresh();
+        }
+        return $this->render('contact', [
+            'model' => $model,
+        ]);
     }
 
     public function actionAbout()

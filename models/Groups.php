@@ -216,12 +216,14 @@ class Groups extends HikeActiveRecord
 	/**
 	 * Get al available group name options
 	 */
-	public function getGroupOptions()
-	{
-		$data = Groups::findAll();
-		$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
-		return $groupsArray;
-	}
+	 // Dit slaat nergens op om een lijst met alle groepen te maken.
+	 // Voot alle hikes.
+	// public function getGroupOptions()
+	// {
+	// 	$data = Groups::findAll();
+	// 	$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
+	// 	return $groupsArray;
+	// }
 
 	/**
 	 * Get al available group name options for a particular event.

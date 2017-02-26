@@ -106,9 +106,6 @@ class EventNamesController extends Controller
             $model->event_ID = EventNames::determineNewHikeId();
             $model->image=UploadedFile::getInstance($model,'image');
 
-
-//            dd($model);
-
             $modelDeelnemersEvent->event_ID = $model->event_ID;
             $modelDeelnemersEvent->user_ID = \Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
@@ -134,13 +131,29 @@ class EventNamesController extends Controller
                      ->where(['user_ID' => Yii::$app->user->id])
                      ->joinwith('deelnemersEvents');
 
-                if (Yii::$app->request->isAjax) {
-                    return $this->renderAjax('/event-names/select-hike', [
-                        'modelEvents' => $modelEvents]);
-                    }
-                return $this->render('/event-names/select-hike', [
-                    'modelEvents' => $modelEvents
-                ]);
+                // Na het opslaan raakt de ajax call van slag.
+                // Na het opslaan werken alle andere knoppen op de view niet
+                // meer en openen de create modal view. Daarom wordt hier geen
+                // renderajax gedaan. Sowieso overwegen om door te sturen naar
+                // de hike overview.
+                // if (Yii::$app->request->isAjax) {
+                //     return $this->renderAjax('/event-names/select-hike', [
+                //         'modelEvents' => $modelEvents]);
+                //     }
+
+                if ($model->status == EventNames::STATUS_gestart){
+                    Yii::$app->session->setFlash(
+                        'warning',
+                        Yii::t(
+                            'app',
+                            'You created a new hike. Here you add players.
+                                On the route overview page you can create the route of an hike.
+                                Players cannot see this when the hiek status is setup.')
+                    );
+                }
+                Yii::$app->user->identity->setSelected($model->event_ID);
+                Yii::$app->user->identity->setSelectedCookie($model->event_ID);
+                return $this->redirect(['/site/index']);
             }
         }
 
@@ -166,7 +179,7 @@ class EventNamesController extends Controller
                 throw new \yii\web\HttpException(400, Yii::t('app', 'cannot save record'));
              }
         }
-        return $this->redirect(['site/overview']);
+        return $this->redirect(['site/index']);
     }
 
     /**
@@ -205,7 +218,7 @@ class EventNamesController extends Controller
                 $image->saveAs($path);
              }
         }
-        return $this->redirect(['site/overview']);
+        return $this->redirect(['site/index']);
     }
 
 
@@ -224,13 +237,31 @@ class EventNamesController extends Controller
         }
 
         $model->load(Yii::$app->request->post());
-        if ($model->status != EventNames::STATUS_gestart) {
-            $model->active_day = $model->start_date;
-        }
+        $model->active_day = $model->start_date;
 
         if ($model->save()) {
+            if ($model->status == EventNames::STATUS_opstart){
+                Yii::$app->session->setFlash('warning', Yii::t(
+                    'app',
+                    'The hike is has status setup.
+                        Users cannot see anything of the hike. They can see the
+                        different hike elements when the hike has status introduction or started')
+                );
+            }
+            if ($model->status == EventNames::STATUS_introductie){
+                Yii::$app->session->setFlash('warning', Yii::t(
+                    'app',
+                    'The hike is has status introduction.
+                        Users can see the questions for the introduction and they
+                        can scan the silent stations for the introduction.')
+                );
+            }
             if ($model->status == EventNames::STATUS_gestart){
-                Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
+                Yii::$app->session->setFlash('warning', Yii::t(
+                    'app',
+                    'The hike is started, active day is set on start date.
+                        For this day user can see the questions, scan stations and open hints.
+                        Don\'t forget to set the max time if you want to have a time limit.'));
             }
         } else {
             // validation failed: $errors is an array containing error messages
@@ -239,7 +270,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['site/overview'], 200);
+        return $this->redirect(['site/index']);
     }
 
     /**

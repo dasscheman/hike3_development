@@ -123,7 +123,6 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         $query->andFilterWhere([
             'open_vragen_antwoorden_ID' => $this->open_vragen_antwoorden_ID,
             'open_vragen_ID' => $this->open_vragen_ID,
-            'event_ID' => $this->event_ID,
             'group_ID' => $this->group_ID,
             'checked' => $this->checked,
             'correct' => $this->correct,
