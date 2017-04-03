@@ -153,7 +153,7 @@ class EventNamesController extends Controller
                 }
                 Yii::$app->user->identity->setSelected($model->event_ID);
                 Yii::$app->user->identity->setSelectedCookie($model->event_ID);
-                return $this->redirect(['/site/index']);
+                return $this->redirect(['/site/overview-organisation']);
             }
         }
 
@@ -179,7 +179,7 @@ class EventNamesController extends Controller
                 throw new \yii\web\HttpException(400, Yii::t('app', 'cannot save record'));
              }
         }
-        return $this->redirect(['site/index']);
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**
@@ -218,7 +218,7 @@ class EventNamesController extends Controller
                 $image->saveAs($path);
              }
         }
-        return $this->redirect(['site/index']);
+        return $this->redirect(['site/overview-organisation']);
     }
 
 
@@ -270,7 +270,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['site/index']);
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**
@@ -284,7 +284,7 @@ class EventNamesController extends Controller
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
-            return $this->redirect(['site/overview'], 404);
+            return $this->redirect(['site/overview-organisation'], 404);
         }
 
         $model->load(Yii::$app->request->post());
@@ -298,7 +298,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['site/overview'], 200);
+        return $this->redirect(['site/overview-organisation'], 200);
     }
 
     /**
@@ -312,7 +312,7 @@ class EventNamesController extends Controller
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
-            return $this->redirect(['site/overview'], 404);
+            return $this->redirect(['site/overview-organisation'], 404);
         }
 
         $model->load(Yii::$app->request->post());
@@ -329,7 +329,7 @@ class EventNamesController extends Controller
             }
         }
 
-        return $this->redirect(['site/overview'], 200);
+        return $this->redirect(['site/overview-organisation'], 200);
     }
 
     public function actionSelectHike() {

@@ -14,7 +14,7 @@ use yii\widgets\Pjax;
 
         <p>
         <?php
-        Pjax::begin(['id' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID, 'enablePushState' => false]);
+        Pjax::begin(['id' => 'open-vragen-antwoorden-list-' . $model->open_vragen_antwoorden_ID, 'enablePushState' => false]);
         echo AlertBlock::widget([
             'type' => AlertBlock::TYPE_ALERT,
             'useSessionFlash' => true,
@@ -29,15 +29,21 @@ use yii\widgets\Pjax;
         if (!$model->checked) {
             echo Html::a(
                 Yii::t('app', 'Correct awnser'),
-                ['/open-vragen-antwoorden/antwoordGoedOfFout', 'id' => $model->open_vragen_ID],
-                ['class' => 'btn btn-xs btn-success'],
-                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID]
+                ['/open-vragen-antwoorden/antwoord-goed', 'id' => $model->open_vragen_antwoorden_ID],
+                [
+                    'class' => 'btn btn-xs btn-success',
+                    'id' => 'correct-awnser-' . $model->open_vragen_antwoorden_ID
+                ],
+                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_antwoorden_ID]
             );
             echo Html::a(
                 Yii::t('app', 'Wrong awnser'),
-                ['/open-vragen-antwoorden/antwoordGoedOfFout', 'id' => $model->open_vragen_ID],
-                ['class' => 'btn btn-xs btn-danger'],
-                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID]
+                ['/open-vragen-antwoorden/antwoord-fout', 'id' => $model->open_vragen_antwoorden_ID],
+                [
+                    'class' => 'btn btn-xs btn-danger',
+                    'id' => 'wrong-awnser-' . $model->open_vragen_antwoorden_ID
+                ],
+                ['data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_antwoorden_ID]
             );
         }
         ?>

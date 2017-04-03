@@ -95,10 +95,7 @@ class PostPassageController extends Controller
         $model = new PostPassage();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect([
-                '/game/groupOverview',
-                'event_id'=>$model->event_ID,
-                'group_id'=>$model->group_IDD]);
+            return $this->redirect(['site/index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -116,6 +113,7 @@ class PostPassageController extends Controller
     {
         $model = $this->findModel($id);
         if (!$model->load(Yii::$app->request->post())) {
+
            if (Yii::$app->request->isAjax) {
                 return $this->renderAjax('_form', [
                     'model' => $model,

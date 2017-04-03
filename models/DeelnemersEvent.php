@@ -116,15 +116,14 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-     //This doesn't make sense. Deelenemers worden altijd door een ander toegewezen of automatisch.
-     // maar nooit door de gebruikr geselecteerde hike.
-    // public function beforeValidate() {
-    //     if (parent::beforeValidate()) {
-    //         $this->event_ID = Yii::$app->user->identity->selected;
-    //         return(true);
-    //     }
-    //     return(false);
-    // }
+     // You can only add 
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->event_ID = Yii::$app->user->identity->selected;
+            return(true);
+        }
+        return(false);
+    }
 
     /**
     * Retrieves een lijst met mogelijke rollen die een deelnemer tijdens een hike kan hebben

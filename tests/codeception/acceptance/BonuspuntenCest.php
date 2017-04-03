@@ -35,8 +35,8 @@
 
          $I->click('#bonus-expand-2');
          $I->see('Save');
-         fillField('input[name="Bonuspunten[omschrijving]"]', 'Acceptatietests');
-         fillField('input[name="Bonuspunten[score]"]', '999');
+         $I->fillField('input[name="Bonuspunten[omschrijving]"]', 'Acceptatietests');
+         $I->fillField('input[name="Bonuspunten[score]"]', '999');
          $I->see('Save');
          $I->click('Bonus Points overview');
          $I->see('Acceptatietests');

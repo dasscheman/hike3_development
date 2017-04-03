@@ -5,6 +5,7 @@ use kartik\detail\DetailView;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use app\models\EventNames;
+use kartik\widgets\AlertBlock;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -127,14 +128,6 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
             ?>
         </p>
       </div>
-      <div class="alert alert-success fade in">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-        <p><strong>Ey!</strong></p>
-        People are looking at your profile. Find out who.
-      </div>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
     </div>
     <div class="col-sm-7">
 
@@ -142,33 +135,39 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
         <div class="col-sm-12">
           <div class="panel panel-default text-left">
             <div class="panel-body">
+                <?= AlertBlock::widget([
+                    'type' => AlertBlock::TYPE_ALERT,
+                    'useSessionFlash' => true,
+                    'delay' => 60000,
+
+                ]); ?>
               <p contenteditable="true">          <?php
-                            // View file rendering the widget
-                            echo DetailView::widget([
-                                'model' => $model,
-                                'attributes' => $attributes,
-                                'mode' => 'view',
-                                'bordered' => $bordered,
-                                'striped' => $striped,
-                                'condensed' => $condensed,
-                                'responsive' => $responsive,
-                                'hover' => $hover,
-                                'hAlign'=>$hAlign,
-                                'vAlign'=>$vAlign,
-                                'fadeDelay'=>$fadeDelay,
-                                'deleteOptions' => [ // your ajax delete parameters
-                                    'params' => ['id' => 1000, 'kvdelete' => true],
-                                ],
-                                'container' => ['id' => 'kv-demo'],
-                                'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
-                            ]);
-                        ?></p>
+                    // View file rendering the widget
+                    echo DetailView::widget([
+                        'model' => $model,
+                        'attributes' => $attributes,
+                        'mode' => 'view',
+                        'bordered' => $bordered,
+                        'striped' => $striped,
+                        'condensed' => $condensed,
+                        'responsive' => $responsive,
+                        'hover' => $hover,
+                        'hAlign'=>$hAlign,
+                        'vAlign'=>$vAlign,
+                        'fadeDelay'=>$fadeDelay,
+                        'deleteOptions' => [ // your ajax delete parameters
+                            'params' => ['id' => 1000, 'kvdelete' => true],
+                        ],
+                        'container' => ['id' => 'kv-demo'],
+                        'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
+                    ]);
+                ?></p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-sm-3">
           <div class="well">
            <p>John</p>
@@ -180,46 +179,8 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
             <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="well">
-           <p>Bo</p>
-           <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-          </div>
-        </div>
-        <div class="col-sm-9">
-          <div class="well">
-            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="well">
-           <p>Jane</p>
-           <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-          </div>
-        </div>
-        <div class="col-sm-9">
-          <div class="well">
-            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-3">
-          <div class="well">
-           <p>Anja</p>
-           <img src="bird.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-          </div>
-        </div>
-        <div class="col-sm-9">
-          <div class="well">
-            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-          </div>
-        </div>
-      </div>
+      </div> -->
+
     </div>
     <div class="col-sm-2 well">
       <div class="thumbnail">

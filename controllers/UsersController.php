@@ -8,7 +8,7 @@ use app\models\UsersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use app\components\GeneralFunctions; 
+use app\components\GeneralFunctions;
 use yii\filters\AccessControl;
 
 /**
@@ -80,7 +80,7 @@ class UsersController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Manages all models.
      */
@@ -95,16 +95,16 @@ class UsersController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single TblUsers model.
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView()
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel(Yii::$app->user->id),
         ]);
     }
 
@@ -126,7 +126,7 @@ class UsersController extends Controller
             } else {
                 throw new \yii\web\HttpException(400, Yii::t('app', 'Your account is created, but unfortunately we could not send an email with details. Contact hike-app@biologenkantoor.nl'));
             }
-            
+
         }
         return $this->render('create', [
             'model' => $model,
@@ -154,7 +154,7 @@ class UsersController extends Controller
             ]);
         }
     }
-    
+
     /**
      * Updates a particular model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -163,7 +163,7 @@ class UsersController extends Controller
     public function actionChangePassword()
     {
         $model=$this->findModel(Yii::$app->user->id);
- 
+
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not change password.'));
         }
@@ -171,10 +171,10 @@ class UsersController extends Controller
         return $this->render('view', [
             'model'=>$model,
         ]);
-    }	
-    
+    }
+
     public function actionResendPasswordUser()
-    {		
+    {
         $model = new Users;
         if($model->load(Yii::$app->request->post()))
         {
@@ -182,7 +182,7 @@ class UsersController extends Controller
 //                                        ':username' => $model->username,
 //                                        ':email' => $model->email
 //                                    ]);
-            
+
             if (isset($model)) {
                 $newWachtwoord = GeneralFunctions::randomString(4);
                 //$model=$this->findModel($newModel->user_ID);
@@ -217,11 +217,11 @@ class UsersController extends Controller
         } catch (Exception $ex) {
             throw new CHttpException(400, Yii::t('app/error', 'You cannot remove this user.'));
         }
-        
+
 
         return $this->redirect(['index']);
     }
-    
+
     /**
      * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

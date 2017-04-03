@@ -159,6 +159,7 @@ $this->title = Yii::t('app', 'Routes');
 
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
+        'options' => ['id' => 'Introduction'],
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
             'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => '0000-00-00']]),
@@ -210,6 +211,7 @@ $this->title = Yii::t('app', 'Routes');
     while(strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count]=array(
 		    'label' =>$startDate,
+            'options' => ['id' => $startDate],
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),

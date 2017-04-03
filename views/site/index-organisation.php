@@ -14,6 +14,7 @@
     use kartik\editable\Editable;
     use app\models\EventNames;
     use app\models\Bonuspunten;
+    use app\models\PostPassage;
     use kartik\time\TimePicker;
     use kartik\datetime\DateTimePicker;
     use app\models\DeelnemersEvent;
@@ -78,7 +79,8 @@
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
                             'class' => 'btn btn-sm btn-primary',
-                            'label' => Yii::t('app', 'Save')
+                            'label' => Yii::t('app', 'Save'),
+                            'id' => $eventModel->event_ID.'-is_active_status-submit'
                         ],
                         // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
                         // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
@@ -110,7 +112,8 @@
                         'submitButton' => [
                             'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
                             'class' => 'btn btn-sm btn-primary',
-                            'label' => Yii::t('app', 'Save')
+                            'label' => Yii::t('app', 'Save'),
+                            'id' => $eventModel->event_ID.'-is_active_day-submit'
                         ],
                         // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
                         // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
@@ -172,9 +175,17 @@
           <div class="row">
             <div class="col-sm-3 well">
               <div class="well">
-                <h2><?php echo $eventModel->event_name ?></h2>
+                <h3><?php echo $eventModel->event_name ?></h3>
                 <?php echo Html::img('@web/uploads/event_images/' . $eventModel->image, ['class' => 'img-circle', 'height'=>"65", 'width'=>"65"]);?>
               </div>
+
+              <?php
+              echo AlertBlock::widget([
+                  'type' => AlertBlock::TYPE_ALERT,
+                  'useSessionFlash' => true,
+                  'delay' => 60000,
+              ]); ?>
+            <!-- </div> -->
               <div class="well" style="overflow: auto;">
                 <h3><?php echo Yii::t('app', 'actions')?></h3>
                 <p>
@@ -184,6 +195,7 @@
                         'id' =>'modalEditMaxTime',
                         'toggleButton' => [
                             'label' => Yii::t('app', 'Change max time hike'),
+                            'id' =>'modalEditMaxTimeButton',
                             'class' => 'btn  btn-xs btn-success',
                             'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'set-max-time'),
                         ],
@@ -206,6 +218,7 @@
                         'id' =>'modalEditSettings',
                         'toggleButton' => [
                             'label' => Yii::t('app', 'Change settings hike'),
+                            'id' =>'modalEditSettingsButton',
                             'class' => 'btn btn-xs btn-success',
                             'disabled' => $eventModel->status !== EventNames::STATUS_opstart,
                         ],
@@ -228,6 +241,7 @@
                         'id' =>'modalAssingBonuspoints',
                         'toggleButton' => [
                             'label' => Yii::t('app', 'Assign bonuspoints'),
+                            'id' =>'modalAssingBonuspointsButton',
                             'class' => 'btn btn-xs btn-success',
                             'disabled' => $eventModel->status === EventNames::STATUS_opstart,
                         ],
@@ -290,13 +304,6 @@
                   </div>
                 </div>
               </div>
-
-              <?= AlertBlock::widget([
-                  'type' => AlertBlock::TYPE_GROWL,
-                  'useSessionFlash' => true,
-                  'delay' => 60000,
-
-              ]); ?>
               <?php
               echo ListView::widget([
                   'summary' => FALSE,
@@ -314,6 +321,7 @@
               ]);
               ?>
             </div>
+
             <div class="col-sm-3 well">
               <div class="thumbnail">
                 <?php
@@ -355,6 +363,7 @@
                      ],
                      'toggleButton' => [
                          'label' => Yii::t('app', 'Add organisation to hike'),
+                         'id' => 'modalAddOrganisationButton',
                          'class' => 'btn btn-xs btn-success',
                          'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
                      ],

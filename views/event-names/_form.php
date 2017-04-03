@@ -21,7 +21,13 @@ use kartik\widgets\DepDrop;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
 
-    if (isset($action) && $action == 'set_max_time') {
+    $action_temp = 'default';
+    if (isset($action)) {
+        $action_temp = $action;
+    }
+
+
+    if ($action_temp == 'set_max_time') {
         $attributes['max_time'] = [
             'type' => Form::INPUT_WIDGET,
             'widgetClass' => 'kartik\time\TimePicker',
@@ -81,6 +87,7 @@ use kartik\widgets\DepDrop;
         'type' => ActiveForm::TYPE_VERTICAL,
         'formConfig' => ['labelSpan' => 20],
         'action' => $model->isNewRecord ? ['event-names/create'] : ['event-names/update']]);
+
     echo Form::widget([
         'model' => $model,
         'form' => $form,
@@ -89,7 +96,9 @@ use kartik\widgets\DepDrop;
     ]);?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'), [
+            'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+            'id' => $action_temp == 'set_max_time' ? 'set-max-time-button' : 'settings-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

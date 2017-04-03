@@ -14,7 +14,7 @@ use yii\widgets\Pjax;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblBonuspunten */
+/* @var $model app\models\Bonuspunten */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -27,7 +27,7 @@ use yii\widgets\Pjax;
     ]);
 
     echo AlertBlock::widget([
-        'type' => AlertBlock::TYPE_GROWL,
+        'type' => AlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
         'delay' => 4000,
     ]);
@@ -40,11 +40,17 @@ use yii\widgets\Pjax;
     <?php
 
     if($model->isNewRecord) {
-        echo $form->field($model, 'group_ID')->dropDownList(
+        echo $form->field($model, 'group_ID',
+        [
+            'options' => [
+                'id' => 'bonuspunten-group-field-create'
+            ]
+        ]
+        )->dropDownList(
             Groups::getGroupOptionsForEvent(),
             [
                 'prompt'=>'Select...',
-                'id' => 'group-' . $model->bouspunten_ID
+                'id' => 'bonuspunten-group-dropdown-create'
             ]);
     }
     echo $form->field($model, 'date')->dropDownList(
@@ -114,6 +120,7 @@ use yii\widgets\Pjax;
                 ],
                 [
                     'class' => 'btn btn-xs btn-primary',
+                    'id' => 'save-create-bonuspunten',
                     'data-method'=>'post',
                     'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
                 ]

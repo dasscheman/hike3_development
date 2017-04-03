@@ -63,17 +63,6 @@ class QrController extends Controller
         $searchModel = new QrSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-//        $dataProvider=new CActiveDataProvider('Qr',
-//		    array(
-//			'criteria'=>array(
-//			    'condition'=>$where,
-//			    'order'=>'route_ID ASC, qr_volgorde ASC',
-//			    ),
-//			'pagination'=>array(
-//				'pageSize'=>15,
-//			),
-//		));
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

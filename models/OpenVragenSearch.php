@@ -84,6 +84,16 @@ class OpenVragenSearch extends OpenVragen
             ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
             ->one();
 
+        $event = EventNames::find()
+            ->where('event_ID =:event_id')
+            ->addParams([':event_id' => Yii::$app->user->identity->selected])
+            ->one();
+
+        $queryRoute = Route::find()
+            ->select('route_ID')
+            ->where('event_ID =:event_id and day_date =:day_date')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':day_date' => $event->active_day]);
+
         // Find all answers for founr group id
         $queryAntwoorden = OpenVragenAntwoorden::find();
         $queryAntwoorden->select('open_vragen_ID')
@@ -96,6 +106,7 @@ class OpenVragenSearch extends OpenVragen
         // Find all questions NOT answered by found group id.
         $query = OpenVragen::find()
             ->where(['not in', 'tbl_open_vragen.open_vragen_ID', $queryAntwoorden])
+            ->andWhere(['in', 'tbl_open_vragen.route_ID', $queryRoute])
             ->andWhere('event_ID=:event_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected
