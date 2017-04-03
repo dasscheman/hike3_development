@@ -128,7 +128,7 @@ class GroupsController extends Controller
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
         }
-        return $this->redirect(['site/overview']);
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**

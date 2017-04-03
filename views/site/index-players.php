@@ -102,7 +102,7 @@ $attributes = [
         <div class="row">
             <div class="col-sm-3 well">
                 <div class="well">
-                    <p><?php echo  $groupModel->group_name ?></p>
+                    <h3><?php echo  $groupModel->group_name ?></h3>
                 </div>
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-dashboard', ['model'=>$questionsData]); ?>

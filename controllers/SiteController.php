@@ -29,7 +29,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'game-overview'],
+                'only' => ['logout', 'overview', 'overview-players', 'overview-organisation'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
@@ -37,11 +37,15 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions'=>['game-overview'],
+                        'actions'=>['overview', 'overview-players', 'overview-organisation'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         }
+                    ],
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
                     ],
                 ],
             ],
@@ -135,12 +139,16 @@ class SiteController extends Controller
             if(!isset($user->rol)) {
                 return $this->render('/site/index');
             }
-            if ($user->rol === DeelnemersEvent::ROL_deelnemer) {
+            if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
                 return $this->redirect(['/site/overview-players']);
             }
             if ($user->rol === DeelnemersEvent::ROL_organisatie) {
                 return $this->redirect(['/site/overview-organisation']);
             }
+        }
+
+        if (!Yii::$app->user->isguest) {
+            return $this->redirect(['/users/view']);
         }
         return $this->render('/site/index');
 
@@ -266,6 +274,9 @@ class SiteController extends Controller
     public function actionLanguage()
     {
         $language = Yii::$app->request->get('language');
+        // TODO:
+        $language = 'nl';
+
         Yii::$app->language = $language;
         $languageCookie = new Cookie([
             'name' => 'language',

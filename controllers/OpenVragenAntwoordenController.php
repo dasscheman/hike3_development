@@ -34,7 +34,7 @@ class OpenVragenAntwoordenController extends Controller
                 'only' => [
                     'index', 'delete', 'view-controle', 'updateOrganisatie',
                     'viewPlayers', 'update', 'cancel',  'create',
-                    'antwoordGoedOfFout', 'beantwoorden', 'beantwoorden-dashboard',
+                    'antwoord-fout', 'antwoord-goed', 'beantwoorden', 'beantwoorden-dashboard',
                     'cancel-beantwoording', 'cancel-beantwoording-dashboard'],
                 'rules' => [
                     [
@@ -51,7 +51,7 @@ class OpenVragenAntwoordenController extends Controller
                         'actions'=>[
                             'index', 'delete', 'view-controle',
                             'updateOrganisatie', 'viewPlayers', 'update',
-                            'create', 'antwoordGoedOfFout', 'beantwoorden',
+                            'create', 'antwoord-fout', 'antwoord-goed', 'beantwoorden',
                             'beantwoorden-dashboard'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
@@ -294,27 +294,45 @@ class OpenVragenAntwoordenController extends Controller
         ));
     }
 
-    public function actionAntwoordGoedOfFout()
+    public function actionAntwoordGoed($id)
     {
-        $model=$this->loadModel($_GET["id"]);
+        $model = $this->findModel($id);
         $model->checked = 1;
-        $model->correct = $_GET['goedfout'];
-        $model->save();
+        $model->correct = 1;
+        if (!$model->save()) {
+            foreach ($model->getErrors() as $error) {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+            }
+        }
+        // TODO
+        // Now the overview page is completly reloaded after a question check.
+        // Maybe later a ajax refresh.
+        // if (Yii::$app->request->isAjax) {
+        //     return $this->renderAjax('_list-controle', [
+        //         'model' => $model]);
+        // }
 
-        $event_id = $_GET['event_id'];
-        $where = "event_ID = $event_id AND
-              checked = 0 ";
+        return $this->redirect(['site/overview-organisation']);
+    }
 
-        $DataProvider=new CActiveDataProvider('OpenVragenAntwoorden',
-                               array('criteria'=>array('condition'=>$where,
-                                           'order'=>'group_ID DESC',
-                                        ),
-                                 'pagination'=>array('pageSize'=>10,),
-                                 )
-                               );
-        $this->render('viewControle',array(
-            'dataProvider'=>$DataProvider,
-        ));
+    public function actionAntwoordFout($id)
+    {
+        $model = $this->findModel($id);
+        $model->checked = 1;
+        $model->correct = 0;
+        if ( !$model->save()) {
+            foreach ($model->getErrors() as $error) {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+            }
+        }
+        // TODO
+        // Now the overview page is completly reloaded after a question check.
+        // Maybe later a ajax refresh.
+        // if (Yii::$app->request->isAjax) {
+        //     return $this->renderAjax('_list-controle', [
+        //         'model' => $model]);
+        // }
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**

@@ -106,7 +106,7 @@ class DeelnemersEventController extends Controller
                 ->setTo($model->user->email)
                 ->setSubject('Inschrijving Hike')
                 ->send();
-                return $this->redirect(['site/overview']);
+                return $this->redirect(['site/overview-organisation']);
             }
             foreach ($model->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));
@@ -141,10 +141,10 @@ class DeelnemersEventController extends Controller
                 throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
             }
 
-            return $this->redirect(['site/overview']);
+            return $this->redirect(['site/overview-organisation']);
         } elseif ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-                return $this->redirect(['site/overview']);
+                return $this->redirect(['site/overview-organisation']);
             }
             foreach ($model->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));

@@ -24,11 +24,20 @@ use app\models\DeelnemersEvent;
                     'allowClear' => true,
                     'id' => 'add-user-' . $model->group_ID,
                 ]
-            ]);   
+            ]);
         }
-        
-        echo $form->field($model, 'rol')->dropDownList(DeelnemersEvent::getOrganisationRolOptions()); 
-        
+
+        echo $form->field($model, 'rol',  [
+            'options' => [
+                'id' => $model->isNewRecord ? 'deelnemers-event-rol-field-create' : 'deelnemers-event-rol-field-update-' . $model->user_ID
+            ]
+        ])
+            ->dropDownList(
+                DeelnemersEvent::getOrganisationRolOptions(),
+                [
+                    'id' => $model->isNewRecord ? 'deelnemers-event-rol-dropdown-create' : 'deelnemers-event-rol-dropdown-update-' . $model->user_ID
+                ]);
+
         ?>
         <div class="form-deelnemers-event">
 
@@ -36,8 +45,8 @@ use app\models\DeelnemersEvent;
                 $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'),
                 [
                     'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                    'value'=>'create',
-                    'name'=>'submit']) ?>
+                    'id'=> $model->isNewRecord ? 'deelnemers-event-form-create' : 'deelnemers-event-form-update-' . $model->user_ID,
+                    'value'=>'create']) ?>
             <?php
             if (!$model->isNewRecord) {
                 echo Html::submitButton(Yii::t('app', 'Delete'), ['class' => 'btn btn-delete', 'value'=>'delete', 'name'=>'submit']);

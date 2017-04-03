@@ -43,8 +43,7 @@ class AccessControl extends HikeActiveRecord {
     }
 
     function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {
-
-        return TRUE;
+        // return TRUE;
         AccessControl::setControllerId($controller_id);
         AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
@@ -54,35 +53,12 @@ class AccessControl extends HikeActiveRecord {
         AccessControl::setRolPlayer();
         AccessControl::setGroupOfPlayer();
 
-        switch ($this->action_id) {
-            case 'create':
-            case 'createPlayer' :
-            case 'createOrganisation':
-                return AccessControl::createAllowed();
-            case 'createIntroductie':
-                return AccessControl::createIntroductieAllowed();
-            case 'delete':
-                return AccessControl::deleteAllowed();
-            case 'index':
-                return AccessControl::indexAllowed();
-            case 'moveUpDown':
-                return AccessControl::moveUpDownAllowed();
-            case 'update':
-            case 'updateOrganistion':
-            case 'updatePlayer':
-            case 'upload':
-                return AccessControl::updateAllowed();
-            case 'overview':
-                return AccessControl::overviewAllowed();
-            case 'view':
-                return AccessControl::viewAllowed();
-            case 'ViewIntroductie':
-                return AccessControl::viewIntroductieAllowed();
-            case 'viewPlayers':
-                return AccessControl::viewPlayersAllowed();
-            default:
-                return AccessControl::defaultAllowed();
+        if ($this->action_id === 'error') {
+            return FALSE;
         }
+        // create camelcase function name and remove dashes.
+        $str = implode('', array_map('ucfirst', explode('-', $this->controller_id .'-' . $this->action_id)));
+        return call_user_func(array($this, $str));
     }
 
     public function setSelected($value) {
@@ -145,40 +121,90 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
+    public function QrCheckIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function GroupsIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_deelnemer ||
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function GroupsIndexPosten() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_deelnemer ||
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function RouteIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function PostenIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function OpenNoodEnvelopIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function QrIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function OpenVragenAntwoordenIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function BonuspuntenIndex() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function UsersIndex() {
+        if (Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+
     function indexAllowed() {
-        if ($this->controller_id === 'users' &&
-            Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
-            return TRUE;
-        }
-
         if (!isset($this->event_id)) {
             return FALSE;
         }
         switch ($this->controller_id) {
             case 'nood-envelop':
             case 'open-vragen':
-            case 'posten':
-            case 'qr':
-            case 'route':
-            case 'groups':
             case 'deelnemers-event':
             case 'event-names':
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                return FALSE;
-            case 'open-nood-envelop':
             case 'post-passage':
-                if ($this->hikeStatus > EventNames::STATUS_introductie AND
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                return FALSE;
-            case 'qr-check':
-            case 'bonuspunten':
-            case 'open-vragen-antwoorden':
-                if ($this->hikeStatus <> EventNames::STATUS_opstart AND
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                     return TRUE;
                 }
             default:
@@ -186,141 +212,259 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
-    function updateAllowed() {
-        if ($this->controller_id === 'users' &&
-            Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
+    function EventNamesUpload() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function DeelnemersEventUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function PostPassageUpdate() {
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function EventNamesUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function GroupsUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function OpenVragenAntwoordenUpdate() {
+        if ($this->hikeStatus == EventNames::STATUS_introductie and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer == $group_id) {
+            return TRUE;
+        }
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer == $group_id and
+            PostPassage::model()->isTimeLeftToday($event_id, $group_id)) {
+            return TRUE;
+        }
+        if (($this->hikeStatus == EventNames::STATUS_introductie or
+            $this->hikeStatus == EventNames::STATUS_gestart) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function BonuspuntenUpdate() {
+        if (($this->hikeStatus == EventNames::STATUS_introductie or
+            $this->hikeStatus == EventNames::STATUS_gestart) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function QrCheckUpdate() {
+        if (($this->hikeStatus == EventNames::STATUS_introductie or
+            $this->hikeStatus == EventNames::STATUS_gestart) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function OpenNoodEnvelopUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function NoodEnvelopUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function OpenVragenUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function PostenUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function QrUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+
+    function RouteUpdate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function EventNamesCreate() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function DeelnemersEventCreate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function UsersCreate() {
+        return TRUE;
+    }
+
+
+    function UsersSelectHike() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function GroupsCreate() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSEE;
+    }
+
+    function RouteCreate() {
+        if ($this->hikeStatus == EventNames::STATUS_opstart and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function BonuspuntenCreate() {
+        if ($this->hikeStatus >= EventNames::STATUS_introductie and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FASLE;
+    }
+
+    function NoodEnvelopCreate() {
+        if (($this->hikeStatus == EventNames::STATUS_opstart or
+            $this->hikeStatus == EventNames::STATUS_introductie) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function OpenVragenCreate() {
+        if (($this->hikeStatus == EventNames::STATUS_opstart or
+            $this->hikeStatus == EventNames::STATUS_introductie) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function PostenCreate() {
+        if (($this->hikeStatus == EventNames::STATUS_opstart or
+            $this->hikeStatus == EventNames::STATUS_introductie) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function QrCreate() {
+        if (($this->hikeStatus == EventNames::STATUS_opstart or
+            $this->hikeStatus == EventNames::STATUS_introductie) and
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function QrCheckCreate() {
+        if ($this->hikeStatus == EventNames::STATUS_introductie and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
 
-        if (!isset($this->event_id)) {
-            return FALSE;
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
+            return TRUE;
         }
-
-        switch ($this->controller_id) {
-            case 'open-vragen-antwoorden':
-                if ($this->hikeStatus == EventNames::STATUS_introductie and
-                    $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-                    $this->groupOfPlayer == $group_id) {
-                    return TRUE;
-                }
-                if ($this->hikeStatus == EventNames::STATUS_gestart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-                    $this->groupOfPlayer == $group_id and
-                    PostPassage::model()->isTimeLeftToday($event_id, $group_id)) {
-                    return TRUE;
-                }
-            case 'bonuspunten':
-            case 'qr-check':
-                if (($this->hikeStatus == EventNames::STATUS_introductie or
-                    $this->hikeStatus == EventNames::STATUS_gestart) and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                break;
-            case 'open-nood-envelop':
-            case 'post-passage':
-                if ($this->hikeStatus == EventNames::STATUS_gestart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                break;
-            case 'nood-envelop':
-            case 'open-vragen':
-            case 'posten':
-            case 'qr':
-            case 'route':
-                if ($this->hikeStatus == EventNames::STATUS_opstart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                break;
-            case 'groups':
-            case 'deelnemers-event':
-            case 'groups':
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                break;
-            case 'event-names':
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-                break;
-            default:
-                return FALSE;
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer === $this->ids['group_id'] and
+            PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
+            return TRUE;
         }
+        return FALSE;
     }
 
-    function createAllowed() {
-        if (!isset($this->event_id)) {
-            return FALSE;
+    function OpenVragenAntwoordenCreate() {
+        if ($this->hikeStatus == EventNames::STATUS_introductie and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
+            return TRUE;
         }
 
-        $isAllowed = FALSE;
-
-        switch ($this->controller_id) {
-            case 'bonuspunten':
-                if ($this->hikeStatus >= EventNames::STATUS_introductie and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            case 'nood-envelop':
-            case 'open-vragen':
-            case 'posten':
-            case 'qr':
-                if (($this->hikeStatus == EventNames::STATUS_opstart or
-                    $this->hikeStatus == EventNames::STATUS_introductie) and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            case 'groups':
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            case 'deelnemers-event':
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            case 'route':
-                if ($this->hikeStatus == EventNames::STATUS_opstart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            case 'event-names':
-            case 'users':
-                $isAllowed = TRUE;
-                break;
-            case 'qr-check':
-            case 'open-vragen-antwoorden':
-                if ($this->hikeStatus == EventNames::STATUS_introductie and
-                    $this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
-                    $isAllowed = TRUE;
-                }
-
-                if ($this->hikeStatus == EventNames::STATUS_gestart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
-                    $isAllowed = TRUE;
-                }
-            // Hier geen break. OpenNoodenvelop en post-passage moeten uitgesloten worden voor de introductie.
-            case 'open-nood-envelop':
-            case 'post-passage':
-                if ($this->hikeStatus == EventNames::STATUS_gestart and
-                    $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-                    $this->groupOfPlayer === $this->ids['group_id'] and
-                    PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
-                    $isAllowed = TRUE;
-                }
-                break;
-            default:
-                break;
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
+            return TRUE;
         }
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer === $this->ids['group_id'] and
+            PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
+            return TRUE;
+        }
+        return FALSE;
+    }
 
-        return $isAllowed;
+    function OpenNoodEnvelopCreate() {
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer === $this->ids['group_id'] and
+            PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function PostPassageCreate() {
+        if ($this->hikeStatus == EventNames::STATUS_gestart and
+            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->groupOfPlayer === $this->ids['group_id'] and
+            PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
     function deleteAllowed() {
@@ -358,49 +502,30 @@ class AccessControl extends HikeActiveRecord {
                 return FALSE;
         }
     }
-    function overviewAllowed() {
-        switch ($this->controller_id) {
-//            case 'users':
-//                if ($this->controller_id === 'users' &&
-//                    Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
-//                    return TRUE;
-//                }
-//                return FALSE;
-//            case 'nood-envelop':
-//            case 'open-vragen':
-//            case 'posten':
-//            case 'qr':
-//            case 'route':
-//            case 'chart':
-//            case 'groups':
-//            case 'deelnemers-event':
-//            case 'event-names':
-//            case 'groups':
-//            case 'open-nood-envelop':
-//            case 'open-vragen-antwoorden':
-//            case 'post-passage':
-//            case 'qr-check':
-              case 'organisatie':
-                if (!isset($this->event_id)) {
-                    return FALSE;
-                }
 
-                if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                    return TRUE;
-                }
-            default:
-                return FALSE;
+    function SiteOverviewOrganisation() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
         }
+        return FALSE;
+    }
+
+    function SiteOverviewPlayers() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function UsersView() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
     function viewAllowed() {
         switch ($this->controller_id) {
-            case 'users':
-                if ($this->controller_id === 'users' &&
-                    Yii::$app->user->identity->id == Yii::$app->request->get('id')) {
-                    return TRUE;
-                }
-                return FALSE;
             case 'nood-envelop':
             case 'open-vragen':
             case 'posten':
@@ -509,6 +634,16 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
+    function RouteMoveUpDown() {
+        if ($this->parameters['move_action'] == 'up'){
+            return Route::higherOrderNumberExists($this->ids[0]);
+        }
+        if ($this->parameters['move_action'] == 'down'){
+            return Route::lowererOrderNumberExists($this->ids[0]);
+        }
+        return FALSE;
+    }
+
     function moveUpDownAllowed(){
 
         if (!isset($this->parameters['date']) || !isset($this->parameters['move_action'])){
@@ -548,17 +683,6 @@ class AccessControl extends HikeActiveRecord {
                 if ($this->parameters['move_action'] == 'down'){
                     return NoodEnvelop::lowererOrderNumberExists($this->ids[0]);
                 }
-
-            case 'route':
-                if ($this->parameters['move_action'] == 'up'){
-                    return Route::higherOrderNumberExists($this->ids[0]);
-                }
-                if ($this->parameters['move_action'] == 'down'){
-                    return Route::lowererOrderNumberExists($this->ids[0]);
-                }
-                if ($nextOrderExist) {
-                    return TRUE;
-                }
             default:
                 return FALSE;
         }
@@ -575,6 +699,69 @@ class AccessControl extends HikeActiveRecord {
         }
     }
 
+    function UsersSearchNewFriends() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function UsersSearchFriends() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function UsersSearchFriendRequests() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function EventNamesSetMaxTime() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie &&
+            $this->hikeStatus == EventNames::STATUS_gestart) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function OpenVragenAntwoordenAntwoordGoed() {
+        if (($this->hikeStatus == EventNames::STATUS_introductie OR
+            $this->hikeStatus == EventNames::STATUS_gestart) AND
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->ids[0])) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function OpenVragenAntwoordenAntwoordFout() {
+        if (($this->hikeStatus == EventNames::STATUS_introductie OR
+            $this->hikeStatus == EventNames::STATUS_gestart) AND
+            $this->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->ids[0])) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    // function EventNamesSetMaxTime() {
+    //
+    // }
+
+    function QrReport() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    function QrCode() {
+        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
     function defaultAllowed() {
         if (!isset($this->event_id)) {
             return FALSE;
@@ -587,15 +774,9 @@ class AccessControl extends HikeActiveRecord {
                         return TRUE;
                     }
                 }
-                if ($this->action_id == 'set-max-time'){
-                    if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie &&
-                        $this->hikeStatus == EventNames::STATUS_gestart) {
-                        return TRUE;
-                    }
-                }
             case 'users':
             case 'friend-list':
-                if (in_array($this->action_id, ['decline', 'accept', 'connect', 'search-friends', 'search-new-friends', 'search-friend-requests'])) {
+                if (in_array($this->action_id, ['decline', 'accept', 'connect'])) {
                     return TRUE;
                 }
             case 'organisatie':
@@ -641,13 +822,7 @@ class AccessControl extends HikeActiveRecord {
         }
         if ($this->controller_id === 'open-vragen-antwoorden') {
             switch ($this->action_id) {
-                case 'antwoordGoedOfFout':
-                    if (($this->hikeStatus == EventNames::STATUS_introductie OR
-                        $this->hikeStatus == EventNames::STATUS_gestart) AND
-                        $this->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($model_id)) {
-                        return TRUE;
-                    }
-                    break;
+
                 case 'viewControle':
                     if (($this->hikeStatus == EventNames::STATUS_introductie OR
                         $this->hikeStatus == EventNames::STATUS_gestart) AND
@@ -696,11 +871,7 @@ class AccessControl extends HikeActiveRecord {
 
 
 
-        if ($this->controller_id === 'qr'
-            && $this->action_id == 'report'
-            && $this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-                $actionAllowed = true;
-        }
+
         return FALSE;
     }
 }

@@ -216,12 +216,12 @@ class OpenVragenAntwoorden extends HikeActiveRecord
             {return('Nee');}
     }
 
-    public function isAntwoordGecontroleerd($event_id, $id)
+    public function isAntwoordGecontroleerd($id)
     {
-        $criteria = new CDbCriteria;
-        $criteria->condition="event_ID = $event_id AND
-                              open_vragen_antwoorden_ID = $id";
-        $data = OpenVragenAntwoorden::model()->findAll($criteria);
+        $data = OpenVragenAntwoorden::find()
+            ->where('event_ID =:event_id AND open_vragen_antwoorden_ID =:id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $id])
+            ->all();
         if(isset($data->checked) AND $data->checked == 1)
             return true;
         else

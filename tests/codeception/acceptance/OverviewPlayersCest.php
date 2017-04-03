@@ -419,7 +419,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->dontSee('Answers overview');
+         $I->dontSee('Answered overview');
          $I->amOnPageCustom('open-vragen-antwoorden/index');
          $I->see('Forbidden (#403)');
 
@@ -626,14 +626,13 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('Answers overview');
-         $I->click('Answers overview');
+         $I->see('Answered overview');
+         $I->click('Answered overview');
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
          $I->see('Overview answered questions', 'h1');
-         $I->see('Hoofdletter h?');
-         $I->see('Hoofdletter i?');
+         $I->see('No results found.');
 
          $I->click('Organisatie');
          if (method_exists($I, 'wait')) {
@@ -645,9 +644,7 @@ use tests\codeception\_pages\SelectHikePage;
               $I->wait(3); // only for selenium
           }
           $I->see('Overview bonuspoints', 'h1');
-          $I->see('bonus intro organisatie');
-          $I->see('bonus intro players groep A');
-          $I->see('bonus intro players groep B');
+          $I->see('No results found.');
      }
 
      public function testMainMenuDeelnemerIntroductie(\AcceptanceTester $I)
@@ -830,7 +827,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->dontSee('Answers overview');
+         $I->dontSee('Answered overview');
          $I->amOnPageCustom('open-vragen-antwoorden/index');
          $I->see('Forbidden (#403)');
 
@@ -1045,8 +1042,8 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('Answers overview');
-         $I->click('Answers overview');
+         $I->see('Answered overview');
+         $I->click('Answered overview');
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
@@ -1069,9 +1066,7 @@ use tests\codeception\_pages\SelectHikePage;
               $I->wait(3); // only for selenium
           }
           $I->see('Overview bonuspoints', 'h1');
-          $I->see('bonus gestart organisatie');
-          $I->see('bonus gestart players groep A');
-          $I->see('bonus gestart players groep B');
+          $I->see('No results found.');
      }
 
      public function testMainMenuDeelnemerGestart(\AcceptanceTester $I)
@@ -1254,7 +1249,7 @@ use tests\codeception\_pages\SelectHikePage;
            if (method_exists($I, 'wait')) {
                $I->wait(3); // only for selenium
            }
-         $I->dontSee('Answers overview');
+         $I->dontSee('Answered overview');
          $I->amOnPageCustom('open-vragen-antwoorden/index');
          $I->see('Forbidden (#403)');
 
@@ -1462,14 +1457,13 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('Answers overview');
-         $I->click('Answers overview');
+         $I->see('Answered overview');
+         $I->click('Answered overview');
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
          $I->see('Overview answered questions', 'h1');
-         $I->see('Hoofdletter j?');
-         $I->see('Hoofdletter k?');
+         $I->see('No results found.');
 
          $I->click('Organisatie');
          if (method_exists($I, 'wait')) {
@@ -1481,8 +1475,7 @@ use tests\codeception\_pages\SelectHikePage;
               $I->wait(3); // only for selenium
           }
           $I->see('Overview bonuspoints', 'h1');
-          $I->see('bonus beindigd players groep A');
-          $I->see('bonus beindigd players groep B');
+          $I->see('No results found.');
      }
 
      public function testMainMenuDeelnemerBeindigd(\AcceptanceTester $I)
@@ -1622,10 +1615,6 @@ use tests\codeception\_pages\SelectHikePage;
          }
          $I->see('Create new hike', 'h1');
 
-           $I->click('Organisatie');
-           if (method_exists($I, 'wait')) {
-               $I->wait(3); // only for selenium
-           }
          $I->dontSee('Hike overview');
          $I->amOnPageCustom('site/overview-organisation');
          $I->see('Forbidden (#403)');
@@ -1634,43 +1623,22 @@ use tests\codeception\_pages\SelectHikePage;
          $I->amOnPageCustom('route/index');
          $I->see('Forbidden (#403)');
 
-       $I->click('Organisatie');
-       if (method_exists($I, 'wait')) {
-           $I->wait(3); // only for selenium
-       }
          $I->dontSee('Stations');
          $I->amOnPageCustom('posten/index');
          $I->see('Forbidden (#403)');
 
-           $I->click('Organisatie');
-           if (method_exists($I, 'wait')) {
-               $I->wait(3); // only for selenium
-           }
          $I->dontSee('Overview opened hints');
          $I->amOnPageCustom('open-nood-envelop/index');
          $I->see('Forbidden (#403)');
 
-
-           $I->click('Organisatie');
-           if (method_exists($I, 'wait')) {
-               $I->wait(3); // only for selenium
-           }
          $I->dontSee('Overview checked silent stations');
          $I->amOnPageCustom('qr-check/index');
          $I->see('Forbidden (#403)');
 
-           $I->click('Organisatie');
-           if (method_exists($I, 'wait')) {
-               $I->wait(3); // only for selenium
-           }
-         $I->dontSee('Answers overview');
+         $I->dontSee('Answered overview');
          $I->amOnPageCustom('open-vragen-antwoorden/index');
          $I->see('Forbidden (#403)');
 
-           $I->click('Organisatie');
-           if (method_exists($I, 'wait')) {
-               $I->wait(3); // only for selenium
-           }
           $I->dontSee('Bonus Points overview');
           $I->amOnPageCustom('bonuspunten/index');
           $I->see('Forbidden (#403)');

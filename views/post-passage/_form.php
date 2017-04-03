@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 use kartik\widgets\DateTimePicker;
+use app\models\Groups;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\PostPassage */
@@ -13,38 +14,44 @@ use kartik\widgets\DateTimePicker;
 
 <div class="tbl-post-passage-form">
     <?php
-    Pjax::begin(['id' => 'post-passage-form-' . $model->posten_passage_ID, 'enablePushState' => false]);
+    Pjax::begin([
+        'id' => 'post-passage-form-' . $model->posten_passage_ID,
+        'enablePushState' => false
+    ]);
     echo AlertBlock::widget([
         'type' => AlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
         'delay' => 4000,
     ]);
-    $form = ActiveForm::begin(); ?>
+    $form = ActiveForm::begin([
+        'options'=>[
+            'data-pjax'=>TRUE,
+        ],
+    ]); ?>
 
     <h3>
+        <?php echo Html::encode($model->post->post_name); ?>
+    </h3> <?php
+    echo $form->field($model, 'gepasseerd')->checkBox(['uncheck' => FALSE, 'selected' => TRUE]);
 
-    <?php echo Html::encode($model->post->post_name); ?>
-    </h3>
-
-    <?= $form->field($model, 'gepasseerd')->checkBox(['uncheck' => FALSE, 'selected' => TRUE]); ?>
-
-    <?= $form->field($model, 'binnenkomst')->widget(
+    echo $form->field($model, 'binnenkomst')->widget(
         DateTimePicker::classname(), [
         	'options' => ['placeholder' => Yii::t('app', 'Enter incheck time')],
             'type' => DateTimePicker::TYPE_INPUT,
         	'pluginOptions' => [
         		'autoclose' => true
         	]
-    ]); ?>
+    ]);
 
-    <?= $form->field($model, 'vertrek')->widget(
-        DateTimePicker::classname(), [
-        	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
-            'type' => DateTimePicker::TYPE_INPUT,
-        	'pluginOptions' => [
-        		'autoclose' => true
-        	]
-    ]); ?>
+    echo  $form->field($model, 'vertrek')->widget(
+    DateTimePicker::classname(), [
+    	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
+        'type' => DateTimePicker::TYPE_INPUT,
+    	'pluginOptions' => [
+    		'autoclose' => true
+    	]
+    ]);
+    ?>
 
     <div class="form-group">
         <?php
@@ -71,6 +78,8 @@ use kartik\widgets\DateTimePicker;
         ); ?>
     </div>
 
-    <?php ActiveForm::end();
+    <?php
+    ActiveForm::end();
     Pjax::end(); ?>
+
 </div>

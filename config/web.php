@@ -14,7 +14,9 @@ $config = [
         'log',
         [
             'class' => 'app\components\LanguageSelector',
-            'supportedLanguages' => ['en_US', 'nl_NL'],
+            'supportedLanguages' => ['nl_NL'],
+            // TODO:
+            //'supportedLanguages' => ['en_US', 'nl_NL'],
         ],
         'app\components\Bootstrap',
     ],
