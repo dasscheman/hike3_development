@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use Yii;
-use yii\base\Model;
+    use Yii;
+    use yii\base\Model;
     use yii\data\ArrayDataProvider;
     use app\components\CustomPagination;
 // use app\models\Bonuspunten;
@@ -11,7 +11,7 @@ use yii\base\Model;
 /**
  * UsersSearch represents the model behind the search form about `app\models\Users`.
  */
-class ActivityFeed extends Model
+class HikeActivityFeed extends Model
 {
     public $pageSize;
     public $pageCount;

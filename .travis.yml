@@ -42,8 +42,14 @@ script:
   - cd tests
   # - ls -la
   - ../vendor/bin/codecept build
-  - ../vendor/bin/codecept -vvv run unit
-  - ../vendor/bin/codecept -vvv run functional
+
+  - java -jar -Dwebdriver.gecko.driver=geckodriver selenium-server-standalone-3.0.1.jar > /dev/null &
+  - sleep 3
+  - ./codeception/bin/yii serve &
+  - sleep 3
+  - ../vendor/bin/codecept -vvv run
+  # - ../vendor/bin/codecept -vvv run unit
+  # - ../vendor/bin/codecept -vvv run functional
 ##notifications:
 ##  email:
 ##    - dasscheman@hotmail.com

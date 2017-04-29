@@ -6,81 +6,20 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use app\models\EventNames;
 use kartik\widgets\AlertBlock;
+use yii\widgets\ListView;
+use geertw\Yii2\Adsense;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 
-$bordered = TRUE;
-$striped = TRUE;
-$condensed = TRUE;
-$responsive = FALSE;
-$hover = FALSE;
-$hAlign = DetailView::ALIGN_RIGHT;
-$vAlign = DetailView::ALIGN_TOP;
-$fadeDelay = TRUE;
-
-$attributes = [
-    [
-        'columns' => [
-            [
-                'attribute' => 'username',
-                'displayOnly' => true,
-                'valueColOptions' => ['style' => 'width:30%']
-            ],
-            [
-                'attribute' => 'email',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-                'displayOnly' => true
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'voornaam',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'achternaam',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'organisatie',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'birthdate',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'last_login_time',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'selected',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-                'value' => EventNames::getEventName(Yii::$app->user->identity->selected),
-            ],
-        ],
-    ],
-];
-
-
-
-
-
+// $bordered = TRUE;
+// $striped = TRUE;
+// $condensed = TRUE;
+// $responsive = FALSE;
+// $hover = FALSE;
+// $hAlign = DetailView::ALIGN_RIGHT;
+// $vAlign = DetailView::ALIGN_TOP;
+// $fadeDelay = TRUE;
 
 
 $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
@@ -90,7 +29,33 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
   <div class="row">
     <div class="col-sm-3 well">
       <div class="well">
-          <?php echo $model->username ?>
+          <h3><?php echo  $model->username ?></h3>
+          <?php echo '(' . Html::encode($model->email) . ')'; ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('voornaam')); ?>:
+          </b>
+          <?php echo Html::encode($model->voornaam); ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('achternaam')); ?>:
+          </b>
+          <?php echo Html::encode($model->achternaam); ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('organisatie')); ?>:
+          </b>
+          <?php echo Html::encode($model->organisatie); ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('birthdate')); ?>:
+          </b>
+          <?php echo Html::encode($model->birthdate); ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('last_login_time')); ?>:
+          </b>
+          <?php echo Html::encode($model->last_login_time); ?></br>
+          <b>
+          <?php echo Html::encode($model->getAttributeLabel('selected')); ?>:
+          </b>
+          <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected)); ?></br>
+
       </div>
       <div class="well">
         <h3><?php echo Yii::t('app', 'actions')?></h3>
@@ -129,73 +94,49 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
         </p>
       </div>
     </div>
-    <div class="col-sm-7">
-
+    <div class="col-sm-6">
       <div class="row">
         <div class="col-sm-12">
-          <div class="panel panel-default text-left">
-            <div class="panel-body">
-                <?= AlertBlock::widget([
+            <?php
+                echo AlertBlock::widget([
                     'type' => AlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
                     'delay' => 60000,
 
-                ]); ?>
-              <p contenteditable="true">          <?php
-                    // View file rendering the widget
-                    echo DetailView::widget([
-                        'model' => $model,
-                        'attributes' => $attributes,
-                        'mode' => 'view',
-                        'bordered' => $bordered,
-                        'striped' => $striped,
-                        'condensed' => $condensed,
-                        'responsive' => $responsive,
-                        'hover' => $hover,
-                        'hAlign'=>$hAlign,
-                        'vAlign'=>$vAlign,
-                        'fadeDelay'=>$fadeDelay,
-                        'deleteOptions' => [ // your ajax delete parameters
-                            'params' => ['id' => 1000, 'kvdelete' => true],
-                        ],
-                        'container' => ['id' => 'kv-demo'],
-                        'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
-                    ]);
-                ?></p>
-            </div>
-          </div>
+                ]);
+                echo ListView::widget([
+                  'summary' => FALSE,
+                  'pager' => [
+                      'prevPageLabel' => Yii::t('app', 'previous'),
+                      'nextPageLabel' => Yii::t('app', 'next'),
+                      'maxButtonCount' => 3,
+                      'options' => [
+                         'class' => 'pagination pagination-sm',
+                      ],
+                  ],
+                  'dataProvider' => $activityFeed,
+                  'itemView' => '/users/_list-feed',
+                  'emptyText' => 'Er is geen ativiteit voor dit profiel.',
+                ]);
+            ?>
         </div>
       </div>
-
-      <!-- <div class="row">
-        <div class="col-sm-3">
-          <div class="well">
-           <p>John</p>
-           <img src="bird.jpg" class="img-circle" height="55" width="55" alt="Avatar">
-          </div>
-        </div>
-        <div class="col-sm-9">
-          <div class="well">
-            <p>Just Forgot that I had to mention something about someone to someone about how I forgot something, but now I forgot it. Ahh, forget it! Or wait. I remember.... no I don't.</p>
-          </div>
-        </div>
-      </div> -->
-
     </div>
     <div class="col-sm-2 well">
-      <div class="thumbnail">
-        <p>Upcoming Events:</p>
-        <img src="paris.jpg" alt="Paris" width="400" height="300">
-        <p><strong>Paris</strong></p>
-        <p>Fri. 27 November 2015</p>
-        <button class="btn btn-primary">Info</button>
-      </div>
-      <div class="well">
-        <p>ADS</p>
-      </div>
-      <div class="well">
-        <p>ADS</p>
-      </div>
+
+        <div class="well"> <!-- style="width: 728px; height: 90px"> -->
+            <?
+            echo AdsenseWidget::widget(); ?>
+        </div>
+
+        <div class="well" style="width: 728px; height: 90px">
+            <?
+            echo AdsenseWidget::widget([
+                    'client'  => 'ca-pub-5643906969935410',
+                    'slot'    => '1234567890',
+                    'enabled' => false
+                ]); ?>
+        </div>
     </div>
   </div>
 </div>

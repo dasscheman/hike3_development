@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\GeneralFunctions;
 use yii\filters\AccessControl;
+use app\models\ProfileActivityFeed;
 
 /**
  * UsersController implements the CRUD actions for TblUsers model.
@@ -103,8 +104,13 @@ class UsersController extends Controller
      */
     public function actionView()
     {
+
+        $feed = new ProfileActivityFeed;
+        $feed->pageSize = 10;
+
         return $this->render('view', [
             'model' => $this->findModel(Yii::$app->user->id),
+            'activityFeed' => $feed->getData(),
         ]);
     }
 

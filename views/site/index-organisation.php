@@ -32,44 +32,35 @@
     /* @var $this yii\web\View */
     $this->title = Yii::t('app', 'Hike overview');
 
-    $attributes = [
-        [
-            'columns' => [
-                [
-                    'attribute' => 'organisatie',
-                    'label' => 'organisatie',
-                    'displayOnly' => TRUE,
-                    'valueColOptions' => ['style' => 'width:30%']
-                ],
-                [
-                    'attribute' => 'website',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                    'displayOnly' => TRUE,
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'start_date',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                    'displayOnly' => TRUE,
-                ],
-                [
-                    'attribute' => 'end_date',
-                    'format' => 'raw',
-                    'valueColOptions' => ['style' => 'width:30%'],
-                    'displayOnly' => TRUE,
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'status',
-                    'format' => 'raw',
-                    'value' => Editable::widget([
+    ?>
+    <div class="organisatie-overview">
+        <div class="container text-center">
+          <div class="row">
+            <div class="col-sm-3 well">
+              <div class="well">
+                <h3><?php echo $eventModel->event_name ?></h3>
+                <?php echo Html::img('@web/uploads/event_images/' . $eventModel->image, ['class' => 'img-circle', 'height'=>"65", 'width'=>"65"]);?>
+                </br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('organisatie')); ?>:
+                </b>
+                <?php echo Html::encode($eventModel->organisatie); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('website')); ?>:
+                </b>
+                <?php echo Html::encode($eventModel->website); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('start_date')); ?>:
+                </b>
+                <?php echo Html::encode($eventModel->start_date); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('end_date')); ?>:
+                </b>
+                <?php echo Html::encode($eventModel->end_date); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('status')); ?>:
+                </b>
+                <?php echo Editable::widget([
                         'model'=> $eventModel,
                         'attribute' => 'status',
                         'formOptions' => [
@@ -95,13 +86,11 @@
                             'id' => $eventModel->event_ID.'-is_active_status'
                         ],
                         'displayValue' => $eventModel->getStatusText(),
-                    ]),
-                    'valueColOptions'=>['style'=>'width:30%']
-                ],
-                [
-                    'attribute' => 'active_day',
-                    'format' => 'raw',
-                    'value' => Editable::widget([
+                    ]); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('active_day')); ?>:
+                </b>
+                <?php echo  Editable::widget([
                         'name'=>'active_day',
                         'model'=> $eventModel,
                         'attribute' => 'active_day',
@@ -126,57 +115,11 @@
                         'options' =>
                         [
                             'id' => $eventModel->event_ID.'-is_active_day',
-    //                            'class'=>'form-control',
+        //                            'class'=>'form-control',
                         ],
                         'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
                         'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
-                    ]),
-                    'valueColOptions'=>['style'=>'width:30%']
-                ],
-            ],
-        ],
-        [
-            'columns' => [
-                [
-                    'attribute' => 'max_time',
-                    'valueColOptions' => ['style' => 'width:30%'],
-    //                    'format' => 'raw',
-    //                    'value' => Editable::widget([
-    //                        'model'=> $eventModel,
-    //                        'attribute' => 'max_time',
-    //                        'formOptions' => [
-    //                            'action' => Url::to(['/event-names/change-day']),
-    //                        ],
-    //                        'asPopover' => TRUE,
-    //                        'format' => Editable::FORMAT_BUTTON,
-    //                        'inputType' => Editable::INPUT_TIME,
-    //                        'pluginOptions'=>[
-    //                            'format' => 'hh:ss'
-    //                        ],
-    //                        'options' => [
-    //                            'id' => $eventModel->event_ID.'-is_active_6',  'class'=>'form-control'],
-    ////                        'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->actie_day : 'nvt',
-    //                    ]),
-                    'valueColOptions'=>['style'=>'width:30%']
-
-                ],
-                [
-                    'attribute' => 'create_user_ID',
-                    'value' => $eventModel->createUser->username,
-                    'valueColOptions' => ['style' => 'width:30%'],
-                ],
-            ],
-        ],
-    ];
-    ?>
-
-    <div class="organisatie-overview">
-        <div class="container text-center">
-          <div class="row">
-            <div class="col-sm-3 well">
-              <div class="well">
-                <h3><?php echo $eventModel->event_name ?></h3>
-                <?php echo Html::img('@web/uploads/event_images/' . $eventModel->image, ['class' => 'img-circle', 'height'=>"65", 'width'=>"65"]);?>
+                    ]); ?></br>
               </div>
 
               <?php
@@ -272,38 +215,6 @@
               </p>
             </div>
             <div class="col-sm-6">
-
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="panel panel-default text-left">
-                    <div class="panel-body">
-                      <p contenteditable="true">
-                        <?php
-                          // View file rendering the widget
-                          echo DetailView::widget([
-                            'model' => $eventModel,
-                            'attributes' => $attributes,
-                            'mode' => 'edit',
-                            'enableEditMode' => FALSE,
-                            'bordered' => $bordered,
-                            'striped' => $striped,
-                            'condensed' => $condensed,
-                            'responsive' => $responsive,
-                            'hover' => $hover,
-                            'hAlign'=>$hAlign,
-                            'vAlign'=>$vAlign,
-                            'fadeDelay'=>$fadeDelay,
-                            'deleteOptions' => [ // your ajax delete parameters
-                              'params' => ['id' => 1000, 'kvdelete' => true],
-                            ],
-                            'container' => ['id' => 'hike-overview'],
-                            'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
-                        ]);?>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
               <?php
               echo ListView::widget([
                   'summary' => FALSE,

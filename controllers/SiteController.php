@@ -20,7 +20,7 @@ use app\models\OpenVragenSearch;
 use app\models\NoodEnvelopSearch;
 use yii\web\Cookie;
 use yii\data\ActiveDataProvider;
-use app\models\ActivityFeed;
+use app\models\HikeActivityFeed;
 
 class SiteController extends Controller
 {
@@ -113,7 +113,7 @@ class SiteController extends Controller
                 'query' => $queryCheckQuestions
             ]);
 
-            $feed = new ActivityFeed;
+            $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
 
     		return $this->render('/site/index-organisation', array(
@@ -180,7 +180,7 @@ class SiteController extends Controller
             $groupModel = Groups::findOne($group_id);
             $groupModel->setGroupMembers();
 
-            $feed = new ActivityFeed;
+            $feed = new HikeActivityFeed;
             $feed->pageSize = 5;
             $feed->pageCount = 3;
 
@@ -325,7 +325,7 @@ class SiteController extends Controller
 //		// if it is ajax validation request
 //		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
 //		{
-//			echo CActiveForm::validate($model);
+//			echo Corm::validate($model);
 //			Yii::app()->end();
 //		}
 //

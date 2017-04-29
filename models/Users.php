@@ -176,7 +176,7 @@ class Users extends AccessControl implements IdentityInterface {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeelnemersEvents1() {
+    public function getDeelnemersEventsByUserID() {
         return $this->hasMany(DeelnemersEvent::className(), ['user_ID' => 'user_ID']);
     }
 
@@ -218,7 +218,7 @@ class Users extends AccessControl implements IdentityInterface {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFriendLists2() {
+    public function getFriendListsByUserId() {
         return $this->hasMany(FriendList::className(), ['user_ID' => 'user_ID']);
     }
 

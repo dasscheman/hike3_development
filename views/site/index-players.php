@@ -14,87 +14,15 @@ use kartik\widgets\AlertBlock;
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
 
-$bordered = TRUE;
-$striped = TRUE;
-$condensed = TRUE;
-$responsive = FALSE;
-$hover = TRUE;
-$pageSummary = FALSE;
-$heading = FALSE;
-$exportConfig = TRUE;
-$responsiveWrap = FALSE;
-
-$attributes = [
-    [
-        'columns' => [
-            [
-                'attribute' => 'group_members',
-                'displayOnly' => true,
-                'valueColOptions' => ['style' => 'width:30%']
-            ],
-            [
-                'attribute' => 'rank',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-                'displayOnly' => true
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'time_walking',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'time_left',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'bonus_score',
-//                    'value' => $groupModel,
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'post_score',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'qr_score',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'vragen_score',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-    [
-        'columns' => [
-            [
-                'attribute' => 'hint_score',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-            [
-                'attribute' => 'total_score',
-                'format' => 'raw',
-                'valueColOptions' => ['style' => 'width:30%'],
-            ],
-        ],
-    ],
-];
-
+// $bordered = TRUE;
+// $striped = TRUE;
+// $condensed = TRUE;
+// $responsive = FALSE;
+// $hover = TRUE;
+// $pageSummary = FALSE;
+// $heading = FALSE;
+// $exportConfig = TRUE;
+// $responsiveWrap = FALSE;
 ?>
 
 <div class="organisatie-overview">
@@ -103,6 +31,40 @@ $attributes = [
             <div class="col-sm-3 well">
                 <div class="well">
                     <h3><?php echo  $groupModel->group_name ?></h3>
+                    <?php echo '(' . Html::encode($groupModel->group_members) . ')'; ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('rank')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->rank); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('time_walking')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->time_walking); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('time_left')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->time_left); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->bonus_score); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('post_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->post_score); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('vragen_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->vragen_score); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('hint_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->hint_score); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('total_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->total_score); ?></br>
+
                 </div>
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-dashboard', ['model'=>$questionsData]); ?>
@@ -111,39 +73,16 @@ $attributes = [
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="panel panel-default text-left">
-                            <div class="panel-body">
-                                <?php
-                                Modal::begin(['id'=>'main-modal']);
-                                echo '<div id="main-content-modal"></div>';
-                                Modal::end();
-                                echo AlertBlock::widget([
-                                    'type' => AlertBlock::TYPE_ALERT,
-                                    'useSessionFlash' => true,
-                                    'delay' => 4000,
-                                ]);
-                                // View file rendering the widget
-                                echo DetailView::widget([
-                                    'model' => $groupModel,
-                                    'attributes' => $attributes,
-                                    'mode' => 'view',
-                                    'bordered' => $bordered,
-                                    'striped' => $striped,
-                                    'condensed' => $condensed,
-                                    'responsive' => $responsive,
-                                    'hover' => $hover,
-                                //        'hAlign'=>$hAlign,
-                                //        'vAlign'=>$vAlign,
-                                //        'fadeDelay'=>$fadeDelay,
-                                    'deleteOptions' => [ // your ajax delete parameters
-                                        'params' => ['id' => 1000, 'kvdelete' => true],
-                                    ],
-                                    'container' => ['id' => 'kv-demo'],
-                                    'formOptions' => ['action' => Url::current(['#' => 'kv-demo'])] // your action to delete
-                                ]);
-                                ?>
-                            </div>
-                        </div>
+                        <?php
+                        Modal::begin(['id'=>'main-modal']);
+                        echo '<div id="main-content-modal"></div>';
+                        Modal::end();
+                        echo AlertBlock::widget([
+                            'type' => AlertBlock::TYPE_ALERT,
+                            'useSessionFlash' => true,
+                            'delay' => 4000,
+                        ]);
+                        ?>
                     </div>
                 </div>
                 <?php
@@ -159,7 +98,7 @@ $attributes = [
                   ],
                   'dataProvider' => $activityFeed,
                   'itemView' => '/groups/_list-feed',
-                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                  'emptyText' => 'Er is nog geen activiteit bij dit profiel.',
                 ]);
                 ?>
             </div>
