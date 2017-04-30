@@ -213,6 +213,47 @@
                       ]);
                   ?>
               </p>
+
+
+              <?php
+              ?>
+              <p>
+              <?php
+              Modal::begin(
+                 [
+                     'id' =>'modal-add-organisation',
+                     'options' => [
+                         'id' => 'modal-add-organisation',
+                         'tabindex' => true // important for Select2 to work properly
+                     ],
+                     'toggleButton' => [
+                         'label' => Yii::t('app', 'Add organisation to hike'),
+                         'id' => 'modalAddOrganisationButton',
+                         'class' => 'btn btn-xs btn-success',
+                         'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
+                     ],
+                     'closeButton' => [
+                         'label' => 'Close',
+                         'class' => 'btn btn-danger btn-sm pull-right',
+                     ],
+                     'size' => Modal::SIZE_LARGE,
+                 ]
+              );
+              $modelNewDeelnemer = new DeelnemersEvent;
+              echo $this->render('/deelnemers-event/_form', ['model' => $modelNewDeelnemer]);
+              Modal::end();?>
+              </p>
+              <?php
+              echo ListView::widget([
+                  'summary' => FALSE,
+                  'pager' => FALSE,
+                  'dataProvider' => $organisatieData,
+                  'itemView' => '/deelnemers-event/_list',
+                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+              ]); ?>
+              <p>
+
+
             </div>
             <div class="col-sm-6">
               <?php
@@ -261,43 +302,6 @@
                 ?>
                 </p>
               </div>
-              <?php
-              ?>
-             <p>
-             <?php
-             Modal::begin(
-                 [
-                     'id' =>'modal-add-organisation',
-                     'options' => [
-                         'id' => 'modal-add-organisation',
-                         'tabindex' => true // important for Select2 to work properly
-                     ],
-                     'toggleButton' => [
-                         'label' => Yii::t('app', 'Add organisation to hike'),
-                         'id' => 'modalAddOrganisationButton',
-                         'class' => 'btn btn-xs btn-success',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
-                     ],
-                     'closeButton' => [
-                         'label' => 'Close',
-                         'class' => 'btn btn-danger btn-sm pull-right',
-                     ],
-                     'size' => Modal::SIZE_LARGE,
-                 ]
-             );
-             $modelNewDeelnemer = new DeelnemersEvent;
-             echo $this->render('/deelnemers-event/_form', ['model' => $modelNewDeelnemer]);
-             Modal::end();?>
-             </p>
-             <?php
-              echo ListView::widget([
-                  'summary' => FALSE,
-                  'pager' => FALSE,
-                  'dataProvider' => $organisatieData,
-                  'itemView' => '/deelnemers-event/_list',
-                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
-              ]); ?>
-              <p>
               <?php
               Modal::begin(
                   [
