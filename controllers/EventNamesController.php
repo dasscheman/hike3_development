@@ -341,6 +341,8 @@ class EventNamesController extends Controller
         if (NULL !== Yii::$app->request->get('id')  ) {
             Yii::$app->user->identity->setSelected(Yii::$app->request->get('id'));
             Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('id'));
+
+            return $this->redirect(['/site/index']);
         }
 
         return $this->render('select-hike', [

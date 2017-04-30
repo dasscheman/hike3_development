@@ -3,6 +3,7 @@
 
 use app\models\DeelnemersEvent;
 use kartik\grid\GridView;
+use kartik\widgets\AlertBlock;
 use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
 use yii\data\ActiveDataProvider;
@@ -19,7 +20,12 @@ $this->title = Yii::t('app', 'Select hike');
     <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
+echo AlertBlock::widget([
+    'type' => AlertBlock::TYPE_ALERT,
+    'useSessionFlash' => true,
+    'delay' => 60000,
 
+]);
     Modal::begin(['id'=>'create-hike-modal']);
     echo '<div id="create-hike-content-modal"></div>';
     Modal::end();
