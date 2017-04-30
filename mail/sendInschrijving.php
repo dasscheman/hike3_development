@@ -14,8 +14,8 @@ use app\models\DeelnemersEvent;
 		Hallo <?php echo $mailUsersName; ?>,<br>
 
 		Je ontvangt deze mail omdat <?php echo $mailUsersNameSender ?> je heeft ingeschreven
-		op www.hike.nl voor de hike <?php echo $mailEventName ?>.
-		
+		op www.kiwi.run voor de hike <?php echo $mailEventName ?>.
+
 		Je bent ingeschreven als <?php echo $mailRolText;
 		if ($mailRol == DeelnemersEvent::ROL_deelnemer){
 			echo ", voor de groep " . $mailGroupName . ".";
@@ -28,6 +28,6 @@ use app\models\DeelnemersEvent;
         <br>
 		Met vriendelijke groet,<br>
 		<br>
-		www.hike-app.nl<br>
+		www.kiwi.run<br>
  	</body>
 </html>

@@ -88,13 +88,13 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function rules() {
         return [
-            [['username', 'voornaam', 'achternaam', 'email'], 'required'],
+            [['username', 'email'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
                 'password', 'macadres', 'authKey', 'accessToken'], 'string', 'max' => 255],
-            ['username', 'unique'],
-            ['email', 'unique'],
+            [['username'], 'unique', 'on' => self::SCENARIO_CREATE],
+            [['email'], 'unique', 'on' => self::SCENARIO_CREATE],
             [['email'], 'email'],
 
             [['password'], 'required', 'on' => self::SCENARIO_CREATE],
@@ -521,13 +521,13 @@ class Users extends AccessControl implements IdentityInterface {
         return false;
     }
 
-    public function sendEmailWithNewPassword() {
+    public function sendEmailWithNewPassword($NewPassword) {
         $message = Yii::$app->mailer->compose('resendPassword', [
                 'newMailUsers' => $this->username,
-                'newWachtwoord' => $this->password,
+                'newWachtwoord' => $NewPassword,
             ])
-            ->setSubject('Wachtwoord Hike-app')
-            ->setFrom('noreply@biologenkatoor.nl')
+            ->setSubject('Wachtwoord Kiwi.run')
+            ->setFrom('noreply@kiwi.run')
             ->setTo($this->email);
 
         if ($message->send()) {

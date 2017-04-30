@@ -181,30 +181,31 @@ class UsersController extends Controller
 
     public function actionResendPasswordUser()
     {
-        $model = new Users;
-        if($model->load(Yii::$app->request->post()))
-        {
-//            $newModel = Users::find('username =:username AND email =:email',[
-//                                        ':username' => $model->username,
-//                                        ':email' => $model->email
-//                                    ]);
+        $model = Users::find()
+            ->where('username =:username AND email =:email')
+            ->addParams([
+                ':username' => Yii::$app->request->post('Users')['username'],
+                ':email' => Yii::$app->request->post('Users')['email']
+            ])
+            ->one();
 
-            if (isset($model)) {
-                $newWachtwoord = GeneralFunctions::randomString(4);
-                //$model=$this->findModel($newModel->user_ID);
-                $model->password =$newWachtwoord;
-                $model->password_repeat = $newWachtwoord;
-                if($model->save()){
-                    $emailSend = Users::sendEmailWithNewPassword($model, $newWachtwoord);
-                    if($emailSend)
-                    {
-                        $this->redirect(array('site/index'));
-                    } else {
-                        throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
-                    }
+        if (isset($model)) {
+            $newWachtwoord = GeneralFunctions::randomString(6);
+            //$model=$this->findModel($newModel->user_ID);
+            $model->password =$newWachtwoord;
+            $model->password_repeat = $newWachtwoord;
+
+            if($model->save()){
+                $emailSend = $model->sendEmailWithNewPassword($newWachtwoord);
+                if($emailSend)
+                {
+                    $this->redirect(array('site/index'));
+                } else {
+                    throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
                 }
             }
         }
+        $model = new Users;
         return $this->render('updateGetNewPass', [
             'model'=>$model,
         ]);
