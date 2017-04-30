@@ -148,13 +148,6 @@ class SiteController extends Controller
         }
 
         if (!Yii::$app->user->isguest) {
-            Yii::$app->session->setFlash(
-                'info',
-                Yii::t(
-                    'app',
-                    'Welcome ' . Yii::$app->user->identity->username . '. Your last visit was on ' . Yii::$app->user->identity->last_login_time
-                )
-            );
             if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
                 Yii::$app->session->setFlash(
                     'warning',
