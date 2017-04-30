@@ -88,6 +88,7 @@ class EventNames extends HikeActiveRecord {
             'active_day' => Yii::t('app', 'Active Day'),
             'max_time' => Yii::t('app', 'Max Time'),
             'image' => Yii::t('app', 'Image'),
+            'image_temp' => Yii::t('app', 'Update image'),
             'organisatie' => Yii::t('app', 'Organisation'),
             'website' => Yii::t('app', 'Website'),
             'create_time' => Yii::t('app', 'Create Time'),
