@@ -25,7 +25,7 @@ class FriendListController extends Controller
                 'actions' => [
                     'delete' => ['post'],
                 ],
-            ],            
+            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['connect', 'accept', 'decline','update', 'delete', 'create'],
@@ -146,9 +146,8 @@ class FriendListController extends Controller
 	 */
 	public function actionConnect()
 	{
-        dd('sadf');
 		$friendsWithUser = Yii::$app->request->get('user_id');
-        
+
 		$modelCurrentUser = new FriendList;
 		$modelCurrentUser->user_ID = Yii::$app->user->id;
 		$modelCurrentUser->friends_with_user_ID = $friendsWithUser;
@@ -158,12 +157,12 @@ class FriendListController extends Controller
 		$modelNewFriendUser->user_ID = $friendsWithUser;
 		$modelNewFriendUser->friends_with_user_ID = Yii::$app->user->id;
 		$modelNewFriendUser->status = FriendList::STATUS_pending;
-		
+
 		$valid = $modelCurrentUser->validate();
         $valid = $modelNewFriendUser->validate() && $valid;
-        
+
 		if(!$valid)
-		{   
+		{
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'));
         } else {
             $modelCurrentUser->save(false);
@@ -178,7 +177,7 @@ class FriendListController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         }
-        
+
         return $this->render('/users/searchNewFriends', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -188,7 +187,7 @@ class FriendListController extends Controller
 	public function actionAccept()
 	{
 		$requstedUserId = Yii::$app->request->get('user_id');
-                
+
 		$dataRequester = FriendList::find()
             ->where('user_ID=:requestUserId')
             ->andWhere('friends_with_user_ID =:acceptingUserId')
@@ -220,22 +219,10 @@ class FriendListController extends Controller
         } else {
 			// use false parameter to disable validation
 			$modelRequester->save(false);
-			$modelAccepter->save(false);			
+			$modelAccepter->save(false);
 		}
-        $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 
-        if (Yii::$app->getRequest()->isAjax) {
-            return $this->renderPartial('/users/searchFriendRequests', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-        
-        return $this->render('/users/searchFriendRequests', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->redirect(['users/view']);
 	}
 
 	public function actionDecline()
@@ -253,27 +240,14 @@ class FriendListController extends Controller
         $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
 
         $modelAccepter->status=FriendList::STATUS_declined;
-        
+
 		if(!$modelAccepter->validate()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
         } else {
 			// use false parameter to disable validation
             $modelAccepter->save(FALSE);
 		}
-        
-        $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 
-        if (Yii::$app->getRequest()->isAjax) {
-            return $this->renderPartial('/users/searchFriendRequests', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-        
-        return $this->render('/users/searchFriendRequests', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->redirect(['users/view']);
 	}
 }

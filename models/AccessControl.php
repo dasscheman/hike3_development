@@ -58,6 +58,7 @@ class AccessControl extends HikeActiveRecord {
         }
         // create camelcase function name and remove dashes.
         $str = implode('', array_map('ucfirst', explode('-', $this->controller_id .'-' . $this->action_id)));
+
         return call_user_func(array($this, $str));
     }
 
@@ -762,6 +763,19 @@ class AccessControl extends HikeActiveRecord {
         return FALSE;
     }
 
+    function FriendListDecline() {
+        return TRUE;
+
+    }
+    function FriendListAccept() {
+        return TRUE;
+
+    }
+    function FriendListConnect() {
+        return TRUE;
+
+    }
+
     function defaultAllowed() {
         if (!isset($this->event_id)) {
             return FALSE;
@@ -773,11 +787,6 @@ class AccessControl extends HikeActiveRecord {
                     if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
                         return TRUE;
                     }
-                }
-            case 'users':
-            case 'friend-list':
-                if (in_array($this->action_id, ['decline', 'accept', 'connect'])) {
-                    return TRUE;
                 }
             case 'organisatie':
                 if ($this->rolPlayer <= DeelnemersEvent::ROL_deelnemer &&

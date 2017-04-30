@@ -122,14 +122,17 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
         </div>
       </div>
     </div>
-    <div class="col-sm-2 well">
+    <div class="col-sm-3 well">
 
-        <div class="well"> 
+        <div class="well">
         </div>
 
         <div class="well">
 
         </div>
+        <!-- <div class="well"> -->
+            <?php echo Yii::$app->controller->renderPartial('/friendlist/view-dashboard', ['model' => $friendRequestData]); ?>
+        <!-- </div> -->
     </div>
   </div>
 </div>

@@ -5,12 +5,15 @@ namespace app\controllers;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
+use app\models\FriendList;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\components\GeneralFunctions;
 use yii\filters\AccessControl;
 use app\models\ProfileActivityFeed;
+
+use yii\data\ActiveDataProvider;
 
 /**
  * UsersController implements the CRUD actions for TblUsers model.
@@ -108,9 +111,25 @@ class UsersController extends Controller
         $feed = new ProfileActivityFeed;
         $feed->pageSize = 10;
 
+        $query = Users::find();
+        $queryFriendList = FriendList::find();
+        $queryFriendList->select('friends_with_user_ID')
+                        ->where('user_ID=:user_id')
+                        ->addParams([':user_id' => Yii::$app->user->id])
+                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
+        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
+              ->andwhere('tbl_users.user_ID<>:user_id')
+              ->addParams([':user_id' => Yii::$app->user->id]);
+            //   ->all();
+
+        $friendRequestData = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
         return $this->render('view', [
             'model' => $this->findModel(Yii::$app->user->id),
             'activityFeed' => $feed->getData(),
+            'friendRequestData' => $friendRequestData,
         ]);
     }
 
