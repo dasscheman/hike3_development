@@ -775,6 +775,10 @@ class AccessControl extends HikeActiveRecord {
         return TRUE;
 
     }
+    function UsersContact() {
+        return TRUE;
+
+    }
 
     function defaultAllowed() {
         if (!isset($this->event_id)) {
