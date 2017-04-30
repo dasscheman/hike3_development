@@ -148,7 +148,36 @@ class SiteController extends Controller
         }
 
         if (!Yii::$app->user->isguest) {
-            return $this->redirect(['/users/view']);
+            Yii::$app->session->setFlash(
+                'info',
+                Yii::t(
+                    'app',
+                    'Welcome ' . Yii::$app->user->identity->username . '. Your last visit was on ' . Yii::$app->user->identity->last_login_time
+                )
+            );
+            if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
+                Yii::$app->session->setFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                        'Select a hike to view all the options of the hike'
+                    )
+                );
+                return $this->redirect(['/event-names/select-hike']);
+            } else {
+                Yii::$app->session->setFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                        'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
+                        If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
+                    )
+                );
+                return $this->redirect(['/users/view']);
+            }
+
+
+
         }
         return $this->render('/site/index');
 
