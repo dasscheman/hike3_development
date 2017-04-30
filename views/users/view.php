@@ -124,18 +124,11 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
     </div>
     <div class="col-sm-2 well">
 
-        <div class="well"> <!-- style="width: 728px; height: 90px"> -->
-            <?
-            echo AdsenseWidget::widget(); ?>
+        <div class="well"> 
         </div>
 
-        <div class="well" style="width: 728px; height: 90px">
-            <?
-            echo AdsenseWidget::widget([
-                    'client'  => 'ca-pub-5643906969935410',
-                    'slot'    => '1234567890',
-                    'enabled' => false
-                ]); ?>
+        <div class="well">
+
         </div>
     </div>
   </div>
