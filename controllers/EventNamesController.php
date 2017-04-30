@@ -14,7 +14,7 @@ use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\HttpException;
-use \yii\helpers\Json;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
 /**
@@ -213,7 +213,7 @@ class EventNamesController extends Controller
             // store the source file name
             $model->image = $image->name;
 
-            $path = Yii::$app->basePath . ''. Yii::$app->params['event_images_path'] . $model->image;
+            $path = Yii::$app->params['event_images_path'] . $model->image;
             if($model->save()){
                 $image->saveAs($path);
              }
