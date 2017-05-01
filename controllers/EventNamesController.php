@@ -102,22 +102,24 @@ class EventNamesController extends Controller
         $modelRoute = new Route;
 
         if ($model->load(Yii::$app->request->post())) {
+            $event_id = EventNames::determineNewHikeId();
             $model->attributes = Yii::$app->request->post('EventNames');
-            $model->event_ID = EventNames::determineNewHikeId();
+            $model->event_ID = $event_id;
             $model->image=UploadedFile::getInstance($model,'image');
 
-            $modelDeelnemersEvent->event_ID = $model->event_ID;
+            $modelDeelnemersEvent->event_ID = $event_id;
             $modelDeelnemersEvent->user_ID = \Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
             $modelDeelnemersEvent->group_ID = NULL;
 
             $modelRoute->day_date = NULL;
             $modelRoute->route_name = "Introductie";
-            $modelRoute->event_ID = $model->event_ID;
+            $modelRoute->event_ID = $event_id;
             $modelRoute->route_volgorde = 1;
 
             // validate BOTH $model, $modelDeelnemersEvent and $modelRoute.
             $valid = $model->validate();
+            d($modelDeelnemersEvent->validate());
             $valid = $modelDeelnemersEvent->validate() && $valid;
             $valid = $modelRoute->validate() && $valid;
             if($valid)
@@ -125,6 +127,9 @@ class EventNamesController extends Controller
 				$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
                 // use false parameter to disable validation
                 $model->save(false);
+
+                // During the validate the event_id is set. Here we bypass the logic in the validation.
+                $modelDeelnemersEvent->event_ID = $model->event_ID;
                 $modelDeelnemersEvent->save(false);
                 $modelRoute->save(false);
                 $modelEvents = EventNames::find()
