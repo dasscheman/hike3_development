@@ -344,6 +344,12 @@ class AccessControl extends HikeActiveRecord {
         return TRUE;
     }
 
+    function UsersUpdate() {
+        if (!Yii::$app->user->isGuest) {
+            return TRUE;
+        }
+        return FALSE;
+    }
 
     function UsersSelectHike() {
         if (!Yii::$app->user->isGuest) {

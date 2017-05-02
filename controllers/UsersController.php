@@ -170,9 +170,7 @@ class UsersController extends Controller
         $model->load(Yii::$app->request->post());
         $model->scenario = Users::SCENARIO_UPDATE;
         if ($model->save()) {
-            return $this->render('view', [
-                'model' => $this->findModel(Yii::$app->user->id),
-            ]);
+            return $this->redirect(['view']);
         } else {
             return $this->render('update', [
                 'model' => $model,
