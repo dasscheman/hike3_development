@@ -35,12 +35,12 @@ class OpenVragenController extends Controller
                         'allow' => FALSE,
                         'roles'=>array('?'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('dynamicRouteOnderdeel'),
                         'roles'=>array('@'),
                     ),
-                    array(	
+                    array(
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'moveUpDown'),
                         'matchCallback'=> function () {
@@ -92,13 +92,13 @@ class OpenVragenController extends Controller
     {
         $model = new OpenVragen();
         if (!$model->load(Yii::$app->request->post())) {
+            $model->route_ID = Yii::$app->request->get(1)['route_id'];
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
         }
         $model->event_ID = Yii::$app->user->identity->selected;
-        $model->route_ID = Yii::$app->request->get(1)['route_id'];
-        $model->vraag_volgorde = OpenVragen::getNewOrderForVragen($model->route_ID);
+        $model->setNewOrderForVragen();
 
         if($model->save()) {
 
@@ -114,8 +114,9 @@ class OpenVragenController extends Controller
                 'endDate' => $endDate
             ]);
         }
+        dd($model->errors);
     }
-		
+
     /**
      * Updates an existing TblOpenVragen model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -162,7 +163,7 @@ class OpenVragenController extends Controller
             'endDate' => $endDate
         ]);
     }
-		
+
     /**
      * Deletes an existing TblOpenVragen model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -193,7 +194,7 @@ class OpenVragenController extends Controller
             'endDate' => $endDate
         ]);
     }
-    
+
     /**
      * Finds the TblOpenVragen model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

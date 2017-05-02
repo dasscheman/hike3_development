@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 use app\models\NoodEnvelop;
+use app\models\EventNames;
+use app\models\RouteSearch;
 use app\models\NoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,7 +66,7 @@ class NoodEnvelopController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single TblNoodEnvelop model.
      * @param integer $id
@@ -87,8 +89,7 @@ class NoodEnvelopController extends Controller
         $model = new NoodEnvelop();
         if ($model->load(Yii::$app->request->post())) {
 			$model->event_ID = Yii::$app->user->identity->selected;
-			$model->route_ID = Yii::$app->request->get(1)['route_id'];
-			$model->vraag_volgorde = NoodEnvelop::getNewOrderForNoodEnvelop($model->route_ID);
+			$model->setNewOrderForNoodEnvelop();
 
 			if($model->save()) {
 
@@ -105,6 +106,7 @@ class NoodEnvelopController extends Controller
                 ]);
             }
         } else {
+            $model->route_ID = Yii::$app->request->get(1)['route_id'];
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
@@ -158,7 +160,7 @@ class NoodEnvelopController extends Controller
             'endDate' => $endDate
         ]);
     }
-    
+
     /**
      * Deletes an existing TblNoodEnvelop model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -234,7 +236,7 @@ class NoodEnvelopController extends Controller
                 ),
             )
         );
-        
+
         return $this->render('viewPlayers',array(
             'noodEnvelopDataProvider'=>$noodEnvelopDataProvider,
         ));
@@ -286,7 +288,7 @@ class NoodEnvelopController extends Controller
                 "event_id"=>$currentModel->event_ID,));
         }
     }
-    
+
     /**
      * Finds the TblNoodEnvelop model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
