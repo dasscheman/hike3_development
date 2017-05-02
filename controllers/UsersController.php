@@ -237,7 +237,7 @@ class UsersController extends Controller
         try {
             $this->findModel($id)->delete();
         } catch (Exception $ex) {
-            throw new CHttpException(400, Yii::t('app/error', 'You cannot remove this user.'));
+            throw new CHttpException(400, Yii::t('app', 'You cannot remove this user.'));
         }
 
 

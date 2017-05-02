@@ -51,14 +51,20 @@ use dosamigos\qrcode\QrCode;
             <?php echo Html::encode($model->getAttributeLabel('score')); ?>
             </b>
             <?php echo Html::encode($model->score); ?></br>
-            <?php
+            <?php Pjax::end();
+
             echo Html::a(
                 Yii::t('app', 'Create pdf file'),
                 ['/qr/report', 'id' => $model->qr_ID],
-                ['class' => 'btn btn-xs btn-primary'],
-                ['data-pjax' => 'qr-list-' . $model->qr_ID]
+                [
+                    'class' => 'btn btn-xs btn-primary',
+                    'target'=>'_blank',
+                    'data-pjax' => "0"
+                ]
             ); ?></br>
             <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_id' => $model->event_ID]));?>
+
+
         </div>
     </div>
 </div>
