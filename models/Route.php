@@ -170,18 +170,21 @@ class Route extends HikeActiveRecord
 
     public function setRouteOrder()
     {
-//        var_dump($this->day_date);exit;
         $max_order = Route::find()
             ->select('route_volgorde')
             ->where('event_ID=:event_id')
             ->andwhere('day_date=:day_date')
             ->addParams(
                 [
-                    ':event_ID' => $this->event_ID,
+                    ':event_id' => $this->event_ID,
                     ':day_date' => $this->day_date,
                 ])
             ->max('route_volgorde');
-        $this->route_volgorde = $max_order++;
+        if (empty($max_order)) {
+            $this->route_volgorde = 1;
+        } else {
+            $this->route_volgorde = $max_order++;
+        }
     }
 
 	public function getDayOfRouteId($id)

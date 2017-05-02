@@ -52,7 +52,7 @@ class Posten extends HikeActiveRecord
                 ['post_name', 'event_ID', 'date'],
                 'unique',
                 'targetAttribute' => ['post_name', 'event_ID', 'date'],
-                'message' => Yii::t('app/error', 'This station name exist for this day.')]
+                'message' => Yii::t('app', 'This station name exist for this day.')]
         ];
     }
 
@@ -275,11 +275,11 @@ class Posten extends HikeActiveRecord
 	{
         $exists = Posten::find()
             ->where('event_ID=:event_id')
-            ->andwhere('day_date=:day_date')
+            ->andwhere('date=:date')
             ->addParams(
                 [
-                    ':event_ID' => Yii::$app->user->identity->selected,
-                    ':day_date' => $date,
+                    ':event_id' => Yii::$app->user->identity->selected,
+                    ':date' => $date,
                 ])
             ->exists();
         return $exists;

@@ -762,7 +762,7 @@ class AccessControl extends HikeActiveRecord {
         return FALSE;
     }
 
-    function QrCode() {
+    function QrQrcode() {
         if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }

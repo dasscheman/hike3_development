@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\components\GeneralFunctions;
 
 /**
  * This is the model class for table "tbl_qr".
@@ -49,7 +50,7 @@ class Qr extends HikeActiveRecord
                 ['qr_code', 'event_ID'],
                 'unique',
                 'targetAttribute' => ['qr_code', 'event_ID'],
-                'message' => Yii::t('app/error', 'This qr code exists for this hike')]
+                'message' => Yii::t('app', 'This qr code exists for this hike')]
         ];
     }
 
@@ -126,19 +127,17 @@ class Qr extends HikeActiveRecord
 
 	public function getUniqueQrCode()
 	{
-
-        dd('NIET MEER NODIG??');
 		$UniqueQrCode = 99;
-		$event_id = $_GET['event_id'];
+
 		while($UniqueQrCode == 99)
 		{
 			$newqrcode = GeneralFunctions::randomString(22);
-
-			$data = Qr::find('event_ID = :event_Id AND qr_code=:qr_code',
-						    array(':event_Id' => $event_id,
-							  ':qr_code' => $newqrcode));
+			$data = Qr::find()
+                ->where('qr_code = :qr_code')
+			    ->params([':qr_code' => $newqrcode])
+                ->exists();
 			// if QR code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
-			if(!isset($data))
+			if(!$data)
 			{
 				$UniqueQrCode = $newqrcode;
 			}
@@ -190,45 +189,23 @@ class Qr extends HikeActiveRecord
 		return($data->qr_name);
 	}
 
-	public function getNewOrderForIntroductieQr($event_id)
+	public function setNewOrderForQr()
 	{
-
-        dd('NIET MEER NODIG??');
-
-        $route_id = Route::getIntroductieRouteId($event_id);
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-		$criteria->order = "qr_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (Qr::model()->exists($criteria))
-		{	$data = Qr::findAll($criteria);
-			$newOrder = $data[0]->qr_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
-	}
-
-	public function getNewOrderForQr($event_id, $route_id)
-	{
-
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-		$criteria->order = "qr_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (Qr::model()->exists($criteria))
-		{	$data = Qr::findAll($criteria);
-			$newOrder = $data[0]->qr_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
+        $max_order = Qr::find()
+            ->select('qr_volgorde')
+            ->where('event_ID=:event_id')
+            ->andwhere('route_ID=:route_id')
+            ->addParams(
+                [
+                    ':event_id' => $this->event_ID,
+                    ':route_id' =>$this->route_ID,
+                ])
+            ->max('qr_volgorde');
+        if (empty($max_order)) {
+            $this->qr_volgorde = 1;
+        } else {
+            $this->qr_volgorde = $max_order++;
+        }
 	}
 
 	public function getNumberQrRouteId($route_id)
@@ -262,7 +239,7 @@ class Qr extends HikeActiveRecord
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
-            ->exist();
+            ->exists();
 
 		if ($dataNext) {
 			return TRUE;
@@ -270,15 +247,14 @@ class Qr extends HikeActiveRecord
         return FALSE;
 	}
 
-	public function qrExistForRouteId($event_id, $route_id)
+	public function qrExistForRouteId($route_id)
 	{
-        $data = Qr::find($qr_id);
-        $dataNext = Qr::find()
+        $data = Qr::find()
             ->where('route_ID =:event_id AND route_ID =:route_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' => $data->route_ID])
-            ->exist();
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' => $route_id])
+            ->exists();
 
-		if ($dataNext) {
+		if ($data) {
 			return TRUE;
         }
         return FALSE;
