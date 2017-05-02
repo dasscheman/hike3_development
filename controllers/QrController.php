@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Qr;
+use app\models\EventNames;
 use app\models\QrSearch;
+use app\models\RouteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -148,6 +150,7 @@ class QrController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it contains items which should be removed first.'));
             }
         }
+
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to silent station.'));
         }
@@ -245,6 +248,7 @@ class QrController extends Controller
                'marginTop' => 0,
                'marginBottom' => 0,
                'defaultFont' => 'arial',
+               'filename' => $model->qr_name,
                // portrait orientation
                'orientation' => Pdf::ORIENT_LANDSCAPE,
                // stream to browser inline
