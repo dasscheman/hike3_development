@@ -94,21 +94,30 @@ class PostenController extends Controller
     {
         $model = new Posten();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->event_ID = $_GET['event_id'];
-			$model->date = $_GET['date'];
-			$model->post_volgorde = Posten::getNewOrderForPosten($_GET['event_id'], $model->date);
-			if($model->save()) {
-				$this->redirect(
-                    array(
-                        '/posten/index',
-                        'event_id'=>$model->event_ID,
-                        'date'=>$model->date
-                    )
-                );
+        if (Yii::$app->request->post('Posten') && $model->load(Yii::$app->request->post())) {
+
+            $model->setNewOrderForPosten();
+            if($model->save()) {
+                return $this->redirect(['/posten/index']);
             }
-		}
-        return $this->render('create', ['model' => $model,]);
+        } else {
+            // This set the tab from which the call is started.
+            $date = Yii::$app->request->get('date');
+            $model->setAttributes([
+                'event_ID' => Yii::$app->user->identity->selected,
+                'date' => $date
+            ]);
+        }
+
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/posten/create',
+            'model' => $model
+        ]);
     }
 
     /**

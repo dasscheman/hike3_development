@@ -15,7 +15,7 @@ use prawee\widgets\ButtonAjax;
 $this->title = Yii::t('app', 'Posten');
 ?>
 
-<div class="route-index">
+<div class="posten-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -81,8 +81,9 @@ $this->title = Yii::t('app', 'Posten');
                             'modalId'=>'#main-modal',
                             'modalContent'=>'#main-content-modal',
                             'options'=>[
-                                'class'=>'btn btn-success',
-                                'title'=>'Button for create application',
+                                'class' => 'btn btn-success',
+                                'title' => Yii::t('app', 'Create new station'),
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed('posten', 'create'),
                             ]
                         ]),
                     ],

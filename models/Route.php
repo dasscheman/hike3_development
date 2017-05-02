@@ -183,7 +183,7 @@ class Route extends HikeActiveRecord
         if (empty($max_order)) {
             $this->route_volgorde = 1;
         } else {
-            $this->route_volgorde = $max_order++;
+            $this->route_volgorde = $max_order+1;
         }
     }
 

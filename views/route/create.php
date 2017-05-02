@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblRoute */
+/* @var $model app\models\Route */
 
 $this->title = Yii::t('app', 'Create new route for' . ' ' . $model->day_date );
 

@@ -248,7 +248,7 @@ class NoodEnvelop extends HikeActiveRecord
         if (empty($max_order)) {
             $this->nood_envelop_volgorde = 1;
         } else {
-            $this->nood_envelop_volgorde = $max_order++;
+            $this->nood_envelop_volgorde = $max_order+1;
         }
 	}
 
