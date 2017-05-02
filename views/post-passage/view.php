@@ -15,6 +15,7 @@ use yii\helpers\Html;
 
        <p>
         <?php
+
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Check group in station'),
              'route'=>['post-passagae/create', ['post_id' => $model->post_ID]],
@@ -23,6 +24,7 @@ use yii\helpers\Html;
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
+                 'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'create'),
              ]
          ]);
         ?>

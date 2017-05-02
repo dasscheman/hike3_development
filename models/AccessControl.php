@@ -466,14 +466,14 @@ class AccessControl extends HikeActiveRecord {
 
     function PostPassageCreate() {
         if ($this->hikeStatus == EventNames::STATUS_gestart and
-            $this->rolPlayer == DeelnemersEvent::ROL_deelnemer and
+            $this->rolPlayer <= DeelnemersEvent::ROL_post and
             $this->groupOfPlayer === $this->ids['group_id'] and
             PostPassage::model()->istimeLeftToday($this->event_id, $this->ids['group_id'])) {
             return TRUE;
         }
         return FALSE;
     }
-
+    
     function deleteAllowed() {
         if (!isset($this->event_id)) {
             return FALSE;
