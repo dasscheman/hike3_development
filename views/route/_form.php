@@ -4,16 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblRoute */
+/* @var $model app\models\Route */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="tbl-route-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['route/create'] : ['route/update', 'id' => $model->route_ID]]); ?>
+        'action' => $model->isNewRecord ? ['route/create'] : ['route/update', 'id' => $model->route_ID]]);
 
-    <?php
         echo $form->field($model, 'route_name')->textInput(['maxlength' => true]);
         echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
         echo $form->field($model, 'day_date')->hiddenInput(['value'=> $model->day_date])->label(false);

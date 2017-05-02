@@ -204,7 +204,7 @@ class Qr extends HikeActiveRecord
         if (empty($max_order)) {
             $this->qr_volgorde = 1;
         } else {
-            $this->qr_volgorde = $max_order++;
+            $this->qr_volgorde = $max_order+1;
         }
 	}
 

@@ -324,7 +324,7 @@ class OpenVragen extends HikeActiveRecord
         if (empty($max_order)) {
             $this->vraag_volgorde = 1;
         } else {
-            $this->vraag_volgorde = $max_order++;
+            $this->vraag_volgorde = $max_order+1;
         }
 	}
 

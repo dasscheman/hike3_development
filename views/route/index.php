@@ -179,7 +179,7 @@ $this->title = Yii::t('app', 'Routes');
                         'modalContent'=>'#main-content-modal',
                         'options'=>[
                             'class'=>'btn btn-success',
-                            'title'=>'Button for create application',
+                            'title'=>Yii::t('app', 'Create new route item'),
                             'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create', [Yii::$app->user->identity->selected]),
                         ]
                     ]),

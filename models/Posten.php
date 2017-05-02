@@ -28,8 +28,6 @@ use app\Components\SetupDateTime;
  */
 class Posten extends HikeActiveRecord
 {
-    private $_activeTab;
-
     /**
      * @inheritdoc
      */
@@ -187,22 +185,24 @@ class Posten extends HikeActiveRecord
             $data->date : "nvt";
     }
 
-
-	public function getNewOrderForPosten($event_id, $date)
+	public function setNewOrderForPosten()
 	{
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
-		$criteria->order = "post_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (Posten::exists($criteria))
-		{	$data = Posten::findAll($criteria);
-			$newOrder = $data[0]->post_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
+        $max_order = Posten::find()
+            ->select('post_volgorde')
+            ->where('event_ID=:event_id')
+            ->andwhere('date=:date')
+            ->addParams(
+                [
+                    ':event_id' => $this->event_ID,
+                    ':date' =>$this->date,
+                ])
+            ->max('post_volgorde');
+        if (empty($max_order)) {
+            // dd(empty($max_order));
+            $this->post_volgorde = 1;
+        } else {
+            $this->post_volgorde = $max_order+1;
+        }
 	}
 
 	public function lowererOrderNumberExists($post_id)
@@ -283,23 +283,5 @@ class Posten extends HikeActiveRecord
                 ])
             ->exists();
         return $exists;
-	}
-
-	public function setActiveTab($date)
-	{
-		$this->_activeTab = $date;
-	}
-
-	public function getActiveTab()
-	{
-		return $this->_activeTab;
-	}
-
-	public function getDefaultActiveTab($date)
-	{
-		if (isset($this->_activeTab))
-			return $this->_activeTab;
-		else
-			return $date;
 	}
 }

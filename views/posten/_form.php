@@ -4,34 +4,27 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblPosten */
+/* @var $model app\models\Posten */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <div class="tbl-posten-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'action' => $model->isNewRecord ? ['posten/create'] : ['posten/update', 'id' => $model->route_ID]]);
 
-    <?= $form->field($model, 'post_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'event_ID')->textInput() ?>
-
-    <?= $form->field($model, 'date')->textInput() ?>
-
-    <?= $form->field($model, 'post_volgorde')->textInput() ?>
-
-    <?= $form->field($model, 'score')->textInput() ?>
-
-    <?= $form->field($model, 'create_time')->textInput() ?>
-
-    <?= $form->field($model, 'create_user_ID')->textInput() ?>
-
-    <?= $form->field($model, 'update_time')->textInput() ?>
-
-    <?= $form->field($model, 'update_user_ID')->textInput() ?>
-
+    echo $form->field($model, 'post_name')->textInput(['maxlength' => true]);
+    echo $form->field($model, 'score')->textInput();
+    echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
+    echo $form->field($model, 'date')->hiddenInput(['value'=> $model->date])->label(false);
+    ?>
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php
+        echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
+
+        if (!$model->isNewRecord) {
+            echo Html::submitButton(Yii::t('app', 'Delete'), ['class' => 'btn btn-delete', 'value'=>'delete', 'name'=>'submit']);
+        } ?>
     </div>
 
     <?php ActiveForm::end(); ?>
