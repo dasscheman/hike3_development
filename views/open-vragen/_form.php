@@ -11,21 +11,18 @@ use yii\widgets\ActiveForm;
 <div class="tbl-open-vragen-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['open-vragen/create'] : ['open-vragen/update', 'id' => $model->open_vragen_ID]]); ?>
-
-    <?= $form->field($model, 'open_vragen_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'omschrijving')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'vraag')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'goede_antwoord')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'score')->textInput() ?>
+        'action' => $model->isNewRecord ? ['open-vragen/create'] : ['open-vragen/update', 'id' => $model->open_vragen_ID]]);
+    echo $form->field($model, 'open_vragen_name')->textInput(['maxlength' => true]);
+    echo $form->field($model, 'omschrijving')->textarea(['rows' => 6]);
+    echo $form->field($model, 'vraag')->textInput(['maxlength' => true]);
+    echo $form->field($model, 'goede_antwoord')->textInput(['maxlength' => true]);
+    echo $form->field($model, 'score')->textInput();
+    echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
-     
+
         if (!$model->isNewRecord) {
             echo Html::submitButton(Yii::t('app', 'Delete'), ['class' => 'btn btn-delete', 'value'=>'delete', 'name'=>'submit']);
         } ?>

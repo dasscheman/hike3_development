@@ -233,23 +233,23 @@ class NoodEnvelop extends HikeActiveRecord
 			{return('Geen Hint volgnummer beschikbaar.');}
 	}
 
-	public function getNewOrderForNoodEnvelop($event_id, $route_id)
+	public function setNewOrderForNoodEnvelop()
 	{
-        dd('NIET MEER NODIG??');
-        $criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-		$criteria->order = "nood_envelop_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (NoodEnvelop::model()->exists($criteria))
-		{
-			$data = NoodEnvelop::model()->findAll($criteria);
-			$newOrder = $data[0]->nood_envelop_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
+        $max_order = NoodEnvelop::find()
+            ->select('nood_envelop_volgorde')
+            ->where('event_ID=:event_id')
+            ->andwhere('route_ID=:route_id')
+            ->addParams(
+                [
+                    ':event_id' => $this->event_ID,
+                    ':route_id' =>$this->route_ID,
+                ])
+            ->max('nood_envelop_volgorde');
+        if (empty($max_order)) {
+            $this->nood_envelop_volgorde = 1;
+        } else {
+            $this->nood_envelop_volgorde = $max_order++;
+        }
 	}
 
 	public function lowererOrderNumberExists($event_id, $id, $envelop_order, $route_id)

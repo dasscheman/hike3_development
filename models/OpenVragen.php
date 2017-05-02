@@ -309,41 +309,23 @@ class OpenVragen extends HikeActiveRecord
 		}
 	}
 
-	public function getNewOrderForIntroductieVragen($event_id)
+	public function setNewOrderForVragen()
 	{
-        dd('NIET MEER NODIG??');
-        $route_id = Route::getIntroductieRouteId($event_id);
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-		$criteria->order = "vraag_volgorde DESC";
-		$criteria->limit = 1;
-
-		if (OpenVragen::exists($criteria))
-		{	$data = OpenVragen::findAll($criteria);
-			$newOrder = $data[0]->vraag_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
-	}
-
-
-	public function getNewOrderForVragen($route_id)
-	{
-        $data = OpenVragen::find()
-            ->where('event_ID =:event_id AND route_ID =:route_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' =>$route_id])
-            ->orderBy('vraag_volgorde DESC')
-            ->one();
-
-		if ($data)
-		{	$newOrder = $data->vraag_volgorde+1;
-		} else {
-			$newOrder = 1;}
-
-		return $newOrder;
+        $max_order = OpenVragen::find()
+            ->select('vraag_volgorde')
+            ->where('event_ID=:event_id')
+            ->andwhere('route_ID=:route_id')
+            ->addParams(
+                [
+                    ':event_id' => $this->event_ID,
+                    ':route_id' =>$this->route_ID,
+                ])
+            ->max('vraag_volgorde');
+        if (empty($max_order)) {
+            $this->vraag_volgorde = 1;
+        } else {
+            $this->vraag_volgorde = $max_order++;
+        }
 	}
 
 	public function lowerOrderNumberExists($id)
