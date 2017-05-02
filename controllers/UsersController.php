@@ -191,9 +191,7 @@ class UsersController extends Controller
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not change password.'));
         }
 
-        return $this->render('view', [
-            'model'=>$model,
-        ]);
+        return $this->redirect(['view']);
     }
 
     public function actionResendPasswordUser()
