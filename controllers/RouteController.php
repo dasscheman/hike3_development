@@ -14,6 +14,7 @@ use app\models\EventNames;
 use app\models\Bonuspunten;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
+use app\models\Posten;
 
 use dosamigos\qrcode\QrCode;
 /**
@@ -125,7 +126,7 @@ class RouteController extends Controller
     }
 
     /**
-     * Creates a new TblRoute model.
+     * Creates a new Route model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -134,17 +135,11 @@ class RouteController extends Controller
         $model = new Route;
 
         if (Yii::$app->request->post('Route') && $model->load(Yii::$app->request->post())) {
-            $model->setAttributes([
-                'event_ID' => Yii::$app->user->identity->selected,
-                'day_date' => Yii::$app->request->get('date')
-            ]);
-            var_dump(Yii::$app->request->get('date'));
             $model->setRouteOrder();
-
             // Wanneer er een route onderdeel aangemaakt wordt, dan moet er
             // gecheckt woren of er voor die dag al een begin aangemaakt is.
             // Als dat niet het geval is dan moet die nog aangemaakt worden.
-            if (!Posten::startPostExist($model->event_ID, $model->day_date)) {
+            if (!Posten::startPostExist($model->day_date)) {
 
                 $modelStartPost = new Posten;
                 $modelStartPost->setAttributes([
@@ -171,29 +166,31 @@ class RouteController extends Controller
                 // Because route_ID is not available before save.
                 // Furthermore it is not a problem when route record is saved and
                 // an error occured on qr save. Therefore this easy and fast solution is choosen.
-                if (!Qr::qrExistForRouteId($model->evnt_ID, $model->route_ID)) {
-                    $qrModel=new Qr;
+                if (!Qr::qrExistForRouteId($model->route_ID)) {
+                    $qrModel = new Qr;
                     $qrModel->setAttributes([
                         'qr_name' => $model->route_name,
                         'qr_code' => Qr::getUniqueQrCode(),
-                        'event_ID' => $model->evnt_ID,
+                        'event_ID' => $model->event_ID,
                         'route_ID' => $model->route_ID,
                         'score' => 5,
                     ]);
 
                     $qrModel->setNewOrderForQr();
-
                     // use false parameter to disable validation
                     $qrModel->save(false);
                 }
-                if (Yii::$app->request->isAjax) {
-                    return $this->renderAjax('/route/index', ['model' => $model]);
-                }
-                return $this->render([
-                    '/route/index',
-                    'event_id'=>$model->event_ID
-                ]);
+                return $this->redirect(['/route/index']);
             }
+        } else {
+            // $model->load(Yii::$app->request->get('date'));
+            // This set the tab from which the call is started.
+            $date = Yii::$app->request->get('date');
+
+            $model->setAttributes([
+                'event_ID' => Yii::$app->user->identity->selected,
+                'day_date' => $date
+            ]);
         }
 
         if (Yii::$app->request->isAjax) {

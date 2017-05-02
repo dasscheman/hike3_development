@@ -214,6 +214,7 @@ class QrController extends Controller
 			}
 		}
 	}
+
     public function actionQrcode() {
         $qr_code = Yii::$app->Request->get('qr_code');
         $event_id = Yii::$app->Request->get('event_id');
