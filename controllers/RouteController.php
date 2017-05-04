@@ -43,7 +43,7 @@ class RouteController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['route_ID' => Yii::$app->request->get('route_ID')]);
                         }
                     ),
                     [
@@ -209,9 +209,9 @@ class RouteController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($route_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($route_ID);
         if (!$model->load(Yii::$app->request->post())) {
             return $this->render('update', [
                 'model' => $model,

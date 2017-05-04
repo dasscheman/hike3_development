@@ -41,7 +41,7 @@ class QrController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie', 'moveUpDown', 'qrcode'),
                         'matchCallback' => function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['qr_ID' => Yii::$app->request->get('id')]);
                         },
                     ),
                     [

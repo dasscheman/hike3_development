@@ -37,7 +37,7 @@ class PostenController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('index', 'update', 'delete', 'create', 'view', 'moveUpDown'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['post_ID' => Yii::$app->request->get('id')]);
                         }
                     ),
                     [

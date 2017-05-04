@@ -33,7 +33,7 @@ class BonuspuntenController extends Controller
                         'actions' => ['index', 'delete', 'cancel',  'create', 'update', 'view'],
                         'allow' => TRUE,
                         'matchCallback' => function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['bonuspunten_ID' => Yii::$app->request->get('id')]);
                         }
                     ],
                     [

@@ -39,7 +39,7 @@ class NoodEnvelopController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('create', 'index', 'update', 'delete', 'viewPlayers', 'moveUpDown'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['nood_envelop_ID' => Yii::$app->request->get('id')]);
                         },
                         'roles'=>array('@'),
                     ),

@@ -42,7 +42,7 @@ class UsersController extends Controller
                         'actions' => ['index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'ChangePassword'],
                         'allow' => TRUE,
                         'matchCallback' => function () {
-                            return Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['user_ID' => Yii::$app->request->get('id')]);
                         }
                     ],
                     [

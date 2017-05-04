@@ -32,10 +32,15 @@ class FriendListController extends Controller
                 'rules' => [
                     [
                         'allow' => TRUE,
-                        'actions'=>array('connect', 'accept', 'decline','update', 'delete', 'create'),
+                        'actions'=>array('connect'),
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('accept', 'decline','update', 'delete', 'create'),
                         'roles'=> array('@'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['friend_list_ID' => Yii::$app->request->get('id')]);
                         }
                     ],
                     [
