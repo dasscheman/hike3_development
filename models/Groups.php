@@ -162,6 +162,15 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID']);
     }
 
+	public function getCorrectOpenVragenAntwoordens()
+	{
+	   return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID'])
+		   ->where([
+			   'tbl_open_vragen_antwoorden.correct' => TRUE,
+			   'tbl_open_vragen_antwoorden.checked' => TRUE
+		   ]);
+	}
+
     public function getVraag()
     {
         return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
@@ -171,7 +180,7 @@ class Groups extends HikeActiveRecord
     public function getVragen_score()
     {
         return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
-            ->via('openVragenAntwoordens')
+            ->via('correctOpenVragenAntwoordens')
             ->sum('score');
     }
 
