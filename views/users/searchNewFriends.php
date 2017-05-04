@@ -7,40 +7,29 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\UsersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'View friend requests');
+$this->title = Yii::t('app', 'Search for new friends');
 ?>
 <div class="users-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
-
     $gridColumns = [
         'username',
         'voornaam',
         'achternaam',
         'organisatie',
-        'email',
+        'last_login_time',
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{accept} {decline}',
+            'template' => '{connect}',
             'buttons' => [
-                'accept' => function ($url, $model) {
+                'connect' => function ($url, $model) {
                     return Html::a(
-                        Yii::t('app', 'Accept'),
-                        ['friend-list/accept', 'user_id'=>$model->id],
+                        Yii::t('app', 'Invite'),
+                        ['friend-list/connect', 'user_id'=>$model->id],
                         [
-                            'title' => Yii::t('app', 'Accept'),
-                            'class' =>'btn btn-success btn-xs',
-                        ]
-                    );
-                },
-                'decline' => function ($url, $model) {
-                    return Html::a(
-                        Yii::t('app', 'Decline'),
-                        ['friend-list/decline', 'user_id'=>$model->id],
-                        [
-                            'title' => Yii::t('app', 'Decline'),
-                            'class' =>'btn btn-danger btn-xs',
+                            'title' => Yii::t('app', 'Invite'),
+                            'class' =>'btn btn-primary btn-xs',
                         ]
                     );
                 }
@@ -59,6 +48,7 @@ $this->title = Yii::t('app', 'View friend requests');
     $responsiveWrap = FALSE;
 
     yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
+
     echo GridView::widget([
         'id' => 'kv-grid-hike_select',
         'dataProvider' => $dataProvider,
@@ -92,5 +82,6 @@ $this->title = Yii::t('app', 'View friend requests');
         'persistResize'=>false,
         //'exportConfig'=>$exportConfig,
     ]);
+
     yii\widgets\Pjax::end(); ?>
 </div>
