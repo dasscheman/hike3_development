@@ -39,14 +39,14 @@ class PostPassageController extends Controller
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array( 'update', 'cancel-beantwoording', 'cancel'),
+                        'actions'=>array('cancel-beantwoording', 'cancel'),
                         'roles'=>array('@'),
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('index', 'delete', 'create', 'createDayStart', 'updateVertrek'),
+                        'actions'=>array('index', 'delete', 'create', 'createDayStart', 'updateVertrek', 'update'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['posten_passage_ID' => Yii::$app->request->get('id')]);
                         }
                     ),
                     [

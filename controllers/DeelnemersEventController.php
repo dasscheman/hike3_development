@@ -43,7 +43,7 @@ class DeelnemersEventController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['deelnemers_ID' => Yii::$app->request->get('id')]);
                         }
                     ),
                     [

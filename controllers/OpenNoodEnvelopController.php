@@ -37,14 +37,14 @@ class OpenNoodEnvelopController extends Controller
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('open', 'cancel-opening'),
+                        'actions'=>array('cancel-opening'),
                         'roles'=>array('@'),
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('create', 'index', 'update', 'delete'),
+                        'actions'=>array('create', 'index', 'update', 'delete', 'open'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['open_nood_envelop_ID' => Yii::$app->request->get('id')]);
                         },
                         'roles'=>array('@'),
                     ),

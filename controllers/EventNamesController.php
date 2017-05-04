@@ -36,15 +36,15 @@ class EventNamesController extends Controller
                 'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'selectDay', 'setMaxTime'],
                 'rules' => [
                     array(
-                        'actions'=>array('create', 'selectDay', 'setMaxTime'    ),
+                        'actions'=>array('create', 'setMaxTime'),
                         'allow' => TRUE,
                         'roles'=>array('@'),
                     ),
                     array(
-                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay', 'selectDay'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['event_ID' => Yii::$app->request->get('event_ID')]);
                         }
                     ),
                     [

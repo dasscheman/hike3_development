@@ -54,7 +54,7 @@ class OpenVragenAntwoordenController extends Controller
                             'create', 'antwoord-fout', 'antwoord-goed', 'beantwoorden',
                             'beantwoorden-dashboard'],
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['open_vragen_antwoorden_ID' => Yii::$app->request->get('id')]);
                         }
                     ],
                     [

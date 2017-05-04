@@ -44,7 +44,7 @@ class OpenVragenController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'moveUpDown'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['open_vragen_ID' => Yii::$app->request->get('id')]);
                         },
                         'roles'=>array('@'),
                     ),

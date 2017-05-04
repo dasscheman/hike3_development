@@ -29,7 +29,7 @@ use yii\widgets\Pjax;
         <?php echo Html::encode($model->post->post_name); ?>
         </h3>
         <?php
-        if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update')) {
+        if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update', ['posten_passage_ID' => $model->posten_passage_ID])) {
             echo Html::a(
                 Yii::t('app', 'Edit station checkin'),
                 ['/post-passage/update', 'id' => $model->posten_passage_ID],
