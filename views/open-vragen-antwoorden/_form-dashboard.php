@@ -40,7 +40,7 @@ use yii\widgets\Pjax;
             Yii::t('app', 'Save'),
             [
                 '/open-vragen-antwoorden/beantwoorden-dashboard',
-                'id' => $modelVraag->open_vragen_ID
+                'open_vragen_ID' => $modelVraag->open_vragen_ID
             ],
             [
                 'class' => 'btn btn-xs btn-primary',
@@ -53,7 +53,7 @@ use yii\widgets\Pjax;
             Yii::t('app', 'Cancel'),
             [
                 '/open-vragen-antwoorden/cancel-beantwoording-dashboard',
-                'id' => $modelVraag->open_vragen_ID
+                'open_vragen_ID' => $modelVraag->open_vragen_ID
             ],
             [
                 'class' => 'btn btn-xs btn-danger',

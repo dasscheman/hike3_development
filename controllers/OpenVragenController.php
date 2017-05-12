@@ -40,14 +40,23 @@ class OpenVragenController extends Controller
                         'actions'=>array('dynamicRouteOnderdeel'),
                         'roles'=>array('@'),
                     ),
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('viewPlayers', 'update', 'delete', 'create', 'view', 'createIntroductie', 'index', 'moveUpDown'),
+                        'actions'=> ['create'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         },
-                        'roles'=>array('@'),
-                    ),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('viewPlayers', 'update', 'delete', 'view', 'createIntroductie', 'index', 'moveUpDown'),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['open_vragen_ID' => Yii::$app->request->get('open_vragen_ID')]);
+                        },
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -123,9 +132,9 @@ class OpenVragenController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($open_vragen_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_vragen_ID);
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('update', [
                 'model' => $model,

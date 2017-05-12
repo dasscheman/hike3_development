@@ -30,12 +30,13 @@ use dosamigos\qrcode\QrCode;
                 <?php
                  echo ButtonAjax::widget([
                     'name'=> Yii::t('app', 'Modify silent station'),
-                    'route'=>['qr/update', 'id' => $model->qr_ID],
+                    'route'=>['qr/update', 'qr_ID' => $model->qr_ID],
                     'modalId'=>'#main-modal',
                     'modalContent'=>'#main-content-modal',
                     'options'=>[
                         'class'=>'btn btn-xs btn-success',
                         'title'=> Yii::t('app', 'Modify silent station'),
+                        'disabled' => !Yii::$app->user->identity->isActionAllowed('qr', 'update', ['qr_ID' => $model->qr_ID]),
                     ]
                 ]);?>
             </p>
@@ -55,14 +56,14 @@ use dosamigos\qrcode\QrCode;
 
             echo Html::a(
                 Yii::t('app', 'Create pdf file'),
-                ['/qr/report', 'id' => $model->qr_ID],
+                ['/qr/report', 'qr_ID' => $model->qr_ID],
                 [
                     'class' => 'btn btn-xs btn-primary',
                     'target'=>'_blank',
                     'data-pjax' => "0"
                 ]
             ); ?></br>
-            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_id' => $model->event_ID]));?>
+            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_ID' => $model->event_ID]));?>
 
 
         </div>

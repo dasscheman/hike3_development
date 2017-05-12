@@ -86,7 +86,7 @@ use kartik\widgets\DepDrop;
         'id' => 'event-names-form',
         'type' => ActiveForm::TYPE_VERTICAL,
         'formConfig' => ['labelSpan' => 20],
-        'action' => $model->isNewRecord ? ['event-names/create'] : ['event-names/update']]);
+        'action' => $model->isNewRecord ? ['event-names/create'] : ['event-names/update', 'event_ID' => $model->event_ID]]);
 
     echo Form::widget([
         'model' => $model,

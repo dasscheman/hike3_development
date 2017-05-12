@@ -39,14 +39,17 @@ class PostPassageController extends Controller
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array( 'update', 'cancel-beantwoording', 'cancel'),
+                        'actions'=>array('cancel-beantwoording', 'cancel'),
                         'roles'=>array('@'),
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('index', 'delete', 'create', 'createDayStart', 'updateVertrek'),
+                        'actions'=>array('index', 'delete', 'create', 'createDayStart', 'updateVertrek', 'update'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['posten_passage_ID' => Yii::$app->request->get('posten_passage_ID')]);
                         }
                     ),
                     [
@@ -109,9 +112,12 @@ class PostPassageController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($posten_passage_ID)
     {
-        $model = $this->findModel($id);
+
+        d(Yii::$app->request->get());
+        dd(Yii::$app->request->post());
+        $model = $this->findModel($posten_passage_ID);
         if (!$model->load(Yii::$app->request->post())) {
 
            if (Yii::$app->request->isAjax) {
@@ -123,6 +129,9 @@ class PostPassageController extends Controller
                'model' => $model,
            ]);
         }
+        // $model = $this->findModel($posten_passage_ID);
+        // $model->load(Yii::$app->request->post());
+
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes.'));
         }
@@ -141,9 +150,9 @@ class PostPassageController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($posten_passage_ID)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($posten_passage_ID)->delete();
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list', [
@@ -214,9 +223,9 @@ class PostPassageController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancel($id)
+    public function actionCancel($posten_passage_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($posten_passage_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list', [

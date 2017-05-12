@@ -30,7 +30,7 @@ use kartik\widgets\Alert;
         if (!$model->isHintOpenedByGroup()) {
             echo Html::a(
                 Yii::t('app', 'Open Hint'),
-                ['/open-nood-envelop/create', 'id'=>$model->nood_envelop_ID],
+                ['/open-nood-envelop/create', 'nood_envelop_ID'=>$model->nood_envelop_ID],
                 ['class' => 'btn btn-xs btn-success'],
                 ['data-pjax' => 'open-nood-envelop-list-' . $model->nood_envelop_ID]
             );

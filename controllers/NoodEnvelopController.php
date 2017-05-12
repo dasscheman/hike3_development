@@ -35,14 +35,20 @@ class NoodEnvelopController extends Controller
                         'allow' => FALSE,
                         'roles'=>array('?'),
                     ),
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('create', 'index', 'update', 'delete', 'viewPlayers', 'moveUpDown'),
+                        'actions'=>array('create'),
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         },
-                        'roles'=>array('@'),
-                    ),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'viewPlayers', 'moveUpDown'),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['nood_envelop_ID' => Yii::$app->request->get('nood_envelop_ID')]);
+                        },
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -119,9 +125,9 @@ class NoodEnvelopController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($nood_envelop_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($nood_envelop_ID);
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('update', [
                 'model' => $model,
@@ -167,11 +173,11 @@ class NoodEnvelopController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($nood_envelop_ID)
     {
 
         dd('NIET MEER NODIG');
-        $model = $this->findModel($id);
+        $model = $this->findModel($nood_envelop_ID);
 
         $exist = OpenNoodEnvelop::find()
            ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')

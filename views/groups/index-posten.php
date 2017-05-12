@@ -105,62 +105,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'expandTitle' => Yii::t('app', 'Open view bonuspoints'),
             'collapseTitle' => Yii::t('app', 'Close view bonuspoints'),
         ],
-//        [
-//            'header' => Yii::t('app', '#Silent posts'),
-//            'value' => function($key){
-//                return Route::findOne($key)->getQrCount();
-//            },
-//        ],
-//        [
-//            'class' => 'yii\grid\ActionColumn',
-//            'header'=>'Actions',
-//            'template' => '{up} {down}',
-//            'buttons' => [
-//                'up' => function ($url, $model) {
-//                    return Html::a(
-//                        '<span class="glyphicon glyphicon-chevron-up"></span>',
-//                        [
-//                            'route/move-up-down',
-//                            'id' => $model->route_ID,
-//                            'up_down' => 'up',
-//                        ],
-//                        [
-//                            'title' => Yii::t('app', 'Move up'),
-//                            'class'=>'btn btn-primary btn-xs',
-//                        ]
-//                    );
-//                },
-//                'down' => function ($url, $model) {
-//                    return Html::a(
-//                        '<span class="glyphicon glyphicon-chevron-down"></span>',
-//                        [
-//                            'route/move-up-down',
-//                            'id' => $model->route_ID,
-//                            'up_down' => 'down',
-//                        ],
-//                        [
-//                            'title' => Yii::t('app', 'Mode down'),
-//                            'class'=>'btn btn-primary btn-xs',
-//                        ]
-//                    );
-//                },
-//            ],
-//            'visibleButtons' => [
-//                'up' => function ($model, $key, $index) {
-//                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'up', 'date' => $model->day_date]);
-//                 },
-//                'down' => function ($model, $key, $index) {
-//                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'down', 'date' => $model->day_date]);
-//                 }
-//            ]
-//        ],
     ];
-//
-//    foreach ($dataProvider->models as $temp_model) {
-//        $temp_model->setRank();
-//    }
-//            d($dataProvider->models[0]->setRank());
-//            dd($dataProvider->models[0]->getRank());
 
 
     echo GridView::widget([

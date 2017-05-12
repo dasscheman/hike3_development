@@ -29,7 +29,7 @@ use yii\widgets\Pjax;
         if (!$model->checked) {
             echo Html::a(
                 Yii::t('app', 'Correct awnser'),
-                ['/open-vragen-antwoorden/antwoord-goed', 'id' => $model->open_vragen_antwoorden_ID],
+                ['/open-vragen-antwoorden/antwoord-goed', 'open_vragen_antwoorden_ID' => $model->open_vragen_antwoorden_ID],
                 [
                     'class' => 'btn btn-xs btn-success',
                     'id' => 'correct-awnser-' . $model->open_vragen_antwoorden_ID
@@ -38,7 +38,7 @@ use yii\widgets\Pjax;
             );
             echo Html::a(
                 Yii::t('app', 'Wrong awnser'),
-                ['/open-vragen-antwoorden/antwoord-fout', 'id' => $model->open_vragen_antwoorden_ID],
+                ['/open-vragen-antwoorden/antwoord-fout', 'open_vragen_antwoorden_ID' => $model->open_vragen_antwoorden_ID],
                 [
                     'class' => 'btn btn-xs btn-danger',
                     'id' => 'wrong-awnser-' . $model->open_vragen_antwoorden_ID

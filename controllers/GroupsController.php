@@ -49,7 +49,7 @@ class GroupsController extends Controller
                         'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
                         'actions'=>array('index', 'index-posten', 'update', 'delete', 'view', 'create'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['group_ID' => Yii::$app->request->get('groups_ID')]);
                         }
                     ),
                     [
@@ -137,9 +137,9 @@ class GroupsController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($group_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($group_ID);
         if (!$model->load(Yii::$app->request->post())) {
             $group_members = array();
             foreach ($model->deelnemersEvents as $item) {

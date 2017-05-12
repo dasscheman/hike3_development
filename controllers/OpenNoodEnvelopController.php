@@ -37,14 +37,17 @@ class OpenNoodEnvelopController extends Controller
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('open', 'cancel-opening'),
+                        'actions'=>array('cancel-opening'),
                         'roles'=>array('@'),
                     ),
                     array(
                         'allow' => TRUE,
-                        'actions'=>array('create', 'index', 'update', 'delete'),
+                        'actions'=>array('create', 'index', 'update', 'delete', 'open'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['open_nood_envelop_ID' => Yii::$app->request->get('open_nood_envelop_ID')]);
                         },
                         'roles'=>array('@'),
                     ),
@@ -95,10 +98,10 @@ class OpenNoodEnvelopController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate($nood_envelop_ID)
     {
         $model = new OpenNoodEnvelop;
-        $modelEnvelop = NoodEnvelop::findOne($id);
+        $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
                 'model' => $model,
@@ -116,10 +119,10 @@ class OpenNoodEnvelopController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionOpen($id)
+    public function actionOpen($nood_envelop_ID)
     {
         $model = new OpenNoodEnvelop;
-        $modelEvent = NoodEnvelop::findOne($id);
+        $modelEvent = NoodEnvelop::findOne($nood_envelop_ID);
 
         $model->event_ID = Yii::$app->user->identity->selected;
         $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
@@ -143,9 +146,9 @@ class OpenNoodEnvelopController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancelOpening($id)
+    public function actionCancelOpening($nood_envelop_ID)
     {
-        $modelEvent = NoodEnvelop::findOne($id);
+        $modelEvent = NoodEnvelop::findOne($nood_envelop_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list', [
@@ -161,12 +164,12 @@ class OpenNoodEnvelopController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($open_nood_envelop_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_nood_envelop_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->open_nood_envelop_ID]);
+            return $this->redirect(['view', 'open_nood_envelop_ID' => $model->open_nood_envelop_ID]);
         } else {
             return $this->render('update', [
                 'model' => $model,

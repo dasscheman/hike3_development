@@ -102,7 +102,7 @@ AppAsset::register($this);
                     [
                         'label' => Yii::t('app','Start New Hike'),
                         'url'=>['/event-names/create'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('event-names', 'create'),
+                        'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
                     [
                         'label'=> Yii::t('app','Route Overview'),

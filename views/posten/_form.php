@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-posten-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['posten/create'] : ['posten/update', 'id' => $model->route_ID]]);
+        'action' => $model->isNewRecord ? ['posten/create'] : ['posten/update', 'route_ID' => $model->route_ID]]);
 
     echo $form->field($model, 'post_name')->textInput(['maxlength' => true]);
     echo $form->field($model, 'score')->textInput();

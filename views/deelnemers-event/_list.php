@@ -15,14 +15,14 @@ use yii\bootstrap\Modal;
         'name' => $model->user->username,
         'route' => [
             'deelnemers-event/update',
-            'id'=>$model->deelnemers_ID,
+            'deelnemers_ID'=>$model->deelnemers_ID,
         ],
         'modalId' => '#deelnemer-update-modal',
         'modalContent' => '#deelnemer-update-modal',
         'options' => [
             'class' => 'btn btn-link',
             'title' => Yii::t('app', 'Edit player'),
-            'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'update'),
+            'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'update', ['deelnemers_ID' => $model->deelnemers_ID]),
         ]
     ]);
     Modal::begin([

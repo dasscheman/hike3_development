@@ -54,7 +54,10 @@ class OpenVragenAntwoordenController extends Controller
                             'create', 'antwoord-fout', 'antwoord-goed', 'beantwoorden',
                             'beantwoorden-dashboard'],
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['open_vragen_antwoorden_ID' => Yii::$app->request->get('open_vragen_antwoorden_ID')]);
                         }
                     ],
                     [
@@ -98,10 +101,10 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate($open_vragen_ID)
     {
         $model = new OpenVragenAntwoorden;
-        $modelVraag = OpenVragen::findOne($id);
+        $modelVraag = OpenVragen::findOne($open_vragen_ID);
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
                 'model' => $model,
@@ -119,10 +122,10 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionBeantwoorden($id)
+    public function actionBeantwoorden($open_vragen_ID)
     {
         $model = new OpenVragenAntwoorden;
-        $modelVraag = OpenVragen::findOne($id);
+        $modelVraag = OpenVragen::findOne($open_vragen_ID);
 
         $model->event_ID = $modelVraag->event_ID;
         $model->group_ID = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID, Yii::$app->user->id);
@@ -151,10 +154,10 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionBeantwoordenDashboard($id)
+    public function actionBeantwoordenDashboard($open_vragen_ID)
     {
         $model = new OpenVragenAntwoorden;
-        $modelVraag = OpenVragen::findOne($id);
+        $modelVraag = OpenVragen::findOne($open_vragen_ID);
 
         $model->event_ID = $modelVraag->event_ID;
 
@@ -186,9 +189,9 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancelBeantwoording($id)
+    public function actionCancelBeantwoording($open_vragen_ID)
     {
-        $model = OpenVragen::findOne($id);
+        $model = OpenVragen::findOne($open_vragen_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list', [
@@ -203,9 +206,9 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancelBeantwoordingDashboard($id)
+    public function actionCancelBeantwoordingDashboard($open_vragen_ID)
     {
-        $model = OpenVragen::findOne($id);
+        $model = OpenVragen::findOne($open_vragen_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_list-dashboard', [
@@ -220,9 +223,9 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancel($id)
+    public function actionCancel($open_vragen_antwoorden_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_vragen_antwoorden_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form-organisation', [
@@ -238,9 +241,9 @@ class OpenVragenAntwoordenController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdateOrganisatie($id)
+    public function actionUpdateOrganisatie($open_vragen_antwoorden_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_vragen_antwoorden_ID);
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
             foreach ($model->getErrors() as $error) {
@@ -294,9 +297,9 @@ class OpenVragenAntwoordenController extends Controller
         ));
     }
 
-    public function actionAntwoordGoed($id)
+    public function actionAntwoordGoed($open_vragen_antwoorden_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_vragen_antwoorden_ID);
         $model->checked = 1;
         $model->correct = 1;
         if (!$model->save()) {
@@ -315,9 +318,9 @@ class OpenVragenAntwoordenController extends Controller
         return $this->redirect(['site/overview-organisation']);
     }
 
-    public function actionAntwoordFout($id)
+    public function actionAntwoordFout($open_vragen_antwoorden_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($open_vragen_antwoorden_ID);
         $model->checked = 1;
         $model->correct = 0;
         if ( !$model->save()) {

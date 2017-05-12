@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Routes');
             'format' => 'raw',
            // here comes the problem - instead of parent_region I need to have parent
             'value'=>function ($model, $key, $index, $column) {
-                return Html::a($model->route_name, ['route/update', 'id' => $key]);
+                return Html::a($model->route_name, ['route/update', 'route_ID' => $key]);
             },
         ],
         'route_volgorde',
@@ -113,7 +113,7 @@ $this->title = Yii::t('app', 'Routes');
                         '<span class="glyphicon glyphicon-chevron-up"></span>',
                         [
                             'route/move-up-down',
-                            'id' => $model->route_ID,
+                            'route_ID' => $model->route_ID,
                             'up_down' => 'up',
                         ],
                         [
@@ -127,7 +127,7 @@ $this->title = Yii::t('app', 'Routes');
                         '<span class="glyphicon glyphicon-chevron-down"></span>',
                         [
                             'route/move-up-down',
-                            'id' => $model->route_ID,
+                            'route_ID' => $model->route_ID,
                             'up_down' => 'down',
                         ],
                         [
@@ -180,7 +180,7 @@ $this->title = Yii::t('app', 'Routes');
                         'options'=>[
                             'class'=>'btn btn-success',
                             'title'=>Yii::t('app', 'Create new route item'),
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create', [Yii::$app->user->identity->selected]),
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create'),
                         ]
                     ]),
                 ],
@@ -232,7 +232,7 @@ $this->title = Yii::t('app', 'Routes');
                             'options'=>[
                                 'class'=>'btn btn-success',
                                 'title'=>'Button for create application',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create', [Yii::$app->user->identity->selected]),
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create'),
                             ]
                         ]),
                     ],
