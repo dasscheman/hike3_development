@@ -33,13 +33,24 @@ class PostenController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('listsPosts'),
                         'roles'=>array('?'),),
-                    array(
+
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'create', 'view', 'moveUpDown'),
+                        'actions'=>array('create'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['post_ID' => Yii::$app->request->get('id')]);
+                            return Yii::$app->user->identity->isActionAllowed();
                         }
-                    ),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'view', 'moveUpDown'),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['post_ID' => Yii::$app->request->get('post_ID')]);
+                        }
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -126,12 +137,12 @@ class PostenController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($post_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($post_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/startup/startupOverview', 'event_id' => $model->event_ID]);
+            return $this->redirect(['/startup/startupOverview', 'event_ID' => $model->event_ID]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -223,9 +234,9 @@ class PostenController extends Controller
    public function actionListsPosts()
    {
        $out = [];
-       if (null !== Yii::$app->request->post('depdrop_parents')) {
+       if (NULL !== Yii::$app->request->post('depdrop_parents')) {
            $parents = Yii::$app->request->post('depdrop_parents');
-           if ($parents != null) {
+           if ($parents != NULL) {
            $date = $parents[0];
                $data = Posten::getPostNameOptionsToday($date);
                foreach ($data as $key => $item) {

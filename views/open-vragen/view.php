@@ -16,12 +16,13 @@ use yii\widgets\ListView;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['open-vragen/create', ['route_id' => $model->route_ID]],
+             'route'=>['open-vragen/create', ['route_ID' => $model->route_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
+                 'disabled' => !Yii::$app->user->identity->isActionAllowed('open-vragen', 'create'),
              ]
          ]);
         ?>

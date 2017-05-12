@@ -27,7 +27,7 @@ $this->title = Yii::t('app', 'View friend requests');
                 'accept' => function ($url, $model) {
                     return Html::a(
                         Yii::t('app', 'Accept'),
-                        ['friend-list/accept', 'user_id'=>$model->id],
+                        ['friend-list/accept', 'user_ID'=>$model->id],
                         [
                             'title' => Yii::t('app', 'Accept'),
                             'class' =>'btn btn-success btn-xs',
@@ -37,7 +37,7 @@ $this->title = Yii::t('app', 'View friend requests');
                 'decline' => function ($url, $model) {
                     return Html::a(
                         Yii::t('app', 'Decline'),
-                        ['friend-list/decline', 'user_id'=>$model->id],
+                        ['friend-list/decline', 'user_ID'=>$model->id],
                         [
                             'title' => Yii::t('app', 'Decline'),
                             'class' =>'btn btn-danger btn-xs',

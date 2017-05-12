@@ -32,14 +32,14 @@ $this->title = Yii::t('app', 'Search for new friends');
                 'template' => '{connect}',
                 'buttons' => [
                     'connect' => function ($url, $model) {
-                        return Html::a( 
+                        return Html::a(
                             Yii::t('app', 'Invite'),
-                            ['friend-list/connect', 'user_id'=>$model->id],
-                            [ 
+                            ['friend-list/connect', 'user_ID'=>$model->id],
+                            [
                                 'title' => Yii::t('app', 'Invite'),
-                                'class' =>'btn btn-primary btn-xs', 
+                                'class' =>'btn btn-primary btn-xs',
                             ]
-                        ); 
+                        );
                     }
                 ],
             ],

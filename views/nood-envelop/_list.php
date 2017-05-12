@@ -18,12 +18,13 @@ use yii\bootstrap\Modal;
             <?php
              echo ButtonAjax::widget([
                 'name' => Yii::t('app', 'Modify hint'),
-                'route'=>['/nood-envelop/update', 'id' => $model->nood_envelop_ID],
+                'route'=>['/nood-envelop/update', 'nood_envelop_ID' => $model->nood_envelop_ID],
                 'modalId'=>'#main-modal',
                 'modalContent'=>'#main-content-modal',
                 'options'=>[
                     'class'=>'btn btn-xs btn-success',
                     'title'=> Yii::t('app', 'Modify hint'),
+                    'disabled' => !Yii::$app->user->identity->isActionAllowed('nood-envelop', 'update', ['nood_envelop_ID' => $model->nood_envelop_ID]),
                 ]
             ]); ?>
         </p>

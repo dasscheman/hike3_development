@@ -342,10 +342,9 @@ class EventNamesController extends Controller
         $modelEvents = EventNames::find()
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
-
-        if (NULL !== Yii::$app->request->get('id')  ) {
-            Yii::$app->user->identity->setSelected(Yii::$app->request->get('id'));
-            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('id'));
+        if (NULL !== Yii::$app->request->get('event_ID')  ) {
+            Yii::$app->user->identity->setSelected(Yii::$app->request->get('event_ID'));
+            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('event_ID'));
 
             return $this->redirect(['/site/index']);
         }

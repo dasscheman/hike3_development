@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-qr-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['qr/create'] : ['qr/update', 'id' => $model->route_ID]]); ?>
+        'action' => $model->isNewRecord ? ['qr/create'] : ['qr/update', 'route_ID' => $model->route_ID]]); ?>
 
     <?= $form->field($model, 'qr_name')->textInput(['maxlength' => true]) ?>
 

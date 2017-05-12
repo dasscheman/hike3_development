@@ -81,7 +81,7 @@ use yii\widgets\Pjax;
                 Yii::t('app', 'Save'),
                 [
                     '/bonuspunten/update',
-                    'id' => $model->bouspunten_ID
+                    'bonuspunten_ID' => $model->bouspunten_ID
                 ],
                 [
                     'class' => 'btn btn-xs btn-primary',
@@ -93,7 +93,7 @@ use yii\widgets\Pjax;
                 Yii::t('app', 'Cancel'),
                 [
                     '/bonuspunten/cancel',
-                    'id' => $model->bouspunten_ID],
+                    'bonuspunten_ID' => $model->bouspunten_ID],
                 [
                     'class' => 'btn btn-xs btn-danger',
                     'data-method'=>'post',
@@ -104,7 +104,7 @@ use yii\widgets\Pjax;
                 Yii::t('app', 'Delete'),
                 [
                     '/bonuspunten/delete',
-                    'id' => $model->bouspunten_ID],
+                    'bonuspunten_ID' => $model->bouspunten_ID],
                 [
                     'class' => 'btn btn-xs btn-danger',
                     'data-method'=>'post',

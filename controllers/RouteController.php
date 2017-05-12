@@ -39,13 +39,25 @@ class RouteController extends Controller
                         'allow' => FALSE,
                         'roles' => array('?'),
                     ),
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'),
+                        'actions'=> ['create'],
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['route_ID' => Yii::$app->request->get('route_ID')]);
+                            return Yii::$app->user->identity->isActionAllowed();
                         }
-                    ),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=> [
+                            'index', 'update', 'delete', 'viewIntroductie', 'moveUpDown', 'view'
+                        ],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['route_ID' => Yii::$app->request->get('route_ID')]);
+                        }
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -331,9 +343,9 @@ class RouteController extends Controller
 	/*
 	 * Deze actie wordt gebruikt voor de grid velden. 
 	 */
-	public function actionMoveUpDown($id, $up_down)
+	public function actionMoveUpDown($route_ID, $up_down)
 	{
-        $model = $this->findModel($id);
+        $model = $this->findModel($route_ID);
         if ($up_down === 'up') {
             $previousModel = Route::find()
                 ->where('event_ID =:event_id and day_date =:date and route_volgorde <:order')

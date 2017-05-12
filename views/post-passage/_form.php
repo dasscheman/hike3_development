@@ -58,21 +58,21 @@ use app\models\Groups;
 
         echo Html::a(
             Yii::t('app', 'Save'),
-            ['/post-passage/update', 'id' => $model->posten_passage_ID],
+            ['/post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID],
             ['class' => 'btn btn-xs btn-success'],
             ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
         );
 
         echo Html::a(
             Yii::t('app', 'Delete'),
-            ['/post-passage/delete', 'id' => $model->posten_passage_ID],
+            ['/post-passage/delete', 'posten_passage_ID' => $model->posten_passage_ID],
             ['class' => 'btn btn-xs btn-danger'],
             ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
         );
 
         echo Html::a(
             Yii::t('app', 'Cancel'),
-            ['/post-passage/cancel', 'id' => $model->posten_passage_ID],
+            ['/post-passage/cancel', 'posten_passage_ID' => $model->posten_passage_ID],
             ['class' => 'btn btn-xs btn-primary'],
             ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
         ); ?>

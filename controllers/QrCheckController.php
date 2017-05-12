@@ -36,7 +36,10 @@ class QrCheckController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('viewPlayers', 'index', 'delete', 'create', 'update'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['qr_check_ID' => Yii::$app->request->get('id')]);
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['qr_check_ID' => Yii::$app->request->get('qr_check_ID')]);
                         }
                     ),
                     [
@@ -87,7 +90,7 @@ class QrCheckController extends Controller
         $groupPlayer = DeelnemersEvent::getGroupOfPlayer($event_id,
                                       Yii::app()->user->id);
 
-        $model=new QrCheck;
+        $model = new QrCheck;
 
         $qr = Qr::find('event_ID =:event_id AND
                      qr_code =:qr_code',
@@ -131,9 +134,9 @@ class QrCheckController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($qr_check_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($qr_check_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->qr_check_ID]);

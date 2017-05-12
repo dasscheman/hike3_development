@@ -47,7 +47,7 @@ use yii\widgets\Pjax;
 
         echo Html::a(
             Yii::t('app', 'Open hint'),
-            ['/open-nood-envelop/open', 'id'=>$modelEnvelop->nood_envelop_ID],
+            ['/open-nood-envelop/open', 'nood_envelop_ID' => $modelEnvelop->nood_envelop_ID],
             ['class' => 'btn btn-xs btn-primary'],
             ['data-pjax' => 'open-nood-envelop-list-' . $model->nood_envelop_ID]
         );

@@ -43,7 +43,7 @@ class DeelnemersEventController extends Controller
                         'allow' => TRUE,
                         'actions'=>array('index', 'view', 'update', 'delete', 'viewPlayers', 'create'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['deelnemers_ID' => Yii::$app->request->get('id')]);
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['deelnemers_ID' => Yii::$app->request->get('deelnemers_ID')]);
                         }
                     ),
                     [
@@ -124,9 +124,9 @@ class DeelnemersEventController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($deelnemers_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($deelnemers_ID);
         if ($model->user_ID == Yii::$app->user->identity->id) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'You cannot change your own account'));
             return $this->redirect(['site/index']);
