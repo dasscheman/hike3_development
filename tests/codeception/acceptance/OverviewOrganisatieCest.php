@@ -55,17 +55,17 @@ use tests\codeception\_pages\SelectHikePage;
           $I->assertEquals($disabled, 'true');
 
           $I->amGoingTo('change hike settings');
-          $I->see('organisatie de Bison');
-          $I->see('Change settings hike');
-          $I->click('Change settings hike');
+          $I->see('organisatie: de Bison');
+          $I->see('Wijzig hike settings');
+          $I->click('Wijzig hike settings');
           $I->wait(3); // only for selenium
 
           $I->fillField(['name' => 'EventNames[organisatie]'], 'TESTnaamwijzigen');
-          $I->see('Save');
+          $I->see('Opslaan');
           $I->click('#settings-button');
 
           $I->wait(3); // only for selenium
-          $I->see('organisatie TESTnaamwijzigen');
+          $I->see('organisatie: TESTnaamwijzigen');
 
         $I->amGoingTo('Assign bonuspoints');
         $I->see('Assign bonuspoints');
@@ -166,8 +166,8 @@ use tests\codeception\_pages\SelectHikePage;
        $I->assertEquals($disabled, 'true');
 
        $I->amGoingTo('change hike settings');
-       $I->see('organisatie de Bison');
-       $I->see('Change settings hike');
+       $I->see('organisatie: de Bison');
+       $I->see('Wijzig hike settings');
        $disabled = $I->grabAttributeFrom('#modalEditSettingsButton', 'disabled');
        $I->assertEquals($disabled, 'true');
 
@@ -301,8 +301,8 @@ use tests\codeception\_pages\SelectHikePage;
        $I->see('12:13:00');
 
        $I->amGoingTo('change hike settings');
-       $I->see('organisatie de Bison');
-       $I->see('Change settings hike');
+       $I->see('organisatie: de Bison');
+       $I->see('Wijzig hike settings');
        $disabled = $I->grabAttributeFrom('#modalEditSettingsButton', 'disabled');
        $I->assertEquals($disabled, 'true');
 
@@ -434,8 +434,9 @@ use tests\codeception\_pages\SelectHikePage;
 
 
          $I->amGoingTo('change hike settings');
-         $I->see('organisatie de Bison');
-         $I->see('Change settings hike');
+
+         $I->see('organisatie: de Bison');
+         $I->see('Wijzig hike settings');
          $disabled = $I->grabAttributeFrom('#modalEditSettingsButton', 'disabled');
          $I->assertEquals($disabled, 'true');
 

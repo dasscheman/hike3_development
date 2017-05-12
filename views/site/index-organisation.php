@@ -120,6 +120,10 @@
                         'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
                         'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
                     ]); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('max_time')); ?>:
+                </b>
+                <?php echo Html::encode((empty($eventModel->max_time)) ? '(not set)' : $eventModel->max_time); ?></br>
               </div>
 
               <?php

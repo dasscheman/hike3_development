@@ -15,7 +15,7 @@ use tests\codeception\_pages\SelectHikePage;
  * qr_id = 7, 8;
  * post_id = 10, 11;
  */
- class MainMenuCest
+ class StationsCest
  {
      public function testMainMenuOrganisatieOpstart(\AcceptanceTester $I)
      {
