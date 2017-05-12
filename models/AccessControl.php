@@ -87,7 +87,7 @@ class AccessControl extends HikeActiveRecord {
     }
 
     function setActionId($action_id) {
-        if ($this->action_id == NULL) {
+        if ($action_id == NULL) {
             $this->action_id = Yii::$app->controller->action->id;
         } else {
             $this->action_id = $action_id;
