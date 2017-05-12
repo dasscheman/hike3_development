@@ -348,9 +348,14 @@ use tests\codeception\_pages\SelectHikePage;
           if (method_exists($I, 'wait')) {
               $I->wait(3); // only for selenium
           }
-         $I->dontSee('Stations');
-         $I->amOnPageCustom('posten/index');
-         $I->see('Forbidden (#403)');
+          $I->click('Stations');
+          if (method_exists($I, 'wait')) {
+              $I->wait(3); // only for selenium
+          }
+          $I->see('Posten', 'h1');
+          $I->see('2015-02-25');
+          $I->see('2015-03-01');
+          $I->see('TODONo results found.');
      }
 
  }
