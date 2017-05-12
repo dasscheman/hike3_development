@@ -15,7 +15,7 @@ use yii\bootstrap\Modal;
         'name' => $model->user->username,
         'route' => [
             'deelnemers-event/update',
-            'id'=>$model->deelnemers_ID,
+            'deelnemers_ID'=>$model->deelnemers_ID,
         ],
         'modalId' => '#deelnemer-update-modal',
         'modalContent' => '#deelnemer-update-modal',

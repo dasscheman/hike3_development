@@ -113,7 +113,7 @@ $this->title = Yii::t('app', 'Routes');
                         '<span class="glyphicon glyphicon-chevron-up"></span>',
                         [
                             'route/move-up-down',
-                            'id' => $model->route_ID,
+                            'route_ID' => $model->route_ID,
                             'up_down' => 'up',
                         ],
                         [
@@ -127,7 +127,7 @@ $this->title = Yii::t('app', 'Routes');
                         '<span class="glyphicon glyphicon-chevron-down"></span>',
                         [
                             'route/move-up-down',
-                            'id' => $model->route_ID,
+                            'route_ID' => $model->route_ID,
                             'up_down' => 'down',
                         ],
                         [

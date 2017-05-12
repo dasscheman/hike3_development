@@ -58,7 +58,7 @@ use yii\widgets\Pjax;
             Yii::t('app', 'Save'),
             [
                 '/open-vragen-antwoorden/update-organisatie',
-                'id' => $model->open_vragen_antwoorden_ID
+                'open_vragen_antwoorden_ID' => $model->open_vragen_antwoorden_ID
             ],
             [
                 'class' => 'btn btn-xs btn-primary',
@@ -71,7 +71,7 @@ use yii\widgets\Pjax;
             Yii::t('app', 'Cancel'),
             [
                 '/open-vragen-antwoorden/cancel',
-                'id' => $model->open_vragen_antwoorden_ID],
+                'open_vragen_antwoorden_ID' => $model->open_vragen_antwoorden_ID],
             [
                 'class' => 'btn btn-xs btn-danger',
                 'data-method'=>'post',

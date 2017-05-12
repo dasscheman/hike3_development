@@ -26,7 +26,7 @@ use app\models\FriendList;
     <?php
     echo Html::a(
         Yii::t('app', 'Accept'),
-        ['friend-list/accept', 'user_id'=>$model->id],
+        ['friend-list/accept', 'user_ID'=>$model->id],
         [
             'title' => Yii::t('app', 'Accept'),
             'class' =>'btn btn-success btn-xs',
@@ -35,7 +35,7 @@ use app\models\FriendList;
 
     echo Html::a(
         Yii::t('app', 'Decline'),
-        ['friend-list/decline', 'user_id'=>$model->id],
+        ['friend-list/decline', 'user_ID'=>$model->id],
         [
             'title' => Yii::t('app', 'Decline'),
             'class' =>'btn btn-danger btn-xs',

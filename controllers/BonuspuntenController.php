@@ -33,7 +33,7 @@ class BonuspuntenController extends Controller
                         'actions' => ['index', 'delete', 'cancel',  'create', 'update', 'view'],
                         'allow' => TRUE,
                         'matchCallback' => function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['bonuspunten_ID' => Yii::$app->request->get('id')]);
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['bonuspunten_ID' => Yii::$app->request->get('bonuspunten_ID')]);
                         }
                     ],
                     [
@@ -97,9 +97,9 @@ class BonuspuntenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCancel($id)
+    public function actionCancel($bonuspunten_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($bonuspunten_ID);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
@@ -115,13 +115,13 @@ class BonuspuntenController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($bonuspunten_ID)
     {
-        if ($this->findModel($id)->delete()) {
+        if ($this->findModel($bonuspunten_ID)->delete()) {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspoints are deleted'));
             return $this->redirect(['bonuspunten/index']);
         }
-        $model = $this->findModel($id);
+        $model = $this->findModel($bonuspunten_ID);
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
                 'model' => $model,
@@ -136,9 +136,9 @@ class BonuspuntenController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($bonuspunten_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($bonuspunten_ID);
 
         if ($model->load(Yii::$app->request->post())) {
             if (isset(Yii::$app->request->post('Bonuspunten')['date'])) {

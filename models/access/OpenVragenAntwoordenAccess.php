@@ -26,7 +26,7 @@ class OpenVragenAntwoordenAccess {
 
         if (($this->userModel->hikeStatus == EventNames::STATUS_introductie OR
             $this->userModel->hikeStatus == EventNames::STATUS_gestart) AND
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->ids[0])) {
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->userModel->ids['open_vragen_antwoorden_ID'])) {
             return TRUE;
         }
         return FALSE;
@@ -41,7 +41,7 @@ class OpenVragenAntwoordenAccess {
 
         if (($this->userModel->hikeStatus == EventNames::STATUS_introductie OR
             $this->userModel->hikeStatus == EventNames::STATUS_gestart) AND
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->ids[0])) {
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie AND ! OpenVragenAntwoorden::isAntwoordGecontroleerd($this->userModel->ids['open_vragen_antwoorden_ID'])) {
             return TRUE;
         }
         return FALSE;
@@ -59,8 +59,8 @@ class OpenVragenAntwoordenAccess {
         }
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            $this->userModel->groupOfPlayer === $this->userModel->ids['group_id'] and
-            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_id'])) {
+            $this->userModel->groupOfPlayer === $this->userModel->ids['group_ID'] and
+            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
             return TRUE;
         }
         return FALSE;

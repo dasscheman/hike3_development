@@ -26,11 +26,11 @@ class OpenNoodenvelopAccess {
             return FALSE;
         }
 
-        if ($this->userModel->groupOfPlayer !== $this->userModel->ids['group_id']) {
+        if ($this->userModel->groupOfPlayer !== $this->userModel->ids['group_ID']) {
             return FALSE;
         }
 
-        if (!PostPassage::istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_id'])) {
+        if (!PostPassage::istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
             return FALSE;
         }
         return TRUE;

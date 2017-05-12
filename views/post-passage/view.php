@@ -18,13 +18,13 @@ use yii\helpers\Html;
 
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Check group in station'),
-             'route'=>['post-passagae/create', ['post_id' => $model->post_ID]],
+             'route'=>['post-passagae/create', ['post_ID' => $model->post_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'create'),
+                 'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'create', ['post_ID' => $model->post_ID]),
              ]
          ]);
         ?>

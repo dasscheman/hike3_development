@@ -17,12 +17,13 @@ use yii\helpers\Html;
             <?php
              echo ButtonAjax::widget([
                 'name' => Yii::t('app', 'Edit question'),
-                'route' => ['/open-vragen/update', 'id' => $model->open_vragen_ID],
+                'route' => ['/open-vragen/update', 'open-vragen' => $model->open_vragen_ID],
                 'modalId' => '#main-modal',
                 'modalContent'=>'#main-content-modal',
                 'options' => [
                     'class' => 'btn btn-xs btn-success',
                     'title' => 'Button for create application',
+                    'disabled' => !Yii::$app->user->identity->isActionAllowed('open-vragen', 'update', ['open_vragen_ID' => $model->open_vragen_ID]),
                 ]
             ]); ?>
 

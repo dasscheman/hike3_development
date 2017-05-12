@@ -15,7 +15,10 @@ use yii\widgets\Pjax;
 
         <p>
         <?php
-        Pjax::begin(['id' => 'post-passage-list-' . $model->posten_passage_ID, 'enablePushState' => false]);
+        Pjax::begin([
+            'id' => 'post-passage-list-' . $model->posten_passage_ID,
+            'enablePushState' => false
+        ]);
         echo AlertBlock::widget([
             'type' => AlertBlock::TYPE_ALERT,
             'useSessionFlash' => true,
@@ -32,7 +35,7 @@ use yii\widgets\Pjax;
         if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update', ['posten_passage_ID' => $model->posten_passage_ID])) {
             echo Html::a(
                 Yii::t('app', 'Edit station checkin'),
-                ['/post-passage/update', 'id' => $model->posten_passage_ID],
+                ['/post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID],
                 ['class' => 'btn btn-xs btn-success'],
                 ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
             );
