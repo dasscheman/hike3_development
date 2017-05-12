@@ -57,7 +57,7 @@ class PostPassage extends HikeActiveRecord
                 ['post_ID', 'event_ID', 'group_ID'],
                 'unique',
                 'targetAttribute' => ['post_ID', 'event_ID', 'group_ID'],
-                'message' => Yii::t('app/error', 'This group already checked in on this station.')]
+                'message' => Yii::t('app', 'This group already checked in on this station.')]
         ];
     }
 

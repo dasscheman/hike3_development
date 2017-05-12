@@ -36,15 +36,15 @@ class EventNamesController extends Controller
                 'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'selectDay', 'setMaxTime'],
                 'rules' => [
                     array(
-                        'actions'=>array('create', 'selectDay', 'setMaxTime'    ),
+                        'actions'=>array('create', 'setMaxTime'),
                         'allow' => TRUE,
                         'roles'=>array('@'),
                     ),
                     array(
-                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay'],
+                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay', 'selectDay'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['event_ID' => Yii::$app->request->get('event_ID')]);
                         }
                     ),
                     [
@@ -342,10 +342,9 @@ class EventNamesController extends Controller
         $modelEvents = EventNames::find()
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
-
-        if (NULL !== Yii::$app->request->get('id')  ) {
-            Yii::$app->user->identity->setSelected(Yii::$app->request->get('id'));
-            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('id'));
+        if (NULL !== Yii::$app->request->get('event_ID')  ) {
+            Yii::$app->user->identity->setSelected(Yii::$app->request->get('event_ID'));
+            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('event_ID'));
 
             return $this->redirect(['/site/index']);
         }

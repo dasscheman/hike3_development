@@ -32,10 +32,15 @@ class FriendListController extends Controller
                 'rules' => [
                     [
                         'allow' => TRUE,
-                        'actions'=>array('connect', 'accept', 'decline','update', 'delete', 'create'),
+                        'actions'=>array('connect'),
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('accept', 'decline','update', 'delete', 'create'),
                         'roles'=> array('@'),
                         'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
+                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['friend_list_ID' => Yii::$app->request->get('friend_list_ID')]);
                         }
                     ],
                     [
@@ -98,12 +103,12 @@ class FriendListController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($friend_list_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($friend_list_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->friend_list_ID]);
+            return $this->redirect(['view', 'friend_list_ID' => $model->friend_list_ID]);
         } else {
             return $this->render('update', [
                 'model' => $model,

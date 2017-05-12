@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-nood-envelop-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['nood-envelop/create'] : ['nood-envelop/update', 'id' => $model->route_ID]]);
+        'action' => $model->isNewRecord ? ['nood-envelop/create'] : ['nood-envelop/update', 'route_ID' => $model->route_ID]]);
 
     echo $form->field($model, 'nood_envelop_name')->textInput(['maxlength' => true]);
     echo $form->field($model, 'coordinaat')->textInput(['maxlength' => true]);

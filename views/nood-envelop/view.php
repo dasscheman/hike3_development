@@ -15,12 +15,13 @@ use prawee\widgets\ButtonAjax;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new hint'),
-             'route'=>['nood-envelop/create', ['route_id' => $model->route_ID]],
+             'route'=>['nood-envelop/create', ['route_ID' => $model->route_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
+                 'disabled' => !Yii::$app->user->identity->isActionAllowed('nood-envelop', 'create'),
              ]
          ]);
         ?>

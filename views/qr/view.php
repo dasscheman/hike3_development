@@ -21,12 +21,13 @@ use yii\data\ArrayDataProvider;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['qr/create', ['route_id' => $model->route_ID]],
+             'route'=>['qr/create', ['route_ID' => $model->route_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create silent station',
+                 'disabled' => !Yii::$app->user->identity->isActionAllowed('qr', 'create'),
              ]
          ]);
         ?>

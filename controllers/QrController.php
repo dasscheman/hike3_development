@@ -37,13 +37,23 @@ class QrController extends Controller
                         'allow' => FALSE,
                         'roles'=>['?'],
                     ],
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'create', 'report', 'createIntroductie', 'moveUpDown', 'qrcode'),
+                        'actions'=>['create'],
                         'matchCallback' => function () {
                             return Yii::$app->user->identity->isActionAllowed();
                         },
-                    ),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'report', 'createIntroductie', 'moveUpDown', 'qrcode'),
+                        'matchCallback' => function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['qr_ID' => Yii::$app->request->get('qr_ID')]);
+                        },
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -125,9 +135,9 @@ class QrController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($qr_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($qr_ID);
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('update', [
                 'model' => $model,
@@ -232,9 +242,9 @@ class QrController extends Controller
             TRUE);
     }
 
-	public function actionReport($id)
+	public function actionReport($qr_ID)
 	{
-	    $model = $this->findModel($id);
+	    $model = $this->findModel($qr_ID);
         if (isset($model)) {
             $content = $this->renderPartial('reportview', ['model' => $model]);
            // setup kartik\mpdf\Pdf component

@@ -75,7 +75,7 @@ echo AlertBlock::widget([
                         '<span class="fa fa-search"></span>Select',
                         [
                             'event-names/select-hike',
-                            'id' => $model->event_ID],
+                            'event_ID' => $model->event_ID],
                         [
                             'id' => 'select-hike-'. $model->event_ID,
                             'title' => Yii::t('app', 'Select hike'),

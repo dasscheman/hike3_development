@@ -120,6 +120,10 @@
                         'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
                         'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
                     ]); ?></br>
+                <b>
+                <?php echo Html::encode($eventModel->getAttributeLabel('max_time')); ?>:
+                </b>
+                <?php echo Html::encode((empty($eventModel->max_time)) ? '(not set)' : $eventModel->max_time); ?></br>
               </div>
 
               <?php
@@ -133,6 +137,7 @@
                 <h3><?php echo Yii::t('app', 'actions')?></h3>
                 <p>
                 <?php
+
                 Modal::begin(
                     [
                         'id' =>'modalEditMaxTime',
@@ -140,7 +145,7 @@
                             'label' => Yii::t('app', 'Change max time hike'),
                             'id' =>'modalEditMaxTimeButton',
                             'class' => 'btn  btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'set-max-time'),
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'set-max-time', ['event_ID' => $eventModel->event_ID]),
                         ],
                         'closeButton' => [
                             'label' => 'Close',
@@ -279,14 +284,14 @@
                 <?php
                 $form = ActiveForm::begin([
                     'options'=>['enctype'=>'multipart/form-data'],
-                    'action' => ['event-names/upload'],// important
+                    'action' => ['event-names/upload','event_ID' => $eventModel->event_ID],// important
                 ]); ?>
                 <p>
                 <?php
                 // your fileinput widget for single file upload
                 echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
                     'options'=>['accept'=>'image/*'],
-                    'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload'),
+                    'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload', ['event_ID' => $eventModel->event_ID]),
                     'pluginOptions'=>['allowedFileExtensions'=>['jpg', 'jpeg', 'gif','png'],
             ////            'uploadUrl' => Url::to(['/organisatie/overview']),
             //                'previewFileType' => 'image',

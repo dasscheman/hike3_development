@@ -37,7 +37,7 @@ use yii\widgets\Pjax;
     <?php
     echo Html::a(
         Yii::t('app', 'Awnser question'),
-        ['/open-vragen-antwoorden/create', 'id' => $model->open_vragen_ID],
+        ['/open-vragen-antwoorden/create', 'open_vragen_ID' => $model->open_vragen_ID],
         [
             'class' => 'btn btn-xs btn-success',
             'data-pjax' => 'open-vragen-antwoorden-list-' . $model->open_vragen_ID

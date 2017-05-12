@@ -13,7 +13,7 @@ use app\models\DeelnemersEvent;
 <div class="tbl-deelnemers-event-form">
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['deelnemers-event/create'] : ['deelnemers-event/update',
-        'id' => $model->deelnemers_ID]]); ?>
+        'deelnemers_ID' => $model->deelnemers_ID]]); ?>
 
         <?php
         if ($model->isNewRecord) {
