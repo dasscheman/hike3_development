@@ -70,7 +70,7 @@ class GroupsSearch extends Groups
 
         $openHintQuery = OpenNoodEnvelop::find()
             ->select([
-                'tbl_open_nood_envelop.group_ID as hint_group_ID',                
+                'tbl_open_nood_envelop.group_ID as hint_group_ID',
                 'IFNULL(SUM(tbl_nood_envelop.score), 0) as hint_score'
             ])
             ->innerJoinWith('noodEnvelop', false)
@@ -95,11 +95,15 @@ class GroupsSearch extends Groups
         $VraagQuery = OpenVragenAntwoorden::find()
             ->select([
                 'tbl_open_vragen_antwoorden.group_ID as vraag_group_ID',
+                'tbl_open_vragen_antwoorden.correct as correct',
+                'tbl_open_vragen_antwoorden.checked as checked',
                 'IFNULL(SUM(tbl_open_vragen.score), 0) as vragen_score'
             ])
-            ->innerJoinWith('openVragen', false)
+            ->where('correct=:correct')
+            ->andWhere('checked=:checked')
+            ->innerJoinWith('openVragen', TRUE)
+            ->addParams([':correct' => TRUE, ':checked' => TRUE])
             ->groupBy('tbl_open_vragen_antwoorden.group_ID');
-
 
         $query->leftJoin(['orderBonusSum' => $bonusQuery], 'orderBonusSum.bonus_group_ID = group_ID');
         $query->leftJoin(['orderOpenHintSum' => $openHintQuery], 'orderOpenHintSum.hint_group_ID = group_ID');
@@ -107,19 +111,19 @@ class GroupsSearch extends Groups
         $query->leftJoin(['orderQrSum' => $QrQuery], 'orderQrSum.qr_group_ID = group_ID');
         $query->leftJoin(['orderVraagSum' => $VraagQuery], 'orderVraagSum.vraag_group_ID = group_ID');
 
-        $query->select([ 
+        $query->select([
             '*',
             '(COALESCE(bonus_score, 0) + COALESCE(post_score, 0) + COALESCE(qr_score, 0) + COALESCE(vragen_score, 0) - COALESCE(hint_score, 0)) as total_score'
         ]);
         $query->groupBy('tbl_groups.group_ID');
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query, 
+            'query' => $query,
         ]);
 
         /**
           * Setup your sorting attributes
-          * Note: This is setup before the $this->load($params) 
+          * Note: This is setup before the $this->load($params)
           * statement below
           */
           $dataProvider->setSort([
@@ -181,152 +185,6 @@ class GroupsSearch extends Groups
         ]);
 
         $query->andFilterWhere(['LIKE', 'group_name', $this->group_name]);
-
         return $dataProvider;
     }
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function searchScore($event_id)
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-		$criteria=new CDbCriteria;
-			
-		$criteria->with=array(
-			'deelnemersEvents'=>array('together'=>true, 'joinType'=>'LEFT JOIN'), 
-			'deelnemersEvents.user'=>array('select'=>'username', 'together'=>false, 'joinType'=>'LEFT JOIN'), 
-		);
-
-		$criteria->join =
-			'LEFT JOIN tbl_hint_score ON tbl_hint_score.group_ID = t.group_ID
-			LEFT JOIN tbl_qr_score ON tbl_qr_score.group_ID = t.group_ID
-			LEFT JOIN tbl_posten_score ON tbl_posten_score.group_ID = t.group_ID
-			LEFT JOIN tbl_vragen_score ON tbl_vragen_score.group_ID = t.group_ID
-			LEFT JOIN tbl_bonus_score ON tbl_bonus_score.group_ID = t.group_ID
-			LEFT JOIN tbl_totaal_score ON tbl_totaal_score.group_ID = t.group_ID';
-
-		$criteria->select = array(
-			'event_ID',
-			'group_ID',
-			'group_concat(DISTINCT user.username SEPARATOR " ") AS group_members',
-			'tbl_bonus_score.bonus_score AS bonus_score',
-			'tbl_hint_score.hint_score AS hint_score',
-			'tbl_vragen_score.vragen_score AS vragen_score',
-			'tbl_posten_score.post_score AS post_score',
-			'tbl_qr_score.qr_score AS qr_score',
-			'tbl_totaal_score.totaal_score AS totaal_score',
-			'group_name');
-
-		$criteria->group = 't.group_ID';
-		$criteria->compare('t.event_ID',$event_id);
-		$criteria->compare('group_name',$this->group_name, true);
-		$criteria->compare('user.username',$this->group_members, true);
-		$criteria->compare('bonus_score',$this->bonus_score, true);
-		$criteria->compare('posten_score',$this->post_score, true);
-		$criteria->compare('qr_score',$this->qr_score, true);
-		$criteria->compare('vragen_score',$this->vragen_score, true);
-		$criteria->compare('hint_score',$this->hint_score, true);
-		$criteria->compare('totaal_score',$this->totaal_score, true);
-		//$criteria->compare('rank',$this->totaal_score,true);
-
-		$sort = new CSort();
-		$sort->attributes = array(
-			'group_name'=>array(
-				'asc'=>'group_name',
-				'desc'=>'group_name desc',
-			),
-			'group_members'=>array(
-				'asc'=>'group_members',
-				'desc'=>'group_members desc',
-			),
-			'bonus_score'=>array(
-				'asc'=>'bonus_score',
-				'desc'=>'bonus_score desc',
-			),
-			'post_score'=>array(
-				'asc'=>'post_score',
-				'desc'=>'post_score desc',
-			),
-			'qr_score'=>array(
-				'asc'=>'qr_score',
-				'desc'=>'qr_score desc',
-			),
-			'vragen_score'=>array(
-				'asc'=>'vragen_score',
-				'desc'=>'vragen_score desc',
-			),
-			'hint_score'=>array(
-				'asc'=>'hint_score',
-				'desc'=>'hint_score desc',
-			),
-			'totaal_score'=>array(
-				'asc'=>'totaal_score',
-				'desc'=>'totaal_score desc',
-			),
-		);
-
-		$sort->defaultOrder = array('totaal_score'=>true);
-	    return new CActiveDataProvider($this, array(
-		    'criteria'=>$criteria,
-			'pagination'=>array(
-				 'pageSize'=>10
-				 ),
-			'sort'=>$sort
-	    ));
-	}
-
-	public function searchPost($event_id)
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-		$criteria=new CDbCriteria;
-			
-		$criteria->with=array(
-			'deelnemersEvents'=>array('together'=>true, 'joinType'=>'LEFT JOIN'), 
-			'deelnemersEvents.user'=>array('select'=>'username', 'together'=>false, 'joinType'=>'LEFT JOIN'), 
-			'postPassages'=>array('together'=>true, 'joinType'=>'LEFT JOIN'), 
-			'postPassages.post'=>array('together'=>true, 'joinType'=>'LEFT JOIN'), 
-		);
-
-		$criteria->select = array(
-			'group_name',
-			'group_ID',
-			'event_ID',
-			'group_concat(DISTINCT user.username SEPARATOR " ") AS group_members',
-			'postPassages.binnenkomst AS last_post_time',
-			'post.post_name AS last_post');  
-		$criteria->order = 'last_post_time DESC';
-		$criteria->group = 't.group_ID, postPassages.group_ID';
-		$criteria->compare('group_ID',$this->group_ID);
-		$criteria->compare('t.event_ID',$event_id);
-		$criteria->compare('group_name',$this->group_name,true);
-		$criteria->compare('user.username',$this->group_members,true);
-		$criteria->compare('update_user_ID',$this->update_user_ID);
-
-		$sort = new CSort();
-		$sort->attributes = array(
-			//'defaultOrder'=>'t.create_time ASC',
-			'group_name'=>array(
-				'asc'=>'group_name',
-				'desc'=>'group_name desc',
-			),
-			'group_members'=>array(
-				'asc'=>'group_members',
-				'desc'=>'group_members',
-			),
-		);
-
-		$sort->defaultOrder = array('group_name'=>true);
-	    return new CActiveDataProvider($this, array(
-		    'criteria'=>$criteria,
-			'pagination'=>array(
-				 'pageSize'=>10
-				 ),
-			'sort'=>$sort
-	    ));
-	}
-
 }
