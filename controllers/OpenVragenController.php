@@ -127,9 +127,9 @@ class OpenVragenController extends Controller
     }
 
     /**
-     * Updates an existing TblOpenVragen model.
+     * Updates an existing OpenVragen model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param integer $open_vragen_ID
      * @return mixed
      */
     public function actionUpdate($open_vragen_ID)

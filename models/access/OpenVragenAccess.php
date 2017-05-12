@@ -26,6 +26,7 @@ class OpenVragenAccess {
         return FALSE;
     }
     function OpenVragenUpdate() {
+        // dd($this->userModel->ids);
         $model = $this->findModel($this->userModel->ids['open_vragen_ID']);
 
         if ($model->event_ID !== Yii::$app->user->identity->selected) {

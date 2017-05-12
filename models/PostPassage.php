@@ -265,7 +265,7 @@ class PostPassage extends HikeActiveRecord
 
 	public function isTimeLeftToday($event_id, $group_id)
 	{
-		if (PostPassage::timeLeftToday($event_id, $group_id) > 0)
+		if (PostPassage::getTimeLeftToday($event_id, $group_id) > 0)
 			return true;
 
 		return false;
@@ -416,4 +416,20 @@ class PostPassage extends HikeActiveRecord
         }
 		return false;
 	}
+
+    public function isGroupStarted($group_id, $active_day)
+    {
+        $start_post_id = Posten::getStartPost($active_day);
+
+        // This is not complete correct use of function but it will do.
+        return PostPassage::isPostPassedByGroup($group_id, $start_post_id);
+    }
+
+    public function isPostPassedByGroup($group_id, $post_id)
+    {
+        return PostPassage::find()
+            ->where('event_ID =:event_id AND post_ID =:post_id AND gepasseerd =:gepasseerd')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':post_id' => $post_id, ':gepasseerd' => TRUE])
+            ->exists();
+    }
 }

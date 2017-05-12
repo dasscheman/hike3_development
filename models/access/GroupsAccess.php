@@ -41,9 +41,9 @@ class GroupsAccess {
     }
 
     function GroupsUpdate() {
-        $model = $this->findModel($this->userModel->ids['groups_ID']);
+        $model = $this->findModel($this->userModel->ids['group_ID']);
 
-        if ($model->event_ID !== $model->userModel->event_ID) {
+        if ($model->event_ID !== $this->userModel->event_id) {
             return FALSE;
         }
 
@@ -51,7 +51,7 @@ class GroupsAccess {
             return FALSE;
         }
 
-        if ($this->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }
         return FALSE;

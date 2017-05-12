@@ -233,22 +233,35 @@ class Posten extends HikeActiveRecord
         return FALSE;
 	}
 
-	public function getStartPost($event_id)
+    /**
+    * Return the first station of the date
+    */
+	public function getStartPost($date)
 	{
-        dd('NIET MEER NODIG??');
-		$date = EventNames::getActiveDayOfHike($event_id);
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
-		$criteria->order = "post_volgorde ASC";
-		$data = Posten::find($criteria);
+        $event_id = Yii::$app->user->identity->selected;
+        $data = Posten::find()
+            ->where('event_ID =:event_id AND date =:date')
+            ->params([':event_id' => $event_id, ':date' => $date])
+            ->orderBy(['post_volgorde'=>SORT_ASC])
+            ->one();
 
 		if (isset($data->post_ID))
 		{
 			return $data->post_ID;
 		} else {
 			return false;
+		}
+	}
+
+    /**
+    * Checks if the post is a start post of a day.
+    */
+	public function isStartPost($post_id)
+	{
+		if (Posten::higherOrderNumberExists($post_id)) {
+			return FALSE;
+		} else {
+			return TRUE;
 		}
 	}
 
