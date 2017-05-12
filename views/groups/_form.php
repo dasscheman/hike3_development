@@ -13,7 +13,7 @@ use app\models\FriendList;
 <div class="tbl-groups-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['groups/create'] : ['groups/update', 'groups_ID' => $model->group_ID]]); ?>
+        'action' => $model->isNewRecord ? ['groups/create'] : ['groups/update', 'group_ID' => $model->group_ID]]); ?>
 
     <?= $form->field($model, 'group_name')->textInput(['maxlength' => true]);
 

@@ -18,7 +18,7 @@ use yii\helpers\Html;
 
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Check group in station'),
-             'route'=>['post-passagae/create', ['post_ID' => $model->post_ID]],
+             'route'=>['post-passage/create', ['post_ID' => $model->post_ID]],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[

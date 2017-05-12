@@ -20,6 +20,15 @@ $this->title = Yii::t('app', 'Routes');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
+    $bordered = FALSE;
+    $striped = TRUE;
+    $condensed = TRUE;
+    $responsive = FALSE;
+    $hover = TRUE;
+    $pageSummary = FALSE;
+    $heading = FALSE;
+    $exportConfig = TRUE;
+    $resizableColumns = FALSE;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -139,23 +148,22 @@ $this->title = Yii::t('app', 'Routes');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'up', 'date' => $model->day_date]);
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'route',
+                        'moveUpDown',
+                        ['route_ID' => $key],
+                        ['move_action' => 'up', 'date' => $model->day_date]);
                  },
                 'down' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed('route', 'moveUpDown', [$key], ['move_action' => 'down', 'date' => $model->day_date]);
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'route',
+                        'moveUpDown',
+                        ['route_ID' => $key],
+                        ['move_action' => 'down', 'date' => $model->day_date]);
                  }
             ]
         ],
     ];
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
-    $resizableColumns = FALSE;
 
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),

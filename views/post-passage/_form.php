@@ -13,11 +13,14 @@ use app\models\Groups;
 ?>
 
 <div class="tbl-post-passage-form">
+    <div class="col-sm-3">
+        <div class="row-1">
+            <div class="view">
     <?php
-    Pjax::begin([
-        'id' => 'post-passage-form-' . $model->posten_passage_ID,
-        'enablePushState' => false
-    ]);
+    // Pjax::begin([
+    //     'id' => 'post-passage-form-' . $model->posten_passage_ID,
+    //     'enablePushState' => false
+    // ]);
     echo AlertBlock::widget([
         'type' => AlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
@@ -32,7 +35,7 @@ use app\models\Groups;
     <h3>
         <?php echo Html::encode($model->post->post_name); ?>
     </h3> <?php
-    echo $form->field($model, 'gepasseerd')->checkBox(['uncheck' => FALSE, 'selected' => TRUE]);
+    echo $form->field($model, 'gepasseerd')->checkBox(['uncheck' => 0, 'selected' => TRUE]);
 
     echo $form->field($model, 'binnenkomst')->widget(
         DateTimePicker::classname(), [
@@ -59,27 +62,34 @@ use app\models\Groups;
         echo Html::a(
             Yii::t('app', 'Save'),
             ['/post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID],
-            ['class' => 'btn btn-xs btn-success'],
-            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+            [
+                'class' => 'btn btn-xs btn-success',
+                'data-method'=>'post',
+                'data-pjax' => 'post-passage-list-' . $model->posten_passage_ID
+            ]
         );
 
-        echo Html::a(
-            Yii::t('app', 'Delete'),
-            ['/post-passage/delete', 'posten_passage_ID' => $model->posten_passage_ID],
-            ['class' => 'btn btn-xs btn-danger'],
-            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
-        );
+        // echo Html::a(
+        //     Yii::t('app', 'Delete'),
+        //     ['/post-passage/delete', 'posten_passage_ID' => $model->posten_passage_ID],
+        //     ['class' => 'btn btn-xs btn-danger'],
+        //     ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+        // );
 
         echo Html::a(
             Yii::t('app', 'Cancel'),
             ['/post-passage/cancel', 'posten_passage_ID' => $model->posten_passage_ID],
-            ['class' => 'btn btn-xs btn-primary'],
-            ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
+            [
+                'class' => 'btn btn-xs btn-primary',
+                'data-pjax' => 'post-passage-list-' . $model->posten_passage_ID
+            ]
         ); ?>
     </div>
 
     <?php
     ActiveForm::end();
-    Pjax::end(); ?>
-
+    // Pjax::end(); ?>
+</div>
+</div>
+</div>
 </div>

@@ -11,12 +11,11 @@ use yii\bootstrap\Modal;
 
 $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
 ?>
-<div class="groups-index">
+<div class="groups-index-posten">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-
     $bordered = FALSE;
     $striped = TRUE;
     $condensed = TRUE;
@@ -26,6 +25,10 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
+
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
 
     $gridColumns = [
         'group_name',
@@ -69,7 +72,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
                 return GridView::ROW_COLLAPSED;
             },
             'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['model'=>$model]);
+                return Yii::$app->controller->renderPartial('/post-passage/view-group', ['model'=>$model]);
             },
             'allowBatchToggle' => FALSE,
             'headerOptions'=>['class'=>'kartik-sheet-style'],

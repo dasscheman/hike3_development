@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\models\Posten;
+use app\models\Groups;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
@@ -20,6 +21,14 @@ $this->title = Yii::t('app', 'Posten');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
+    $bordered = FALSE;
+    $striped = TRUE;
+    $condensed = TRUE;
+    $responsive = FALSE;
+    $hover = TRUE;
+    $pageSummary = FALSE;
+    $heading = FALSE;
+    $exportConfig = TRUE;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -37,14 +46,18 @@ $this->title = Yii::t('app', 'Posten');
             },
         ],
         [
-            'header' => Yii::t('app', 'View Groups passed'),
+            'header' => Yii::t('app', 'View check in/out'),
             'class'=>'kartik\grid\ExpandRowColumn',
             'width'=>'50px',
             'value'=> function ($model, $key, $index, $column) {
                 return GridView::ROW_COLLAPSED;
             },
-            'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/post-passage/view', ['model'=>$model]);
+            'detail' => function ($model, $key, $index, $column) {
+                $groups = Groups::find()
+                    ->where('event_ID =:event_id')
+                    ->params([':event_id' => Yii::$app->user->identity->selected])
+                    ->all();
+                return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['post_id'=>$key, 'groups' => $groups]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
@@ -52,16 +65,22 @@ $this->title = Yii::t('app', 'Posten');
             'collapseTitle' => Yii::t('app', 'Close view groups'),
         ],
     ];
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
+
 
     while(strtotime($startDate) <= strtotime($endDate)) {
+
+        // $gridColumns[4]['detail'] =
+        //     function ($model, $key, $index, $column, $startDate) {
+        //         if($key === Posten::getStartPost($startDate)) {
+        //             $groups = Groups::find()
+        //                 ->where('event_ID =:event_id')
+        //                 ->params([':event_id' => Yii::$app->user->identity->selected])
+        //                 ->all();
+        //
+        //             return Yii::$app->controller->renderPartial('/post-passage/view-start', ['model'=>$groups]);
+        //         }
+        //         return Yii::$app->controller->renderPartial('/post-passage/view', ['model'=>$model]);
+        //     };
         $dataArray[$count]=array(
 		    'label' =>$startDate,
 		    'content' => GridView::widget([
