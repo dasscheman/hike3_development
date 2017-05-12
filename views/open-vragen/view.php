@@ -7,10 +7,12 @@ use yii\widgets\ListView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
+$this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
+
 ?>
 <div class="tbl-open-vragen-view">
 
-    <h1><?= Html::encode(Yii::t('app', 'Questions for') . ' ' . $model->route_name) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?php
@@ -28,18 +30,16 @@ use yii\widgets\ListView;
         ?>
     </p>
     <?php
+        $dataProvider = new yii\data\ArrayDataProvider([
+            'allModels' => $model->openVragens,
+        ]);
 
-    $dataProvider = new yii\data\ArrayDataProvider([
-        'allModels' => $model->openVragens,
-    ]);
-
-    echo ListView::widget([
-        'summary' => FALSE,
-        'pager' => FALSE,
-        'dataProvider' => $dataProvider,
-        'itemView' => '/open-vragen/_list',
-        'emptyText' => Yii::t('app', 'There are no questions for this route section'),
-    ]);
-
-?>
+        echo ListView::widget([
+            'summary' => FALSE,
+            'pager' => FALSE,
+            'dataProvider' => $dataProvider,
+            'itemView' => '/open-vragen/_list',
+            'emptyText' => Yii::t('app', 'There are no questions for this route section'),
+        ]);
+    ?>
 </div>

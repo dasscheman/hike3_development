@@ -17,7 +17,7 @@ use kartik\widgets\Select2;
             $model->group_name,
             [
                 '/groups/update',
-                'groups_ID'=>$model->group_ID
+                'group_ID'=>$model->group_ID
             ],
             ['class'=>'btn btn-xs btn-primary']);
         ?>
