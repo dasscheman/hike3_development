@@ -12,16 +12,17 @@ use yii\data\ArrayDataProvider;
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
 
+$this->title = Yii::t('app', 'Silent stations for') . ' ' . $model->route_name
 ?>
-<div class="tbl-qr-view" <?php $model->route_ID ?>>
+<div class="tbl-qr-view">
 
-    <h1><?= Html::encode(Yii::t('app', 'Silent stations for') . ' ' . $model->route_name) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?php
         echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['qr/create', ['route_ID' => $model->route_ID]],
+            'name'=>Yii::t('app', 'Create new silent station'),
+             'route'=>['qr/create', 'route_ID' => $model->route_ID],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[
@@ -34,17 +35,17 @@ use yii\data\ArrayDataProvider;
     </p>
     <?php
 
-    // EXAMPLE
-    $dataProvider = new yii\data\ArrayDataProvider([
-        'allModels' => $model->qrs,
-    ]);
+        // EXAMPLE
+        $dataProvider = new yii\data\ArrayDataProvider([
+            'allModels' => $model->qrs,
+        ]);
 
-    echo ListView::widget([
-        'summary' => FALSE,
-        'pager' => FALSE,
-        'dataProvider' => $dataProvider,
-        'itemView' => '/qr/_list',
-        'emptyText' => Yii::t('app', 'There are no silent stations for this route section'),
-    ]);
-?>
+        echo ListView::widget([
+            'summary' => FALSE,
+            'pager' => FALSE,
+            'dataProvider' => $dataProvider,
+            'itemView' => '/qr/_list',
+            'emptyText' => Yii::t('app', 'There are no silent stations for this route section'),
+        ]);
+    ?>
 </div>

@@ -79,6 +79,8 @@ class RouteController extends Controller
 
         $searchModel = new RouteSearch();
 
+        $this::setRouteIndexMessage($event_Id);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'startDate' => $startDate,
@@ -396,6 +398,76 @@ class RouteController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function setRouteIndexMessage($event_id) {
+        $route = Route::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $event_id]);
+
+        if ($route->count() < 3 ) {
+           Yii::$app->session->setFlash(
+               'route',
+               Yii::t(
+                   'app',
+                   'Here you can create route items for each day.
+                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with kiwi.run.
+                   For each route item you can create questions, hints or silent stations.')
+           );
+        }
+        $questionModel = new OpenVragen;
+        $questions = $questionModel->find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $event_id]);
+
+        if ($questions->count() < 3) {
+           Yii::$app->session->setFlash(
+               'question',
+               Yii::t(
+                   'app',
+                   'Questions are visable by player only when the hike is started and the same day is selected.
+                   The field {awnser} is never visable by players.', ['awnser' => $questionModel->getAttributeLabel('goede_antwoord'),])
+           );
+        }
+
+        $hintsModel = new NoodEnvelop;
+        $hints = $hintsModel->find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $event_id]);
+
+        if ($hints->count() < 3) {
+           Yii::$app->session->setFlash(
+               'hint',
+               Yii::t(
+                   'app',
+                   'Hints are visable by player only when the hike is started and the same day is selected.
+                   The field {remark} and {cordinate} are only visable by players when whey open a hint.
+                   The score fields are penalty score, use positive interger numbers.
+                   Use the {name} to give a clear description what this hint is about',
+                   [
+                       'remark' => $hintsModel->getAttributeLabel('opmerkingen'),
+                       'cordinate' => $hintsModel->getAttributeLabel('coordinaat'),
+                       'name' => $hintsModel->getAttributeLabel('nood_envelop_name'),
+                   ])
+           );
+        }
+
+        $qrModel = new Qr;
+        $qr = $qrModel->find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $event_id]);
+
+        if ($qr->count() <= $route->count()) {
+           Yii::$app->session->setFlash(
+               'qr',
+               Yii::t(
+                   'app',
+                   'Silent station have to be printed and hanged along the hike route.
+                   Players get points when they scan the QR code.
+                   A silent station is automaticly created for each route item'
+               )
+           );
         }
     }
 }

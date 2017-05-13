@@ -8,7 +8,6 @@ use yii\widgets\ListView;
 /* @var $model app\models\Route */
 
 $this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
-
 ?>
 <div class="tbl-open-vragen-view">
 
@@ -18,7 +17,7 @@ $this->title = Yii::t('app', 'Questions for') . ' ' . $model->route_name;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['open-vragen/create', ['route_ID' => $model->route_ID]],
+             'route'=>['open-vragen/create', 'route_ID' => $model->route_ID],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[

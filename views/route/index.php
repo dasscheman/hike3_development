@@ -6,7 +6,7 @@ use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
-
+use app\components\CustomAlertBlock;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RouteSearch */
@@ -34,6 +34,11 @@ $this->title = Yii::t('app', 'Routes');
     echo '<div id="main-content-modal"></div>';
     Modal::end();
 
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 20000,
+    ]);
     $count=0;
     $gridColumns = [
         [

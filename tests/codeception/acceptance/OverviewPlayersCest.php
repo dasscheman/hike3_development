@@ -68,7 +68,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
          $I->click('Profiel');
          if (method_exists($I, 'wait')) {
@@ -285,7 +285,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
          $I->click('Profiel');
          if (method_exists($I, 'wait')) {
@@ -482,7 +482,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
           $I->click('Profiel');
           if (method_exists($I, 'wait')) {
@@ -697,7 +697,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
          $I->click('Profiel');
          if (method_exists($I, 'wait')) {
@@ -889,7 +889,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
          $I->click('Profiel');
          if (method_exists($I, 'wait')) {
@@ -1119,7 +1119,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
           $I->click('Profiel');
           if (method_exists($I, 'wait')) {
@@ -1312,7 +1312,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
            $I->click('Profiel');
            if (method_exists($I, 'wait')) {
@@ -1528,7 +1528,7 @@ use tests\codeception\_pages\SelectHikePage;
          if (method_exists($I, 'wait')) {
              $I->wait(3); // only for selenium
          }
-         $I->see('No results found.');
+         $I->see('Search for new friends', 'h1');
 
 
           $I->click('Profiel');

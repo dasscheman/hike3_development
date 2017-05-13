@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\web\Cookie;
+use yii\web\NotFoundHttpException;
 // use app\models\access\BonuspuntenAccess;
 // use app\models\access\RouteAccess;
 
@@ -66,6 +67,11 @@ class AccessControl extends HikeActiveRecord {
         // Define the access class
         $class = 'app\\models\\access\\' . $classname;
         $model = new $class($this);
+
+        if (!method_exists($model, $method) OR
+            !is_callable(array($model, $method))) {
+            throw new NotFoundHttpException('Method ' . $method . 'does not exist.');
+        }
         return call_user_func(array($model, $method));
     }
 

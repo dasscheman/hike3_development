@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\OpenNoodEnvelop;
+use yii\web\NotFoundHttpException;
 
 class OpenNoodenvelopAccess {
 

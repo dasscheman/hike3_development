@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\Bonuspunten;
+use yii\web\NotFoundHttpException;
 
 class BonuspuntenAccess {
 

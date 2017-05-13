@@ -4,6 +4,7 @@ namespace app\models\access;
 
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use yii\web\NotFoundHttpException;
 
 class SiteAccess {
 

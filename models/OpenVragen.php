@@ -52,7 +52,7 @@ class OpenVragen extends HikeActiveRecord
                 ['open_vragen_name', 'event_ID', 'route_ID'],
                 'unique',
                 'targetAttribute' => ['open_vragen_name', 'event_ID', 'route_ID'],
-                'message' => Yii::t('app/error', 'Question name already exists for this route section')]
+                'message' => Yii::t('app', 'Question name already exists for this route section')]
         ];
     }
 

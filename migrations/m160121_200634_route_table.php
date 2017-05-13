@@ -16,17 +16,18 @@ class m160121_200634_route_table extends Migration
         /* de mogelijkheid om introductie vragen, posten en stille posten te ondersteunen.
         /*****************************************************************************/
 
-	$this->createTable('tbl_route', [
+	$this->createTable(
+        'tbl_route', [
             'route_ID'          => $this->primaryKey(),
-            'route_name'	=> $this->string(255)->notNull(),
+            'route_name'        => $this->string(255)->notNull(),
             'event_ID'          => $this->integer()->notNull(),
             'day_date'          => $this->date(),
             'route_volgorde'    => $this->integer(11),
-            'create_time'	=> $this->dateTime(),
+            'create_time'       => $this->dateTime(),
             'create_user_ID'    => $this->integer(11),
-            'update_time'	=> $this->dateTime(),
+            'update_time'       => $this->dateTime(),
             'update_user_ID'    => $this->integer(11),
-	],
+        ],
         'ENGINE=InnoDB');
 
         $this->createIndex(
@@ -35,7 +36,7 @@ class m160121_200634_route_table extends Migration
             ['event_ID', 'day_date', 'route_name'],
             true);
 
-	$this->addForeignKey(
+        $this->addForeignKey(
             "fk_route_event_id",
             "tbl_route",
             "event_ID",
@@ -44,7 +45,7 @@ class m160121_200634_route_table extends Migration
             "RESTRICT",
             "CASCADE");
 
-	$this->addForeignKey(
+       $this->addForeignKey(
             "fk_route_create_user_name",
             "tbl_route",
             "create_user_ID",
@@ -53,7 +54,7 @@ class m160121_200634_route_table extends Migration
             "RESTRICT",
             "CASCADE");
 
-	$this->addForeignKey(
+       $this->addForeignKey(
             "fk_route_update_user_name",
             "tbl_route",
             "update_user_ID",

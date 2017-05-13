@@ -30,7 +30,7 @@ class BonuspuntenController extends Controller
                 'only' => ['index', 'view', 'create', 'update', 'delete', 'cancel'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'delete', 'cancel',  'create', 'update', 'view'],
+                        'actions' => ['index', 'delete', 'create', 'update', 'view'],
                         'allow' => TRUE,
                         'matchCallback' => function () {
                             return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['bonuspunten_ID' => Yii::$app->request->get('bonuspunten_ID')]);
@@ -93,23 +93,6 @@ class BonuspuntenController extends Controller
     }
 
     /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCancel($bonuspunten_ID)
-    {
-        $model = $this->findModel($bonuspunten_ID);
-
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form', [
-                'model' => $model,
-            ]);
-        }
-        return $this->redirect(['bonuspunten/index']);
-    }
-
-    /**
      * Deletes an existing Bonuspunten model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
@@ -154,11 +137,6 @@ class BonuspuntenController extends Controller
             }
         }
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form', [
-                'model' => $model,
-            ]);
-        }
         return $this->redirect(['bonuspunten/index']);
     }
 

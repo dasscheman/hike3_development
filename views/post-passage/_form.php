@@ -13,30 +13,12 @@ use app\models\Groups;
 ?>
 
 <div class="tbl-post-passage-form">
-    <div class="col-sm-3">
-        <div class="row-1">
-            <div class="view">
+
     <?php
-    // Pjax::begin([
-    //     'id' => 'post-passage-form-' . $model->posten_passage_ID,
-    //     'enablePushState' => false
-    // ]);
-    echo AlertBlock::widget([
-        'type' => AlertBlock::TYPE_ALERT,
-        'useSessionFlash' => true,
-        'delay' => 4000,
-    ]);
     $form = ActiveForm::begin([
-        'options'=>[
-            'data-pjax'=>TRUE,
-        ],
-    ]); ?>
+        'action' => $model->isNewRecord ? ['post-passage/create'] : ['post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID]]);
 
-    <h3>
-        <?php echo Html::encode($model->post->post_name); ?>
-    </h3> <?php
     echo $form->field($model, 'gepasseerd')->checkBox(['uncheck' => 0, 'selected' => TRUE]);
-
     echo $form->field($model, 'binnenkomst')->widget(
         DateTimePicker::classname(), [
         	'options' => ['placeholder' => Yii::t('app', 'Enter incheck time')],
@@ -47,49 +29,22 @@ use app\models\Groups;
     ]);
 
     echo  $form->field($model, 'vertrek')->widget(
-    DateTimePicker::classname(), [
-    	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
-        'type' => DateTimePicker::TYPE_INPUT,
-    	'pluginOptions' => [
-    		'autoclose' => true
-    	]
+        DateTimePicker::classname(), [
+        	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
+            'type' => DateTimePicker::TYPE_INPUT,
+        	'pluginOptions' => [
+        		'autoclose' => true
+        	]
     ]);
     ?>
 
-    <div class="form-group">
+    <div class="form-post-passage">
         <?php
+        echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
 
-        echo Html::a(
-            Yii::t('app', 'Save'),
-            ['/post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID],
-            [
-                'class' => 'btn btn-xs btn-success',
-                'data-method'=>'post',
-                'data-pjax' => 'post-passage-list-' . $model->posten_passage_ID
-            ]
-        );
-
-        // echo Html::a(
-        //     Yii::t('app', 'Delete'),
-        //     ['/post-passage/delete', 'posten_passage_ID' => $model->posten_passage_ID],
-        //     ['class' => 'btn btn-xs btn-danger'],
-        //     ['data-pjax' => 'post-passage-list-' . $model->posten_passage_ID]
-        // );
-
-        echo Html::a(
-            Yii::t('app', 'Cancel'),
-            ['/post-passage/cancel', 'posten_passage_ID' => $model->posten_passage_ID],
-            [
-                'class' => 'btn btn-xs btn-primary',
-                'data-pjax' => 'post-passage-list-' . $model->posten_passage_ID
-            ]
-        ); ?>
+        if (!$model->isNewRecord) {
+            echo Html::submitButton(Yii::t('app', 'Delete'), ['class' => 'btn btn-delete', 'value'=>'delete', 'name'=>'submit']);
+        } ?>
     </div>
-
-    <?php
-    ActiveForm::end();
-    // Pjax::end(); ?>
-</div>
-</div>
-</div>
+    <?php ActiveForm::end(); ?>
 </div>

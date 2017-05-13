@@ -253,11 +253,6 @@ class OpenVragenAntwoordenController extends Controller
             Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
         }
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form-organisation', [
-                'model' => $model,
-            ]);
-        }
         return $this->redirect(['open-vragen-antwoorden/index']);
     }
 

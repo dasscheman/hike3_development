@@ -38,13 +38,12 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
     <?php
-
     if($model->isNewRecord) {
         echo $form->field($model, 'group_ID',
         [
             'options' => [
-                'id' => 'bonuspunten-group-field-create'
-            ]
+                'id' => 'bonuspunten-group-field-create',
+            ],
         ]
         )->dropDownList(
             Groups::getGroupOptionsForEvent(),
@@ -84,18 +83,7 @@ use yii\widgets\Pjax;
                     'bonuspunten_ID' => $model->bouspunten_ID
                 ],
                 [
-                    'class' => 'btn btn-xs btn-primary',
-                    'data-method'=>'post',
-                    'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
-                ]
-            );
-            echo Html::a(
-                Yii::t('app', 'Cancel'),
-                [
-                    '/bonuspunten/cancel',
-                    'bonuspunten_ID' => $model->bouspunten_ID],
-                [
-                    'class' => 'btn btn-xs btn-danger',
+                    'class' => 'btn btn-xs btn-success',
                     'data-method'=>'post',
                     'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
                 ]
@@ -111,8 +99,8 @@ use yii\widgets\Pjax;
                     'data-pjax' => 'bonuspunten-form-' . $model->bouspunten_ID
                 ]
             );
-        } else {
-
+        }
+        if($model->isNewRecord) {
             echo Html::a(
                 Yii::t('app', 'Save'),
                 [

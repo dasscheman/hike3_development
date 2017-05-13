@@ -108,18 +108,17 @@ class EventNamesController extends Controller
             $model->image=UploadedFile::getInstance($model,'image');
 
             $modelDeelnemersEvent->event_ID = $event_id;
-            $modelDeelnemersEvent->user_ID = \Yii::$app->user->id;
+            $modelDeelnemersEvent->user_ID = Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
             $modelDeelnemersEvent->group_ID = NULL;
 
-            $modelRoute->day_date = NULL;
+            $modelRoute->day_date = '0000-00-00';
             $modelRoute->route_name = "Introductie";
             $modelRoute->event_ID = $event_id;
             $modelRoute->route_volgorde = 1;
 
             // validate BOTH $model, $modelDeelnemersEvent and $modelRoute.
             $valid = $model->validate();
-            d($modelDeelnemersEvent->validate());
             $valid = $modelDeelnemersEvent->validate() && $valid;
             $valid = $modelRoute->validate() && $valid;
             if($valid)
@@ -127,9 +126,6 @@ class EventNamesController extends Controller
 				$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
                 // use false parameter to disable validation
                 $model->save(false);
-
-                // During the validate the event_id is set. Here we bypass the logic in the validation.
-                $modelDeelnemersEvent->event_ID = $model->event_ID;
                 $modelDeelnemersEvent->save(false);
                 $modelRoute->save(false);
                 $modelEvents = EventNames::find()
@@ -153,7 +149,7 @@ class EventNamesController extends Controller
                             'app',
                             'You created a new hike. Here you add players.
                                 On the route overview page you can create the route of an hike.
-                                Players cannot see this when the hiek status is setup.')
+                                Players cannot see this when the hike status is setup.')
                     );
                 }
                 Yii::$app->user->identity->setSelected($model->event_ID);
@@ -162,11 +158,7 @@ class EventNamesController extends Controller
             }
         }
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('/event-names/create', ['model' => $model]);
-        }
-
-        return $this->render('/event-names/create',array('model'=>$model));
+        return $this->render('/event-names/create', ['model'=>$model]);
     }
 
     /**

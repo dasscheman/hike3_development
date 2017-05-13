@@ -116,13 +116,16 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-     // You can only add 
+     // You can only add
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
-            return(true);
+            if (Yii::$app->controller->id !== 'event-names' AND
+                Yii::$app->controller->action->id !== 'create') {
+                $this->event_ID = Yii::$app->user->identity->selected;
+            }
+            return(TRUE);
         }
-        return(false);
+        return(FALSE);
     }
 
     /**
