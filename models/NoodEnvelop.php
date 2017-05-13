@@ -50,7 +50,7 @@ class NoodEnvelop extends HikeActiveRecord
             [
                 ['nood_envelop_name', 'event_ID'],
                 'unique', 'targetAttribute' => ['nood_envelop_name', 'event_ID'],
-                'message' => Yii::t('app/error', 'This hint name alrady exists for this Hike')]
+                'message' => Yii::t('app', 'This hint name alrady exists for this Hike')]
         ];
     }
 

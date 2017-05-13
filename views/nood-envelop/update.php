@@ -3,14 +3,10 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblNoodEnvelop */
+/* @var $model app\models\NoodEnvelop */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Nood Envelop',
-]) . ' ' . $model->nood_envelop_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Nood Envelops'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->nood_envelop_ID, 'url' => ['view', 'id' => $model->nood_envelop_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'Edit {name} ', [
+    'name' => $model->nood_envelop_name]);
 ?>
 <div class="tbl-nood-envelop-update">
 

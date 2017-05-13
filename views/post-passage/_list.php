@@ -3,6 +3,7 @@ use app\components\GeneralFunctions;
 use yii\helpers\Html;
 use kartik\widgets\AlertBlock;
 use yii\widgets\Pjax;
+use prawee\widgets\ButtonAjax;
 
 /* @var $this GroupsController */
 /* @var $data Groups */

@@ -7,6 +7,7 @@ use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\PostPassage;
 use app\models\Posten;
+use yii\web\NotFoundHttpException;
 
 class PostPassageAccess {
 

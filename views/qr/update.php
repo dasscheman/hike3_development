@@ -5,12 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblQr */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Qr',
-]) . ' ' . $model->qr_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Qrs'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->qr_ID, 'url' => ['view', 'id' => $model->qr_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'Edit {name} ', [
+    'name' => $model->qr_name]);
 ?>
 <div class="tbl-qr-update">
 

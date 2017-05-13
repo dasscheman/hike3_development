@@ -15,7 +15,7 @@ use prawee\widgets\ButtonAjax;
         <?php
         echo ButtonAjax::widget([
             'name'=>Yii::t('app', 'Create new hint'),
-             'route'=>['nood-envelop/create', ['route_ID' => $model->route_ID]],
+             'route'=>['nood-envelop/create', 'route_ID' => $model->route_ID],
              'modalId'=>'#main-modal',
              'modalContent'=>'#main-content-modal',
              'options'=>[

@@ -6,9 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblNoodEnvelop */
 
-$this->title = Yii::t('app', 'Create Tbl Nood Envelop');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Nood Envelops'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Create hint');
+
 ?>
 <div class="tbl-nood-envelop-create">
 

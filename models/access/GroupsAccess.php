@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\Groups;
+use yii\web\NotFoundHttpException;
 
 class GroupsAccess {
 

@@ -93,15 +93,15 @@ class OpenVragenController extends Controller
     }
 
     /**
-     * Creates a new TblOpenVragen model.
+     * Creates a new OpenVragen model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($route_ID)
     {
         $model = new OpenVragen();
         if (!$model->load(Yii::$app->request->post())) {
-            $model->route_ID = Yii::$app->request->get(1)['route_id'];
+            $model->route_ID = $route_ID;
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
@@ -109,21 +109,12 @@ class OpenVragenController extends Controller
         $model->event_ID = Yii::$app->user->identity->selected;
         $model->setNewOrderForVragen();
 
-        if($model->save()) {
-
-            $event_Id = Yii::$app->user->identity->selected;
-            $startDate = EventNames::getStartDate($event_Id);
-            $endDate = EventNames::getEndDate($event_Id);
-
-            $searchModel = new RouteSearch();
-
-            return $this->render('/route/index', [
-                'searchModel' => $searchModel,
-                'startDate' => $startDate,
-                'endDate' => $endDate
-            ]);
+        if(!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save question.'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new question.'));
         }
-        dd($model->errors);
+        return $this->redirect(['route/index']);
     }
 
     /**
@@ -140,7 +131,6 @@ class OpenVragenController extends Controller
                 'model' => $model,
             ]);
         }
-
         if (Yii::$app->request->post('submit') == 'delete') {
             $exist = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
@@ -150,27 +140,21 @@ class OpenVragenController extends Controller
                         ':open_vragen_id' => $model->open_vragen_ID
                     ])
                 ->exists();
-
             if (!$exist) {
                 $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted question.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at leas one group.'));
             }
+            return $this->redirect(['route/index']);
         }
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to question.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
         }
-        $event_Id = Yii::$app->user->identity->selected;
-        $startDate = EventNames::getStartDate($event_Id);
-        $endDate = EventNames::getEndDate($event_Id);
 
-        $searchModel = new RouteSearch();
-
-        return $this->render('/route/index', [
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
-        ]);
+        return $this->redirect(['route/index']);
     }
 
     /**

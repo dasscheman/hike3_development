@@ -59,7 +59,7 @@ class NoodEnvelopController extends Controller
     }
 
     /**
-     * Lists all TblNoodEnvelop models.
+     * Lists all NoodEnvelop models.
      * @return mixed
      */
     public function actionIndex()
@@ -86,41 +86,33 @@ class NoodEnvelopController extends Controller
     }
 
     /**
-     * Creates a new TblNoodEnvelop model.
+     * Creates a new NoodEnvelop model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($route_ID)
     {
         $model = new NoodEnvelop();
-        if ($model->load(Yii::$app->request->post())) {
-			$model->event_ID = Yii::$app->user->identity->selected;
-			$model->setNewOrderForNoodEnvelop();
-
-			if($model->save()) {
-
-                $event_Id = Yii::$app->user->identity->selected;
-                $startDate = EventNames::getStartDate($event_Id);
-                $endDate = EventNames::getEndDate($event_Id);
-
-                $searchModel = new RouteSearch();
-
-                return $this->render('/route/index', [
-                    'searchModel' => $searchModel,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate
-                ]);
-            }
-        } else {
-            $model->route_ID = Yii::$app->request->get(1)['route_id'];
+        if (!$model->load(Yii::$app->request->post())) {
+            $model->route_ID = $route_ID;
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
         }
+
+		$model->event_ID = Yii::$app->user->identity->selected;
+		$model->setNewOrderForNoodEnvelop();
+
+        if(!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save hint.'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
+        }
+        return $this->redirect(['route/index']);
     }
 
     /**
-     * Updates an existing TblNoodEnvelop model.
+     * Updates an existing NoodEnvelop model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -143,28 +135,22 @@ class NoodEnvelopController extends Controller
                        ':nood_envelop_id' => $model->nood_envelop_ID
                    ])
                ->exists();
-
             if (!$exist) {
                 $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted hint.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it is opened by at least one group.'));
             }
+            return $this->redirect(['route/index']);
         }
 
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to hint.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
         }
-        $event_Id = Yii::$app->user->identity->selected;
-        $startDate = EventNames::getStartDate($event_Id);
-        $endDate = EventNames::getEndDate($event_Id);
 
-        $searchModel = new RouteSearch();
-
-        return $this->render('/route/index', [
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
-        ]);
+        return $this->redirect(['route/index']);
     }
 
     /**

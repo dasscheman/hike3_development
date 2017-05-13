@@ -5,6 +5,7 @@ namespace app\models\access;
 use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use yii\web\NotFoundHttpException;
 
 class DeelnemersEventAccess {
 

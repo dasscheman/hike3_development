@@ -99,40 +99,32 @@ class QrController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($route_ID)
     {
         $model = new Qr();
-        if ($model->load(Yii::$app->request->post())) {
-			$model->event_ID = Yii::$app->user->identity->selected;
-			$model->qr_code = Qr::getUniqueQrCode();
-			$model->route_ID = Yii::$app->request->get(1)['route_id'];
-			$model->qr_volgorde = Qr::getNewOrderForQr($model->route_ID);
-
-			if($model->save()) {
-
-                $event_Id = Yii::$app->user->identity->selected;
-                $startDate = EventNames::getStartDate($event_Id);
-                $endDate = EventNames::getEndDate($event_Id);
-
-                $searchModel = new RouteSearch();
-
-                return $this->render('/route/index', [
-                    'searchModel' => $searchModel,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate
-                ]);
-            }
-        } else {
+        if (!$model->load(Yii::$app->request->post())) {
+            $model->route_ID = $route_ID;
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
         }
+
+		$model->event_ID = Yii::$app->user->identity->selected;
+		$model->qr_code = Qr::getUniqueQrCode();
+		$model->setNewOrderForQr();
+
+        if(!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save silent station.'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
+        }
+        return $this->redirect(['route/index']);
     }
 
     /**
-     * Updates an existing TblQr model.
+     * Updates an existing Qr model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param integer $qr_ID
      * @return mixed
      */
     public function actionUpdate($qr_ID)
@@ -153,29 +145,21 @@ class QrController extends Controller
                        ':qr_id' => $model->qr_ID
                    ])
                ->exists();
-
             if (!$exist) {
                 $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted silent station.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
             }
+            return $this->redirect(['route/index']);
         }
-
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to silent station.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
         }
 
-        $event_Id = Yii::$app->user->identity->selected;
-        $startDate = EventNames::getStartDate($event_Id);
-        $endDate = EventNames::getEndDate($event_Id);
-
-        $searchModel = new RouteSearch();
-
-        return $this->render('/route/index', [
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
-        ]);
+        return $this->redirect(['route/index']);
     }
 
     /**

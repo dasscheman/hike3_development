@@ -201,6 +201,7 @@ class Qr extends HikeActiveRecord
                     ':route_id' =>$this->route_ID,
                 ])
             ->max('qr_volgorde');
+
         if (empty($max_order)) {
             $this->qr_volgorde = 1;
         } else {

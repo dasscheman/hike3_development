@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\OpenVragen;
+use yii\web\NotFoundHttpException;
 
 class OpenVragenAccess {
 
