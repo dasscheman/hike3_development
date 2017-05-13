@@ -87,7 +87,7 @@ class RouteSearch extends Route
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-//            return $dataProvider;
+           return $dataProvider;
         }
 
         $query->andFilterWhere([
@@ -103,31 +103,4 @@ class RouteSearch extends Route
 
         return $dataProvider;
     }
-
-//    public function searchRoute($event_id, $startDate) {
-//		// Warning: Please modify the following code to remove attributes that
-//		// should not be searched.
-//
-//		$criteria=new CDbCriteria;
-//
-//		$criteria->compare('route_ID',$this->route_ID);
-//		$criteria->compare('event_ID',$this->event_ID);
-//		$criteria->compare('day_date',$this->day_date,true);
-//		$criteria->condition = 'event_ID=:event_id AND day_date=:date';
-//		$criteria->params=array(':event_id'=>$event_id,
-//							    ':date'=>$startDate);
-//		$criteria->order= 'route_volgorde ASC';
-//		$criteria->compare('route_volgorde',$this->route_volgorde);
-//		$criteria->compare('create_time',$this->create_time,true);
-//		$criteria->compare('create_user_ID',$this->create_user_ID);
-//		$criteria->compare('update_time',$this->update_time,true);
-//		$criteria->compare('update_user_ID',$this->update_user_ID);
-//
-//		return new CActiveDataProvider($this, array(
-//			'criteria'=>$criteria,
-//			'pagination'=>array('pageSize'=>50)
-//		));
-//    }
-
-    
 }

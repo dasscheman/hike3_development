@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblRoute */
+/* @var $model app\models\Route */
 
 $this->title = Yii::t('app', 'Update {routeName}: ', [
     'routeName' => $model->route_name]);

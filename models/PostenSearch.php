@@ -70,5 +70,47 @@ class PostenSearch extends Posten
         $query->andFilterWhere(['like', 'post_name', $this->post_name]);
 
         return $dataProvider;
-    }    
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchPostenInEvent($params)
+    {
+        $query = Posten::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected))
+            ->orderBy('post_volgorde ASC');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'post_ID' => $this->post_ID,
+            'event_ID' => $this->event_ID,
+            'date' => $this->date,
+            'post_volgorde' => $this->post_volgorde,
+            'score' => $this->score,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        $query->andFilterWhere(['like', 'post_name', $this->post_name]);
+
+        return $dataProvider;
+    }
 }

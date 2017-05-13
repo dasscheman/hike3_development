@@ -34,10 +34,11 @@ class RouteAccess {
     }
 
     function RouteMoveUpDown() {
-        if ($this->userModel->parameters['move_action'] == 'up'){
+        if ($this->userModel->parameters['move_action'] == 'down'){
             return Route::higherOrderNumberExists($this->userModel->ids['route_ID']);
         }
-        if ($this->userModel->parameters['move_action'] == 'down'){
+
+        if ($this->userModel->parameters['move_action'] == 'up'){
             return Route::lowererOrderNumberExists($this->userModel->ids['route_ID']);
         }
         return FALSE;

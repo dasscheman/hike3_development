@@ -46,7 +46,17 @@ $this->title = Yii::t('app', 'Routes');
             'format' => 'raw',
            // here comes the problem - instead of parent_region I need to have parent
             'value'=>function ($model, $key, $index, $column) {
-                return Html::a($model->route_name, ['route/update', 'route_ID' => $key]);
+                return ButtonAjax::widget([
+                    'name'=>$model->route_name,
+                     'route'=>['route/update', 'route_ID' => $key],
+                     'modalId'=>'#main-modal',
+                     'modalContent'=>'#main-content-modal',
+                     'options'=>[
+                         'class'=> 'btn btn-xs btn-primary',
+                         'title'=>'Edit',
+                         'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'update', ['route_ID' => $key]),
+                     ]
+                 ]);
             },
         ],
         'route_volgorde',
@@ -197,7 +207,7 @@ $this->title = Yii::t('app', 'Routes');
                         ]
                     ]),
                 ],
-                '{export}',
+                //'{export}',
                 '{toggleData}',
             ],
             // set export properties

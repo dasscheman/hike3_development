@@ -218,7 +218,7 @@ class RouteController extends Controller
     }
 
     /**
-     * Updates an existing TblRoute model.
+     * Updates an existing Route model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -227,7 +227,7 @@ class RouteController extends Controller
     {
         $model = $this->findModel($route_ID);
         if (!$model->load(Yii::$app->request->post())) {
-            return $this->render('update', [
+            return $this->renderPartial('update', [
                 'model' => $model,
             ]);
         }
@@ -266,13 +266,17 @@ class RouteController extends Controller
 
             if (!$exist) {
                 $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
             }
+            return $this->redirect(['route/index']);
         }
 
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to route.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to route.'));
         }
         return $this->redirect(['route/index']);
     }
@@ -379,10 +383,12 @@ class RouteController extends Controller
                 'startDate' => $startDate,
                 'endDate' => $endDate]);
         }
+
         return $this->render('/route/index',[
             'searchModel' => $searchModel,
             'startDate' => $startDate,
-            'endDate' => $endDate]);
+            'endDate' => $endDate
+        ]);
 	}
 
     /**
