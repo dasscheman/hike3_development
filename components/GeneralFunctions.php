@@ -20,7 +20,7 @@ class GeneralFunctions
 		if($yesno==1)
 			return "Ja";
 	}
-	
+
 	/**
 	 * Returns true als ingelogde user de admin is. Als site life gaat
 	 * altijd op false zetten.
@@ -29,10 +29,10 @@ class GeneralFunctions
 	{
 		if(Yii::app()->user->id == 1)
 			{return true;}
-			
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns true als gebruiker is ingeschreven voor 1 event dat de status
 	 * 'gestart' heeft. Anders return false.
@@ -42,7 +42,7 @@ class GeneralFunctions
 
 		$count_gestart = 0;
 		$dataDeelnemersEvent = DeelnemersEvent::model()->findAll('user_ID = :user_id',
-						       array(':user_id' => Yii::app()->user->id)); 
+						       array(':user_id' => Yii::app()->user->id));
 
 		foreach($dataDeelnemersEvent as $record)
 		{
@@ -52,20 +52,20 @@ class GeneralFunctions
 			   $dataEventNames->status == 2)
 				$count_gestart++;
 		}
-	
+
 		if($count_gestart<>1)
 			{return false;}
 		return true;
 	}
-	
+
 	/**
 	 * Returns event_id als gebruiker is ingeschreven voor 1 event dat de status
 	 * 'gestart' heeft. checkForSingleActiveEventForUser() Moet eerst afgecheckt worden.
 	 */
 	public static function getSingleActiveEventIdForUser()
-	{		
+	{
 		$dataDeelnemersEvent = DeelnemersEvent::model()->findAll('user_ID = :user_id',
-						       array(':user_id' => Yii::app()->user->id)); 
+						       array(':user_id' => Yii::app()->user->id));
 
 		foreach($dataDeelnemersEvent as $record)
 		{
@@ -76,7 +76,7 @@ class GeneralFunctions
 				return $dataEventNames->event_ID;
 		}
 	}
-		
+
 	/**
 	 * Returns true als gebruiker is ingeschreven voor 1 event.
 	 * Anders return false.
@@ -85,7 +85,7 @@ class GeneralFunctions
 	{
 		$count_gestart = 0;
 		$dataDeelnemersEvent = DeelnemersEvent::model()->findAll('user_ID = :user_id',
-						       array(':user_id' => Yii::app()->user->id)); 
+						       array(':user_id' => Yii::app()->user->id));
 
 		foreach($dataDeelnemersEvent as $record)
 		{
@@ -93,20 +93,20 @@ class GeneralFunctions
 								    array(':event_id'=>$record->event_ID));
 			$count_gestart++;
 		}
-	
+
 		if($count_gestart<>1)
 			{return false;}
 		return true;
 	}
-	
+
 	/**
 	 * Returns event_id als gebruiker is ingeschreven voor 1 event.
 	 * checkForSingleEventForUser() Moet eerst afgecheckt worden.
 	 */
 	public static function getSingleEventIdForUser()
-	{		
+	{
 		$dataDeelnemersEvent = DeelnemersEvent::model()->findAll('user_ID = :user_id',
-						       array(':user_id' => Yii::app()->user->id)); 
+						       array(':user_id' => Yii::app()->user->id));
 
 		foreach($dataDeelnemersEvent as $record)
 		{
@@ -115,7 +115,7 @@ class GeneralFunctions
 			return $dataEventNames->event_ID;
 		}
 	}
-		
+
 	public static function randomString($length)
 	{
 		$chars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789";

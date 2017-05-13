@@ -42,8 +42,8 @@ class Posten extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['post_name', 'event_ID'], 'required'],
-            [['event_ID', 'post_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
+            [['post_name', 'event_ID', 'score'], 'required'],
+            [['event_ID', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['date', 'create_time', 'update_time'], 'safe'],
             [['post_name'], 'string', 'max' => 255],
             [
@@ -209,8 +209,9 @@ class Posten extends HikeActiveRecord
 	{
         $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
-            ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
+            ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->orderBy('post_volgorde DESC')
             ->exists();
 
 		if ($dataNext) {
@@ -223,8 +224,9 @@ class Posten extends HikeActiveRecord
 	{
         $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
-            ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
+            ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->orderBy('post_volgorde ASC')
             ->exists();
 
 		if ($dataNext) {

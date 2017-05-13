@@ -7,10 +7,11 @@ use app\models\Groups;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
+use app\components\CustomAlertBlock;
 
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\RouteSearch */
+/* @var $searchModel app\models\PostenSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Posten');
@@ -34,9 +35,31 @@ $this->title = Yii::t('app', 'Posten');
     echo '<div id="main-content-modal"></div>';
     Modal::end();
 
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 20000,
+    ]);
     $count=0;
     $gridColumns = [
-        'post_name',
+        [
+            'attribute' => 'post_name',
+            'format' => 'raw',
+           // here comes the problem - instead of parent_region I need to have parent
+            'value'=>function ($model, $key, $index, $column) {
+                return ButtonAjax::widget([
+                    'name'=>$model->post_name,
+                     'route'=>['posten/update', 'post_ID' => $key],
+                     'modalId'=>'#main-modal',
+                     'modalContent'=>'#main-content-modal',
+                     'options'=>[
+                         'class'=> 'btn btn-xs btn-primary',
+                         'title'=>'Edit',
+                         'disabled' => !Yii::$app->user->identity->isActionAllowed('posten', 'update', ['post_ID' => $key]),
+                     ]
+                 ]);
+            },
+        ],
         'post_volgorde',
         'score',
         [
@@ -64,28 +87,65 @@ $this->title = Yii::t('app', 'Posten');
             'expandTitle' => Yii::t('app', 'Open view groups'),
             'collapseTitle' => Yii::t('app', 'Close view groups'),
         ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header'=>'Actions',
+            'template' => '{up} {down}',
+            'buttons' => [
+                'up' => function ($url, $model) {
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-chevron-up"></span>',
+                        [
+                            'posten/move-up-down',
+                            'post_ID' => $model->post_ID,
+                            'up_down' => 'up',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Move up'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                },
+                'down' => function ($url, $model) {
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-chevron-down"></span>',
+                        [
+                            'posten/move-up-down',
+                            'post_ID' => $model->post_ID,
+                            'up_down' => 'down',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Mode down'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                },
+            ],
+            'visibleButtons' => [
+                'up' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'posten',
+                        'moveUpDown',
+                        ['post_ID' => $key],
+                        ['move_action' => 'up', 'date' => $model->date]);
+                 },
+                'down' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'posten',
+                        'moveUpDown',
+                        ['post_ID' => $key],
+                        ['move_action' => 'down', 'date' => $model->date]);
+                 }
+            ]
+        ],
     ];
 
-
     while(strtotime($startDate) <= strtotime($endDate)) {
-
-        // $gridColumns[4]['detail'] =
-        //     function ($model, $key, $index, $column, $startDate) {
-        //         if($key === Posten::getStartPost($startDate)) {
-        //             $groups = Groups::find()
-        //                 ->where('event_ID =:event_id')
-        //                 ->params([':event_id' => Yii::$app->user->identity->selected])
-        //                 ->all();
-        //
-        //             return Yii::$app->controller->renderPartial('/post-passage/view-start', ['model'=>$groups]);
-        //         }
-        //         return Yii::$app->controller->renderPartial('/post-passage/view', ['model'=>$model]);
-        //     };
         $dataArray[$count]=array(
 		    'label' =>$startDate,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
-                'dataProvider'=>$searchModel->search(['PostenSearch' => ['date' => $startDate]]),
+                'dataProvider'=>$searchModel->searchPostenInEvent(['PostenSearch' => ['date' => $startDate]]),
                 'columns'=>$gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],
@@ -106,7 +166,7 @@ $this->title = Yii::t('app', 'Posten');
                             ]
                         ]),
                     ],
-                    '{export}',
+                    //'{export}',
                     '{toggleData}',
                 ],
                 // set export properties

@@ -95,3 +95,29 @@ a.desc:after {
     font-size: 1em;
     color: #337ab7;
 }
+
+.alert-post,
+.alert-route,
+.alert-hint,
+.alert-qr,
+.alert-question {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.alert-post,
+.alert-route,
+.alert-hint,
+.alert-qr,
+.alert-questions hr {
+    border-top-color: #a6e1ec;
+}
+
+.alert-post,
+.alert-route,
+.alert-hint,
+.alert-qr,
+.alert-question .alert-link {
+    color: #245269;
+}

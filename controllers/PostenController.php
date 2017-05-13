@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Posten;
 use app\models\PostenSearch;
+use app\models\PostPassage;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -69,16 +70,12 @@ class PostenController extends Controller
         $event_Id = Yii::$app->user->identity->selected;
 		$startDate=EventNames::getStartDate($event_Id);
 		$endDate=EventNames::getEndDate($event_Id);
-
         $searchModel = new PostenSearch();
 
-        $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
-        $queryParams["PostenSearch"]["event_ID"] = $event_Id ;
-        $postenData = $searchModel->search($queryParams);
+        $this::setPostenIndexMessage($event_Id);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-			'dataProvider'=>$postenData,
 			'startDate'=>$startDate,
 			'endDate'=>$endDate
         ]);
@@ -101,34 +98,24 @@ class PostenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($date)
     {
         $model = new Posten();
-
-        if (Yii::$app->request->post('Posten') && $model->load(Yii::$app->request->post())) {
-
-            $model->setNewOrderForPosten();
-            if($model->save()) {
-                return $this->redirect(['/posten/index']);
-            }
-        } else {
-            // This set the tab from which the call is started.
-            $date = Yii::$app->request->get('date');
-            $model->setAttributes([
-                'event_ID' => Yii::$app->user->identity->selected,
-                'date' => $date
+        if (!$model->load(Yii::$app->request->post())) {
+            $model->date = $date;
+            return $this->renderPartial('create', [
+                'model' => $model,
             ]);
         }
+        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->setNewOrderForPosten();
 
-
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('create', ['model' => $model]);
+        if(!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save station.'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
         }
-
-        return $this->render([
-            '/posten/create',
-            'model' => $model
-        ]);
+        return $this->redirect(['posten/index']);
     }
 
     /**
@@ -140,14 +127,35 @@ class PostenController extends Controller
     public function actionUpdate($post_ID)
     {
         $model = $this->findModel($post_ID);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['/startup/startupOverview', 'event_ID' => $model->event_ID]);
-        } else {
-            return $this->render('update', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('update', [
                 'model' => $model,
             ]);
         }
+        if (Yii::$app->request->post('submit') == 'delete') {
+            $exist = PostPassage::find()
+                ->where('event_ID=:event_id and post_ID=:post_ID')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':post_ID' => $model->post_ID
+                    ])
+                ->exists();
+            if (!$exist) {
+                $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted station.'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
+            }
+            return $this->redirect(['posten/index']);
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to station.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
+        }
+
+        return $this->redirect(['posten/index']);
     }
 
     /**
@@ -189,8 +197,52 @@ class PostenController extends Controller
         }
     }
 
-	public function actionMoveUpDown()
+	public function actionMoveUpDown($post_ID, $up_down)
     {
+        $model = $this->findModel($post_ID);
+        if ($up_down === 'up') {
+            $previousModel = Posten::find()
+                ->where('event_ID =:event_id and date =:date and post_volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->date, ':order' => $model->post_volgorde])
+                ->orderBy('post_volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = Posten::find()
+                ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->date, ':order' => $model->post_volgorde])
+                ->orderBy('post_volgorde ASC')
+                ->one();
+        }
+
+        $tempCurrentVolgorde = $model->post_volgorde;
+        $model->post_volgorde = $previousModel->post_volgorde;
+        $previousModel->post_volgorde = $tempCurrentVolgorde;
+
+        $model->save();
+        $previousModel->save();
+
+        $event_Id = Yii::$app->user->identity->selected;
+		$startDate=EventNames::getStartDate($event_Id);
+		$endDate=EventNames::getEndDate($event_Id);
+        $searchModel = new PostenSearch();
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/posten/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate]);
+        }
+
+        return $this->render('/posten/index', [
+            'searchModel' => $searchModel,
+			'startDate'=>$startDate,
+			'endDate'=>$endDate
+        ]);
+
+
+
+
+
 		$event_id = $_GET['event_id'];
 		$post_id = $_GET['post_id'];
 		$date = $_GET['date'];
@@ -247,5 +299,22 @@ class PostenController extends Controller
            }
        }
        echo Json::encode(['output'=>'', 'selected'=>'']);
+   }
+
+   protected function setPostenIndexMessage($event_id) {
+       $posten = Posten::find()
+           ->where('event_ID =:event_id')
+           ->params([':event_id' => $event_id]);
+
+       if ($posten->count() < 3 ) {
+          Yii::$app->session->setFlash(
+              'post',
+              Yii::t(
+                  'app',
+                  'Here you can create stations for each day.
+                  For each day an start station is made, you have to use this when you want a group to start.
+                  The start station should have a score of 0, unless you think starting your hike is a challange on it self and deserves points.')
+          );
+       }
    }
 }

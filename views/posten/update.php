@@ -3,14 +3,10 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblPosten */
+/* @var $model app\models\Posten */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Posten',
-]) . ' ' . $model->post_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Postens'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->post_ID, 'url' => ['view', 'id' => $model->post_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'Update {name}: ', [
+    'name' => $model->post_name]);
 ?>
 <div class="tbl-posten-update">
 

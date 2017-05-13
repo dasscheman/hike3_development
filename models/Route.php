@@ -240,7 +240,7 @@ class Route extends HikeActiveRecord
 	{
         $data = Route::findOne($route_id);
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde <:order')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde DESC')
             ->exists();
@@ -254,11 +254,13 @@ class Route extends HikeActiveRecord
 	public function higherOrderNumberExists($route_id)
 	{
         $data = Route::findOne($route_id);
+
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde <:order')
+            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
             ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde ASC')
             ->exists();
+
 		if ($dataNext) {
 			return TRUE;
         }

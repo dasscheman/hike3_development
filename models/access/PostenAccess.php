@@ -46,6 +46,17 @@ class PostenAccess {
         return FALSE;
     }
 
+    function PostenMoveUpDown() {
+        if ($this->userModel->parameters['move_action'] == 'down'){
+            return Posten::higherOrderNumberExists($this->userModel->ids['post_ID']);
+        }
+
+        if ($this->userModel->parameters['move_action'] == 'up'){
+            return Posten::lowererOrderNumberExists($this->userModel->ids['post_ID']);
+        }
+        return FALSE;
+    }
+
     /**
      * Finds the Posten model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
