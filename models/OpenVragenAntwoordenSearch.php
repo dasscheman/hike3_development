@@ -140,4 +140,56 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
 
         return $dataProvider;
     }
+
+
+    public function searchQuestionAnsweredByGroup($params)
+    {
+        // Get group id of current user.
+        $group_id = DeelnemersEvent::find()
+            ->select('group_ID')
+            ->where('event_ID =:event_id and user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->one();
+
+        // Find all answers for founr group id
+        $query = OpenVragenAntwoorden::find()
+            ->where('event_ID=:event_id AND group_ID=:group_id AND checked=:checked')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected,
+                ':group_id' => $group_id->group_ID,
+                ':checked' => TRUE
+            ]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort'=> ['defaultOrder' => ['create_time'=>SORT_ASC]],
+            'pagination' => [
+                'pageSize' => 1,
+            ],
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'open_vragen_antwoorden_ID' => $this->open_vragen_antwoorden_ID,
+            'open_vragen_ID' => $this->open_vragen_ID,
+            'group_ID' => $this->group_ID,
+            'checked' => $this->checked,
+            'correct' => $this->correct,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        $query->andFilterWhere(['like', 'antwoord_spelers', $this->antwoord_spelers]);
+
+        return $dataProvider;
+    }
 }

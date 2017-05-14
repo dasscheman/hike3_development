@@ -5,6 +5,7 @@ namespace app\models\access;
 use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use app\models\PostPassage;
 use app\models\OpenVragenAntwoorden;
 use yii\web\NotFoundHttpException;
 
@@ -48,20 +49,16 @@ class OpenVragenAntwoordenAccess {
         return FALSE;
     }
 
-    function OpenVragenAntwoordenCreate() {
+    function OpenVragenAntwoordenBeantwoorden() {
         if ($this->userModel->hikeStatus == EventNames::STATUS_introductie and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer))) {
-            return TRUE;
-        }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
             $this->userModel->groupOfPlayer === $this->userModel->ids['group_ID'] and
-            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
+            PostPassage::istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
             return TRUE;
         }
         return FALSE;

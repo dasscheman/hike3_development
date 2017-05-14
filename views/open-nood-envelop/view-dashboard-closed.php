@@ -9,11 +9,12 @@ use yii\widgets\Pjax;
 /* @var $model app\models\Route */
 
 ?>
-<div class="tbl-open-nood-envelop-view">
-    <h3> <?php echo Yii::t('app', 'Hints') ?> </h3>
+<div class="tbl-open-nood-envelop-view-dashboard-closed">
+    <h3> <?php echo Yii::t('app', 'Closed Hint') ?> </h3>
     <p>
         <?php
-        Pjax::begin(['id' => 'nood-envelop-view-dashboard', 'enablePushState' => false]);
+        // this is needed for the pagination.
+        Pjax::begin(['id' => 'nood-envelop-view-dashboard-closed', 'enablePushState' => false]);
         ?>
     </p>
     <?php
@@ -32,5 +33,5 @@ use yii\widgets\Pjax;
             'emptyText' => Yii::t('app', 'No hints that can be opened.'),
         ]);
     ?>
-    <?php Pjax::end(); ?>
+    <?php  Pjax::end(); ?>
 </div>

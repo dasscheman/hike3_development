@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\OpenNoodEnvelop;
+use app\models\PostPassage;
 use yii\web\NotFoundHttpException;
 
 class OpenNoodenvelopAccess {
@@ -18,7 +19,7 @@ class OpenNoodenvelopAccess {
         $this->userModel = $arguments[0];
     }
 
-    function OpenNoodEnvelopCreate() {
+    function OpenNoodEnvelopOpen() {
         if ($this->userModel->hikeStatus !== EventNames::STATUS_gestart) {
             return FALSE;
         }
@@ -36,6 +37,7 @@ class OpenNoodenvelopAccess {
         }
         return TRUE;
     }
+
     public function OpenNoodEnvelopIndex() {
         if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;

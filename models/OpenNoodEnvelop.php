@@ -49,7 +49,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
                 ['nood_envelop_ID', 'group_ID'],
                 'unique',
                 'targetAttribute' => ['nood_envelop_ID', 'group_ID'],
-                'message' => Yii::t('app/error', 'This hint is already opened by this group.')]
+                'message' => Yii::t('app', 'This hint is already opened by this group.')]
         ];
     }
 

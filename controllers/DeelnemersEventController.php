@@ -150,7 +150,7 @@ class DeelnemersEventController extends Controller
                 Yii::$app->session->setFlash('error', Json::encode($error));
             }
         } else {
-            return $this->renderPartial('_form', [
+            return $this->renderPartial('update', [
                 'model' => $model,
             ]);
         }
