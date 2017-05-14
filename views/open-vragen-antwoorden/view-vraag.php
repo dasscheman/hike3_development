@@ -10,11 +10,12 @@ use yii\widgets\Pjax;
 /* @var $model app\models\Route */
 
 ?>
-<div class="tbl-open-vragen-view-dashboard">
-    <h3> <?php echo Yii::t('app', 'Questions') ?> </h3>
+<div class="tbl-open-vragen-view-vraag">
+    <h3> <?php echo Yii::t('app', 'Question') ?> </h3>
     <p>
         <?php
-        Pjax::begin(['id' => 'open-vragen-antwoorden-view-dashboard', 'enablePushState' => false]);
+        // this is needed for the pagination.
+        Pjax::begin(['id' => 'open-vragen-antwoorden-view-vraag', 'enablePushState' => false]);
         ?>
     </p>
     <?php
@@ -29,8 +30,8 @@ use yii\widgets\Pjax;
                 ],
             ],
             'dataProvider' => $model,
-            'itemView' => '/open-vragen-antwoorden/_list-dashboard',
-            'emptyText' => Yii::t('app', 'No question to be answereds.'),
+            'itemView' => '/open-vragen-antwoorden/_list-questions',
+            'emptyText' => Yii::t('app', 'No question to be answered.'),
         ]);
     ?>
     <?php Pjax::end(); ?>

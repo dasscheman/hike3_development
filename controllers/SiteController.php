@@ -15,6 +15,7 @@ use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
 use app\models\OpenVragenAntwoorden;
+use app\models\OpenVragenAntwoordenSearch;
 use app\models\OpenVragen;
 use app\models\OpenVragenSearch;
 use app\models\NoodEnvelopSearch;
@@ -189,9 +190,12 @@ class SiteController extends Controller
             $searchQuestionsModel = new OpenVragenSearch();
             $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
 
+            $searchAnswersModel = new OpenVragenAntwoordenSearch();
+            $answerData = $searchAnswersModel->searchQuestionAnsweredByGroup(Yii::$app->request->queryParams);
 
             $searchHintsModel = new NoodEnvelopSearch();
-            $hintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
+            $closedHintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
+            $openHintsData = $searchHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams);
 
             $searchBonusModel = new BonuspuntenSearch();
             $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams);
@@ -203,14 +207,16 @@ class SiteController extends Controller
             $groupModel->setGroupMembers();
 
             $feed = new HikeActivityFeed;
-            $feed->pageSize = 5;
-            $feed->pageCount = 3;
+            $feed->pageSize = 9;
+            $feed->pageCount = 2;
 
             return $this->render('index-players',[
                 'groupModel' => $groupModel,
                 'activityFeed' => $feed->getData(),
                 'questionsData' => $questionsData,
-                'hintsData' => $hintsData,
+                'answerData' => $answerData,
+                'openHintsData' => $openHintsData,
+                'closedHintsData' => $closedHintsData,
                 'qrCheckData' => $qrCheckData,
                 'bonusData' => $bonusData
             ]);

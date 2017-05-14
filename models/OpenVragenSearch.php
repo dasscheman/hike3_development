@@ -95,13 +95,13 @@ class OpenVragenSearch extends OpenVragen
             ->params([':event_id' => Yii::$app->user->identity->selected, ':day_date' => $event->active_day]);
 
         // Find all answers for founr group id
-        $queryAntwoorden = OpenVragenAntwoorden::find();
-        $queryAntwoorden->select('open_vragen_ID')
-                        ->where('event_ID=:event_id AND group_ID=:group_id')
-                        ->addParams([
-                            ':event_id' => Yii::$app->user->identity->selected,
-                            ':group_id' => $group_id->group_ID
-                        ]);
+        $queryAntwoorden = OpenVragenAntwoorden::find()
+            ->select('open_vragen_ID')
+            ->where('event_ID=:event_id AND group_ID=:group_id')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected,
+                ':group_id' => $group_id->group_ID
+            ]);
 
         // Find all questions NOT answered by found group id.
         $query = OpenVragen::find()

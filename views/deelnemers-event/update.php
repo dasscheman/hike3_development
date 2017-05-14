@@ -3,14 +3,9 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblDeelnemersEvent */
+/* @var $model app\models\DeelnemersEvent */
 
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Tbl Deelnemers Event',
-]) . ' ' . $model->deelnemers_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Deelnemers Events'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->deelnemers_ID, 'url' => ['view', 'id' => $model->deelnemers_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'Edit user');
 ?>
 <div class="tbl-deelnemers-event-update">
 

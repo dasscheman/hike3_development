@@ -35,14 +35,23 @@ class OpenNoodEnvelopController extends Controller
                         'allow' => FALSE,
                         'roles'=>array('?'),
                     ),
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('cancel-opening'),
+                        'actions' => ['open'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                [
+                                    'nood_envelop_ID' => Yii::$app->request->get('nood_envelop_ID'),
+                                    'group_ID' => Yii::$app->request->get('group_ID')
+                                ]);
+                        },
                         'roles'=>array('@'),
-                    ),
-                    array(
+                    ],
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('create', 'index', 'update', 'delete', 'open'),
+                        'actions' => ['index', 'update', 'delete'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
@@ -50,7 +59,7 @@ class OpenNoodEnvelopController extends Controller
                                 ['open_nood_envelop_ID' => Yii::$app->request->get('open_nood_envelop_ID')]);
                         },
                         'roles'=>array('@'),
-                    ),
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -98,64 +107,28 @@ class OpenNoodEnvelopController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($nood_envelop_ID)
+    public function actionOpen($nood_envelop_ID)
     {
         $model = new OpenNoodEnvelop;
         $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('open', [
                 'model' => $model,
                 'modelEnvelop' => $modelEnvelop,
             ]);
         }
-        return $this->render('create', [
-             'model' => $model,
-             'modelEnvelop' => $modelEnvelop,
-        ]);
-    }
+        if (Yii::$app->request->post('submit') == 'open-hint') {
+            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+            $model->opened = 1;
 
-    /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionOpen($nood_envelop_ID)
-    {
-        $model = new OpenNoodEnvelop;
-        $modelEvent = NoodEnvelop::findOne($nood_envelop_ID);
-
-        $model->event_ID = Yii::$app->user->identity->selected;
-        $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
-        $model->nood_envelop_ID = $id;
-        $model->opened = 1;
-
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+            }  else {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is opened.'));
+            }
         }
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
-                'model' => $modelEvent,
-            ]);
-        }
-        return $this->redirect(['site/index']);
-    }
-
-    /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCancelOpening($nood_envelop_ID)
-    {
-        $modelEvent = NoodEnvelop::findOne($nood_envelop_ID);
-
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
-                'model' => $modelEvent,
-            ]);
-        }
-        return $this->redirect(['site/index']);
+        return $this->redirect(['site/overview-players']);
     }
 
     /**

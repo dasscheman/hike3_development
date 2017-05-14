@@ -121,3 +121,10 @@ a.desc:after {
 .alert-question .alert-link {
     color: #245269;
 }
+
+/*Beetje een vieze hack. 
+Om een of andere reden was de modal op de organisatie pagina niet goed te zien,
+Hiermee wordt het modal naar voren gehaald.*/
+.modal-open .modal {
+    z-index: 1500;
+}
