@@ -86,7 +86,7 @@ class BonuspuntenController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['site/index']);
         } else {
-            return $this->render('create', [
+            return $this->renderPartial('create', [
                 'model' => $model,
             ]);
         }

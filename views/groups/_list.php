@@ -13,18 +13,25 @@ use kartik\widgets\Select2;
     <div class="well">
         <p>
         <?php
-        echo Html::a(
-            $model->group_name,
-            [
-                '/groups/update',
-                'group_ID'=>$model->group_ID
-            ],
-            ['class'=>'btn btn-xs btn-primary']);
-        ?>
-        <br/>
-        <br/>
-        <?php
-
+        Modal::begin(
+           [
+               'options' => [
+                   'tabindex' => true // important for Select2 to work properly
+               ],
+               'toggleButton' => [
+                   'label' => $model->group_name,
+                   'id' => 'modalAddOrganisationButton',
+                   'class' => 'btn btn-xs btn-success',
+                   'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'update', ['group_ID' => $model->group_ID]),
+               ],
+           ]
+        );
+        foreach ($model->deelnemersEvents as $item) {
+            $model->users_temp[] = $item->user_ID;
+        }
+        echo $this->render('/groups/update', ['model' => $model]);
+        Modal::end();
+        
         $printSeparator = false;
         foreach ($model->deelnemersEvents as $player )
         {

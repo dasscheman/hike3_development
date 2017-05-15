@@ -7,11 +7,11 @@ use yii\widgets\Pjax;
 use app\models\DeelnemersEvent;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblOpenVragenAntwoorden */
+/* @var $model app\models\OpenVragenAntwoorden */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="tbl-open-vragen-antwoorden-form">
+<div class="tbl-open-vragen-antwoorden-form-beantwoorden">
     <?php
 
     $form = ActiveForm::begin([

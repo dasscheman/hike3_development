@@ -9,17 +9,24 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ListView;
 use app\models\ActivityFeed;
-use kartik\widgets\AlertBlock;
+use app\components\CustomAlertBlock;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
 
 ?>
-
-<div class="organisatie-overview">
+<div class="site-index-players">
     <div class="container text-center">
+        <h1><?= Html::encode($this->title) ?></h1>
         <div class="row">
             <div class="col-sm-3 well">
+                <?php
+                echo CustomAlertBlock::widget([
+                    'type' => CustomAlertBlock::TYPE_ALERT,
+                    'useSessionFlash' => true,
+                    'delay' => 20000,
+                ]);
+                ?>
                 <div class="well">
                     <h3><?php echo  $groupModel->group_name ?></h3>
                     <?php echo '(' . Html::encode($groupModel->group_members) . ')'; ?></br>
@@ -74,11 +81,6 @@ $this->title = Yii::t('app', 'Hike overzicht');
                         Modal::begin(['id'=>'main-modal']);
                         echo '<div id="main-content-modal"></div>';
                         Modal::end();
-                        echo AlertBlock::widget([
-                            'type' => AlertBlock::TYPE_ALERT,
-                            'useSessionFlash' => true,
-                            'delay' => 4000,
-                        ]);
                         ?>
                     </div>
                 </div>

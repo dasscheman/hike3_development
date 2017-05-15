@@ -4,11 +4,9 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblDeelnemersEvent */
+/* @var $model app\models\DeelnemersEvent */
 
-$this->title = Yii::t('app', 'Create Tbl Deelnemers Event');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Deelnemers Events'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Add organisation to hike');
 ?>
 <div class="tbl-deelnemers-event-create">
 

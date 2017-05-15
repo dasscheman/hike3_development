@@ -11,6 +11,7 @@ use yii\web\HttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
+use yii\db\Exception;
 
 /**
  * DeelnemersEventController implements the CRUD actions for DeelnemersEvent model.
@@ -91,31 +92,34 @@ class DeelnemersEventController extends Controller
     {
         $model = new DeelnemersEvent();
 
-        if ($model->load(Yii::$app->request->post())) {
-            if($model->save()) {
-                Yii::$app->mailer->compose('sendInschrijving', [
-                    'mailEventName' => $model->event->event_name,
-                    'mailUsersName' => $model->user->username,
-                    'mailUsersNameSender' => $model->createUser->username,
-                    'mailUsersEmailSender' => $model->createUser->email,
-                    'mailRol' => $model->rol,
-                    'mailRolText' => DeelnemersEvent::getRolText($model->rol),
-                    'mailGroupName' => $model->group_ID,
-                ])
-                ->setFrom('noreply@biologenkantoor.nl')
-                ->setTo($model->user->email)
-                ->setSubject('Inschrijving Hike')
-                ->send();
-                return $this->redirect(['site/overview-organisation']);
-            }
-            foreach ($model->getErrors() as $error) {
-                Yii::$app->session->setFlash('error', Json::encode($error));
-            }
-        } else {
-            return $this->renderpartial('_form', [
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderpartial('create', [
                 'model' => $model,
             ]);
         }
+        $model->event_ID = Yii::$app->user->identity->selected;
+        if($model->save()) {
+            Yii::$app->mailer->compose('sendInschrijving', [
+                'mailEventName' => $model->event->event_name,
+                'mailUsersName' => $model->user->username,
+                'mailUsersNameSender' => $model->createUser->username,
+                'mailUsersEmailSender' => $model->createUser->email,
+                'mailRol' => $model->rol,
+                'mailRolText' => DeelnemersEvent::getRolText($model->rol),
+                'mailGroupName' => $model->group_ID,
+            ])
+            ->setFrom('noreply@biologenkantoor.nl')
+            ->setTo($model->user->email)
+            ->setSubject('Inschrijving Hike')
+            ->send();
+
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Added {username} to hike and sended an confiration mail', ['username' => $model->user->username]));
+        } else {
+            foreach ($model->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
+            }
+        }
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**
@@ -127,33 +131,34 @@ class DeelnemersEventController extends Controller
     public function actionUpdate($deelnemers_ID)
     {
         $model = $this->findModel($deelnemers_ID);
-        if ($model->user_ID == Yii::$app->user->identity->id) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'You cannot change your own account'));
-            return $this->redirect(['site/index']);
+
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderpartial('update', [
+                'model' => $model,
+            ]);
         }
-        if (Yii::$app->request->post('submit') == 'delete') {
+
+        if (Yii::$app->request->post('action') == 'delete') {
            try
             {
                 $model->delete();
             }
-            catch(CDbException $e)
+            catch(Exception $e)
             {
                 throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
             }
-
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {username} from the hike', ['username' => $model->user->username]));
             return $this->redirect(['site/overview-organisation']);
-        } elseif ($model->load(Yii::$app->request->post())) {
-            if ($model->save()) {
-                return $this->redirect(['site/overview-organisation']);
-            }
-            foreach ($model->getErrors() as $error) {
-                Yii::$app->session->setFlash('error', Json::encode($error));
-            }
-        } else {
-            return $this->renderPartial('update', [
-                'model' => $model,
-            ]);
         }
+
+        if ($model->save()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved changes'));
+            return $this->redirect(['site/overview-organisation']);
+        }
+        foreach ($model->getErrors() as $error) {
+            Yii::$app->session->setFlash('error', Json::encode($error));
+        }
+        return $this->redirect(['site/overview-organisation']);
     }
 
     /**

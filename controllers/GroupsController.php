@@ -127,6 +127,8 @@ class GroupsController extends Controller
         // Because it is very easy to at them
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Created group {groupname}.', ['groupname' => $model->group_name]));
         }
         return $this->redirect(['site/overview-organisation']);
     }
@@ -141,7 +143,6 @@ class GroupsController extends Controller
     {
         $model = $this->findModel($group_ID);
         if (!$model->load(Yii::$app->request->post())) {
-            $group_members = array();
             foreach ($model->deelnemersEvents as $item) {
                 $model->users_temp[] = $item->user_ID;
 
@@ -151,7 +152,7 @@ class GroupsController extends Controller
             ]);
         }
 
-        if (Yii::$app->request->post('submit') == 'delete' ||
+        if (Yii::$app->request->post('action') == 'update' ||
             $model->load(Yii::$app->request->post())) {
             // Eerst verwijderen we alle leden van huidige group, om ze
             // vervolgens weer toe tevoegen. indien nodig
@@ -166,9 +167,15 @@ class GroupsController extends Controller
             }
         }
 
-        if (Yii::$app->request->post('submit') == 'delete') {
-            $model->delete();
-            return $this->redirect(['site/overview']);
+        if (Yii::$app->request->post('action') == 'delete') {
+            try {
+                 $model->delete();
+            }
+            catch(Exception $e) {
+                throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
+            }
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {group} from the hike', ['group' => $model->group_name]));
+            return $this->redirect(['site/overview-organisation']);
         }
 
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
@@ -177,7 +184,7 @@ class GroupsController extends Controller
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
         }
-        return $this->redirect(['site/overview']);
+        return $this->redirect(['site/overview-organisation']);
     }
 
 	/**

@@ -3,18 +3,19 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblEventNames */
+/* @var $model app\models\EventNames */
 
-$this->title = Yii::t('app', 'Hike {modelClass} bijwerken', [
-    'modelClass' => $model->event_name,
+$this->title = Yii::t('app', 'Hike {hike} bijwerken', [
+    'hike' => $model->event_name,
 ]);
 ?>
 <div class="tbl-event-names-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_formtest', [
+    <?= $this->render('_form', [
         'model' => $model,
+        'action' => $action,
     ]) ?>
 
 </div>

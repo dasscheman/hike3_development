@@ -81,7 +81,7 @@ class OpenVragenController extends Controller
         ]);
     }
     /**
-     * Displays a single TblOpenVragen model.
+     * Displays a single OpenVragen model.
      * @param integer $id
      * @return mixed
      */

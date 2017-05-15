@@ -23,7 +23,7 @@ use app\models\DeelnemersEvent;
 			".";
 		}?>
 
-		Als je vragen hebt kun je mailen naar de maker van deze hike <?php echo $mailUsersEmailSender?>.
+		Als je vragen hebt kun je mailen naar de organisatie van de hike <?php echo $mailUsersEmailSender?>.
         <br>
         <br>
 		Met vriendelijke groet,<br>
