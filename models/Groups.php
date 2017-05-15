@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "tbl_groups".
@@ -301,7 +302,6 @@ class Groups extends HikeActiveRecord
 
 		foreach($data as $item)
 		{
-//            $item->setScores();
 			$groupsArray[$item->group_ID] = $item->total_score;
 		}
 
@@ -344,6 +344,7 @@ class Groups extends HikeActiveRecord
             return TRUE;
         }
         foreach ($members as $player) {
+			$sendmail = FALSE;
             // First check if we can find this user in
             $inschrijving = DeelnemersEvent::find()
                 ->where(['user_ID' => $player])
@@ -353,6 +354,10 @@ class Groups extends HikeActiveRecord
             if (!$inschrijving) {
                 //inschrijving bestaat niet dus we maken een nieuwe aan:
                 $inschrijving = new DeelnemersEvent;
+				$inschrijving->event_ID = Yii::$app->user->identity->selected;
+				// Deze gebruiker was nog niet toegevoegd aandeze groep,
+				// daarom zenden we deze mensen een mail.
+				$sendmail = TRUE;
             }
             // Voor nu schrijven we alles over. De aanname is dat in de
             // selectie alleen de juiste namen zichtbaar zijn.
@@ -360,32 +365,27 @@ class Groups extends HikeActiveRecord
             $inschrijving->user_ID = $player;
             $inschrijving->rol = DeelnemersEvent::ROL_deelnemer;
             if (!$inschrijving->save()) {
+				foreach ($inschrijving->getErrors() as $error) {
+					Yii::$app->session->setFlash('error', Json::encode($error));
+				}
                 return FALSE;
             }
-        }
+			if($sendmail) {
+				Yii::$app->mailer->compose('sendInschrijving', [
+					'mailEventName' => $inschrijving->event->event_name,
+					'mailUsersName' => $inschrijving->user->username,
+					'mailUsersNameSender' => $inschrijving->createUser->username,
+					'mailUsersEmailSender' => $inschrijving->createUser->email,
+					'mailRol' => $inschrijving->rol,
+					'mailRolText' => DeelnemersEvent::getRolText($inschrijving->rol),
+					'mailGroupName' => $inschrijving->group->group_name,
+				])
+				->setFrom('noreply@biologenkantoor.nl')
+				->setTo($inschrijving->user->email)
+				->setSubject('Inschrijving Hike')
+				->send();
+			}
+		}
         return TRUE;
     }
-
-    /**
-     * Score ophalen voor een group.
-     */
-//    public function getUsersOfGroup()
-//    {
-//        $user_ids = DeelnemersEvent::find()
-//            ->select('group_ID')
-//            ->where('event_ID =:event_id AND group_ID =:group_id')
-//            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $this->group_ID])
-//            ->all();
-//
-//        $data = Users::find()
-//            ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
-//            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
-//            ->all();
-//
-//        if($data === NULL) {
-//            $data = new OpenNoodEnvelop;
-//        }
-//
-//        return $data;
-//    }
 }

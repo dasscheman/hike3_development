@@ -2,11 +2,9 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\TblGroups */
 
-        dd('sadsafffffffsvdvvvvavlkjf');
 $this->title = Yii::t('app', 'Create new group');
 ?>
 <div class="tbl-groups-create">

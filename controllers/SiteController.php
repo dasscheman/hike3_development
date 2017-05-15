@@ -114,6 +114,8 @@ class SiteController extends Controller
                 'query' => $queryCheckQuestions
             ]);
 
+
+
             $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
 
@@ -124,6 +126,7 @@ class SiteController extends Controller
                 'groupModel' => $groupModel,
                 'dataProviderCheck' => $dataProviderCheck,
                 'activityFeed' => $feed->getData(),
+                'modelDeelnemer' => new DeelnemersEvent,
     		));
         }
         return $this->render('/site/index');

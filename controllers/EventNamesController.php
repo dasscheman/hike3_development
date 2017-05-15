@@ -167,14 +167,33 @@ class EventNamesController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate()
+    public function actionUpdate($event_ID, $action)
     {
-        $model = $this->findModel(Yii::$app->user->identity->selected);
+        $model = $this->findModel($event_ID);
 
-        if ($model->load(Yii::$app->request->post())) {
-            if(!$model->save()){
-                throw new \yii\web\HttpException(400, Yii::t('app', 'cannot save record'));
-             }
+        if (!$model->load(Yii::$app->request->post())) {
+            return $this->renderPartial('update', [
+                'model' => $model,
+                'action' => $action,
+            ]);
+        }
+
+        if (Yii::$app->request->get('action') == 'change_settings' ||
+            Yii::$app->request->get('action') == 'set_max_time') {
+
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the changes.'));
+            }  else {
+                if (Yii::$app->request->get('action') == 'change_settings') {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Changes are saved.'));
+                }
+                if (Yii::$app->request->get('action') == 'set_max_time') {
+                    Yii::$app->session->setFlash('success', Yii::t(
+                        'app',
+                        'You set the max time. This is the max walking time the groups have to finish.
+                        Time spend on a station is not included.'));
+                }
+            }
         }
         return $this->redirect(['site/overview-organisation']);
     }

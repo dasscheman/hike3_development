@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\DeelnemersEvent */
 
-$this->title = Yii::t('app', 'Edit user');
+$this->title = Yii::t('app', 'Edit user {username}', ['username' => $model->user->username]);
 ?>
 <div class="tbl-deelnemers-event-update">
 

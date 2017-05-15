@@ -20,21 +20,21 @@ use yii\widgets\Pjax;
 <div class="tbl-bonuspunten-form">
 
     <?php
-    Pjax::begin([
-        'id' => 'bonuspunten-form-' . $model->bouspunten_ID,
-        'enablePushState' => FALSE,
-    ]);
-
-    echo AlertBlock::widget([
-        'type' => AlertBlock::TYPE_ALERT,
-        'useSessionFlash' => true,
-        'delay' => 4000,
-    ]);
+    // Pjax::begin([
+    //     'id' => 'bonuspunten-form-' . $model->bouspunten_ID,
+    //     'enablePushState' => FALSE,
+    // ]);
+    //
+    // echo AlertBlock::widget([
+    //     'type' => AlertBlock::TYPE_ALERT,
+    //     'useSessionFlash' => true,
+    //     'delay' => 4000,
+    // ]);
 
     $form = ActiveForm::begin([
-        'options'=>[
-            'data-pjax'=>TRUE,
-        ],
+        // 'options'=>[
+        //     'data-pjax'=>TRUE,
+        // ],
     ]); ?>
     <?php
     if($model->isNewRecord) {
@@ -117,6 +117,6 @@ use yii\widgets\Pjax;
     </div>
     <?php
     ActiveForm::end();
-    Pjax::end(); ?>
+    // Pjax::end(); ?>
 
 </div>

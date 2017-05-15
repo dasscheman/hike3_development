@@ -27,6 +27,11 @@ class DeelnemersEventAccess {
     function DeelnemersEventUpdate() {
         $model = $this->findModel($this->userModel->ids['deelnemers_ID']);
 
+        if ($model->user_ID == Yii::$app->user->identity->id) {
+            // User cannot change his own assignement to an hike.
+            return FALSE;
+        }
+        
         if ($model->event_ID !== Yii::$app->user->identity->selected) {
             return FALSE;
         }
