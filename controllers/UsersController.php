@@ -206,7 +206,6 @@ class UsersController extends Controller
 
         if (isset($model)) {
             $newWachtwoord = GeneralFunctions::randomString(6);
-            //$model=$this->findModel($newModel->user_ID);
             $model->password =$newWachtwoord;
             $model->password_repeat = $newWachtwoord;
 
@@ -220,6 +219,13 @@ class UsersController extends Controller
                 }
             }
         }
+
+        if (isset(Yii::$app->request->post('Users')['username']) AND
+            isset(Yii::$app->request->post('Users')['email']) AND
+            !isset($model)) {
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'Unknown user and/or email.'));
+        }
+
         $model = new Users;
         return $this->render('updateGetNewPass', [
             'model'=>$model,
