@@ -30,8 +30,11 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
+
     NavBar::begin([
-        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ? 'Geselecteerde hike: ' . (EventNames::getEventName(Yii::$app->user->identity->selected)): 'Kiwi.run',
+        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ?
+            '<img src="images/kiwilogo40-39.jpg" class=\'img-circle\' height=\'37\' width=\'37\'>' . (EventNames::getEventName(Yii::$app->user->identity->selected)):
+            '<img src="images/kiwilogo40-39.jpg class=\'img-circle\' height=\'37\' width=\'37\' "> Kiwi.run',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
