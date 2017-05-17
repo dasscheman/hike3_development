@@ -22,18 +22,6 @@ class GeneralFunctions
 	}
 
 	/**
-	 * Returns true als ingelogde user de admin is. Als site life gaat
-	 * altijd op false zetten.
-	 */
-	public static function UserIsAdmin()
-	{
-		if(Yii::app()->user->id == 1)
-			{return true;}
-
-		return false;
-	}
-
-	/**
 	 * Returns true als gebruiker is ingeschreven voor 1 event dat de status
 	 * 'gestart' heeft. Anders return false.
 	 */
