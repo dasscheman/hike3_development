@@ -135,3 +135,10 @@ Hiermee wordt het modal naar voren gehaald.*/
 .modal-open .select2-dropdown {
     z-index: 2551;
 }
+
+/* Fine tuning van het logo */
+.navbar-brand > img {
+    display: inline;
+    margin-right: 5px;
+    margin-top: -8px;
+}
