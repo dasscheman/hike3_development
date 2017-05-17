@@ -5,14 +5,18 @@
 use yii\helpers\Html;
 
 $this->title = 'About';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        This is the About page. You may modify the following file to customize its content:
+    <?php echo Yii::t('app', 'Kiwi.run is based on open source:') ?>
     </p>
-
-    <code><?= __FILE__ ?></code>
+    
+    <p>
+        <?= Yii::powered() ?>
+    </p>
+    <p>
+        Illustrations by <a align="center" href="https://vecteezy.com">Vecteezy!</a>
+    </p>
 </div>

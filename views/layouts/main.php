@@ -12,6 +12,8 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
+use yii\helpers\Url;
+
 
 AppAsset::register($this);
 ?>
@@ -33,8 +35,8 @@ AppAsset::register($this);
 
     NavBar::begin([
         'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ?
-            '<img src="images/kiwilogo40-39.jpg" class=\'img-circle\' height=\'37\' width=\'37\'>' . (EventNames::getEventName(Yii::$app->user->identity->selected)):
-            '<img src="images/kiwilogo40-39.jpg class=\'img-circle\' height=\'37\' width=\'37\' "> Kiwi.run',
+            Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height'=>"37", 'width'=>"37"]) . EventNames::getEventName(Yii::$app->user->identity->selected):
+            Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height'=>"37", 'width'=>"37"]) . 'Kiwi.run',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -154,6 +156,7 @@ AppAsset::register($this);
             // ],
             //['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'About', 'url' => ['/site/about']],
             Yii::$app->user->isGuest ?
                 ['label' => 'Login', 'url' => ['/site/login']] :
                 [
@@ -177,8 +180,6 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; Kiwi.run <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
 
