@@ -22,7 +22,7 @@ class BonuspuntenAccess {
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }
-        return FASLE;
+        return FALSE;
     }
 
     public function BonuspuntenIndex() {
