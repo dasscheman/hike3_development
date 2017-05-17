@@ -142,3 +142,6 @@ Hiermee wordt het modal naar voren gehaald.*/
     margin-right: 5px;
     margin-top: -8px;
 }
+.navbar-inverse {
+  background-color: #002039;
+}
