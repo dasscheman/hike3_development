@@ -26,10 +26,10 @@
 		$organisatie .= ' (' . $modelEvent->website . ')';
 	}
 	$site = $modelEvent->website;
-	if (file_exists('@web/uploads/event_images/' . $modelEvent->image)) {
-		$image = '@web/uploads/event_images/' . $modelEvent->image;
+	if (file_exists(Yii::$app->params['event_images_path'] . $modelEvent->image)) {
+		$image = Url::to(Yii::$app->params['event_images_path'] . $modelEvent->image);
 	} else {
-		$image = '@web/images/kiwilogo.jpg';
+		$image = Url::to(Yii::$app->params['kiwilogo']);
 	}
 
 	$event_id = $model->event_ID;
@@ -49,8 +49,8 @@
 	</div>
 
 	<div class="rounded left">
-		<?php echo Html::img('@web/qr/' . $model->qr_code . '.jpg', ['class' => 'image']); ?>
-		<?php echo $qr_code ?>
+		<?php $img = Url::to(Yii::$app->params['qr_code_path'] . $model->qr_code . '.jpg') ?>
+		<?php echo Html::img($img, ['class' => 'image']); ?>
 	</div>
 
 	<div class="rounded tekst centre">
@@ -64,7 +64,10 @@
 		<br>
 		<br>
 		<i>www.kiwi.run</i>
+		<br><br>
+		<div class="centretext"><?php echo $qr_code ?></div>
 	</div>
+
 	<div class="rounded tekst right">
 		<?php echo Html::img($image, ['class' => 'image']);?>
 	</div>
