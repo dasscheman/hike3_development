@@ -25,7 +25,7 @@
 	$site = $modelEvent->website; //'www.debison.nl';
 	$image = $modelEvent->image;
 	if (!isset($image) || $image == '') {
-		$image = '@web/uploads/event_images/aangifte.jpg';
+		$image = '@web/imgages/kiwilogo.jpg';
 	} else {
 		$image = '@web/uploads/event_images/' . $image;
 	}
