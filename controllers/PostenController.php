@@ -12,6 +12,8 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use app\models\EventNames;
+use app\components\SetupDateTime;
+
 /**
  * PostenController implements the CRUD actions for Posten model.
  */
@@ -305,8 +307,12 @@ class PostenController extends Controller
        $posten = Posten::find()
            ->where('event_ID =:event_id')
            ->params([':event_id' => $event_id]);
+       $event = EventNames::findOne($event_id);
 
-       if ($posten->count() < 3 ) {
+       $datediff = strtotime($event->end_date) - strtotime($event->start_date);
+       $days = Yii::$app->setupdatetime->convert($datediff, 'days');
+       $tresholt = $days + 4;
+       if ($posten->count() <= $tresholt ) {
           Yii::$app->session->setFlash(
               'post',
               Yii::t(
