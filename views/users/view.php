@@ -116,7 +116,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                   ],
                   'dataProvider' => $activityFeed,
                   'itemView' => '/users/_list-feed',
-                  'emptyText' => 'Er is geen ativiteit voor dit profiel.',
+                  'emptyText' => 'Er is geen activiteit voor dit profiel.',
                 ]);
             ?>
         </div>
