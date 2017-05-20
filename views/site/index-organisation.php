@@ -40,11 +40,17 @@ $this->title = Yii::t('app', 'Hike overview');
                 ?>
                 <div class="well">
                     <h3><?php echo $eventModel->event_name ?></h3>
-                    <?php if (file_exists('@web/uploads/event_images/' . $eventModel->image)) {
-                        $image = '@web/uploads/event_images/' . $eventModel->image;
+                    <?php
+                    if (file_exists(Url::to(Yii::$app->params['event_images_path'] . $eventModel->image))) {
+                        $image = Url::to('@web/uploads/event_images/' . $eventModel->image);
                     } else {
-                        $image = '@web/images/kiwilogo.jpg';
+                        $image = Url::to('@web/images/kiwilogo.jpg');
                     }
+                    // if (file_exists('@web/uploads/event_images/' . $eventModel->image)) {
+                    //     $image = '@web/uploads/event_images/' . $eventModel->image;
+                    // } else {
+                    //     $image = '@web/images/kiwilogo.jpg';
+                    // }
                     echo Html::img($image, ['class' => 'img-circle', 'height'=>"65", 'width'=>"65"]);?>
                     </br>
                     <b>
