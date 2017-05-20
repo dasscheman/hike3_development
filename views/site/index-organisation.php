@@ -118,7 +118,7 @@ $this->title = Yii::t('app', 'Hike overview');
                             'asPopover' => TRUE,
                             'format' => Editable::FORMAT_BUTTON,
                             'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => $eventModel->getDatesAvailable($eventModel->event_ID),
+                            'data' => $eventModel->getDatesAvailable(FALSE),
                             'options' =>
                             [
                                 'id' => $eventModel->event_ID.'-is_active_day',
