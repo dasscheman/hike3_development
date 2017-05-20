@@ -10,6 +10,7 @@ use yii\helpers\Url;
 use yii\widgets\ListView;
 use app\models\ActivityFeed;
 use app\components\CustomAlertBlock;
+use app\components\SetupDateTime;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
@@ -37,11 +38,11 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('time_walking')); ?>:
                     </b>
-                    <?php echo Html::encode($groupModel->time_walking); ?></br>
+                    <?php echo Html::encode(Yii::$app->setupdatetime->convert($groupModel->time_walking, 'time')); ?></br>
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('time_left')); ?>:
                     </b>
-                    <?php echo Html::encode($groupModel->time_left); ?></br>
+                    <?php echo Html::encode(Yii::$app->setupdatetime->convert($groupModel->time_left, 'time')); ?></br>
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
                     </b>

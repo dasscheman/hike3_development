@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use kartik\grid\ExpandRowColumn;
 use yii\bootstrap\Modal;
+use app\components\SetupDateTime;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TblGroupsSearch */
@@ -56,11 +57,17 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
         ],
         [
             'attribute' => 'time_walking',
+            'value'=> function ($model, $key, $index, $column) {
+                return Yii::$app->setupdatetime->convert($model->time_walking, 'time');
+            },
             'visible'=> TRUE,
             'filter' => FALSE,
         ],
         [
             'attribute' => 'time_left',
+            'value'=> function ($model, $key, $index, $column) {
+                return Yii::$app->setupdatetime->convert($model->time_left, 'time');
+            },
             'visible'=> TRUE,
             'filter' => FALSE,
         ],
