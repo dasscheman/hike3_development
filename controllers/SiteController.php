@@ -84,7 +84,7 @@ class SiteController extends Controller
 
             $queryOrganisatie = DeelnemersEvent::find()
                 ->where(['=', 'event_ID', $event_id])
-                ->andWhere(['<=', 'rol', DeelnemersEvent::ROL_post])
+                ->andWhere(['!=', 'rol', DeelnemersEvent::ROL_deelnemer])
                 ->orderby('rol ASC');
 
             $providerOrganisatie = new ActiveDataProvider([
