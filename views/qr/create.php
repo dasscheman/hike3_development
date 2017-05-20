@@ -6,9 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblQr */
 
-$this->title = Yii::t('app', 'Create Tbl Qr');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Qrs'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Create silent station');
 ?>
 <div class="tbl-qr-create">
 
