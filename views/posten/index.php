@@ -60,6 +60,7 @@ $this->title = Yii::t('app', 'Posten');
                  ]);
             },
         ],
+        'date',
         'post_volgorde',
         'score',
         [

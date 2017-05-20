@@ -150,31 +150,7 @@ class RouteController extends Controller
 
         if (Yii::$app->request->post('Route') && $model->load(Yii::$app->request->post())) {
             $model->setRouteOrder();
-            // Wanneer er een route onderdeel aangemaakt wordt, dan moet er
-            // gecheckt woren of er voor die dag al een begin aangemaakt is.
-            // Als dat niet het geval is dan moet die nog aangemaakt worden.
-            if (!Posten::startPostExist($model->day_date)) {
-
-                $modelStartPost = new Posten;
-                $modelStartPost->setAttributes([
-                    'event_ID' => $model->event_ID,
-                    'post_name' => Yii::t('app', 'Start day'),
-                    'date' => $model->day_date,
-                    'post_volgorde'=> 1,
-                    'score' => 0,
-                ]);
-            }
-
-            // validate BOTH $model, $modelStartPost.
-            $valid=$model->validate();
-            if (isset($modelStartPost)) {
-                $valid=$modelStartPost->validate() && $valid;
-            }
-
-            if($valid && $model->save(false)) {
-                if(isset($modelStartPost)) {
-                    $modelStartPost->save(false);
-                }
+            if($model->save()) {
 
                 // QR record can only be set after the routemodel save.
                 // Because route_ID is not available before save.
@@ -197,7 +173,6 @@ class RouteController extends Controller
                 return $this->redirect(['/route/index']);
             }
         } else {
-            // $model->load(Yii::$app->request->get('date'));
             // This set the tab from which the call is started.
             $date = Yii::$app->request->get('date');
 

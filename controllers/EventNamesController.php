@@ -7,6 +7,8 @@ use app\models\EventNames;
 use app\models\EventNamesSearch;
 use app\models\DeelnemersEvent;
 use app\models\Route;
+use app\models\Posten;
+use app\models\Qr;
 use app\models\UploadForm;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -16,6 +18,10 @@ use yii\filters\AccessControl;
 use yii\web\HttpException;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use app\components\SetupDateTime;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 
 /**
  * EventNamesController implements the CRUD actions for EventNames model.
@@ -103,6 +109,12 @@ class EventNamesController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $event_id = EventNames::determineNewHikeId();
+
+            // when we have an event_id set the user variable and the cookcie to
+            // be sure the before validate is not overwriting with the wrong event_id.
+            Yii::$app->user->identity->setSelected($event_id);
+            Yii::$app->user->identity->setSelectedCookie($event_id);
+
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = $event_id;
             $model->image=UploadedFile::getInstance($model,'image');
@@ -132,15 +144,47 @@ class EventNamesController extends Controller
                      ->where(['user_ID' => Yii::$app->user->id])
                      ->joinwith('deelnemersEvents');
 
-                // Na het opslaan raakt de ajax call van slag.
-                // Na het opslaan werken alle andere knoppen op de view niet
-                // meer en openen de create modal view. Daarom wordt hier geen
-                // renderajax gedaan. Sowieso overwegen om door te sturen naar
-                // de hike overview.
-                // if (Yii::$app->request->isAjax) {
-                //     return $this->renderAjax('/event-names/select-hike', [
-                //         'modelEvents' => $modelEvents]);
-                //     }
+                // QR record can only be set after the routemodel save.
+                // Because route_ID is not available before save.
+                // Furthermore it is not a problem when route record is saved and
+                // an error occured on qr save. Therefore this easy and fast solution is choosen.
+                if (!Qr::qrExistForRouteId($modelRoute->route_ID)) {
+                    $qrModel = new Qr;
+                    $qrModel->setAttributes([
+                        'qr_name' => $modelRoute->route_name,
+                        'qr_code' => Qr::getUniqueQrCode(),
+                        'event_ID' => $modelRoute->event_ID,
+                        'route_ID' => $modelRoute->route_ID,
+                        'score' => 5,
+                    ]);
+
+                    $qrModel->setNewOrderForQr();
+                    // use false parameter to disable validation
+                    $qrModel->save(false);
+                }
+
+                $begin = new DateTime($model->start_date);
+                $end = new DateTime($model->end_date);
+
+                for($i = $begin; $i <= $end; $i->modify('+1 day')){
+                    $day = Yii::$app->setupdatetime->convert($i);
+                     // Wanneer er een hike aangemaakt wordt, dan moet er
+                     // gecheckt woren of er voor elke dag al een begin aangemaakt is.
+                     // Als dat niet het geval is dan moet die nog aangemaakt worden.
+                     if (!Posten::startPostExist($day)) {
+
+                         $modelStartPost = new Posten;
+                         $modelStartPost->setAttributes([
+                             'event_ID' => $model->event_ID,
+                             'post_name' => Yii::t('app', 'Start day'),
+                             'date' => $day,
+                             'post_volgorde'=> 1,
+                             'score' => 0,
+                         ]);
+                         $modelStartPost->save();
+                     }
+
+                 }
 
                 if ($model->status == EventNames::STATUS_gestart){
                     Yii::$app->session->setFlash(
@@ -152,8 +196,6 @@ class EventNamesController extends Controller
                                 Players cannot see this when the hike status is setup.')
                     );
                 }
-                Yii::$app->user->identity->setSelected($model->event_ID);
-                Yii::$app->user->identity->setSelectedCookie($model->event_ID);
                 return $this->redirect(['/site/overview-organisation']);
             }
         }
