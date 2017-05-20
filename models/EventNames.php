@@ -389,7 +389,7 @@ class EventNames extends HikeActiveRecord {
         return true;
     }
 
-    public function getDatesAvailable() {
+    public function getDatesAvailable($include_intro = TRUE) {
         $event_id = Yii::$app->user->identity->selected;
 
         $StartDate = EventNames::getStartDate($event_id);
@@ -397,7 +397,9 @@ class EventNames extends HikeActiveRecord {
         $mainarr = array();
         $date = $StartDate;
         $count = 0;
-        $mainarr[NULL] = Yii::t('app', 'Introduction');
+        if($include_intro) {
+            $mainarr[NULL] = Yii::t('app', 'Introduction');
+        }
         while ($date <= $EndDate) {
             $mainarr[$date] = $date;
             $date = date('Y-m-d', strtotime($date. ' + 1 days'));
