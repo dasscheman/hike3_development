@@ -46,11 +46,6 @@ $this->title = Yii::t('app', 'Hike overview');
                     } else {
                         $image = Url::to('@web/images/kiwilogo.jpg');
                     }
-                    // if (file_exists('@web/uploads/event_images/' . $eventModel->image)) {
-                    //     $image = '@web/uploads/event_images/' . $eventModel->image;
-                    // } else {
-                    //     $image = '@web/images/kiwilogo.jpg';
-                    // }
                     echo Html::img($image, ['class' => 'img-circle', 'height'=>"65", 'width'=>"65"]);?>
                     </br>
                     <b>
