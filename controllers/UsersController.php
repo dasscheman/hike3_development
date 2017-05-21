@@ -113,17 +113,15 @@ class UsersController extends Controller
 
         $query = Users::find();
         $queryFriendList = FriendList::find();
-        $queryFriendList->select('friends_with_user_ID')
-                        ->where('user_ID=:user_id')
-                        ->addParams([':user_id' => Yii::$app->user->id])
-                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
-        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
-              ->andwhere('tbl_users.user_ID<>:user_id')
-              ->addParams([':user_id' => Yii::$app->user->id]);
-            //   ->all();
+        
+        $queryFriendList->where('user_ID=:user_id')
+            ->addParams([':user_id' => Yii::$app->user->id])
+            ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
+
+
 
         $friendRequestData = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $queryFriendList,
         ]);
 
         return $this->render('view', [

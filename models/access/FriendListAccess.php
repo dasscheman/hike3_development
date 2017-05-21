@@ -21,7 +21,7 @@ class FriendListAccess {
     function FriendListAccept() {
         $model = $this->findModel($this->userModel->ids['friend_list_ID']);
 
-        if ($model->friends_with_user_ID === Yii::$app->user->id) {
+        if ($model->user_ID === Yii::$app->user->id) {
             return TRUE;
         };
         return FALSE;
@@ -30,7 +30,7 @@ class FriendListAccess {
     function FriendListDecline() {
         $model = $this->findModel($this->userModel->ids['friend_list_ID']);
 
-        if ($model->friends_with_user_ID === Yii::$app->user->id) {
+        if ($model->user_ID === Yii::$app->user->id) {
             return TRUE;
         };
         return FALSE;
