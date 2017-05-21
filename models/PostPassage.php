@@ -288,12 +288,6 @@ class PostPassage extends HikeActiveRecord
 		return $this->convertToHoursMinute($this->timeLeftToday($event_id, $group_id));
 	}
 
-//	public function convertToHoursMinute($timestamp)
-//	{
-//		$time = sprintf('%02d',floor($timestamp / 60 / 60))  . ':' . sprintf('%02d',($timestamp / 60) %60);
-//		return $time;
-//	}
-
 	public function getWalkingTimeToday($group_id)
 	{
         $dataEvent = EventNames::find()
@@ -302,8 +296,7 @@ class PostPassage extends HikeActiveRecord
             ->one();
 
         if ($dataEvent->active_day === NULL || $dataEvent->active_day === '0000-00-00') {
-            //return (bool)strtotime($myDateString);
-			return Yii::t('app', 'No day selected');
+			return FALSE;
 		}
 
         $queryPosten = Posten::find()
@@ -360,11 +353,6 @@ class PostPassage extends HikeActiveRecord
 			$count++;
         }
 		return $totalTime;
-//		if ($this->timeLeftToday($event_id, $group_id) == 0){
-//			return $this->convertToHoursMinute(strtotime("1970-01-01 $dataEvent->max_time UTC"));
-//		}
-//
-//		return $this->convertToHoursMinute($this->walkingTimeToday($event_id, $group_id));
 	}
 
 	public function isFirstPostOfDayForGroup($event_id, $group_id)
