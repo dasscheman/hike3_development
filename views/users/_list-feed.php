@@ -16,11 +16,10 @@ use kartik\widgets\Select2;
             <h4>
                 <?php echo $model['title'];?>
             </h4>
-            <?php if ($model['description'] !== '') {
-                echo $model['description'];?>
-            -
-            <?php } ?>
-            <?php echo $model['timestamp']; ?>
+            <?php echo $model['description'];?>
+            <p>
+                <?php echo $model['timestamp']; ?>
+            </p>
         </div>
     </div>
 </div>
