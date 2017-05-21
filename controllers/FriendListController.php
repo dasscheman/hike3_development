@@ -191,26 +191,15 @@ class FriendListController extends Controller
 
 	public function actionAccept()
 	{
-		$requstedUserId = Yii::$app->request->get('user_id');
+        $modelRequester = $this->findModel(Yii::$app->request->get('friend_list_ID'));
 
-		$dataRequester = FriendList::find()
-            ->where('user_ID=:requestUserId')
-            ->andWhere('friends_with_user_ID =:acceptingUserId')
-            ->addParams([
-                ':requestUserId' => $requstedUserId,
-                ':acceptingUserId' => Yii::$app->user->id])
-            ->one();
-
-        $dataAccepter = FriendList::find()
-            ->where('user_ID =:requestUserId')
-            ->andWhere('friends_with_user_ID =:acceptingUserId')
+		$modelAccepter = FriendList::find()
+            ->where('user_ID=:acceptingUserId')
+            ->andWhere('friends_with_user_ID =:requestUserId')
             ->addParams([
                 ':requestUserId' => Yii::$app->user->id,
-                ':acceptingUserId' => $requstedUserId])
+                ':acceptingUserId' => $modelRequester->friends_with_user_ID])
             ->one();
-
-        $modelRequester = $this->findModel($dataRequester->friend_list_ID);
-        $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
 
         $modelRequester->status=FriendList::STATUS_accepted;
 		$modelAccepter->status=FriendList::STATUS_accepted;
@@ -232,17 +221,7 @@ class FriendListController extends Controller
 
 	public function actionDecline()
 	{
-		$requstedUserId = Yii::$app->request->get('user_id');
-		$dataAccepter = FriendList::find()
-            ->where('user_ID=:requestUserId')
-            ->andWhere('friends_with_user_ID =:acceptingUserId')
-            ->addParams([
-                ':requestUserId' => Yii::$app->user->id,
-                ':acceptingUserId' => $requstedUserId])
-            ->one();
-
-
-        $modelAccepter = $this->findModel($dataAccepter->friend_list_ID);
+        $modelAccepter = $this->findModel(Yii::$app->request->get('friend_list_ID'));
 
         $modelAccepter->status=FriendList::STATUS_declined;
 

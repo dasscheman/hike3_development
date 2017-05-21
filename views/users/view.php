@@ -12,16 +12,6 @@ use geertw\Yii2\Adsense;
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 
-// $bordered = TRUE;
-// $striped = TRUE;
-// $condensed = TRUE;
-// $responsive = FALSE;
-// $hover = FALSE;
-// $hAlign = DetailView::ALIGN_RIGHT;
-// $vAlign = DetailView::ALIGN_TOP;
-// $fadeDelay = TRUE;
-
-
 $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
 
 ?>
@@ -130,9 +120,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
         <div class="well">
 
         </div>
-        <!-- <div class="well"> -->
-            <?php echo Yii::$app->controller->renderPartial('/friendlist/view-dashboard', ['model' => $friendRequestData]); ?>
-        <!-- </div> -->
+        <?php echo Yii::$app->controller->renderPartial('/friendlist/view-dashboard', ['model' => $friendRequestData]); ?>
     </div>
   </div>
 </div>

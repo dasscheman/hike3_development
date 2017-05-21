@@ -115,6 +115,7 @@ class ProfileActivityFeed extends Model
 
         $friends = Yii::$app->user->identity->friendListsByUserId;
         foreach ($friends as $friend) {
+            $title = false;
             if ($friend['status'] === FriendList::STATUS_accepted) {
                 $title = Yii::t('app', '{username} is a friend',
                     [
@@ -132,13 +133,15 @@ class ProfileActivityFeed extends Model
                     ]);
             }
 
-            $data[] = [
-                'id' => $friend['friend_list_ID'],
-                'source' => 'friendlist',
-                'timestamp' => $friend['update_time'],
-                'title' => $title,
-                'description' => $description,
-            ];
+            if ($title) {
+                $data[] = [
+                    'id' => $friend['friend_list_ID'],
+                    'source' => 'friendlist',
+                    'timestamp' => $friend['update_time'],
+                    'title' => $title,
+                    'description' => $description,
+                ];
+            }
         }
         $pages = new CustomPagination(['pageSize' => $this->pageSize, 'pageCount' => $this->pageCount]);
         $provider = new ArrayDataProvider([
