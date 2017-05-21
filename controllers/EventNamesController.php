@@ -42,17 +42,30 @@ class EventNamesController extends Controller
                 'only' => ['create','index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'selectDay', 'setMaxTime'],
                 'rules' => [
                     array(
-                        'actions'=>array('create', 'setMaxTime'),
+                        'actions'=>array('create'),
                         'allow' => TRUE,
                         'roles'=>array('@'),
                     ),
-                    array(
-                        'actions'=>['index', 'view', 'update', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay', 'selectDay'],
+                    [
+                        'actions'=>['update'],
+                        'allow' => TRUE,
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                [
+                                    'event_ID' => Yii::$app->request->get('event_ID'),
+                                    'action' => Yii::$app->request->get('action')
+                                ]);
+                        }
+                    ],
+                    [
+                        'actions'=>['index', 'view', 'upload', 'delete', 'viewPlayers', 'changeStatus', 'changeDay', 'selectDay'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['event_ID' => Yii::$app->request->get('event_ID')]);
                         }
-                    ),
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
