@@ -121,7 +121,7 @@ class ProfileActivityFeed extends Model
                         'username' => $friend->friendsWithUser['username'],
                     ]);
             } elseif ($friend['status'] === FriendList::STATUS_waiting) {
-                $title = Yii::t('app', 'You sended {username} a friendship request',
+                $title = Yii::t('app', 'You\'ve sent {username} a friendship request',
                     [
                         'username' => $friend->friendsWithUser['username'],
                     ]);
