@@ -227,6 +227,31 @@ class EventNamesController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the changes.'));
             }  else {
                 if (Yii::$app->request->get('action') == 'change_settings') {
+                    $begin = new DateTime($model->start_date);
+                    $end = new DateTime($model->end_date);
+
+                    for($i = $begin; $i <= $end; $i->modify('+1 day')){
+                        $day = Yii::$app->setupdatetime->convert($i);
+                         // Wanneer er een hike aangemaakt wordt, dan moet er
+                         // gecheckt woren of er voor elke dag al een begin aangemaakt is.
+                         // Als dat niet het geval is dan moet die nog aangemaakt worden.
+                         if (!Posten::startPostExist($day)) {
+
+                             $modelStartPost = new Posten;
+                             $modelStartPost->setAttributes([
+                                 'event_ID' => $model->event_ID,
+                                 'post_name' => Yii::t('app', 'Start day'),
+                                 'date' => $day,
+                                 'post_volgorde'=> 1,
+                                 'score' => 0,
+                             ]);
+                             $modelStartPost->save();
+                         }
+
+                     }
+                 }
+
+                if (Yii::$app->request->get('action') == 'change_settings') {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Changes are saved.'));
                 }
                 if (Yii::$app->request->get('action') == 'set_max_time') {

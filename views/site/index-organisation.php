@@ -122,7 +122,6 @@ $this->title = Yii::t('app', 'Hike overview');
                             'options' =>
                             [
                                 'id' => $eventModel->event_ID.'-is_active_day',
-            //                            'class'=>'form-control',
                             ],
                             'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
                             'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
@@ -135,48 +134,47 @@ $this->title = Yii::t('app', 'Hike overview');
               <div class="well">
                 <h3><?php echo Yii::t('app', 'actions')?></h3>
                 <?php
-                echo ButtonAjax::widget([
-                    'name' => Yii::t('app', 'Change max time hike'),
-                    'route' => [
-                        '/event-names/update',
-                        'event_ID' => $eventModel->event_ID,
-                        'action' => 'set_max_time'
-                    ],
-                    'modalId'=>'#main-modal',
-                    'modalContent'=>'#main-content-modal',
-                    'options' => [
+                // TimePicker within a bootstrap modal window with initial values.
+                Modal::begin([
+                	'toggleButton' => [
+                        'label' => Yii::t('app', 'Change max time hike'),
+                        'id' => 'modalChangeMaxTimeButton',
                         'class' => 'btn btn-xs btn-success',
-                        'title' => Yii::t('app', 'Change max time hike'),
                         'disabled' => !Yii::$app->user->identity->isActionAllowed(
                             'event-names',
                             'update',
                             [
-                                'event_ID' => $eventModel->event_ID
-                            ]
-                        ),
-                    ]
-                ]);
-                echo ButtonAjax::widget([
-                    'name' => Yii::t('app', 'Change settings hike'),
-                    'route' => [
-                        '/event-names/update',
-                        'event_ID' => $eventModel->event_ID,
-                        'action' => 'change_settings'
+                                'event_ID' => $eventModel->event_ID,
+                                'action' => 'set_max_time'
+                            ]),
                     ],
-                    'modalId'=>'#main-modal',
-                    'modalContent'=>'#main-content-modal',
-                    'options' => [
+                ]);
+
+                echo $this->render('/event-names/update', [
+                    'model' => $eventModel,
+                    'action' => 'set_max_time']);
+                Modal::end();
+
+                Modal::begin([
+                    'toggleButton' => [
+                        'label' => Yii::t('app', 'Change settings hike'),
+                        'id' => 'modalChangeSettingsButton',
                         'class' => 'btn btn-xs btn-success',
-                        'title' => Yii::t('app', 'Change settings hike'),
                         'disabled' => !Yii::$app->user->identity->isActionAllowed(
                             'event-names',
                             'update',
                             [
-                                'event_ID' => $eventModel->event_ID
-                            ]
-                        ),
-                    ]
+                                'event_ID' => $eventModel->event_ID,
+                                'action' => 'change_settings'
+                            ]),
+                    ],
                 ]);
+
+                echo $this->render('/event-names/update', [
+                    'model' => $eventModel,
+                    'action' => 'change_settings']);
+                Modal::end();
+
                 echo ButtonAjax::widget([
                     'name' => Yii::t('app', 'Assign bonuspoints'),
                     'route' => [
