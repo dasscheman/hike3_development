@@ -63,7 +63,7 @@ class DeelnemersEvent extends HikeActiveRecord
         return [
             'deelnemers_ID' => Yii::t('app', 'Player ID'),
             'event_ID' => Yii::t('app', 'Hike ID'),
-            'user_ID' => Yii::t('app', 'User ID'),
+            'user_ID' => Yii::t('app', 'Username'),
             'rol' => Yii::t('app', 'Role'),
             'group_ID' => Yii::t('app', 'Group ID'),
             'create_time' => Yii::t('app', 'Create Time'),
