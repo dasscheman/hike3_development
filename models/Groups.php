@@ -68,7 +68,6 @@ class Groups extends HikeActiveRecord
         return [
             'group_ID' => Yii::t('app', 'Group ID'),
             'group_name' => Yii::t('app', 'Group Name'),
-//            'rank' => Yii::t('app', 'Rank'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
