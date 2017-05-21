@@ -13,15 +13,30 @@ use kartik\widgets\Select2;
     <div class="well">
         <p>
         <?php
+        echo Html::a(
+            $model->group_name,
+            [
+                '/site/overview-players',
+                'group_ID' =>  $model->group_ID,
+            ],
+            [
+                'class' => 'btn btn-xs btn-success',
+                'value'=> $model->group_name,
+                'name'=>'action'
+            ]);
+        ?>
+        </p>
+        <p>
+        <?php
         Modal::begin(
            [
                'options' => [
                    'tabindex' => true // important for Select2 to work properly
                ],
                'toggleButton' => [
-                   'label' => $model->group_name,
+                   'label' => Yii::t('app', 'Edit'),
                    'id' => 'modalAddOrganisationButton',
-                   'class' => 'btn btn-xs btn-success',
+                   'class' => 'btn btn-xs btn-link',
                    'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'update', ['group_ID' => $model->group_ID]),
                ],
            ]
@@ -31,7 +46,7 @@ use kartik\widgets\Select2;
         }
         echo $this->render('/groups/update', ['model' => $model]);
         Modal::end();
-        
+
         $printSeparator = false;
         foreach ($model->deelnemersEvents as $player )
         {

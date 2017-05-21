@@ -117,7 +117,6 @@ class EventNamesController extends Controller
 
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = $event_id;
-            $model->image=UploadedFile::getInstance($model,'image');
 
             $modelDeelnemersEvent->event_ID = $event_id;
             $modelDeelnemersEvent->user_ID = Yii::$app->user->id;
@@ -135,7 +134,6 @@ class EventNamesController extends Controller
             $valid = $modelRoute->validate() && $valid;
             if($valid)
             {
-				$newImageName='event_id=' . $model->event_ID . '-logo.jpg';
                 // use false parameter to disable validation
                 $model->save(false);
                 $modelDeelnemersEvent->save(false);

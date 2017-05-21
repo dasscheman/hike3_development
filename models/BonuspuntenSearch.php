@@ -83,22 +83,24 @@ class BonuspuntenSearch extends Bonuspunten
         return $dataProvider;
     }
 
-    public function searchByGroup($params)
+    public function searchByGroup($params, $group_id = NULL)
     {
-        // Get group id of current user.
-        $group_id = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('tbl_deelnemers_event.event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
-            ->one();
-
+        if ($group_id === NULL) {
+            // Get group id of current user.
+            $group_id = DeelnemersEvent::find()
+                ->select('group_ID')
+                ->where('tbl_deelnemers_event.event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->one();
+            $group_id = $groupModel->group_ID;
+        }
         // Find all answers for founr group id
         $query = Bonuspunten::find()
             // ->select('open_vragen_ID')
             ->where('tbl_bonuspunten.event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected,
-                ':group_id' => $group_id->group_ID
+                ':group_id' => $group_id
             ]);
 
         $dataProvider = new ActiveDataProvider([

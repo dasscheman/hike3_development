@@ -141,22 +141,23 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         return $dataProvider;
     }
 
-
-    public function searchQuestionAnsweredByGroup($params)
+    public function searchQuestionAnsweredByGroup($params, $group_id = NULL)
     {
-        // Get group id of current user.
-        $group_id = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
-            ->one();
-
+        if ($group_id === NULL) {
+            // Get group id of current user.
+            $groupModel = DeelnemersEvent::find()
+                ->select('group_ID')
+                ->where('event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->one();
+            $group_id = $groupModel->group_ID;
+        }
         // Find all answers for founr group id
         $query = OpenVragenAntwoorden::find()
             ->where('event_ID=:event_id AND group_ID=:group_id AND checked=:checked')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected,
-                ':group_id' => $group_id->group_ID,
+                ':group_id' => $group_id,
                 ':checked' => TRUE
             ]);
 

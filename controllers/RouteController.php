@@ -18,7 +18,7 @@ use app\models\Posten;
 
 use dosamigos\qrcode\QrCode;
 /**
- * RouteController implements the CRUD actions for TblRoute model.
+ * RouteController implements the CRUD actions for Route model.
  */
 class RouteController extends Controller
 {

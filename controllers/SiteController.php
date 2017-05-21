@@ -184,27 +184,32 @@ class SiteController extends Controller
     {
         if (isset(Yii::$app->user->identity->selected)) {
             $event_id = Yii::$app->user->identity->selected;
-            $group_id = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
-                ->one();
 
+            if (NULL !== Yii::$app->request->get('group_ID') &&
+                DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie ) {
+                $group_id = Yii::$app->request->get('group_ID');
+            } else {
+                $group_id = DeelnemersEvent::find()
+                    ->select('group_ID')
+                    ->where('event_ID =:event_id and user_ID =:user_id')
+                    ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                    ->one();
+            }
             $searchQuestionsModel = new OpenVragenSearch();
-            $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
+            $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
 
             $searchAnswersModel = new OpenVragenAntwoordenSearch();
-            $answerData = $searchAnswersModel->searchQuestionAnsweredByGroup(Yii::$app->request->queryParams);
+            $answerData = $searchAnswersModel->searchQuestionAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
 
             $searchHintsModel = new NoodEnvelopSearch();
-            $closedHintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams);
-            $openHintsData = $searchHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams);
+            $closedHintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams, $group_id);
+            $openHintsData = $searchHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams, $group_id);
 
             $searchBonusModel = new BonuspuntenSearch();
-            $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams);
+            $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams, $group_id);
 
-            $searchQrModel = new QrcheckSearch();
-            $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams);
+            $searchQrModel = new QrCheckSearch();
+            $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams, $group_id);
 
             $groupModel = Groups::findOne($group_id);
             $groupModel->setGroupMembers();
