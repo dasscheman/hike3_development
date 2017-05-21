@@ -38,7 +38,15 @@ class EventNamesAccess {
             return FALSE;
         }
 
-        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+        if ($this->userModel->ids['action'] == 'set_max_time' &&
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie &&
+            $this->userModel->hikeStatus == EventNames::STATUS_gestart) {
+            return TRUE;
+        }
+
+        if ($this->userModel->ids['action'] == 'change_settings' &&
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie &&
+            $this->userModel->hikeStatus == EventNames::STATUS_opstart) {
             return TRUE;
         }
         return FALSE;

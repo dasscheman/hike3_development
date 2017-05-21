@@ -136,7 +136,7 @@ Hiermee wordt het modal naar voren gehaald.*/
     z-index: 2551;
 }
 
-/* Fine tuning van het logo */
+/* Fine tuning van het logo in de header */
 .navbar-brand > img {
     display: inline;
     margin-right: 5px;
