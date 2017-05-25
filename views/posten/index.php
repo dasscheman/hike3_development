@@ -8,6 +8,7 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
 use app\components\CustomAlertBlock;
+use yii\web\Cookie;
 
 
 /* @var $this yii\web\View */
@@ -30,6 +31,7 @@ $this->title = Yii::t('app', 'Posten');
     $pageSummary = FALSE;
     $heading = FALSE;
     $exportConfig = TRUE;
+    $responsiveWrap = FALSE;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -60,15 +62,6 @@ $this->title = Yii::t('app', 'Posten');
                  ]);
             },
         ],
-        'date',
-        'post_volgorde',
-        'score',
-        [
-            'header' => Yii::t('app', '#groups passed'),
-            'value' => function($model, $key, $index, $column){
-                return Posten::findOne($key)->getPostPassagesCount();
-            },
-        ],
         [
             'header' => Yii::t('app', 'View check in/out'),
             'class'=>'kartik\grid\ExpandRowColumn',
@@ -87,6 +80,13 @@ $this->title = Yii::t('app', 'Posten');
             'expandOneOnly'=>true,
             'expandTitle' => Yii::t('app', 'Open view groups'),
             'collapseTitle' => Yii::t('app', 'Close view groups'),
+        ],
+        'score',
+        [
+            'header' => Yii::t('app', '#groups passed'),
+            'value' => function($model, $key, $index, $column){
+                return Posten::findOne($key)->getPostPassagesCount();
+            },
         ],
         [
             'class' => 'yii\grid\ActionColumn',
@@ -144,11 +144,13 @@ $this->title = Yii::t('app', 'Posten');
     while(strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count]=array(
 		    'label' =>$startDate,
+            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('posten_day_tab')? TRUE: FALSE,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'dataProvider'=>$searchModel->searchPostenInEvent(['PostenSearch' => ['date' => $startDate]]),
                 'columns'=>$gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+                'responsiveWrap' => $responsiveWrap,
                 'headerRowOptions'=>['class'=>'kartik-sheet-style'],
                 'filterRowOptions'=>['class'=>'kartik-sheet-style'],
                 'pjax'=>true, // pjax is set to always true for this demo
@@ -167,12 +169,6 @@ $this->title = Yii::t('app', 'Posten');
                             ]
                         ]),
                     ],
-                    //'{export}',
-                    '{toggleData}',
-                ],
-                // set export properties
-                'export'=>[
-                    'fontAwesome'=>true
                 ],
                 // parameters from the demo form
                 'bordered'=>$bordered,
@@ -186,7 +182,6 @@ $this->title = Yii::t('app', 'Posten');
                     'heading'=>$heading,
                 ],
                 'persistResize'=>false,
-                //'exportConfig'=>$exportConfig,
             ])
         );
 		$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));
