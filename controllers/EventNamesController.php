@@ -111,8 +111,6 @@ class EventNamesController extends Controller
     {
         $model = new EventNames();
         $model->status = 1;
-        $model->start_date = date('Y-m-d');
-        $model->end_date = date('Y-m-d');
 
         // De gebruiker die de hike aanmaakt moet ook gelijk aangemaakt worden als organisatie
         $modelDeelnemersEvent = new DeelnemersEvent;
@@ -210,8 +208,12 @@ class EventNamesController extends Controller
                 return $this->redirect(['/site/overview-organisation']);
             }
         }
-
-        return $this->render('/event-names/create', ['model'=>$model]);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderPartial('/event-names/create', ['model' => $model]);
+        }
+        return $this->render('/event-names/create', [
+            'model' => $model,
+        ]);
     }
 
     /**

@@ -149,7 +149,9 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->birthdate = Yii::$app->setupdatetime->storeFormat($this->birthdate, 'date');
+            if (isset($this->birthdate)) {
+                $this->birthdate = Yii::$app->setupdatetime->storeFormat($this->birthdate, 'date');
+            }
             return(true);
         }
         return(false);

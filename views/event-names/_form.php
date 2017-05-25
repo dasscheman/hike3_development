@@ -56,12 +56,12 @@ use kartik\widgets\DepDrop;
                 'startAttribute' => 'start_date',
                 'endAttribute' => 'end_date',
                 'pluginOptions' => [
-                    'minDate' => date('Y-m-d'),
+                    'minDate' => date('d-m-Y'),
                     "dateLimit" => [
                         'days' => 10
                     ],
                     'locale' => [
-                        'format' => 'YYYY-MM-DD',
+                        'format' => 'DD-MM-YYYY',
                         'separator' => Yii::t('app', ' t/m ')],
                 ]
             ]
@@ -88,10 +88,21 @@ use kartik\widgets\DepDrop;
         'attributes' => $attributes,
     ]);?>
 
+    <?php echo Html::encode(Yii::t('app', 'You can change these fields later on.')); ?></br>
+
+    <br>
+
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'), [
-            'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-            'id' => $action]) ?>
+        <?= Html::submitButton(
+            $model->isNewRecord ?
+            Yii::t('app', 'Create') :
+            Yii::t('app', 'Save'),
+            [
+                'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                'id' => $action,
+                'data-method'=>'post',
+                'data-pjax' => 'event-names-create-form'
+            ]) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
