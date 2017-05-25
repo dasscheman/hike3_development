@@ -98,6 +98,15 @@ class EventNames extends HikeActiveRecord {
         ];
     }
 
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->start_date = Yii::$app->setupdatetime->storeFormat($this->start_date, 'date');
+            $this->end_date = Yii::$app->setupdatetime->storeFormat($this->end_date, 'date');
+            return(true);
+        }
+        return(false);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -350,8 +359,10 @@ class EventNames extends HikeActiveRecord {
     public function getActiveDayOfHike() {
         $event_id = Yii::$app->user->identity->selected;
         $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_id])
+            ->where('event_ID =:event_Id')
+            ->params([':event_Id' => $event_id])
             ->one();
+
         if (isset($data->active_day)) {
             return $data->active_day;
         } else {

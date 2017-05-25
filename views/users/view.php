@@ -20,16 +20,29 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
   <div class="row">
     <div class="col-sm-3 well">
       <div class="well">
-          <h3><?php echo  $model->username ?></h3>
-          <?php echo '(' . Html::encode($model->email) . ')'; ?></br>
-          <b>
-          <?php echo Html::encode($model->getAttributeLabel('voornaam')); ?>:
-          </b>
-          <?php echo Html::encode($model->voornaam); ?></br>
-          <b>
-          <?php echo Html::encode($model->getAttributeLabel('achternaam')); ?>:
-          </b>
-          <?php echo Html::encode($model->achternaam); ?></br>
+          <?php
+              Modal::begin(
+              [
+                  'toggleButton' => [
+                      'label' => $model->voornaam . ' ' . $model->achternaam,
+                      'class' => 'btn btn-lg btn-link'
+                  ],
+                  'closeButton' => [
+                      'label' => Yii::t('app', 'Close'),
+                      'class' => 'btn btn-danger btn-sm pull-right',
+                  ],
+                  'size' => Modal::SIZE_LARGE,
+              ]);
+
+              Pjax::begin([
+                  'id' => 'users-update-form',
+                  'enablePushState' => FALSE,
+              ]);
+              echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
+              Pjax::end();
+              Modal::end(); ?>
+
+          <?php echo Html::encode($model->email); ?></br>
           <b>
           <?php echo Html::encode($model->getAttributeLabel('organisatie')); ?>:
           </b>
@@ -42,49 +55,26 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
           <?php echo Html::encode($model->getAttributeLabel('selected')); ?>:
           </b>
           <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected)); ?></br>
+          <?php
+                Modal::begin(
+                [
+                  'toggleButton' => [
+                      'label' => Yii::t('app', 'Change password'),
+                      'class' => 'btn  btn-xs btn-link'
+                  ],
+                  'closeButton' => [
+                      'label' => 'Close',
+                      'class' => 'btn btn-danger btn-sm pull-right',
+                  ],
+                  'size' => Modal::SIZE_LARGE,
+                ]);
+                echo $this->render('_change-password', ['model' => $model]);
+                Modal::end();
+          ?>
 
       </div>
       <div class="well">
-        <h3><?php echo Yii::t('app', 'actions')?></h3>
-        <p>
-            <?php
-            Modal::begin(
-            [
-                'toggleButton' => [
-                    'label' => Yii::t('app', 'Edit settings user'),
-                    'class' => 'btn  btn-xs btn-success'
-                ],
-                'closeButton' => [
-                    'label' => 'Close',
-                    'class' => 'btn btn-danger btn-sm pull-right',
-                ],
-                'size' => Modal::SIZE_LARGE,
-            ]);
 
-            Pjax::begin([
-                'id' => 'users-update-form',
-                'enablePushState' => FALSE,
-            ]);
-            echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
-            Pjax::end();
-            Modal::end();
-
-            Modal::begin(
-            [
-                'toggleButton' => [
-                    'label' => Yii::t('app', 'Change password'),
-                    'class' => 'btn  btn-xs btn-success'
-                ],
-                'closeButton' => [
-                    'label' => 'Close',
-                    'class' => 'btn btn-danger btn-sm pull-right',
-                ],
-                'size' => Modal::SIZE_LARGE,
-            ]);
-            echo $this->render('_change-password', ['model' => $model]);
-            Modal::end();
-            ?>
-        </p>
       </div>
     </div>
     <div class="col-sm-6">
@@ -94,7 +84,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                 echo AlertBlock::widget([
                     'type' => AlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
-                    'delay' => 60000,
+                    'delay' => FALSE,
 
                 ]);
                 echo ListView::widget([
@@ -118,6 +108,33 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
     <div class="col-sm-3 well">
 
         <div class="well">
+        <?php
+
+            Modal::begin(
+            [
+                'toggleButton' => [
+                    'label' => Yii::t('app', 'Create new hike'),
+                    'class' => 'btn btn-md btn-success'
+                ],
+                'closeButton' => [
+                    'label' => Yii::t('app', 'Close'),
+                    'class' => 'btn btn-danger btn-sm pull-right',
+                ],
+                'size' => Modal::SIZE_LARGE,
+            ]);
+            Pjax::begin([
+                'id' => 'event-names-create-form',
+                'enablePushState' => FALSE,
+            ]);
+            echo $this->render('/event-names/create', [
+                'model' => new EventNames([
+                    'start_date' => date('d-m-Y'),
+                    'end_date' => date('d-m-Y')] ),
+                'action' => 'create'
+            ]);
+            Pjax::end();
+            Modal::end();
+        ?>
         </div>
 
         <div class="well">

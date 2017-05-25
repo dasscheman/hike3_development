@@ -35,7 +35,7 @@ $this->title = Yii::t('app', 'Hike overview');
                 echo CustomAlertBlock::widget([
                     'type' => CustomAlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
-                    'delay' => 20000,
+                    'delay' => FALSE,
                 ]);
                 ?>
                 <div class="well">

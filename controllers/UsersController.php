@@ -54,12 +54,11 @@ class UsersController extends Controller
     }
 
     /**
-     * Lists all TblUsers models.
+     * Lists all Users models.
      * @return mixed
      */
     public function actionSearchNewFriends()
     {
-        Yii::$app->session->removeAllFlashes();
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
@@ -74,7 +73,6 @@ class UsersController extends Controller
      */
     public function actionSearchFriends()
     {
-        Yii::$app->session->removeAllFlashes();
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchFriends(Yii::$app->request->queryParams);
 
@@ -89,7 +87,6 @@ class UsersController extends Controller
      */
     public function actionSearchFriendRequests()
     {
-        Yii::$app->session->removeAllFlashes();
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 

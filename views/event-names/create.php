@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblEventNames */
+/* @var $model app\models\EventNames */
 
 $this->title = Yii::t('app', 'Create new hike');
 ?>
@@ -11,5 +11,4 @@ $this->title = Yii::t('app', 'Create new hike');
         'model' => $model,
         'action' => 'create'
     ]) ?>
-
 </div>

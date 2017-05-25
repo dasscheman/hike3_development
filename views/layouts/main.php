@@ -80,11 +80,15 @@ AppAsset::register($this);
                         'url' => ['/users/resend-password-user', 'language'=> 'nl'],
                         'visible' => Yii::$app->user->isGuest,
                     ],
+                    [
+                        'label' => isset(Yii::$app->user->identity->username )?'Logout ' . Yii::$app->user->identity->username: '',
+                        'url' => ['/site/logout'],
+                        'linkOptions' => ['data-method' => 'post'],
+                        'visible' => !Yii::$app->user->isGuest,
+                    ],
                 ],
             ],
-            // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
-            // Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
-            Yii::$app->user->isGuest ? '':
+            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
             ['label' => Yii::t('app','Game'),
                 'items' => [
                     [
@@ -99,16 +103,9 @@ AppAsset::register($this);
                     ],
                 ],
             ],
-            // TODO deze moet later gebruikt worden maar voor nu even niet om te zien of de checks goed gaan.
-            // Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
-            Yii::$app->user->isGuest ? '':
+            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
             ['label' => Yii::t('app','Organisatie'),
                 'items' => [
-                    [
-                        'label' => Yii::t('app','Start New Hike'),
-                        'url'=>['/event-names/create'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
-                    ],
                     [
                         'label'=> Yii::t('app','Route Overview'),
                         'url'=>['/route/index'],
@@ -155,15 +152,21 @@ AppAsset::register($this);
             //     ],
             // ],
             //['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label' => 'About', 'url' => ['/site/about']],
+            ['label' => Yii::t('app','Info'),
+                'items' => [
+                    [
+                        'label' => Yii::t('app','Contact'),
+                        'url'=>['/site/contact'],
+                    ],
+                    [
+                        'label'=> Yii::t('app','About'),
+                        'url'=>['/site/about'],
+                    ],
+                ]
+            ],
             Yii::$app->user->isGuest ?
                 ['label' => 'Login', 'url' => ['/site/login']] :
-                [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-                    'url' => ['/site/logout'],
-                    'linkOptions' => ['data-method' => 'post'],
-                ],
+                '',
         ],
     ]);
     NavBar::end();

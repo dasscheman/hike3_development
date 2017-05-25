@@ -98,7 +98,7 @@ use kartik\widgets\ActiveForm;
                 [
                     'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                     'data-method'=>'post',
-                    'data-pjax' => 'users-update-for'
+                    'data-pjax' => 'users-update-form'
                 ]) ?>
     </div>
 

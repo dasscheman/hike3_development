@@ -8,6 +8,8 @@ use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
+use app\models\EventNames;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -20,16 +22,33 @@ $this->title = Yii::t('app', 'Select hike');
     <h1><?= Html::encode($this->title) ?></h1>
 
 <?php
-echo AlertBlock::widget([
-    'type' => AlertBlock::TYPE_ALERT,
-    'useSessionFlash' => true,
-    'delay' => 60000,
+    echo AlertBlock::widget([
+        'type' => AlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => FALSE,
 
-]);
-    Modal::begin(['id'=>'create-hike-modal']);
-    echo '<div id="create-hike-content-modal"></div>';
+    ]);
+    Modal::begin(
+    [
+        'id' => 'create-hike-modal',
+        'closeButton' => [
+            'label' => Yii::t('app', 'Close'),
+            'class' => 'btn btn-danger btn-sm pull-right',
+        ],
+        'size' => Modal::SIZE_LARGE,
+    ]);
+    Pjax::begin([
+        'id' => 'event-names-create-form',
+        'enablePushState' => FALSE,
+    ]);
+    echo $this->render('/event-names/create', [
+        'model' => new EventNames([
+            'start_date' => date('d-m-Y'),
+            'end_date' => date('d-m-Y')] ),
+        'action' => 'create'
+    ]);
+    Pjax::end();
     Modal::end();
-
     $dataProvider = new ActiveDataProvider([
         'query' => $modelEvents,
     ]);
@@ -51,20 +70,6 @@ echo AlertBlock::widget([
         ],
         'organisatie',
         'website',
-//        [
-//            'header' => 'Aangemaakt',
-//            'value' => function($key){
-//                return EventNames::findOne($key)->getCreateUser()->one()->username;
-//            },
-//        ],
-//        [
-//            // EXAMPLE
-//            'header' => 'Laatst Bijgewerkt',
-//            'value' => function($key){
-//                return EventNames::findOne($key)->getUpdateUser()->one()->username;
-//            },
-//
-//        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',
@@ -123,7 +128,7 @@ echo AlertBlock::widget([
                     ]
                 ]),
             ],
-            '{export}',
+            //'{export}',
             '{toggleData}',
         ],
         // set export properties
