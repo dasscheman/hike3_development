@@ -39,10 +39,6 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
           </b>
           <?php echo Html::encode($model->birthdate); ?></br>
           <b>
-          <?php echo Html::encode($model->getAttributeLabel('last_login_time')); ?>:
-          </b>
-          <?php echo Html::encode($model->last_login_time); ?></br>
-          <b>
           <?php echo Html::encode($model->getAttributeLabel('selected')); ?>:
           </b>
           <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected)); ?></br>
