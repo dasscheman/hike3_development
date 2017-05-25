@@ -61,7 +61,6 @@ $this->title = Yii::t('app', 'Routes');
                  ]);
             },
         ],
-        'route_volgorde',
         [
             'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
             'class'=>'kartik\grid\ExpandRowColumn',
