@@ -158,7 +158,7 @@ $this->title = Yii::t('app', 'Posten');
                 'toolbar'=> [
                     ['content'=>
                         ButtonAjax::widget([
-                            'name'=>'Create',
+                            'name'=> Yii::t('app', 'Add station'),
                             'route'=>['posten/create', 'date' => $startDate],
                             'modalId'=>'#main-modal',
                             'modalContent'=>'#main-content-modal',

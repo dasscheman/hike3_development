@@ -198,7 +198,7 @@ $this->title = Yii::t('app', 'Routes');
             'toolbar'=> [
                 ['content'=>
                     ButtonAjax::widget([
-                        'name'=>'Create',
+                        'name'=> Yii::t('app', 'Add route item'),
                         'route'=>['route/create', 'date' => '0000-00-00'],
                         'modalId'=>'#main-modal',
                         'modalContent'=>'#main-content-modal',
@@ -245,7 +245,7 @@ $this->title = Yii::t('app', 'Routes');
                 'toolbar'=> [
                     ['content'=>
                         ButtonAjax::widget([
-                            'name'=>'Create',
+                            'name'=> Yii::t('app', 'Add route item'),
                             'route'=>['route/create', 'date' => $startDate],
                             'modalId'=>'#main-modal',
                             'modalContent'=>'#main-content-modal',
