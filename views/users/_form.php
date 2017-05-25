@@ -53,7 +53,7 @@ use kartik\widgets\ActiveForm;
         'options' => [
            'options' => [
                'placeholder' => Yii::t('app', 'dd-mm-yyyy'),
-               'value'=> Yii::$app->setupdatetime->displayFormat($model->birthdate, 'date')
+               'value'=> isset($model->birthdate)? Yii::$app->setupdatetime->displayFormat($model->birthdate, 'date'): '',
            ],
            'pluginOptions' => [
                 'format' => 'dd-mm-yyyy',
@@ -91,7 +91,15 @@ use kartik\widgets\ActiveForm;
     ]);?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton(
+                $model->isNewRecord ?
+                Yii::t('app', 'Create') :
+                Yii::t('app', 'Update'),
+                [
+                    'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    'data-method'=>'post',
+                    'data-pjax' => 'users-update-for'
+                ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

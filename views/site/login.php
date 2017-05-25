@@ -6,13 +6,20 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use app\components\CustomAlertBlock;
 
 $this->title = 'Login';
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p><?php echo Yii::t('app', 'lease fill out the following fields to login:') ?></p>
+    <?php
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => FALSE,
+    ]);
+    ?>
+    <p><?php echo Yii::t('app', 'Please fill out the following fields to login:') ?></p>
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',

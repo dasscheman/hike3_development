@@ -8,6 +8,7 @@ use app\models\EventNames;
 use kartik\widgets\AlertBlock;
 use yii\widgets\ListView;
 use geertw\Yii2\Adsense;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -64,7 +65,12 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                 'size' => Modal::SIZE_LARGE,
             ]);
 
+            Pjax::begin([
+                'id' => 'users-update-form',
+                'enablePushState' => FALSE,
+            ]);
             echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
+            Pjax::end();
             Modal::end();
 
             Modal::begin(
