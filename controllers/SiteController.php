@@ -14,6 +14,7 @@ use app\models\BonuspuntenSearch;
 use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
+use app\models\Route;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
 use app\models\OpenVragen;
@@ -76,6 +77,7 @@ class SiteController extends Controller
     {
         if (!empty(Yii::$app->user->identity->selected)) {
             $event_id = Yii::$app->user->identity->selected;
+            $this->setSiteIndexMessage($event_id);
 
             $eventModel = EventNames::find($event_id)
                 ->where('event_ID =:event_id')
@@ -189,11 +191,13 @@ class SiteController extends Controller
                 DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie ) {
                 $group_id = Yii::$app->request->get('group_ID');
             } else {
-                $group_id = DeelnemersEvent::find()
+                $temp = DeelnemersEvent::find()
                     ->select('group_ID')
                     ->where('event_ID =:event_id and user_ID =:user_id')
                     ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
                     ->one();
+                    $group_id = $temp->group_ID;
+
             }
             $searchQuestionsModel = new OpenVragenSearch();
             $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
@@ -337,53 +341,37 @@ class SiteController extends Controller
 		$this->render('help');
 	}
 
-	/**
-	 * This is the action to handle external exceptions.
-	 */
-//	public function actionError()
-//	{
-//		if($error=Yii::$app->errorHandler)
-//		{
-//			if(Yii::$app->request->isAjaxRequest)
-//				echo $error['message'];
-//			else
-//				$this->render('error', $error);
-//		}
-//	}
+    protected function setSiteIndexMessage($event_id) {
+        $model = EventNames::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $event_id])
+            ->one();
 
-//	/**
-//	 * Displays the login page
-//	 */
-//	public function actionLogin()
-//	{
-//        //$this->layout='//layouts/column1';
-//		$model=new LoginForm;
-//
-//		// if it is ajax validation request
-//		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
-//		{
-//			echo Corm::validate($model);
-//			Yii::app()->end();
-//		}
-//
-//		// collect user input data
-//		if(isset($_POST['LoginForm']))
-//		{
-//			$model->attributes=$_POST['LoginForm'];
-//			// validate user input and redirect to the previous page if valid
-//			if($model->validate() && $model->login())
-//				$this->redirect(Yii::app()->user->returnUrl);
-//		}
-//		// display the login form
-//		$this->render('login',array('model'=>$model));
-//	}
-//
-//	/**
-//	 * Logs out the current user and redirect to homepage.
-//	 */
-//	public function actionLogout()
-//	{
-//		Yii::app()->user->logout();
-//		$this->redirect(Yii::app()->homeUrl);
-//	}
+        if ($model->status == EventNames::STATUS_opstart){
+            Yii::$app->session->setFlash('info', Yii::t(
+                'app',
+                'The hike is has status setup.
+                    Users cannot see anything of the hike. They can see the
+                    different hike elements when the hike has status introduction or started')
+            );
+
+            Yii::$app->session->setFlash(
+                'route',
+                Yii::t(
+                    'app',
+                    'You have no route items, click on the menu item
+                    \'Organisation/Route Overview\' to create route item,
+                    questions, silent stations and hints.')
+            );
+
+            Yii::$app->session->setFlash(
+                'post',
+                Yii::t(
+                    'app',
+                    'You have no stations, click on the menu item
+                    \'Organisation/Stations\' to create stations.')
+            );
+        }
+
+    }
 }

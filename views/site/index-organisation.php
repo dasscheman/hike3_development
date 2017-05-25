@@ -134,64 +134,97 @@ $this->title = Yii::t('app', 'Hike overview');
               <div class="well">
                 <h3><?php echo Yii::t('app', 'actions')?></h3>
                 <?php
-                // TimePicker within a bootstrap modal window with initial values.
-                Modal::begin([
-                	'toggleButton' => [
-                        'label' => Yii::t('app', 'Change max time hike'),
-                        'id' => 'modalChangeMaxTimeButton',
-                        'class' => 'btn btn-xs btn-success',
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                            'event-names',
-                            'update',
-                            [
-                                'event_ID' => $eventModel->event_ID,
-                                'action' => 'set_max_time'
-                            ]),
-                    ],
-                ]);
-
-                echo $this->render('/event-names/update', [
-                    'model' => $eventModel,
-                    'action' => 'set_max_time']);
-                Modal::end();
-
-                Modal::begin([
-                    'toggleButton' => [
-                        'label' => Yii::t('app', 'Change settings hike'),
-                        'id' => 'modalChangeSettingsButton',
-                        'class' => 'btn btn-xs btn-success',
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                            'event-names',
-                            'update',
-                            [
-                                'event_ID' => $eventModel->event_ID,
-                                'action' => 'change_settings'
-                            ]),
-                    ],
-                ]);
-
-                echo $this->render('/event-names/update', [
-                    'model' => $eventModel,
-                    'action' => 'change_settings']);
-                Modal::end();
-
-                echo ButtonAjax::widget([
-                    'name' => Yii::t('app', 'Assign bonuspoints'),
-                    'route' => [
-                        '/bonuspunten/create',
-                    ],
-                    'modalId'=>'#main-modal',
-                    'modalContent'=>'#main-content-modal',
-                    'options' => [
-                        'class' => 'btn btn-xs btn-success',
-                        'title' => Yii::t('app', 'Assign bonuspoints'),
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                            'bonuspunten',
-                            'create'
-                        ),
-                    ]
-                ]);
+                if ($eventModel->status === EventNames::STATUS_opstart) { ?>
+                    <p>
+                        <?php
+                        echo Html::a(
+                                Yii::t('app', 'Add route items'),
+                                ['/route/index'],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]);
+                        ?>
+                    </p>
+                    <p>
+                        <?php
+                        echo Html::a(
+                                Yii::t('app', 'Add stations'),
+                                ['/posten/index'],
+                                [
+                                    'class' => 'btn btn-xs btn-success',
+                                ]);
+                        ?>
+                    </p> <?php
+                }
                 ?>
+                <p>
+                    <?php
+                    Modal::begin([
+                        'toggleButton' => [
+                            'label' => Yii::t('app', 'Change settings hike'),
+                            'id' => 'modalChangeSettingsButton',
+                            'class' => 'btn btn-xs btn-success',
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                'event-names',
+                                'update',
+                                [
+                                    'event_ID' => $eventModel->event_ID,
+                                    'action' => 'change_settings'
+                                ]),
+                        ],
+                    ]);
+                    ?>
+                </p>
+                <p>
+                    <?php
+
+                    echo $this->render('/event-names/update', [
+                        'model' => $eventModel,
+                        'action' => 'change_settings']);
+                    Modal::end();
+
+                    // TimePicker within a bootstrap modal window with initial values.
+                    Modal::begin([
+                    	'toggleButton' => [
+                            'label' => Yii::t('app', 'Change max time hike'),
+                            'id' => 'modalChangeMaxTimeButton',
+                            'class' => 'btn btn-xs btn-success',
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                'event-names',
+                                'update',
+                                [
+                                    'event_ID' => $eventModel->event_ID,
+                                    'action' => 'set_max_time'
+                                ]),
+                        ],
+                    ]);
+                    echo $this->render('/event-names/update', [
+                        'model' => $eventModel,
+                        'action' => 'set_max_time']);
+                    Modal::end();
+
+                    ?>
+                </p>
+                <p>
+                    <?php
+                    echo ButtonAjax::widget([
+                        'name' => Yii::t('app', 'Assign bonuspoints'),
+                        'route' => [
+                            '/bonuspunten/create',
+                        ],
+                        'modalId'=>'#main-modal',
+                        'modalContent'=>'#main-content-modal',
+                        'options' => [
+                            'class' => 'btn btn-xs btn-success',
+                            'title' => Yii::t('app', 'Assign bonuspoints'),
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                'bonuspunten',
+                                'create'
+                            ),
+                        ]
+                    ]);
+                    ?>
+                </p>
               </div>
 
               <p>
@@ -231,7 +264,7 @@ $this->title = Yii::t('app', 'Hike overview');
                   'pager' => FALSE,
                   'dataProvider' => $organisatieData,
                   'itemView' => '/deelnemers-event/_list',
-                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                  'emptyText' => Yii::t('app', 'No organisation.'),
               ]); ?>
               <p>
 
@@ -260,7 +293,7 @@ $this->title = Yii::t('app', 'Hike overview');
                   ],
                   'dataProvider' => $activityFeed,
                   'itemView' => '/groups/_list-feed',
-                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                  'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
               ]);
               ?>
             </div>
@@ -311,7 +344,7 @@ $this->title = Yii::t('app', 'Hike overview');
                   'pager' => FALSE,
                   'dataProvider' => $groupsData,
                   'itemView' => '/groups/_list',
-                  'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                  'emptyText' => Yii::t('app', 'No groups added to the hike.'),
               ]);
               ?>
             </div>
