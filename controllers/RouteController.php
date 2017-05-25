@@ -15,6 +15,7 @@ use app\models\Bonuspunten;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
 use app\models\Posten;
+use yii\web\Cookie;
 
 use dosamigos\qrcode\QrCode;
 /**
@@ -175,7 +176,7 @@ class RouteController extends Controller
         } else {
             // This set the tab from which the call is started.
             $date = Yii::$app->request->get('date');
-
+            $this->setCookieIndexTab($date);
             $model->setAttributes([
                 'event_ID' => Yii::$app->user->identity->selected,
                 'day_date' => $date
@@ -370,12 +371,13 @@ class RouteController extends Controller
      * Finds the TblRoute model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblRoute the loaded model
+     * @return Route the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
         if (($model = Route::findOne($id)) !== null) {
+            $this->setCookieIndexTab($model->day_date);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -450,5 +452,16 @@ class RouteController extends Controller
                )
            );
         }
+    }
+
+    public function setCookieIndexTab($date){
+        $cookies = Yii::$app->getResponse()->getCookies();
+        $cookies->remove('route_day_tab');
+        $cookie = new Cookie([
+           'name' => 'route_day_tab',
+           'value' => $date,
+           'expire' => time() + 86400 * 365,
+        ]);
+        $cookies->add($cookie);
     }
 }

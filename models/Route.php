@@ -83,26 +83,6 @@ class Route extends HikeActiveRecord
         return(false);
     }
 
-    public function getEventID()
-    {
-        return $this->event_ID;
-    }
-
-    public function setEventID($value)
-    {
-        $this->event_ID = $value;
-    }
-
-    public function getDayDate()
-    {
-        return $this->day_date;
-    }
-
-    public function setDayDate($value)
-    {
-        $this->day_date = $value;
-    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -176,7 +156,7 @@ class Route extends HikeActiveRecord
             ->andwhere('day_date=:day_date')
             ->addParams(
                 [
-                    ':event_id' => $this->event_ID,
+                    ':event_id' => Yii::$app->user->identity->selected,
                     ':day_date' => $this->day_date,
                 ])
             ->max('route_volgorde');
@@ -189,8 +169,15 @@ class Route extends HikeActiveRecord
 
 	public function getDayOfRouteId($id)
 	{
-		$data = Route::find('route_ID =:route_id', array(':route_id' => $id));
-		return $data->day_date;
+		$data = Route::find()
+            ->where('route_ID =:route_id')
+            ->params([':route_id' => $id])
+            ->one();
+        if ($data)
+		{
+            return $data->day_date;
+		}
+		return FALSE;
 	}
 
 	public function getRouteName($id)
@@ -265,23 +252,5 @@ class Route extends HikeActiveRecord
 			return TRUE;
         }
         return FALSE;
-	}
-
-	public function setActiveTab($date)
-	{
-		$this->_activeTab = $date;
-	}
-
-	public function getActiveTab()
-	{
-		return $this->_activeTab;
-	}
-
-	public function getDefaultActiveTab($date)
-	{
-		if (isset($this->_activeTab))
-			return $this->_activeTab;
-		else
-			return $date;
 	}
 }

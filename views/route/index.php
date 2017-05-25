@@ -7,6 +7,7 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use app\components\CustomAlertBlock;
+use yii\web\Cookie;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RouteSearch */
@@ -29,6 +30,7 @@ $this->title = Yii::t('app', 'Routes');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
+    $responsiveWrap = FALSE;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -182,6 +184,7 @@ $this->title = Yii::t('app', 'Routes');
 
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
+        'active' => '0000-00-00' === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? TRUE: FALSE,
         'options' => ['id' => 'Introduction'],
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
@@ -207,12 +210,6 @@ $this->title = Yii::t('app', 'Routes');
                         ]
                     ]),
                 ],
-                //'{export}',
-                '{toggleData}',
-            ],
-            // set export properties
-            'export'=>[
-                'fontAwesome'=>true
             ],
             // parameters from the demo form
             'bordered'=>$bordered,
@@ -226,7 +223,6 @@ $this->title = Yii::t('app', 'Routes');
                 'heading'=>$heading,
             ],
             'persistResize'=>false,
-            //'exportConfig'=>$exportConfig,
         ])
     );
     $count++;
@@ -234,7 +230,9 @@ $this->title = Yii::t('app', 'Routes');
     while(strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count]=array(
 		    'label' =>$startDate,
+            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? TRUE: FALSE,
             'options' => ['id' => $startDate],
+            'responsiveWrap' => $responsiveWrap,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),
@@ -259,14 +257,7 @@ $this->title = Yii::t('app', 'Routes');
                             ]
                         ]),
                     ],
-                    '{export}',
-                    '{toggleData}',
                 ],
-                // set export properties
-                'export'=>[
-                    'fontAwesome'=>true
-                ],
-                // parameters from the demo form
                 'bordered'=>$bordered,
                 'striped'=>$striped,
                 'condensed'=>$condensed,
@@ -278,7 +269,6 @@ $this->title = Yii::t('app', 'Routes');
                     'heading'=>$heading,
                 ],
                 'persistResize'=>false,
-                //'exportConfig'=>$exportConfig,
             ])
         );
 		$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));

@@ -80,6 +80,7 @@ class RouteSearch extends Route
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination'  => false,
         ]);
 
         $this->load($params);

@@ -13,6 +13,8 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use app\models\EventNames;
 use app\components\SetupDateTime;
+use yii\web\Cookie;
+
 
 /**
  * PostenController implements the CRUD actions for Posten model.
@@ -105,6 +107,7 @@ class PostenController extends Controller
         $model = new Posten();
         if (!$model->load(Yii::$app->request->post())) {
             $model->date = $date;
+            $this->setCookieIndexTab($model->date);
             return $this->renderPartial('create', [
                 'model' => $model,
             ]);
@@ -193,6 +196,7 @@ class PostenController extends Controller
     protected function findModel($id)
     {
         if (($model = Posten::findOne($id)) !== null) {
+            $this->setCookieIndexTab($model->date);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -322,5 +326,16 @@ class PostenController extends Controller
                   The start station should have a score of 0, unless you think starting your hike is a challange on it self and deserves points.')
           );
        }
+   }
+
+   public function setCookieIndexTab($date){
+       $cookies = Yii::$app->getResponse()->getCookies();
+       $cookies->remove('posten_day_tab');
+       $cookie = new Cookie([
+          'name' => 'posten_day_tab',
+          'value' => $date,
+          'expire' => time() + 86400 * 365,
+       ]);
+       $cookies->add($cookie);
    }
 }
