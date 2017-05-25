@@ -6,8 +6,7 @@
 
 		Je kunt nu inloggen op de site www.kiwi.run met <br>
         inlognaam: <?php echo $newMailUsers; ?> <br>
-        wachtwoord: <?php echo $newWachtwoord ?> <br>
-		(let op! hoofdletter gevoelig)<br><br>
+        en het zelf ingestelde wachtwoord.<br><br>
 
 
         Je kunt zelf een nieuw wachtwoord instellen als je bent ingelogd.
