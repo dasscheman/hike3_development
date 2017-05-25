@@ -163,15 +163,16 @@ class UsersController extends Controller
     public function actionUpdate()
     {
         $model = $this->findModel(Yii::$app->user->id);
-        $model->load(Yii::$app->request->post());
-        $model->scenario = Users::SCENARIO_UPDATE;
-        if ($model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view']);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
         }
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderPartial('/users/update', ['model' => $model]);
+        }
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
     /**

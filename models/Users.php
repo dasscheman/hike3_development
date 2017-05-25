@@ -88,18 +88,18 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function rules() {
         return [
-            [['username', 'email'], 'required'],
+            [['username', 'email', 'birthdate'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
                 'password', 'macadres', 'authKey', 'accessToken'], 'string', 'max' => 255],
-            [['username'], 'unique', 'on' => self::SCENARIO_CREATE],
-            [['email'], 'unique', 'on' => self::SCENARIO_CREATE],
-            [['email'], 'email'],
-
-            [['password'], 'required', 'on' => self::SCENARIO_CREATE],
+            ['username', 'filter', 'filter' => 'trim'],
+            ['username', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This username address has already been taken.')],
+            ['email', 'filter', 'filter' => 'trim'],
+            ['email', 'email'],
+            ['email', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This email address has already been taken.')],
+            [['password_repeat','password'], 'required', 'on' => self::SCENARIO_CREATE],
             ['password', 'string', 'min' => 6],
-            ['password_repeat', 'required'],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
             [
                 'birthdate',
