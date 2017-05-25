@@ -132,6 +132,11 @@ Hiermee wordt het modal naar voren gehaald.*/
 .select2-dropdown {
     z-index: 2000;
 }
+
+.datepicker{
+    z-index: 2551 !important;
+}
+
 .modal-open .select2-dropdown {
     z-index: 2551;
 }

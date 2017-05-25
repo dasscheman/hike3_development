@@ -63,7 +63,8 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
                 ],
                 'size' => Modal::SIZE_LARGE,
             ]);
-            echo $this->render('_form', ['model' => $model]);
+
+            echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
             Modal::end();
 
             Modal::begin(

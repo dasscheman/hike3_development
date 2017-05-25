@@ -48,5 +48,22 @@ class SetupDateTime {
         return \Yii::$app->formatter->asDate($dateStr, $fmt);
     }
 
+    /*
+     * All Datetime, time and date field should be stored with this function.
+     * To garante consistencie. This function can be used on any datetime, date,
+     * time field just before the 'save'.
+     */
+    public static function displayFormat($dateStr, $type='date') {
+        if ($type === 'datetime') {
+              $fmt = 'php:d-m-Y H:i:s';
+        }
+        elseif ($type === 'time') {
+              $fmt = self::TIME_FORMAT;
+        }
+        else {
+              $fmt = 'php:d-m-Y';
+        }
+        return \Yii::$app->formatter->asDate($dateStr, $fmt);
+    }
 
 }

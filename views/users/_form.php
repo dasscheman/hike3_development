@@ -25,14 +25,14 @@ use kartik\widgets\ActiveForm;
             'placeholder' => Yii::t('app', 'First name')
         ],
     ];
-    
+
     $attributes['achternaam'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
             'placeholder' => Yii::t('app', 'Surname')
         ],
     ];
-    
+
     $attributes['organisatie'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
@@ -40,21 +40,23 @@ use kartik\widgets\ActiveForm;
         ]
     ];
 
-    
     $attributes['email'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
             'placeholder' => Yii::t('app', 'Email')
         ]
     ];
-    
+
     $attributes['birthdate'] = [
         'type' => Form::INPUT_WIDGET,
-        'widgetClass' => 'kartik\date\DatePicker', 
+        'widgetClass' => 'kartik\date\DatePicker',
         'options' => [
-            'pluginOptions' => [
-                'value' => date('d-M-Y'),
-                'format' => 'yyyy-mm-dd',
+           'options' => [
+               'placeholder' => Yii::t('app', 'dd-mm-yyyy'),
+               'value'=> Yii::$app->setupdatetime->displayFormat($model->birthdate, 'date')
+           ],
+           'pluginOptions' => [
+                'format' => 'dd-mm-yyyy',
                 'todayHighlight' => true
             ]
         ]

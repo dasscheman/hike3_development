@@ -12,7 +12,6 @@ use yii\filters\VerbFilter;
 use app\components\GeneralFunctions;
 use yii\filters\AccessControl;
 use app\models\ProfileActivityFeed;
-
 use yii\data\ActiveDataProvider;
 
 /**
@@ -113,7 +112,7 @@ class UsersController extends Controller
 
         $query = Users::find();
         $queryFriendList = FriendList::find();
-        
+
         $queryFriendList->where('user_ID=:user_id')
             ->addParams([':user_id' => Yii::$app->user->id])
             ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
@@ -140,7 +139,6 @@ class UsersController extends Controller
     {
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->save()){
-            $model->birthdate = Yii::$app->setupdatetime->storeFormat($model->birthdate, 'date');
             $emailSend = $model->sendEmailNewAccount();
             if($emailSend)
             {

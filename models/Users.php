@@ -144,6 +144,16 @@ class Users extends AccessControl implements IdentityInterface {
         }
         return false;
     }
+    /**
+     * De het veld event_ID wordt altijd gezet.
+     */
+    public function beforeValidate() {
+        if (parent::beforeValidate()) {
+            $this->birthdate = Yii::$app->setupdatetime->storeFormat($this->birthdate, 'date');
+            return(true);
+        }
+        return(false);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
