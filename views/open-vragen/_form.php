@@ -12,11 +12,38 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['open-vragen/create', 'route_ID' => $model->route_ID] : ['open-vragen/update', 'open_vragen_ID' => $model->open_vragen_ID]]);
-    echo $form->field($model, 'open_vragen_name')->textInput(['maxlength' => true]);
-    echo $form->field($model, 'omschrijving')->textarea(['rows' => 6]);
-    echo $form->field($model, 'vraag')->textInput(['maxlength' => true]);
-    echo $form->field($model, 'goede_antwoord')->textInput(['maxlength' => true]);
-    echo $form->field($model, 'score')->textInput();
+    echo $form->field($model, 'open_vragen_name')->textInput([
+            'maxlength' => true,
+            'placeholder' => Yii::t(
+                'app',
+                'Recognizable name for this question, visable by players.'
+            )
+        ]);
+    echo $form->field($model, 'omschrijving')->textarea([
+            'rows' => 6,
+            'placeholder' => Yii::t(
+                'app',
+                'Optional extra information, visable by players.'
+            )
+        ]);
+    echo $form->field($model, 'vraag')->textInput([
+            'maxlength' => true,
+            'placeholder' => Yii::t(
+                'app',
+                'The actual question, visable by players.'
+            )
+        ]);
+    echo $form->field($model, 'goede_antwoord')->textInput([
+            'maxlength' => true,
+            'placeholder' => Yii::t(
+                'app',
+                'The correct answer. This field is NEVER visable by players'
+            )
+        ]);
+    echo $form->field($model, 'score')->textInput(['placeholder' => Yii::t(
+            'app',
+            'Points for passing this station. Use positive integers.'
+        )]);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     ?>
 

@@ -342,12 +342,16 @@ class RouteController extends Controller
                 ->one();
         }
 
-        $tempCurrentVolgorde = $model->route_volgorde;
-        $model->route_volgorde = $previousModel->route_volgorde;
-        $previousModel->route_volgorde = $tempCurrentVolgorde;
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if(isset($previousModel)) {
+            $tempCurrentVolgorde = $model->route_volgorde;
+            $model->route_volgorde = $previousModel->route_volgorde;
+            $previousModel->route_volgorde = $tempCurrentVolgorde;
 
-        $model->save();
-        $previousModel->save();
+            $model->save();
+            $previousModel->save();
+        }
 
         $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected);
         $endDate=EventNames::getEndDate(Yii::$app->user->identity->selected);
@@ -368,7 +372,7 @@ class RouteController extends Controller
 	}
 
     /**
-     * Finds the TblRoute model based on its primary key value.
+     * Finds the Route model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return Route the loaded model
