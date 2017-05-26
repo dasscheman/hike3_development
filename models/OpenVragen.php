@@ -43,7 +43,7 @@ class OpenVragen extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['open_vragen_name', 'event_ID', 'route_ID', 'omschrijving', 'vraag', 'goede_antwoord', 'score'], 'required'],
+            [['open_vragen_name', 'event_ID', 'route_ID', 'vraag', 'goede_antwoord', 'score'], 'required'],
             [['event_ID', 'route_ID', 'vraag_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['omschrijving'], 'string'],
             [['create_time', 'update_time'], 'safe'],

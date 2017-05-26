@@ -42,7 +42,7 @@ class NoodEnvelop extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['nood_envelop_name', 'event_ID', 'route_ID', 'coordinaat', 'opmerkingen', 'score'], 'required'],
+            [['nood_envelop_name', 'event_ID', 'route_ID', 'opmerkingen', 'score'], 'required'],
             [['event_ID', 'route_ID', 'nood_envelop_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['nood_envelop_name', 'coordinaat'], 'string', 'max' => 255],
