@@ -32,16 +32,26 @@ class QrCheckController extends Controller
                         'allow' => FALSE,
                         'roles'=>array('?'),
                     ),
-                    array(
+                    [
                         'allow' => TRUE,
-                        'actions'=>array('viewPlayers', 'index', 'delete', 'create', 'update'),
+                        'actions'=>array('create'),
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['qr_check_ID' => Yii::$app->request->get('qr_code')]);
+                        }
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('viewPlayers', 'index', 'delete', 'update'),
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
                                 NULL,
                                 ['qr_check_ID' => Yii::$app->request->get('qr_check_ID')]);
                         }
-                    ),
+                    ],
                     [
                         'allow' => FALSE,  // deny all users
                         'roles'=> ['*'],
@@ -85,47 +95,54 @@ class QrCheckController extends Controller
      */
     public function actionCreate()
     {
-        $qr_code = $_GET['qr_code'];
-        $event_id = $_GET['event_id'];
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($event_id,
-                                      Yii::app()->user->id);
+        $qr_code = Yii::$app->request->get('qr_code');
+        $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
 
-        $model = new QrCheck;
+        if(!$groupPlayer){
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Your are not a member of a group in this event.'));
+            return $this->redirect(['site/index']);
+        }
 
-        $qr = Qr::find('event_ID =:event_id AND
-                     qr_code =:qr_code',
-                  array(':event_id' => $event_id,
-                        ':qr_code'  => $qr_code));
+        $qr = Qr::find()
+                ->where('event_ID =:event_id AND qr_code =:qr_code')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected,
+                    ':qr_code'  => $qr_code])
+                ->one();
+
         if (!isset($qr->qr_code)){
-            throw new CHttpException(403,"Ongeldige QR code.");
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Not a valid QR code.'));
+            return $this->redirect(['site/overview-players']);
         }
 
-        if (Route::getDayOfRouteId($qr->route_ID) <> EventNames::getActiveDayOfHike($event_id)){
-            throw new CHttpException(403,"Deze Qr code is niet voor vandaag...");
+        if (Route::getDayOfRouteId($qr->route_ID) != EventNames::getActiveDayOfHike()){
+            Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
+            return $this->redirect(['site/overview-players']);
         }
 
-        $qrCheck = QrCheck::find('event_ID =:event_id AND qr_ID =:qr_id AND group_ID =:group_id',
-            [
+        $qrCheck = QrCheck::find()
+            ->where('event_ID =:event_id AND qr_ID =:qr_id AND group_ID =:group_id')
+            ->params([
                 ':event_id' => $qr->event_ID,
                 ':qr_id'  => $qr->qr_ID,
                 ':group_id'  => $groupPlayer
-            ]);
+            ])
+            ->one();
+
         if (isset($qrCheck->qr_check_ID)){
-            throw new CHttpException(403,"Jullie groep heeft deze code al gescand");
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Your group already scanned this QR code.'));
+            return $this->redirect(['site/overview-players']);
         }
 
+        // Every thing is checked, now we can create the checked qr record.
+        $model = new QrCheck;
         $model->qr_ID = $qr->qr_ID;
         $model->event_ID = $qr->event_ID;
         $model->group_ID = $groupPlayer;
 
-        if($model->save())
-            $this->redirect(
-                [
-                    'viewPlayers',
-                    'event_id'=>$model->event_ID,
-                    'group_id'=>$model->group_ID
-                ]
-            );
+        $model->save();
+
+        return $this->redirect(['site/overview-players']);
     }
 
     /**
