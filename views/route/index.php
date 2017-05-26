@@ -231,9 +231,9 @@ $this->title = Yii::t('app', 'Routes');
 		    'label' =>$startDate,
             'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? TRUE: FALSE,
             'options' => ['id' => $startDate],
-            'responsiveWrap' => $responsiveWrap,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
+                'responsiveWrap' => $responsiveWrap,
                 'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),
                 'columns'=>$gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
