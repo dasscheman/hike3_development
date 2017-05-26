@@ -311,10 +311,13 @@ $this->title = Yii::t('app', 'Hike overview');
                 echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
                     'options'=>['accept'=>'image/*'],
                     'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload', ['event_ID' => $eventModel->event_ID]),
-                    'pluginOptions'=>['allowedFileExtensions'=>['jpg', 'jpeg', 'gif','png'],
-                    'browseClass' => 'btn btn-primary btn-block',
-                    'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-                    'browseLabel' => '', //Yii::t('app', 'Select Photo')
+                    'pluginOptions'=>[
+                        'allowedFileExtensions' => ['jpg', 'jpeg', 'gif','png'],
+                        'uploadLabel' => Yii::t('app',  'save'),
+                        'removeLabel' => '',
+                        'browseClass' => 'btn btn-primary btn-block',
+                        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+                        'browseLabel' => '',
             ]
                 ]);
                 ActiveForm::end();
