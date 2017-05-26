@@ -20,8 +20,8 @@ class EventNamesSearch extends EventNames
         return [
             [['event_ID', 'status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_name', 'start_date', 'end_date', 'active_day', 'max_time', 'image', 'organisatie', 'website', 'create_time', 'update_time'], 'safe'],
-            [['event_ID', 'event_name', 'start_date', 'end_date', 'status', 
-                'active_day', 'create_time', 'create_user_ID', 'update_time', 
+            [['event_ID', 'event_name', 'start_date', 'end_date', 'status',
+                'active_day', 'create_time', 'create_user_ID', 'update_time',
                 'update_user_ID'], 'safe', 'on'=>'search'],
         ];
     }
@@ -46,11 +46,11 @@ class EventNamesSearch extends EventNames
     {
         $query = EventNames::find();
         $query->join(
-            'INNER JOIN', 
-            'tbl_deelnemers_event', 
+            'INNER JOIN',
+            'tbl_deelnemers_event',
             'tbl_deelnemers_event.event_ID = t.event_ID');
         $query->onCondition(
-            'deelnemers.user_ID = :currentuser', 
+            'deelnemers.user_ID = :currentuser',
             [':currentuser'=>Yii::app()->user->id]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -82,5 +82,5 @@ class EventNamesSearch extends EventNames
             ->andFilterWhere(['like', 'website', $this->website]);
 
         return $dataProvider;
-    }  
+    }
 }
