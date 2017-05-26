@@ -247,7 +247,7 @@ $this->title = Yii::t('app', 'Hike overview');
                          'tabindex' => true // important for Select2 to work properly
                      ],
                      'toggleButton' => [
-                         'label' => Yii::t('app', 'Add organisation to hike'),
+                         'label' => Yii::t('app', 'Add organizer to hike'),
                          'id' => 'modalAddOrganisationButton',
                          'class' => 'btn btn-xs btn-success',
                          'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
@@ -326,7 +326,7 @@ $this->title = Yii::t('app', 'Hike overview');
                   [
                       'id' =>'modalCreateGroup',
                       'toggleButton' => [
-                          'label' => Yii::t('app', 'Add group to hike'),
+                          'label' => Yii::t('app', 'Add runner group to hike'),
                           'class' => 'btn btn-xs btn-success',
                           'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'create'),
                       ],
