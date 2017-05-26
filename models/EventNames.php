@@ -211,11 +211,11 @@ class EventNames extends HikeActiveRecord {
      */
     public function getStatusOptions() {
         return [
-            self::STATUS_opstart => 'Opstart',
-            self::STATUS_introductie => 'Introductie',
-            self::STATUS_gestart => 'Gestart',
-            self::STATUS_beindigd => 'Beindigd',
-            self::STATUS_geannuleerd => 'Geannuleerd',
+            self::STATUS_opstart => Yii::t('app', 'Startup'),
+            self::STATUS_introductie => Yii::t('app', 'Introduction'),
+            self::STATUS_gestart => Yii::t('app', 'Started'),
+            self::STATUS_beindigd => Yii::t('app', 'Ended'),
+            self::STATUS_geannuleerd => Yii::t('app', 'Canceled'),
         ];
     }
 
