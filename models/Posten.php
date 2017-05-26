@@ -43,7 +43,7 @@ class Posten extends HikeActiveRecord
     {
         return [
             [['post_name', 'event_ID', 'score'], 'required'],
-            [['event_ID', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
+            [['event_ID', 'score', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['date', 'create_time', 'update_time'], 'safe'],
             [['post_name'], 'string', 'max' => 255],
             [
