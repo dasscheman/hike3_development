@@ -54,7 +54,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->username;
           <b>
           <?php echo Html::encode($model->getAttributeLabel('selected')); ?>:
           </b>
-          <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected)); ?></br>
+          <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected_event_ID)); ?></br>
           <?php
                 Modal::begin(
                 [

@@ -78,7 +78,7 @@ class OpenNoodEnvelopController extends Controller
         $searchModel = new OpenNoodEnvelopSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
 		$startDate=EventNames::getStartDate($event_id);
 		$endDate=EventNames::getEndDate($event_id);
 
@@ -118,7 +118,7 @@ class OpenNoodEnvelopController extends Controller
             ]);
         }
         if (Yii::$app->request->post('submit') == 'open-hint') {
-            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
             $model->opened = 1;
 
             if (!$model->save()) {

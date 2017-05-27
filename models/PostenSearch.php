@@ -82,7 +82,7 @@ class PostenSearch extends Posten
     public function searchPostenInEvent($params)
     {
         $query = Posten::find()
-            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected))
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
             ->orderBy('post_volgorde ASC');
 
         $dataProvider = new ActiveDataProvider([

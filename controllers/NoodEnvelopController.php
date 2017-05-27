@@ -100,7 +100,7 @@ class NoodEnvelopController extends Controller
             ]);
         }
 
-		$model->event_ID = Yii::$app->user->identity->selected;
+		$model->event_ID = Yii::$app->user->identity->selected_event_ID;
 		$model->setNewOrderForNoodEnvelop();
 
         if(!$model->save()) {
@@ -131,7 +131,7 @@ class NoodEnvelopController extends Controller
                ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
                ->addParams(
                    [
-                       ':event_id' => Yii::$app->user->identity->selected,
+                       ':event_id' => Yii::$app->user->identity->selected_event_ID,
                        ':nood_envelop_id' => $model->nood_envelop_ID
                    ])
                ->exists();
@@ -169,7 +169,7 @@ class NoodEnvelopController extends Controller
            ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
            ->addParams(
                [
-                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':event_id' => Yii::$app->user->identity->selected_event_ID,
                    ':nood_envelop_id' => $model->nood_envelop_ID
                ])
            ->exists();

@@ -64,7 +64,7 @@ class PostPassageAccess {
     function PostPassageUpdate() {
         $model = $this->findModel($this->userModel->ids['posten_passage_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and

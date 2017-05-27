@@ -47,7 +47,7 @@ class RouteAccess {
     function RouteUpdate() {
         $model = $this->findModel($this->userModel->ids['route_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
         if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {

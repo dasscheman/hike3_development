@@ -78,7 +78,7 @@ class Posten extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -143,7 +143,7 @@ class Posten extends HikeActiveRecord
 
     public function getPostNameOptionsToday($date)
     {
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
 		// $active_day = EventNames::getActiveDayOfHike($event_id);
         $date = Yii::$app->setupdatetime->convert($date);
     	$data = Posten::find()
@@ -210,7 +210,7 @@ class Posten extends HikeActiveRecord
         $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
             ->orderBy('post_volgorde DESC')
             ->exists();
 
@@ -225,7 +225,7 @@ class Posten extends HikeActiveRecord
         $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
             ->orderBy('post_volgorde ASC')
             ->exists();
 
@@ -240,7 +240,7 @@ class Posten extends HikeActiveRecord
     */
 	public function getStartPost($date)
 	{
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
         $data = Posten::find()
             ->where('event_ID =:event_id AND date =:date')
             ->params([':event_id' => $event_id, ':date' => $date])
@@ -293,7 +293,7 @@ class Posten extends HikeActiveRecord
             ->andwhere('date=:date')
             ->addParams(
                 [
-                    ':event_id' => Yii::$app->user->identity->selected,
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':date' => $date,
                 ])
             ->exists();

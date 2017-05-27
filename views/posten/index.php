@@ -72,7 +72,7 @@ $this->title = Yii::t('app', 'Posten');
             'detail' => function ($model, $key, $index, $column) {
                 $groups = Groups::find()
                     ->where('event_ID =:event_id')
-                    ->params([':event_id' => Yii::$app->user->identity->selected])
+                    ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
                     ->all();
                 return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['post_id'=>$key, 'groups' => $groups]);
             },

@@ -84,7 +84,7 @@ class Groups extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -239,7 +239,7 @@ class Groups extends HikeActiveRecord
 	 */
 	public function getGroupOptionsForEvent()
 	{
-		$event_id = Yii::$app->user->identity->selected;
+		$event_id = Yii::$app->user->identity->selected_event_ID;
 		$data = Groups::find()
 			->where('event_ID =:event_ID')
 			->addParams([':event_ID' => $event_id])
@@ -296,7 +296,7 @@ class Groups extends HikeActiveRecord
 
 		$data = Groups::find()
             ->where('event_ID =:event_ID')
-            ->params([':event_ID' => Yii::$app->user->identity->selected])
+            ->params([':event_ID' => Yii::$app->user->identity->selected_event_ID])
             ->all();
 
 		foreach($data as $item)
@@ -347,13 +347,13 @@ class Groups extends HikeActiveRecord
             // First check if we can find this user in
             $inschrijving = DeelnemersEvent::find()
                 ->where(['user_ID' => $player])
-                ->andWhere(['event_ID' => Yii::$app->user->identity->selected])
+                ->andWhere(['event_ID' => Yii::$app->user->identity->selected_event_ID])
                 ->one();
 
             if (!$inschrijving) {
                 //inschrijving bestaat niet dus we maken een nieuwe aan:
                 $inschrijving = new DeelnemersEvent;
-				$inschrijving->event_ID = Yii::$app->user->identity->selected;
+				$inschrijving->event_ID = Yii::$app->user->identity->selected_event_ID;
 				// Deze gebruiker was nog niet toegevoegd aandeze groep,
 				// daarom zenden we deze mensen een mail.
 				$sendmail = TRUE;

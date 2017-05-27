@@ -106,7 +106,7 @@ class QrCheckController extends Controller
         $qr = Qr::find()
                 ->where('event_ID =:event_id AND qr_code =:qr_code')
                 ->params([
-                    ':event_id' => Yii::$app->user->identity->selected,
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':qr_code'  => $qr_code])
                 ->one();
 

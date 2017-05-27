@@ -71,7 +71,7 @@ class PostenController extends Controller
      */
     public function actionIndex()
     {
-        $event_Id = Yii::$app->user->identity->selected;
+        $event_Id = Yii::$app->user->identity->selected_event_ID;
 		$startDate=EventNames::getStartDate($event_Id);
 		$endDate=EventNames::getEndDate($event_Id);
         $searchModel = new PostenSearch();
@@ -112,7 +112,7 @@ class PostenController extends Controller
                 'model' => $model,
             ]);
         }
-        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->event_ID = Yii::$app->user->identity->selected_event_ID;
         $model->setNewOrderForPosten();
 
         if(!$model->save()) {
@@ -142,7 +142,7 @@ class PostenController extends Controller
                 ->where('event_ID=:event_id and post_ID=:post_ID')
                 ->addParams(
                     [
-                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':post_ID' => $model->post_ID
                     ])
                 ->exists();
@@ -209,13 +209,13 @@ class PostenController extends Controller
         if ($up_down === 'up') {
             $previousModel = Posten::find()
                 ->where('event_ID =:event_id and date =:date and post_volgorde <:order')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->date, ':order' => $model->post_volgorde])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->date, ':order' => $model->post_volgorde])
                 ->orderBy('post_volgorde DESC')
                 ->one();
         } elseif ($up_down === 'down') {
             $previousModel = Posten::find()
                 ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->date, ':order' => $model->post_volgorde])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->date, ':order' => $model->post_volgorde])
                 ->orderBy('post_volgorde ASC')
                 ->one();
         }
@@ -227,7 +227,7 @@ class PostenController extends Controller
         $model->save();
         $previousModel->save();
 
-        $event_Id = Yii::$app->user->identity->selected;
+        $event_Id = Yii::$app->user->identity->selected_event_ID;
 		$startDate=EventNames::getStartDate($event_Id);
 		$endDate=EventNames::getEndDate($event_Id);
         $searchModel = new PostenSearch();

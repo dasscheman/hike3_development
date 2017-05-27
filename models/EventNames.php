@@ -357,7 +357,7 @@ class EventNames extends HikeActiveRecord {
      * Returns de actieve dag.
      */
     public function getActiveDayOfHike() {
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
         $data = EventNames::find()
             ->where('event_ID =:event_Id')
             ->params([':event_Id' => $event_id])
@@ -401,7 +401,7 @@ class EventNames extends HikeActiveRecord {
     }
 
     public function getDatesAvailable($include_intro = TRUE) {
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
 
         $StartDate = EventNames::getStartDate($event_id);
         $EndDate = EventNames::getEndDate($event_id);

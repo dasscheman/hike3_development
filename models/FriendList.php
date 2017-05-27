@@ -45,10 +45,10 @@ class FriendList extends HikeActiveRecord
         return [
             [['user_ID', 'friends_with_user_ID', 'status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
-            [   
-                ['user_ID', 'friends_with_user_ID'], 
-                'unique', 
-                'targetAttribute' => ['user_ID', 'friends_with_user_ID'], 
+            [
+                ['user_ID', 'friends_with_user_ID'],
+                'unique',
+                'targetAttribute' => ['user_ID', 'friends_with_user_ID'],
                 'message' => Yii::t('app', 'This user is already you friend, has an invitation from you or is blocked.')]
         ];
     }
@@ -122,21 +122,21 @@ class FriendList extends HikeActiveRecord
 	*/
 	public function getStatusText()
 	{
-		$statusOptions=$this->statusOptions;   
+		$statusOptions=$this->statusOptions;
 		return isset($statusOptions[$this->status]) ?
 			$statusOptions[$this->status] : "unknown status ({$this->status})";
 	}
-	
+
        	/**
 	* @return string the status text display
 	*/
 	public function getStatusText2($status)
 	{
-		$statusOptions=$this->statusOptions;   
+		$statusOptions=$this->statusOptions;
 		return isset($statusOptions[$status]) ?
 			$statusOptions[$status] : "unknown status ({$status})";
 	}
-	
+
    	/**
 	* Retrieves a list of users
 	* @return array an array of all available users'.
@@ -161,7 +161,7 @@ class FriendList extends HikeActiveRecord
 		{
 			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
 		}
-		return $results;  
+		return $results;
 	}
 
        	/**
@@ -170,19 +170,19 @@ class FriendList extends HikeActiveRecord
 	*/
 
 	public function getFriendNames()
-	{ 
+	{
         $sql = 'SELECT tbl_users.user_ID IN (SELECT friends_with_user_ID
                 FROM `tbl_friend_list`
                 WHERE tbl_friend_list.user_ID =' . Yii::$app->user->id . ' AND tbl_friend_list.status =2)
                 FROM tbl_users
                 WHERE tbl_users.user_ID <>' . Yii::$app->user->id;
-        $model = Users::findBySql($sql)->all();      
-        
+        $model = Users::findBySql($sql)->all();
+
 		foreach($model as $m)
 		{
 			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
 		}
-		return $results;  
+		return $results;
 	}
 
     /**
@@ -205,14 +205,14 @@ class FriendList extends HikeActiveRecord
                 ->where('event_ID=:event_id and (group_ID!=:group_id or rol!=:rol)')
                 ->addParams(
                     [
-                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':group_id' => $group_id,
                         ':rol' => DeelnemersEvent::ROL_deelnemer,
                     ]);
         } else {
             $queryDeelnemersEvent->select('user_ID')
                 ->where('event_ID=:event_id')
-                ->addParams([':event_id' => Yii::$app->user->identity->selected]);
+                ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID]);
         }
 
         $result = Users::find()

@@ -77,7 +77,7 @@ class Route extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -156,7 +156,7 @@ class Route extends HikeActiveRecord
             ->andwhere('day_date=:day_date')
             ->addParams(
                 [
-                    ':event_id' => Yii::$app->user->identity->selected,
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':day_date' => $this->day_date,
                 ])
             ->max('route_volgorde');
@@ -199,7 +199,7 @@ class Route extends HikeActiveRecord
 	{
         $data = Route::find()
             ->where('event_ID =:event_id AND route_name =:route_name')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_name' =>'Introductie'])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_name' =>'Introductie'])
             ->order('route_volgorde DESC')
             ->one();
 
@@ -228,7 +228,7 @@ class Route extends HikeActiveRecord
         $data = Route::findOne($route_id);
         $dataNext = Route::find()
             ->where('event_ID =:event_id AND day_date =:date AND route_volgorde <:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde DESC')
             ->exists();
 
@@ -244,7 +244,7 @@ class Route extends HikeActiveRecord
 
         $dataNext = Route::find()
             ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde ASC')
             ->exists();
 

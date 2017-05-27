@@ -299,7 +299,7 @@ class EventNamesController extends Controller
 
     public function actionUpload()
     {
-        $model = $this->findModel(Yii::$app->user->identity->selected);
+        $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if ($model->load(Yii::$app->request->post())) {
             // get the uploaded file instance. for multiple file uploads
@@ -325,7 +325,7 @@ class EventNamesController extends Controller
      */
     public function actionChangeStatus()
     {
-        $model=$this->findModel(Yii::$app->user->identity->selected);
+        $model=$this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
@@ -376,7 +376,7 @@ class EventNamesController extends Controller
      */
     public function actionChangeDay()
     {
-        $model=$this->findModel(Yii::$app->user->identity->selected);
+        $model=$this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
@@ -404,7 +404,7 @@ class EventNamesController extends Controller
      */
     public function actionSetMaxTime()
     {
-        $model=$this->findModel(Yii::$app->user->identity->selected);
+        $model=$this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if(null === Yii::$app->request->post('EventNames')) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
@@ -434,9 +434,8 @@ class EventNamesController extends Controller
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
         if (NULL !== Yii::$app->request->get('event_ID')  ) {
-            Yii::$app->user->identity->setSelected(Yii::$app->request->get('event_ID'));
-            Yii::$app->user->identity->setSelectedCookie(Yii::$app->request->get('event_ID'));
-
+            Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
+            Yii::$app->user->identity->save();
             return $this->redirect(['/site/index']);
         }
 

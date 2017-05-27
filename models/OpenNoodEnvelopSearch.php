@@ -51,7 +51,7 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
         $query->joinWith(['noodEnvelop', 'group', 'createUser' , 'noodEnvelop.route']);
         $query->where(
             'tbl_open_nood_envelop.event_ID = :event_id',
-            [':event_id'=>Yii::$app->user->identity->selected]);
+            [':event_id'=>Yii::$app->user->identity->selected_event_ID]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -51,7 +51,7 @@ class QrCheckSearch extends QrCheck
         $query->joinWith(['qr', 'group', 'createUser' , 'qr.route']);
         $query->where(
             'tbl_qr_check.event_ID = :event_id',
-            [':event_id'=>Yii::$app->user->identity->selected]);
+            [':event_id'=>Yii::$app->user->identity->selected_event_ID]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -121,7 +121,7 @@ class QrCheckSearch extends QrCheck
             $group_id = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
@@ -130,7 +130,7 @@ class QrCheckSearch extends QrCheck
             // ->select('qr_check_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id
             ]);
 

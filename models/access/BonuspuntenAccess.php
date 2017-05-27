@@ -35,7 +35,7 @@ class BonuspuntenAccess {
     function BonuspuntenUpdate() {
         $model = $this->findModel($this->userModel->ids['bonuspunten_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

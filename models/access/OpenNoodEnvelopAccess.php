@@ -48,7 +48,7 @@ class OpenNoodenvelopAccess {
     function OpenNoodEnvelopUpdate() {
         $model = $this->findModel($this->userModel->ids['open_nood_envelop_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

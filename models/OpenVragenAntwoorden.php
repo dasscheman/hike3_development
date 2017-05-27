@@ -79,7 +79,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -152,7 +152,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     {
         $data = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND checked =:checked AND correct =:correct')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':checked' => TRUE, ':correct' => TRUE])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':checked' => TRUE, ':correct' => TRUE])
             ->all();
 
         $score = 0;
@@ -220,7 +220,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     {
         $data = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id AND open_vragen_antwoorden_ID =:id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $id])
             ->all();
         if(isset($data->checked) AND $data->checked == 1)
             return true;

@@ -80,7 +80,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -258,8 +258,8 @@ class NoodEnvelop extends HikeActiveRecord
                 $data = Qr::find($qr_id);
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
             ->exist();
 
 		if ($dataNext) {
@@ -290,8 +290,8 @@ class NoodEnvelop extends HikeActiveRecord
                 $data = Qr::find($qr_id);
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
             ->exist();
 
 		if ($dataNext) {
@@ -327,12 +327,12 @@ class NoodEnvelop extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
             ->exists();
 
         return $data;
@@ -346,12 +346,12 @@ class NoodEnvelop extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
             ->one();
 
         if($data === NULL) {

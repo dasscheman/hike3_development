@@ -82,27 +82,27 @@ class OpenVragenSearch extends OpenVragen
             $group_id = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
 
         $event = EventNames::find()
             ->where('event_ID =:event_id')
-            ->addParams([':event_id' => Yii::$app->user->identity->selected])
+            ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
         $queryRoute = Route::find()
             ->select('route_ID')
             ->where('event_ID =:event_id and day_date =:day_date')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':day_date' => $event->active_day]);
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
 
         // Find all answers for founr group id
         $queryAntwoorden = OpenVragenAntwoorden::find()
             ->select('open_vragen_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id
             ]);
 
@@ -112,7 +112,7 @@ class OpenVragenSearch extends OpenVragen
             ->andWhere(['in', 'tbl_open_vragen.route_ID', $queryRoute])
             ->andWhere('event_ID=:event_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected
+                ':event_id' => Yii::$app->user->identity->selected_event_ID
             ]);
 
         $dataProvider = new ActiveDataProvider([

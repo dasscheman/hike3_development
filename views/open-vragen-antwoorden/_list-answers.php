@@ -12,7 +12,7 @@ use app\models\DeelnemersEvent;
 ?>
 <div class="view">
     <?php
-    $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+    $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
     ?>
     <h4>
         <?php echo Html::encode($model->openVragen->open_vragen_name); ?>

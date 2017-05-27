@@ -55,7 +55,7 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         $query->joinWith(['openVragen', 'group', 'createUser' , 'openVragen.route']);
         $query->where(
             'tbl_open_vragen_antwoorden.event_ID = :event_id',
-            [':event_id'=>Yii::$app->user->identity->selected]);
+            [':event_id'=>Yii::$app->user->identity->selected_event_ID]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -148,7 +148,7 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
             $groupModel = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
@@ -156,7 +156,7 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         $query = OpenVragenAntwoorden::find()
             ->where('event_ID=:event_id AND group_ID=:group_id AND checked=:checked')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id,
                 ':checked' => TRUE
             ]);

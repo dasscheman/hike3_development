@@ -111,7 +111,7 @@ class PostPassageController extends Controller
         if(!Posten::isStartPost($post_ID)) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'This is not start station.'));
         }
-        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected, $group_ID)) {
+        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, $group_ID)) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'This group has no time left and cannot be checked in to this station.'));
         }
 
@@ -156,7 +156,7 @@ class PostPassageController extends Controller
                'model' => $model,
            ]);
         }
-        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected, $model->group_ID)) {
+        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, $model->group_ID)) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'This group has no time left and cannot be checked in to this station.'));
         } elseif (!$model->save()) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not check in to station.'));

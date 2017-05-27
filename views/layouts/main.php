@@ -34,8 +34,8 @@ AppAsset::register($this);
     <?php
 
     NavBar::begin([
-        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected ?
-            Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height'=>"37", 'width'=>"37"]) . EventNames::getEventName(Yii::$app->user->identity->selected):
+        'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected_event_ID ?
+            Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height'=>"37", 'width'=>"37"]) . EventNames::getEventName(Yii::$app->user->identity->selected_event_ID):
             Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height'=>"37", 'width'=>"37"]) . 'Kiwi.run',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
@@ -88,7 +88,7 @@ AppAsset::register($this);
                     ],
                 ],
             ],
-            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
+            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected_event_ID ? '':
             ['label' => Yii::t('app','Game'),
                 'items' => [
                     [
@@ -103,7 +103,7 @@ AppAsset::register($this);
                     ],
                 ],
             ],
-            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected ? '':
+            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected_event_ID ? '':
             ['label' => Yii::t('app','Organisatie'),
                 'items' => [
                     [

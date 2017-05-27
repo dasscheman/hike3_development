@@ -97,7 +97,7 @@ class DeelnemersEventController extends Controller
                 'model' => $model,
             ]);
         }
-        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->event_ID = Yii::$app->user->identity->selected_event_ID;
         if($model->save()) {
             Yii::$app->mailer->compose('sendInschrijving', [
                 'mailEventName' => $model->event->event_name,
