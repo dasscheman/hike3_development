@@ -48,7 +48,7 @@ class GroupsAccess {
             return FALSE;
         }
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

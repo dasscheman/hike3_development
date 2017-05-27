@@ -86,7 +86,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -252,7 +252,7 @@ class PostPassage extends HikeActiveRecord
 	{
         $data = PostPassage::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND gepasseerd =:status')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':status' => self::STATUS_passed])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':status' => self::STATUS_passed])
             ->all();
 
         $score = 0;
@@ -275,7 +275,7 @@ class PostPassage extends HikeActiveRecord
 	{
 		$dataEvent = EventNames::find()
             ->where('event_ID = :event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
 		$totalTime = PostPassage::getWalkingTimeToday($group_id);
@@ -292,7 +292,7 @@ class PostPassage extends HikeActiveRecord
 	{
         $dataEvent = EventNames::find()
             ->where('event_ID = :event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
         if ($dataEvent->active_day === NULL || $dataEvent->active_day === '0000-00-00') {
@@ -302,7 +302,7 @@ class PostPassage extends HikeActiveRecord
         $queryPosten = Posten::find()
             ->select('post_ID')
             ->where('event_ID =:event_id AND date =:active_date')
-            ->Params([':event_id' => Yii::$app->user->identity->selected, ':active_date' => $dataEvent->active_day]);
+            ->Params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':active_date' => $dataEvent->active_day]);
 
 
         $queryPassage = PostPassage::find()
@@ -359,7 +359,7 @@ class PostPassage extends HikeActiveRecord
 	{
         $dataEvent = EventNames::find()
             ->where('event_ID = :event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
 		$criteria = new CDbCriteria();
@@ -417,7 +417,7 @@ class PostPassage extends HikeActiveRecord
     {
         return PostPassage::find()
             ->where('event_ID =:event_id AND post_ID =:post_id AND gepasseerd =:gepasseerd')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':post_id' => $post_id, ':gepasseerd' => TRUE])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':post_id' => $post_id, ':gepasseerd' => TRUE])
             ->exists();
     }
 }

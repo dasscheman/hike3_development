@@ -46,27 +46,27 @@ class NoodEnvelopSearch extends NoodEnvelop
             $group_id = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
         $event = EventNames::find()
             ->where('event_ID =:event_id')
-            ->addParams([':event_id' => Yii::$app->user->identity->selected])
+            ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
         // Get route id's for current day.
         $queryRoute = Route::find()
             ->select('route_ID')
             ->where('event_ID =:event_id and day_date =:day_date')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':day_date' => $event->active_day]);
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
 
         // Find all open hints for founr group id
         $queryOpenHints = OpenNoodEnvelop::find()
             ->select('nood_envelop_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id AND opened=:opened')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ]);
@@ -77,7 +77,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->andwhere(['in', 'tbl_nood_envelop.route_ID', $queryRoute])
             ->andWhere('event_ID=:event_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected
+                ':event_id' => Yii::$app->user->identity->selected_event_ID
             ]);
 
         $dataProvider = new ActiveDataProvider([
@@ -129,7 +129,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             $group_id = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
@@ -138,7 +138,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->select('nood_envelop_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id AND opened=:opened')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ]);
@@ -148,7 +148,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->where(['in', 'tbl_nood_envelop.nood_envelop_ID', $queryOpenHints])
             ->andWhere('event_ID=:event_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected
+                ':event_id' => Yii::$app->user->identity->selected_event_ID
             ]);
 
         $dataProvider = new ActiveDataProvider([

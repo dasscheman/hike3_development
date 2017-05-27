@@ -109,7 +109,7 @@ class QrController extends Controller
             ]);
         }
 
-		$model->event_ID = Yii::$app->user->identity->selected;
+		$model->event_ID = Yii::$app->user->identity->selected_event_ID;
 		$model->qr_code = Qr::getUniqueQrCode();
 		$model->setNewOrderForQr();
 
@@ -141,7 +141,7 @@ class QrController extends Controller
                ->where('event_ID=:event_id and qr_ID=:qr_id')
                ->addParams(
                    [
-                       ':event_id' => Yii::$app->user->identity->selected,
+                       ':event_id' => Yii::$app->user->identity->selected_event_ID,
                        ':qr_id' => $model->qr_ID
                    ])
                ->exists();
@@ -177,7 +177,7 @@ class QrController extends Controller
            ->where('event_ID=:event_id and qr_ID=:qr_id')
            ->addParams(
                [
-                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':event_id' => Yii::$app->user->identity->selected_event_ID,
                    ':qr_id' => $model->qr_ID
                ])
            ->exists();

@@ -139,7 +139,7 @@ class OpenVragenAntwoordenController extends Controller
             ]);
         }
         if (Yii::$app->request->post('submit') == 'beantwoord-vraag') {
-            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
             $model->checked = 0;
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));

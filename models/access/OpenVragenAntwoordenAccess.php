@@ -22,7 +22,7 @@ class OpenVragenAntwoordenAccess {
     function OpenVragenAntwoordenAntwoordGoed() {
         $model = $this->findModel($this->userModel->ids['open_vragen_antwoorden_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 
@@ -37,7 +37,7 @@ class OpenVragenAntwoordenAccess {
     function OpenVragenAntwoordenAntwoordFout() {
         $model = $this->findModel($this->userModel->ids['open_vragen_antwoorden_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 
@@ -74,7 +74,7 @@ class OpenVragenAntwoordenAccess {
     function OpenVragenAntwoordenUpdate() {
         $model = $this->findModel($this->userModel->ids['open_vragen_antwoorden_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

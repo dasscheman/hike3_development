@@ -75,8 +75,8 @@ class SiteController extends Controller
 
     public function actionOverviewOrganisation()
     {
-        if (!empty(Yii::$app->user->identity->selected)) {
-            $event_id = Yii::$app->user->identity->selected;
+        if (!empty(Yii::$app->user->identity->selected_event_ID)) {
+            $event_id = Yii::$app->user->identity->selected_event_ID;
             $this->setSiteIndexMessage($event_id);
 
             $eventModel = EventNames::find($event_id)
@@ -109,7 +109,7 @@ class SiteController extends Controller
             $queryCheckQuestions = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and checked=:checked')
                 ->addParams([
-                    'event_id' => Yii::$app->user->identity->selected,
+                    'event_id' => Yii::$app->user->identity->selected_event_ID,
                     'checked' => 0,
                 ]);
             $dataProviderCheck = new ActiveDataProvider([
@@ -136,11 +136,12 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if (!empty(Yii::$app->user->identity->selected)) {
-            $event_id = Yii::$app->user->identity->selected;
+        Yii::$app->user->identity->setSelectedEventID();
+        if (!empty(Yii::$app->user->identity->selected_event_ID)) {
+            $event_id = Yii::$app->user->identity->selected_event_ID;
             $user = DeelnemersEvent::find()
                 ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             if(!isset($user->rol)) {
                 return $this->render('/site/index');
@@ -184,8 +185,8 @@ class SiteController extends Controller
 
     public function actionOverviewPlayers()
     {
-        if (isset(Yii::$app->user->identity->selected)) {
-            $event_id = Yii::$app->user->identity->selected;
+        if (isset(Yii::$app->user->identity->selected_event_ID)) {
+            $event_id = Yii::$app->user->identity->selected_event_ID;
 
             if (NULL !== Yii::$app->request->get('group_ID') &&
                 DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie ) {
@@ -194,7 +195,7 @@ class SiteController extends Controller
                 $temp = DeelnemersEvent::find()
                     ->select('group_ID')
                     ->where('event_ID =:event_id and user_ID =:user_id')
-                    ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                    ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                     ->one();
                     $group_id = $temp->group_ID;
 
@@ -238,14 +239,14 @@ class SiteController extends Controller
 
     public function actionGameOverview()
     {
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
         $startDate=EventNames::getStartDate($event_id);
         $endDate=EventNames::getEndDate($event_id);
 
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         if(!isset($group_id->group_ID) || null === $group_id->group_ID) {

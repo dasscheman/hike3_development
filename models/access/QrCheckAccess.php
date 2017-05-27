@@ -47,7 +47,7 @@ class QrCheckAccess {
     function QrCheckUpdate() {
         $model = $this->findModel($this->userModel->ids['qr_check_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

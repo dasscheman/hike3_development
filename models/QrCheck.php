@@ -71,7 +71,7 @@ class QrCheck extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -149,7 +149,7 @@ class QrCheck extends HikeActiveRecord
 	{
         $data = QrCheck::find()
             ->where('event_ID =:event_id AND group_ID =:group_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id])
             ->all();
 
         $score = 0;

@@ -91,7 +91,7 @@ $this->title = Yii::t('app', 'Select hike');
             ],
             'visibleButtons' => [
                 'select' => function ($model, $key, $index) {
-                    return $model->event_ID == Yii::$app->user->identity->selected ? FALSE : TRUE;
+                    return $model->event_ID == Yii::$app->user->identity->selected_event_ID ? FALSE : TRUE;
                  }
             ]
         ],

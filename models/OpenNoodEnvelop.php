@@ -76,7 +76,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -176,7 +176,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
 	{
 		$data = OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND opened =:status')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id, ':status' => self::STATUS_open])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':status' => self::STATUS_open])
             ->all();
 
         $score = 0;

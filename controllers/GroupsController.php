@@ -158,7 +158,7 @@ class GroupsController extends Controller
             // vervolgens weer toe tevoegen. indien nodig
             $groups_leden = DeelnemersEvent::find()
                 ->where(['group_ID' => $model->group_ID])
-                ->andWhere(['event_ID' => Yii::$app->user->identity->selected])
+                ->andWhere(['event_ID' => Yii::$app->user->identity->selected_event_ID])
                 ->all();
             if ($groups_leden) {
                 foreach ($groups_leden as $player) {

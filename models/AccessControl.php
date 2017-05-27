@@ -17,36 +17,19 @@ class AccessControl extends HikeActiveRecord {
     public $hikeStatus;
     public $rolPlayer;
     public $groupOfPlayer;
-    private $_selected;
+    // private $_selected;
 
-    public function init() {
-        if (isset(Yii::$app->user->identity) && Yii::$app->user->identity !== NULL) {
-            return;
-        }
-        $this->setSelected($this->getSelectedCookie());
-    }
-
-    /**
-     *
-     */
-    public function setSelectedCookie($value) {
-        $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('selected_event_ID');
-        $cookie = new Cookie([
-            'name' => 'selected_event_ID',
-            'value' => $value,
-            'expire' => time() + 86400 * 365,
-        ]);
-        $cookies->add($cookie);
-    }
-
-    function getSelectedCookie() {
-        $cookies = Yii::$app->getRequest()->getCookies();
-        return (int) $cookies->getValue('selected_event_ID');
-    }
+//     public function init() {
+// // d(Yii::$app->user);
+//
+//         if (!isset(Yii::$app->user->identity) || Yii::$app->user->identity === NULL) {
+//             return;
+//         }
+//         $this->setSelected();
+//     }
 
     function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {
-        // return TRUE;
+        AccessControl::setSelectedEventID();
         AccessControl::setControllerId($controller_id);
         AccessControl::setActionId($action_id);
         AccessControl::setIds($ids);
@@ -75,13 +58,20 @@ class AccessControl extends HikeActiveRecord {
         return call_user_func(array($model, $method));
     }
 
-    public function setSelected($value) {
-        $id = (int) $value;
-        $this->_selected = $id;
-    }
+    /**
+     *
+     */
+    public function setSelectedEventID() {
+        if(!isset(Yii::$app->user->identity->selected_event_ID)) {
+            $selected = DeelnemersEvent::find()
+                ->where('user_ID=:user_id')
+                ->addParams([':user_id' => Yii::$app->user->identity->id])
+                ->orderBy(['update_time'=>SORT_DESC])
+                ->one();
 
-    public function getSelected() {
-        return $this->_selected;
+            Yii::$app->user->identity->selected_event_ID = (int) $selected->event_ID;
+            Yii::$app->user->identity->save();
+        }
     }
 
     function setControllerId($controller_id) {
@@ -109,11 +99,11 @@ class AccessControl extends HikeActiveRecord {
     }
 
     function setEventId() {
-        if (!isset(Yii::$app->user->identity->selected)) {
+        if (!isset(Yii::$app->user->identity->selected_event_ID)) {
             $this->event_id = FALSE;
             return;
         }
-        $this->event_id = Yii::$app->user->identity->selected;
+        $this->event_id = Yii::$app->user->identity->selected_event_ID;
     }
 
     function setHikeStatus() {

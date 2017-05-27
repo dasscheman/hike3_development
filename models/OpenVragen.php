@@ -83,7 +83,7 @@ class OpenVragen extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -168,12 +168,12 @@ class OpenVragen extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND open_vragen_ID =:vraag_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
             ->exists();
 
         return $data;
@@ -187,12 +187,12 @@ class OpenVragen extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND open_vragen_ID =:vraag_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':vraag_id' => $this->open_vragen_ID])
             ->one();
 
         return $data;
@@ -334,11 +334,11 @@ class OpenVragen extends HikeActiveRecord
         $data = OpenVragen::find($id);
         $dataNext = OpenVragen::find()
             ->where('event_ID =:event_id AND open_vragen_ID !=:id AND route_ID=:route_id AND vraag_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected,
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID,
 								':id' => $id,
 								':route_id' => $route_id,
 								':order' => $vraag_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
             ->exist();
 
 		if ($dataNext) {
@@ -369,8 +369,8 @@ class OpenVragen extends HikeActiveRecord
                 $data = Qr::find($qr_id);
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
             ->exists();
 
 		if ($dataNext) {

@@ -45,7 +45,7 @@ class BonuspuntenSearch extends Bonuspunten
         $query->joinWith(['group', 'createUser']);
         $query->where(
             'tbl_bonuspunten.event_ID = :event_id',
-            [':event_id'=>Yii::$app->user->identity->selected]);
+            [':event_id'=>Yii::$app->user->identity->selected_event_ID]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -90,7 +90,7 @@ class BonuspuntenSearch extends Bonuspunten
             $group_id = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('tbl_deelnemers_event.event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
             $group_id = $groupModel->group_ID;
         }
@@ -99,7 +99,7 @@ class BonuspuntenSearch extends Bonuspunten
             // ->select('open_vragen_ID')
             ->where('tbl_bonuspunten.event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected,
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id
             ]);
 

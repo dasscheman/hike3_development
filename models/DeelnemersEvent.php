@@ -121,7 +121,7 @@ class DeelnemersEvent extends HikeActiveRecord
         if (parent::beforeValidate()) {
             if (Yii::$app->controller->id !== 'event-names' AND
                 Yii::$app->controller->action->id !== 'create') {
-                $this->event_ID = Yii::$app->user->identity->selected;
+                $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             }
             return(TRUE);
         }
@@ -181,7 +181,7 @@ class DeelnemersEvent extends HikeActiveRecord
     public function getRolOfCurrentPlayerCurrentGame()
     {
         $data = DeelnemersEvent::findOne([
-            'event_ID' => Yii::$app->user->identity->selected,
+            'event_ID' => Yii::$app->user->identity->selected_event_ID,
             'user_ID' => Yii::$app->user->identity->id
         ]);
 
@@ -212,11 +212,11 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de group van een speler tijdens een bepaalde hike
      */
-    public function getGroupOfPlayer($event_id, $user_id)
+    public function getGroupOfPlayer()
     {
         $data = DeelnemersEvent::find()
             ->where('event_ID = :event_Id AND user_ID=:user_Id')
-            ->params([':event_Id' => $event_id, ':user_Id' => $user_id])
+            ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':user_Id' => Yii::$app->user->identity->id])
             ->one();
         if(!isset($data->rol))
         {
@@ -271,7 +271,7 @@ class DeelnemersEvent extends HikeActiveRecord
         $queryDeelnemersEvent = DeelnemersEvent::find();
         $queryDeelnemersEvent->select('user_ID')
             ->where('event_ID=:event_id')
-            ->addParams([':event_id' => Yii::$app->user->identity->selected]);
+            ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID]);
 
 
         $result = Users::find()

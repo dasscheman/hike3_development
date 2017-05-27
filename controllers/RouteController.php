@@ -74,7 +74,7 @@ class RouteController extends Controller
      */
     public function actionIndex()
     {
-        $event_Id = Yii::$app->user->identity->selected;
+        $event_Id = Yii::$app->user->identity->selected_event_ID;
         $startDate=EventNames::getStartDate($event_Id);
         $endDate=EventNames::getEndDate($event_Id);
 
@@ -178,7 +178,7 @@ class RouteController extends Controller
             $date = Yii::$app->request->get('date');
             $this->setCookieIndexTab($date);
             $model->setAttributes([
-                'event_ID' => Yii::$app->user->identity->selected,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
                 'day_date' => $date
             ]);
         }
@@ -213,7 +213,7 @@ class RouteController extends Controller
                 ->where('event_ID=:event_id and route_id=:route_id')
                 ->addParams(
                     [
-                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':route_id' => $model->route_ID
                     ])
                 ->exists();
@@ -223,7 +223,7 @@ class RouteController extends Controller
                     ->where('event_ID=:event_id and route_id=:route_id')
                     ->addParams(
                         [
-                            ':event_id' => Yii::$app->user->identity->selected,
+                            ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
                         ])
                     ->exists();
@@ -234,7 +234,7 @@ class RouteController extends Controller
                     ->where('event_ID=:event_id and route_id=:route_id')
                     ->addParams(
                         [
-                            ':event_id' => Yii::$app->user->identity->selected,
+                            ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
                         ])
                     ->exists();
@@ -331,13 +331,13 @@ class RouteController extends Controller
         if ($up_down === 'up') {
             $previousModel = Route::find()
                 ->where('event_ID =:event_id and day_date =:date and route_volgorde <:order')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->day_date, ':order' => $model->route_volgorde])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde DESC')
                 ->one();
         } elseif ($up_down === 'down') {
             $previousModel = Route::find()
                 ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
-                ->params([':event_id' => Yii::$app->user->identity->selected, ':date' => $model->day_date, ':order' => $model->route_volgorde])
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde ASC')
                 ->one();
         }
@@ -353,8 +353,8 @@ class RouteController extends Controller
             $previousModel->save();
         }
 
-        $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected);
-        $endDate=EventNames::getEndDate(Yii::$app->user->identity->selected);
+        $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate=EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
         $searchModel = new RouteSearch();
 
         if (Yii::$app->request->isAjax) {

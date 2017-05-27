@@ -79,7 +79,7 @@ class Qr extends HikeActiveRecord
      */
     public function beforeValidate() {
         if (parent::beforeValidate()) {
-            $this->event_ID = Yii::$app->user->identity->selected;
+            $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
         }
         return(false);
@@ -214,7 +214,7 @@ class Qr extends HikeActiveRecord
         dd('NIET MEER NODIG??');
         $data = Qr::find()
             ->where('event_ID =:event_id AND route_ID =:route_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' =>$route_id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_id' =>$route_id])
             ->count();
 
 		return $data;
@@ -225,7 +225,7 @@ class Qr extends HikeActiveRecord
         $data = Qr::find($qr_id);
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
             ->exist();
 
 		if ($dataNext) {
@@ -239,7 +239,7 @@ class Qr extends HikeActiveRecord
         $data = Qr::find($qr_id);
         $dataNext = Qr::find()
             ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
             ->exists();
 
 		if ($dataNext) {
@@ -252,7 +252,7 @@ class Qr extends HikeActiveRecord
 	{
         $data = Qr::find()
             ->where('route_ID =:event_id AND route_ID =:route_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':route_id' => $route_id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_id' => $route_id])
             ->exists();
 
 		if ($data) {
@@ -280,12 +280,12 @@ class Qr extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = QrCheck::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND qr_ID =:qr_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
             ->exists();
 
         return $data;
@@ -299,12 +299,12 @@ class Qr extends HikeActiveRecord
         $group_id = DeelnemersEvent::find()
             ->select('group_ID')
             ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':user_id' => Yii::$app->user->id])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
 
         $data = QrCheck::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND qr_ID =:qr_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':qr_id' => $this->qr_ID])
             ->one();
 
         return $data;

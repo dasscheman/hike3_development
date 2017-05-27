@@ -21,7 +21,7 @@ class HikeActivityFeed extends Model
         $models = [];
         $bonuspunten = Bonuspunten::find()
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
             //->limit(20)
@@ -42,7 +42,7 @@ class HikeActivityFeed extends Model
 
         $qrchecks = QrCheck::find()
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
             //->limit(20)
@@ -64,7 +64,7 @@ class HikeActivityFeed extends Model
 
         $answers = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
             //->limit(20)
@@ -86,7 +86,7 @@ class HikeActivityFeed extends Model
 
         $posts = PostPassage::find()
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
             //->limit(20)
@@ -108,7 +108,7 @@ class HikeActivityFeed extends Model
 
         $hints = OpenNoodEnvelop::find()
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
             //->limit(20)

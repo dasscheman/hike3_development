@@ -56,7 +56,7 @@ class GroupsSearch extends Groups
      */
     public function search($params)
     {
-        $event_id = Yii::$app->user->identity->selected;
+        $event_id = Yii::$app->user->identity->selected_event_ID;
         $query = Groups::find()
             ->where("event_ID =:event_id")
             ->addParams([':event_id' => $event_id]);

@@ -27,6 +27,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property integer $selected_event_ID
  * @property string $authKey
  * @property string $accessToken
  *
@@ -130,6 +131,7 @@ class Users extends AccessControl implements IdentityInterface {
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
+            'selected_event_ID' => Yii::t('app', 'Selected hike'),
             'authKey' => Yii::t('app', 'Auth Key'),
             'accessToken' => Yii::t('app', 'Access Token'),
         ];

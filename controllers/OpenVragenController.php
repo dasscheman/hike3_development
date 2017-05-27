@@ -106,7 +106,7 @@ class OpenVragenController extends Controller
                 'model' => $model,
             ]);
         }
-        $model->event_ID = Yii::$app->user->identity->selected;
+        $model->event_ID = Yii::$app->user->identity->selected_event_ID;
         $model->setNewOrderForVragen();
 
         if(!$model->save()) {
@@ -136,7 +136,7 @@ class OpenVragenController extends Controller
                 ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
                 ->addParams(
                     [
-                        ':event_id' => Yii::$app->user->identity->selected,
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':open_vragen_id' => $model->open_vragen_ID
                     ])
                 ->exists();
@@ -172,7 +172,7 @@ class OpenVragenController extends Controller
            ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
            ->addParams(
                [
-                   ':event_id' => Yii::$app->user->identity->selected,
+                   ':event_id' => Yii::$app->user->identity->selected_event_ID,
                    ':open_vragen_id' => $model->open_vragen_ID
                ])
            ->exists();

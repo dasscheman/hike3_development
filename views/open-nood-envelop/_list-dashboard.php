@@ -19,7 +19,7 @@ use app\models\DeelnemersEvent;
     </h4>
     <?php
     if (!$model->isHintOpenedByGroup()) {
-        $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected, Yii::$app->user->id);
+        $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
 
         echo ButtonAjax::widget([
             'name' => Yii::t('app', 'Open Hint'),

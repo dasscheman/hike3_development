@@ -20,7 +20,7 @@ class EventNamesAccess {
     function EventNamesSetMaxTime() {
         $model = $this->findModel($this->userModel->ids['event_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 
@@ -34,7 +34,7 @@ class EventNamesAccess {
     function EventNamesUpdate() {
         $model = $this->findModel($this->userModel->ids['event_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 
@@ -55,7 +55,7 @@ class EventNamesAccess {
     function EventNamesUpload() {
         $model = $this->findModel($this->userModel->ids['event_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 

@@ -30,7 +30,7 @@ class OpenVragenAccess {
         // dd($this->userModel->ids);
         $model = $this->findModel($this->userModel->ids['open_vragen_ID']);
 
-        if ($model->event_ID !== Yii::$app->user->identity->selected) {
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
         }
 
