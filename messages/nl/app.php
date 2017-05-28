@@ -33,7 +33,7 @@ return [
     'Arrival' => '',
     'Assign Bonus Points' => '',
     'Auth Key' => '',
-    'Awnser question' => 'Beantwoorde vragen',
+    'Awnser question' => 'Beantwoorden',
     'Belongs to organisation' => 'Behoort tot organisatie',
     'Birthdate' => 'Geboortedag',
     'Bonus Score' => 'Bonuspunten',

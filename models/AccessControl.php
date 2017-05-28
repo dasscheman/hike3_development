@@ -17,16 +17,6 @@ class AccessControl extends HikeActiveRecord {
     public $hikeStatus;
     public $rolPlayer;
     public $groupOfPlayer;
-    // private $_selected;
-
-//     public function init() {
-// // d(Yii::$app->user);
-//
-//         if (!isset(Yii::$app->user->identity) || Yii::$app->user->identity === NULL) {
-//             return;
-//         }
-//         $this->setSelected();
-//     }
 
     function isActionAllowed($controller_id = NULL, $action_id = NULL, array $ids = NULL, array $parameters = NULL) {
         AccessControl::setSelectedEventID();

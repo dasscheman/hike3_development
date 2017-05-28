@@ -263,12 +263,22 @@ class PostPassage extends HikeActiveRecord
         return $score;
 	}
 
-	public function isTimeLeftToday($event_id, $group_id)
+	public function isTimeLeftToday($group_id)
 	{
-		if (PostPassage::getTimeLeftToday($event_id, $group_id) > 0)
-			return true;
+        $dataEvent = EventNames::find()
+            ->where('event_ID = :event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->one();
+        if(!isset($dataEvent->max_time)) {
+            // When max_time is not set return true, because there is time left
+            // when no max is set.
+            return TRUE;
+        }
 
-		return false;
+		if (PostPassage::getTimeLeftToday($group_id) > 0) {
+			return TRUE;
+        }
+		return FALSE;
 	}
 
 	public function getTimeLeftToday($group_id)
@@ -283,9 +293,6 @@ class PostPassage extends HikeActiveRecord
 			return 0;
 		}
 		return strtotime("1970-01-01 $dataEvent->max_time UTC") - $totalTime;
-
-
-		return $this->convertToHoursMinute($this->timeLeftToday($event_id, $group_id));
 	}
 
 	public function getWalkingTimeToday($group_id)

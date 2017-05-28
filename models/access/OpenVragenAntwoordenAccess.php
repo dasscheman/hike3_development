@@ -50,8 +50,8 @@ class OpenVragenAntwoordenAccess {
     }
 
     function OpenVragenAntwoordenBeantwoorden() {
-        if ($this->userModel->hikeStatus == EventNames::STATUS_introductie and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
+        if ($this->userModel->hikeStatus === EventNames::STATUS_introductie and
+            $this->userModel->rolPlayer === DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
 
