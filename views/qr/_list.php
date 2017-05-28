@@ -63,7 +63,7 @@ use dosamigos\qrcode\QrCode;
                     'data-pjax' => "0"
                 ]
             ); ?></br>
-            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_ID' => $model->event_ID]));?>
+            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code]));?>
 
 
         </div>

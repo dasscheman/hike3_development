@@ -39,7 +39,11 @@ class QrCheckController extends Controller
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
                                 NULL,
-                                ['qr_check_ID' => Yii::$app->request->get('qr_code')]);
+                                [
+                                    'qr_check_ID' => Yii::$app->request->get('qr_code'),
+                                    'event_ID' => Yii::$app->request->get('event_id')
+                                ]
+                            );
                         }
                     ],
                     [

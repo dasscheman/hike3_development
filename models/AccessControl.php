@@ -52,7 +52,30 @@ class AccessControl extends HikeActiveRecord {
      *
      */
     public function setSelectedEventID() {
+
+        if(NULL !== Yii::$app->request->get('event_id') AND
+            Yii::$app->request->get('event_id') !== Yii::$app->user->identity->selected_event_ID) {
+            // When a qr code is scanned the, event_ID is passed in the GET.
+            // Because all checks are based on the selected_event_ID we must
+            // if the GET and the selected have the same ID, if not check the GET
+            // event_ID. When okey, set this id.
+            // This is done here in case it is usedby other models.
+            $exists = DeelnemersEvent::find()
+                ->where('user_ID=:user_id AND event_ID=_event_id')
+                ->addParams([
+                    ':user_id' => Yii::$app->user->identity->id,
+                    ':event_id' => Yii::$app->request->get('event_id')
+                ])
+                ->exists();
+
+            if($exists){
+                Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_id');
+                Yii::$app->user->identity->save();
+            }
+        }
+
         if(!isset(Yii::$app->user->identity->selected_event_ID)) {
+            // Select the event_ID which is most recently modified.
             $selected = DeelnemersEvent::find()
                 ->where('user_ID=:user_id')
                 ->addParams([':user_id' => Yii::$app->user->identity->id])

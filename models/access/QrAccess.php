@@ -35,6 +35,14 @@ class QrAccess {
     }
 
     function QrQrcode() {
+        $model = Qr::find()
+            ->where('qr_code =:qr_code')
+            ->params([':qr_code' => $this->userModel->ids['qr_code']])
+            ->one();
+
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
+            return FALSE;
+        }
         if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }

@@ -46,7 +46,18 @@ class QrController extends Controller
                     ],
                     [
                         'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'report', 'createIntroductie', 'moveUpDown', 'qrcode'),
+                        'actions'=>['qrcode'],
+                        'matchCallback' => function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['qr_code' => Yii::$app->request->get('qr_code')]
+                            );
+                        },
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions'=>array('index', 'update', 'delete', 'report', 'createIntroductie', 'moveUpDown'),
                         'matchCallback' => function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
@@ -212,11 +223,10 @@ class QrController extends Controller
 		}
 	}
 
-    public function actionQrcode() {
-        $qr_code = Yii::$app->Request->get('qr_code');
-        $event_id = Yii::$app->Request->get('event_id');
+    public function actionQrcode($qr_code) {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
 
-    	$link = "www.hike-app.nl/index.php?r=qrCheck/create&event_id=".$event_id."&qr_code=".$qr_code;
+    	$link = "www.kiwi.run/index.php?r=qr-check/create&event_id=".$event_id."&qr_code=".$qr_code;
         return QrCode::jpg(
             $link,
             Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',
