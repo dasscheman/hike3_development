@@ -92,20 +92,25 @@ use prawee\widgets\ButtonAjax;
         ?>
         </p>
         <?php
-            $postPassage = $model->getPostPassages()
+        $postPassage = $model->getPostPassages()
             ->where(['post_ID' => $post_id]);
-            //->one();
-            // dd($postPassage);
-        if ($postPassage->exists()) {
-        ?>
+
+        $db = $model::getDb();
+        $postPassageExists = $db->cache(function ($db) use($postPassage){
+            return $postPassage->exists();
+        });
+        if ($postPassageExists) {
+            $postPassageData = $db->cache(function ($db) use($postPassage){
+                return $postPassage->one();
+            }); ?>
             <b>
-            <?php echo Html::encode($postPassage->one()->getAttributeLabel('gepasseerd')); ?>
+            <?php echo Html::encode($postPassageData->getAttributeLabel('gepasseerd')); ?>
             </b>
-            <?php echo GeneralFunctions::printGlyphiconCheck($postPassage->one()->gepasseerd); ?></br>
+            <?php echo GeneralFunctions::printGlyphiconCheck($postPassageData->gepasseerd); ?></br>
             <b>
-            <?php echo Html::encode($postPassage->one()->getAttributeLabel('binnenkomst')); ?>
+            <?php echo Html::encode($postPassageData->getAttributeLabel('binnenkomst')); ?>
             </b>
-            <?php echo Html::encode($postPassage->one()->binnenkomst); ?></br>
+            <?php echo Html::encode($postPassageData->binnenkomst); ?></br>
             <b>
         <?php
         }

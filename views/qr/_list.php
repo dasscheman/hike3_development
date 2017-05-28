@@ -63,9 +63,12 @@ use dosamigos\qrcode\QrCode;
                     'data-pjax' => "0"
                 ]
             ); ?></br>
-            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_ID' => $model->event_ID]));?>
+        <?php
+        if ($this->beginCache('qrcode', ['duration' => 3600])) {
+            echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code, 'event_ID' => $model->event_ID]));
 
-
+            $this->endCache();
+        } ?>
         </div>
     </div>
 </div>

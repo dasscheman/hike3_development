@@ -304,9 +304,12 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStatusHike($event_Id) {
-        $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
-            ->one();
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($event_Id) {
+            return EventNames::find()
+                ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+                ->one();
+        });
         if (isset($data->status)) {
             return $data->status;
         } else {
@@ -318,9 +321,12 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getStartDate($event_Id) {
-        $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
-            ->one();
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($event_Id) {
+            return EventNames::find()
+                ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+                ->one();
+        });
         if (isset($data->status)) {
             return $data->start_date;
         } else {
@@ -332,9 +338,12 @@ class EventNames extends HikeActiveRecord {
      * Returns de status of a hike.
      */
     public function getEndDate($event_Id) {
-        $data = EventNames::find()
-            ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
-            ->one();
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($event_Id) {
+            return EventNames::find()
+                ->where('event_ID =:event_Id', [':event_Id' => $event_Id])
+                ->one();
+        });
         if (isset($data->status)) {
             return $data->end_date;
         } else {
@@ -358,10 +367,13 @@ class EventNames extends HikeActiveRecord {
      */
     public function getActiveDayOfHike() {
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $data = EventNames::find()
-            ->where('event_ID =:event_Id')
-            ->params([':event_Id' => $event_id])
-            ->one();
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($event_id) {
+            return EventNames::find()
+                ->where('event_ID =:event_Id')
+                ->params([':event_Id' => $event_id])
+                ->one();
+        });
 
         if (isset($data->active_day)) {
             return $data->active_day;

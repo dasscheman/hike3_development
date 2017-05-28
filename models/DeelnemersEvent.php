@@ -180,10 +180,13 @@ class DeelnemersEvent extends HikeActiveRecord
      */
     public function getRolOfCurrentPlayerCurrentGame()
     {
-        $data = DeelnemersEvent::findOne([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'user_ID' => Yii::$app->user->identity->id
-        ]);
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return DeelnemersEvent::findOne([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'user_ID' => Yii::$app->user->identity->id
+            ]);
+        });
 
         if(isset($data->rol))
         {

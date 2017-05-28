@@ -17,12 +17,14 @@ use yii\data\ArrayDataProvider;
         $dataProvider = new ArrayDataProvider([
             'allModels' => $model->noodEnvelops,
         ]);
-
-        echo ListView::widget([
-            'summary' => FALSE,
-            'pager' => FALSE,
-            'dataProvider' => $dataProvider,
-            'itemView' => '/open-nood-envelop/_list',
-        ]);
+        if ( Yii::$app->cache->beginCache('hintlist', ['duration' => 3600])) {
+            echo ListView::widget([
+                'summary' => FALSE,
+                'pager' => FALSE,
+                'dataProvider' => $dataProvider,
+                'itemView' => '/open-nood-envelop/_list',
+            ]);
+            Yii::$app->cache->endCache();
+        }
     ?>
 </div>

@@ -19,6 +19,7 @@ use yii\web\HttpException;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use app\components\SetupDateTime;
+use yii\caching\Cache;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -239,7 +240,8 @@ class EventNamesController extends Controller
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the changes.'));
             }  else {
-                if (Yii::$app->request->get('action') == 'change_settings') {
+                Yii::$app->cache->flush();
+                if (Yii::$app->request->get('action') === 'change_settings') {
                     $begin = new DateTime($model->start_date);
                     $end = new DateTime($model->end_date);
 
@@ -336,6 +338,7 @@ class EventNamesController extends Controller
         $model->active_day = $model->start_date;
 
         if ($model->save()) {
+            Yii::$app->cache->flush();
             if ($model->status == EventNames::STATUS_opstart){
                 Yii::$app->session->setFlash('warning', Yii::t(
                     'app',
@@ -386,6 +389,7 @@ class EventNamesController extends Controller
         $model->load(Yii::$app->request->post());
         $model->active_day = Yii::$app->setupdatetime->storeFormat(Yii::$app->request->post('EventNames')['active_day'], 'date');
         if ($model->save()) {           // validation failed: $errors is an array containing error messages
+            Yii::$app->cache->flush();
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Don\'t forget to set the max time.'));
         } else {
             // validation failed: $errors is an array containing error messages
@@ -415,6 +419,7 @@ class EventNamesController extends Controller
 
         if ($model->validate()) {
             $model->save(FALSE);
+            Yii::$app->cache->flush();
             if ($model->status == EventNames::STATUS_gestart){
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
             }
@@ -436,6 +441,7 @@ class EventNamesController extends Controller
         if (NULL !== Yii::$app->request->get('event_ID')  ) {
             Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
             Yii::$app->user->identity->save();
+            Yii::$app->cache->flush();
             return $this->redirect(['/site/index']);
         }
 
