@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\Users */
 
 $this->title = Yii::t('app', 'Update {username}', [
-    'username' => $model->username,
+    'username' => $model->voornaam . ' ' . $model->achternaam,
 ]);
 ?>
 <div class="users-update">

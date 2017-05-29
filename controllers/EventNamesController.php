@@ -123,8 +123,8 @@ class EventNamesController extends Controller
 
             // when we have an event_id set the user variable and the cookcie to
             // be sure the before validate is not overwriting with the wrong event_id.
-            Yii::$app->user->identity->setSelected($event_id);
-            Yii::$app->user->identity->setSelectedCookie($event_id);
+            Yii::$app->user->identity->selected_event_ID = (int) $event_id;
+            Yii::$app->user->identity->save();
 
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = $event_id;

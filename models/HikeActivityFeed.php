@@ -24,10 +24,10 @@ class HikeActivityFeed extends Model
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
-            //->limit(20)
             ->all();
 
         foreach ($bonuspunten as $bonuspunt) {
+            $user = Users::findOne($bonuspunt['create_user_ID']);
             $data[] = [
                 'id' => $bonuspunt['bouspunten_ID'],
                 'source' => 'bonuspunten',
@@ -35,7 +35,7 @@ class HikeActivityFeed extends Model
                 'title' => Yii::t('app', 'Received bonus points'),
                 'description' => $bonuspunt['omschrijving'],
                 'score' => $bonuspunt['score'],
-                'username' => Users::findOne($bonuspunt['create_user_ID'])->username,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
                 'groupname' => Groups::findOne($bonuspunt['group_ID'])->group_name
             ];
         }
@@ -45,11 +45,11 @@ class HikeActivityFeed extends Model
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
-            //->limit(20)
             ->all();
 
         foreach ($qrchecks as $qrcheck) {
             $qr =  Qr::findOne($qrcheck['qr_ID']);
+            $user = Users::findOne($qrcheck['create_user_ID']);
             $data[] = [
                 'id' => $qrcheck['qr_check_ID'],
                 'source' => 'qrcheck',
@@ -57,7 +57,7 @@ class HikeActivityFeed extends Model
                 'title' => Yii::t('app', 'Check silent station'),
                 'description' => $qr->qr_name,
                 'score' => $qr->score,
-                'username' => Users::findOne($qrcheck['create_user_ID'])->username,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
                 'groupname' => Groups::findOne($qrcheck['group_ID'])->group_name
             ];
         }
@@ -67,11 +67,11 @@ class HikeActivityFeed extends Model
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
-            //->limit(20)
             ->all();
 
         foreach ($answers as $answer) {
             $question = OpenVragen::findOne($answer['open_vragen_ID']);
+            $user = Users::findOne($answer['create_user_ID']);
             $data[] = [
                 'id' => $answer['open_vragen_antwoorden_ID'],
                 'source' => 'openvragenantwoorden',
@@ -79,7 +79,7 @@ class HikeActivityFeed extends Model
                 'title' => Yii::t('app', 'Answered question'),
                 'description' => $question->open_vragen_name,
                 'score' => $question->score,
-                'username' => Users::findOne($answer['create_user_ID'])->username,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
                 'groupname' => Groups::findOne($answer['group_ID'])->group_name
             ];
         }
@@ -89,11 +89,11 @@ class HikeActivityFeed extends Model
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
-            //->limit(20)
             ->all();
 
         foreach ($posts as $post) {
             $postData = Posten::findOne($post['post_ID']);
+            $user = Users::findOne($post['create_user_ID']);
             $data[] = [
                 'id' => $post['posten_passage_ID'],
                 'source' => 'postenpassage',
@@ -101,7 +101,7 @@ class HikeActivityFeed extends Model
                 'title' => Yii::t('app', 'Checked in at station'),
                 'description' => $postData->post_name,
                 'score' => $postData->score,
-                'username' => Users::findOne($post['create_user_ID'])->username,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
                 'groupname' => Groups::findOne($post['group_ID'])->group_name
             ];
         }
@@ -116,6 +116,7 @@ class HikeActivityFeed extends Model
 
         foreach ($hints as $hint) {
             $hintData = NoodEnvelop::findOne($hint['nood_envelop_ID']);
+            $suer = Users::findOne($hint['create_user_ID']);
             $data[] = [
                 'id' => $hint['open_nood_envelop_ID'],
                 'source' => 'openhints',
@@ -123,7 +124,7 @@ class HikeActivityFeed extends Model
                 'title' => Yii::t('app', 'Opened an hint'),
                 'description' => $hintData->nood_envelop_name,
                 'score' => $hintData->score,
-                'username' => Users::findOne($hint['create_user_ID'])->username,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
                 'groupname' => Groups::findOne($hint['group_ID'])->group_name
             ];
         }

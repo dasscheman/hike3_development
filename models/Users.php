@@ -387,6 +387,16 @@ class Users extends AccessControl implements IdentityInterface {
     }
 
     /**
+     * Finds user by email
+     *
+     * @param  string      $email
+     * @return static|null
+     */
+    public static function findByEmail($email) {
+        return static::findOne(['email' => $email]);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId() {
@@ -525,8 +535,8 @@ class Users extends AccessControl implements IdentityInterface {
                 'newMailUsers' => $this->username,
                 'newWachtwoord' => $this->password,
             ])
-            ->setSubject('Wachtwoord Hike-app')
-            ->setFrom('noreply@biologenkatoor.nl')
+            ->setSubject('Wachtwoord Kiwi.run')
+            ->setFrom('noreply@kiwi.run')
             ->setTo($this->email);
 
         if ($message->send()) {

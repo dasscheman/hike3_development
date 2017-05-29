@@ -11,7 +11,7 @@ use app\components\SetupDateTime;
  */
 class LoginForm extends Model
 {
-    public $username;
+    public $email;
     public $password;
     public $previous_login_time;
     public $rememberMe = true;
@@ -26,7 +26,7 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['username', 'password'], 'required'],
+            [['email', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
@@ -76,7 +76,7 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = Users::findByUsername(['username'=>$this->username]);
+            $this->_user = Users::findByEmail(['email'=>$this->email]);
         }
         return $this->_user;
     }

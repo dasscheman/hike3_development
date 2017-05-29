@@ -21,7 +21,7 @@ use yii\bootstrap\Modal;
             <b>
             <?php echo Html::encode($model->getAttributeLabel('create_user_ID')); ?>:
             </b>
-            <?php echo Html::encode($model->createUser->username); ?></br>
+            <?php echo Html::encode($model->createUser->voornaam . ' ' . $model->createUser->achternaam); ?></br>
             <b>
             <?php echo Html::encode($model->getAttributeLabel('create_time')); ?>:
             </b>

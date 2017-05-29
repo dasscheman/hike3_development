@@ -32,8 +32,8 @@ $this->title = Yii::t('app', 'Overview opened hints');
         'value' => 'noodEnvelop.score'
         ],
         [
-        'attribute' => 'username',
-        'value' => 'createUser.username'
+        'attribute' => 'voornaam',
+        'value' => 'createUser.voornaam'
         ],
     ];
 

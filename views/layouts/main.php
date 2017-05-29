@@ -81,7 +81,7 @@ AppAsset::register($this);
                         'visible' => Yii::$app->user->isGuest,
                     ],
                     [
-                        'label' => isset(Yii::$app->user->identity->username )?'Logout ' . Yii::$app->user->identity->username: '',
+                        'label' => isset(Yii::$app->user->identity->voornaam )?'Logout ' . Yii::$app->user->identity->voornaam: '',
                         'url' => ['/site/logout'],
                         'linkOptions' => ['data-method' => 'post'],
                         'visible' => !Yii::$app->user->isGuest,

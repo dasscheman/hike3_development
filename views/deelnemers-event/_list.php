@@ -12,7 +12,7 @@ use yii\bootstrap\Modal;
 <div class="well">
     <?php
         echo ButtonAjax::widget([
-            'name' => $model->user->username,
+            'name' => $model->user->voornaam . ' ' . $model->user->achternaam,
             'route' => [
                 'deelnemers-event/update',
                 'deelnemers_ID'=>$model->deelnemers_ID,

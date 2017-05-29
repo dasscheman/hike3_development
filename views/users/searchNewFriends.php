@@ -14,7 +14,6 @@ $this->title = Yii::t('app', 'Search for new friends');
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
     $gridColumns = [
-        'username',
         'voornaam',
         'achternaam',
         'organisatie',

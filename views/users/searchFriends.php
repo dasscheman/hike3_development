@@ -14,7 +14,6 @@ $this->title = Yii::t('app', 'Friends');
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
     $gridColumns = [
-        'username',
         'voornaam',
         'achternaam',
         'organisatie',
@@ -32,7 +31,7 @@ $this->title = Yii::t('app', 'Friends');
     $exportConfig = TRUE;
     $responsiveWrap = FALSE;
 
-    yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]); 
+    yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
 
     echo GridView::widget([
         'id' => 'kv-grid-hike_select',

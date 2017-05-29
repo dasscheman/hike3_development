@@ -57,7 +57,7 @@ use app\models\DeelnemersEvent;
         <b>
         <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_user_ID')); ?>:
         </b>
-        <?php echo Html::encode($model->getHintOpenedByGroup()->createUser->username); ?></br>
+        <?php echo Html::encode($model->getHintOpenedByGroup()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam); ?></br>
         <b>
         <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_time')); ?>:
         </b>

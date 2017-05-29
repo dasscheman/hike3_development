@@ -12,12 +12,12 @@ use kartik\widgets\ActiveForm;
 
 <div class="users-form">
     <?php
-    $attributes['username'] = [
-        'type' => Form::INPUT_TEXT,
-        'options' => [
-            'placeholder' => Yii::t('app', 'Username')
-        ],
-    ];
+    // $attributes['username'] = [
+    //     'type' => Form::INPUT_TEXT,
+    //     'options' => [
+    //         'placeholder' => Yii::t('app', 'Username')
+    //     ],
+    // ];
 
     $attributes['voornaam'] = [
         'type' => Form::INPUT_TEXT,

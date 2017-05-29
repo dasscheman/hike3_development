@@ -41,6 +41,7 @@ class ProfileActivityFeed extends Model
                 // Skip this entry when eventnames entry not exists.
                 continue;
             }
+            $user = Users::findOne($deelnemersevent['create_user_ID']);
             if ($deelnemersevent['rol'] === DeelnemersEvent::ROL_deelnemer) {
                 $data[] = [
                     'id' => $deelnemersevent['deelnemers_ID'],
@@ -53,7 +54,7 @@ class ProfileActivityFeed extends Model
 
                     'description' => Yii::t('app', '{username} added you to the group {groupname}',
                         [
-                            'username' => Users::findOne($deelnemersevent['create_user_ID'])->username,
+                            'username' => $user->voornaam . ' ' . $user->achternaam,
                             'groupname' => Groups::findOne($deelnemersevent['group_ID'])->group_name
                         ]),
                 ];
@@ -70,7 +71,7 @@ class ProfileActivityFeed extends Model
 
                     'description' => Yii::t('app', '{username} added you as {role}',
                         [
-                            'username' => Users::findOne($deelnemersevent['create_user_ID'])->username,
+                            'username' => $user->voornaam . ' ' . $user->achternaam,
                             'role' => DeelnemersEvent::getRolText($deelnemersevent['rol']),
                         ]),
                 ];            }
@@ -87,11 +88,11 @@ class ProfileActivityFeed extends Model
             if (($eventname = EventNames::findOne($eventname['event_ID'])) === null) {
                 continue;
             }
-
+            $user = Users::findOne($eventname['create_user_ID']);
             $description = Yii::t('app', '{username} modified the hike.
                 Hike has status: {status}',
                 [
-                    'username' => Users::findOne($eventname['create_user_ID'])->username,
+                    'username' => $user->voornaam . ' ' . $user->achternaam,
                     'status' => $eventname->statusText,
                 ]);
             if ($eventname->status === EventNames::STATUS_gestart) {
@@ -117,20 +118,21 @@ class ProfileActivityFeed extends Model
         foreach ($friends as $friend) {
             $title = false;
             $description = '';
+            $name = $friend->friendsWithUser['voornaam'] . ' ' . $friend->friendsWithUser['achternaam'];
             if ($friend['status'] === FriendList::STATUS_accepted) {
                 $title = Yii::t('app', '{username} is a friend',
                     [
-                        'username' => $friend->friendsWithUser['username'],
+                        'username' => $name,
                     ]);
             } elseif ($friend['status'] === FriendList::STATUS_waiting) {
                 $title = Yii::t('app', 'You\'ve sent {username} a friendship request',
                     [
-                        'username' => $friend->friendsWithUser['username'],
+                        'username' => $name,
                     ]);
             } elseif ($friend['status'] === FriendList::STATUS_pending) {
                 $title = Yii::t('app', '{username} sended you a friendship request',
                     [
-                        'username' => $friend->friendsWithUser['username'],
+                        'username' => $name,
                     ]);
             }
 

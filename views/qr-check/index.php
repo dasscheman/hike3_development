@@ -33,8 +33,8 @@ $this->title = Yii::t('app', 'Overview checked silent stations');
         'value' => 'qr.score'
         ],
         [
-        'attribute' => 'username',
-        'value' => 'createUser.username'
+        'attribute' => 'voornaam',
+        'value' => 'createUser.voornaam'
         ],
     ];
 

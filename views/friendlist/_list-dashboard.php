@@ -14,7 +14,7 @@ use app\models\FriendList;
         <?php echo Html::encode($model->friendsWithUser->voornaam); ?>
         <?php echo Html::encode($model->friendsWithUser->achternaam); ?></br>
     </b>
-        (<?php echo Html::encode($model->friendsWithUser->username); ?>)
+        (<?php echo Html::encode($model->friendsWithUser->email); ?>)
     <br>
     <b>
         <?php echo Html::encode($model->friendsWithUser->getAttributeLabel('organisatie')); ?>:

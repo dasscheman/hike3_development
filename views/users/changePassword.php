@@ -10,6 +10,6 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h1>Wijzig wachtwoord voor <?php echo $model->username; ?></h1>
+<h1>Wijzig wachtwoord voor <?php echo $model->voornaam . ' ' . $model->achternaam; ?></h1>
 
 <?php echo $this->renderPartial('_changePassword', array('model'=>$model)); ?>

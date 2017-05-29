@@ -15,6 +15,7 @@ use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
 use app\models\Route;
+use app\models\Posten;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
 use app\models\OpenVragen;
@@ -71,6 +72,47 @@ class SiteController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    public function actionIndex()
+    {
+        if (!empty(Yii::$app->user->identity->selected_event_ID)) {
+            $event_id = Yii::$app->user->identity->selected_event_ID;
+            $user = DeelnemersEvent::find()
+                ->where('event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
+                ->one();
+            if(!isset($user->rol)) {
+                return $this->render('/site/index');
+            }
+            if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
+                return $this->redirect(['/site/overview-players']);
+            }
+            if ($user->rol === DeelnemersEvent::ROL_organisatie) {
+                return $this->redirect(['/site/overview-organisation']);
+            }
+        }
+
+        if (!Yii::$app->user->isguest) {
+            if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
+                Yii::$app->user->identity->setSelectedEventID();
+            } else {
+                Yii::$app->session->setFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                        'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
+                        If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
+                    )
+                );
+                return $this->redirect(['/users/view']);
+            }
+
+
+
+        }
+        return $this->render('/site/index');
+
     }
 
     public function actionOverviewOrganisation()
@@ -134,55 +176,6 @@ class SiteController extends Controller
         return $this->render('/site/index');
 	}
 
-    public function actionIndex()
-    {
-        Yii::$app->user->identity->setSelectedEventID();
-        if (!empty(Yii::$app->user->identity->selected_event_ID)) {
-            $event_id = Yii::$app->user->identity->selected_event_ID;
-            $user = DeelnemersEvent::find()
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            if(!isset($user->rol)) {
-                return $this->render('/site/index');
-            }
-            if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
-                return $this->redirect(['/site/overview-players']);
-            }
-            if ($user->rol === DeelnemersEvent::ROL_organisatie) {
-                return $this->redirect(['/site/overview-organisation']);
-            }
-        }
-
-        if (!Yii::$app->user->isguest) {
-            if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
-                Yii::$app->session->setFlash(
-                    'warning',
-                    Yii::t(
-                        'app',
-                        'Select a hike to view all the options of the hike'
-                    )
-                );
-                return $this->redirect(['/event-names/select-hike']);
-            } else {
-                Yii::$app->session->setFlash(
-                    'warning',
-                    Yii::t(
-                        'app',
-                        'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
-                        If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
-                    )
-                );
-                return $this->redirect(['/users/view']);
-            }
-
-
-
-        }
-        return $this->render('/site/index');
-
-    }
-
     public function actionOverviewPlayers()
     {
         if (isset(Yii::$app->user->identity->selected_event_ID)) {
@@ -237,35 +230,6 @@ class SiteController extends Controller
         return $this->render('/site/index');
     }
 
-    public function actionGameOverview()
-    {
-        $event_id = Yii::$app->user->identity->selected_event_ID;
-        $startDate=EventNames::getStartDate($event_id);
-        $endDate=EventNames::getEndDate($event_id);
-
-        $group_id = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-            ->one();
-
-        if(!isset($group_id->group_ID) || null === $group_id->group_ID) {
-           return $this->render('index');
-        }
-
-        $searchModel = new RouteSearch();
-        $queryParams = array_merge(array(),Yii::$app->request->getQueryParams());
-        $queryParams["RouteSearch"]["event_ID"] = $event_id ;
-        $dataProvider = $searchModel->search($queryParams);
-
-        return $this->render('/game/overview',[
-            'searchRouteModel' => $searchModel,
-            'dataProvider'=>$dataProvider,
-            'startDate'=>$startDate,
-            'endDate'=>$endDate
-        ]);
-    }
-
     public function actionLogin()
     {
         if (!\Yii::$app->user->isGuest) {
@@ -275,7 +239,7 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $last_login = $model->previous_login_time;
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Welcome ' . $model->username . '. Your last visit was on ' . $last_login));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Welcome ' . Yii::$app->user->identity->username . '. Your last visit was on ' . $last_login));
             return $this->goBack();
         }
         return $this->render('login', [
@@ -285,10 +249,6 @@ class SiteController extends Controller
 
     public function actionLogout()
     {
-        $cookies = Yii::$app->getResponse()->getCookies();
-
-        $cookies->remove('selected_event_ID');
-
         Yii::$app->user->logout();
 
         return $this->goHome();
@@ -355,21 +315,34 @@ class SiteController extends Controller
                     Users cannot see anything of the hike. They can see the
                     different hike elements when the hike has status introduction or started')
             );
+        }
 
+        $route = Route::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $model->event_ID])
+            ->count();
+
+        if($route < 5) {
             Yii::$app->session->setFlash(
                 'route',
                 Yii::t(
                     'app',
-                    'You have no route items, click on the menu item
+                    'You have no or a few route items, click on the menu item
                     \'Organisation/Route Overview\' to create route item,
                     questions, silent stations and hints.')
             );
+        }
 
+        $station = Posten::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => $model->event_ID])
+            ->count();
+        if($station < 4) {
             Yii::$app->session->setFlash(
                 'post',
                 Yii::t(
                     'app',
-                    'You have no stations, click on the menu item
+                    'You have no or a few stations, click on the menu item
                     \'Organisation/Stations\' to create stations.')
             );
         }

@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 
-$this->title = Yii::t('app', 'Overview') . ' '. $model->username;
+$this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model->achternaam;
 
 ?>
 <div class="container text-center">

@@ -53,7 +53,7 @@ use kartik\widgets\Select2;
             if ($printSeparator){
                 echo " - ";
             }
-            echo $player->user->username;
+            echo $player->user->voornaam . ' ' . $player->user->achternaam;
             $printSeparator = true;
         }?>
         </p>

@@ -30,7 +30,7 @@ $this->title = 'Login';
         ],
     ]); ?>
 
-        <?= $form->field($model, 'username') ?>
+        <?= $form->field($model, 'email') ?>
 
         <?= $form->field($model, 'password')->passwordInput() ?>
 

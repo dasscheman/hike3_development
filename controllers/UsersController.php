@@ -191,9 +191,9 @@ class UsersController extends Controller
     public function actionResendPasswordUser()
     {
         $model = Users::find()
-            ->where('username =:username AND email =:email')
+            ->where('voornaam =:voornaam AND email =:email')
             ->addParams([
-                ':username' => Yii::$app->request->post('Users')['username'],
+                ':voornaam' => Yii::$app->request->post('Users')['voornaam'],
                 ':email' => Yii::$app->request->post('Users')['email']
             ])
             ->one();
@@ -207,6 +207,7 @@ class UsersController extends Controller
                 $emailSend = $model->sendEmailWithNewPassword($newWachtwoord);
                 if($emailSend)
                 {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Email is send.'));
                     $this->redirect(array('site/index'));
                 } else {
                     throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
@@ -214,7 +215,7 @@ class UsersController extends Controller
             }
         }
 
-        if (isset(Yii::$app->request->post('Users')['username']) AND
+        if (isset(Yii::$app->request->post('Users')['voornaam']) AND
             isset(Yii::$app->request->post('Users')['email']) AND
             !isset($model)) {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'Unknown user and/or email.'));

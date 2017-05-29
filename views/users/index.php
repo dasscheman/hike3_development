@@ -20,7 +20,6 @@ $this->title = Yii::t('app', 'Search for new friends');
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'username',
             'voornaam',
             'achternaam',
             'organisatie',
