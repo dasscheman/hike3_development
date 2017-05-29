@@ -93,22 +93,28 @@ class NoodEnvelopController extends Controller
     public function actionCreate($route_ID)
     {
         $model = new NoodEnvelop();
-        if (!$model->load(Yii::$app->request->post())) {
-            $model->route_ID = $route_ID;
-            return $this->renderPartial('create', [
-                'model' => $model,
-            ]);
-        }
 
-		$model->event_ID = Yii::$app->user->identity->selected_event_ID;
-		$model->setNewOrderForNoodEnvelop();
+        if (Yii::$app->request->post('NoodEnvelop') &&
+            $model->load(Yii::$app->request->post())) {
+            $model->setNewOrderForNoodEnvelop();
 
-        if(!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save hint.'));
+            if($model->save()) {
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
+                return $this->redirect(['route/index']);
+            }
         } else {
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
+            $model->route_ID = $route_ID;
+            $model->event_ID = Yii::$app->user->identity->selected_event_ID;
         }
-        return $this->redirect(['route/index']);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/nood-envelop/create',
+            'model' => $model
+        ]);
     }
 
     /**
@@ -120,12 +126,6 @@ class NoodEnvelopController extends Controller
     public function actionUpdate($nood_envelop_ID)
     {
         $model = $this->findModel($nood_envelop_ID);
-        if (!$model->load(Yii::$app->request->post())) {
-            return $this->renderPartial('update', [
-                'model' => $model,
-            ]);
-        }
-
         if (Yii::$app->request->post('submit') == 'delete') {
             $exist = OpenNoodEnvelop::find()
                ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
@@ -144,13 +144,22 @@ class NoodEnvelopController extends Controller
             return $this->redirect(['route/index']);
         }
 
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to hint.'));
-        } else {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
-        }
+        if (Yii::$app->request->post('NoodEnvelop') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
+                return $this->redirect(['route/index']);
+            }
 
-        return $this->redirect(['route/index']);
+            if (Yii::$app->request->isAjax) {
+                return $this->renderAjax('update', ['model' => $model]);
+            }
+
+            return $this->render([
+                '/nood-envelop/update',
+                'model' => $model
+            ]);
+        }
     }
 
     /**

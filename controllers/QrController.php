@@ -113,23 +113,29 @@ class QrController extends Controller
     public function actionCreate($route_ID)
     {
         $model = new Qr();
-        if (!$model->load(Yii::$app->request->post())) {
-            $model->route_ID = $route_ID;
-            return $this->renderPartial('create', [
-                'model' => $model,
-            ]);
-        }
 
-		$model->event_ID = Yii::$app->user->identity->selected_event_ID;
-		$model->qr_code = Qr::getUniqueQrCode();
-		$model->setNewOrderForQr();
+        if (Yii::$app->request->post('Qr') &&
+            $model->load(Yii::$app->request->post())) {
+            $model->qr_code = Qr::getUniqueQrCode();
+            $model->setNewOrderForQr();
 
-        if(!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save silent station.'));
+            if($model->save()) {
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
+                return $this->redirect(['route/index']);
+            }
         } else {
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
+            $model->route_ID = $route_ID;
+            $model->event_ID = Yii::$app->user->identity->selected_event_ID;
         }
-        return $this->redirect(['route/index']);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/qr/create',
+            'model' => $model
+        ]);
     }
 
     /**
@@ -141,11 +147,6 @@ class QrController extends Controller
     public function actionUpdate($qr_ID)
     {
         $model = $this->findModel($qr_ID);
-        if (!$model->load(Yii::$app->request->post())) {
-            return $this->renderPartial('update', [
-                'model' => $model,
-            ]);
-        }
 
         if (Yii::$app->request->post('submit') == 'delete') {
             $exist = QrCheck::find()
@@ -164,13 +165,23 @@ class QrController extends Controller
             }
             return $this->redirect(['route/index']);
         }
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to silent station.'));
-        } else {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
+
+        if (Yii::$app->request->post('Qr') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
+                return $this->redirect(['route/index']);
+            }
         }
 
-        return $this->redirect(['route/index']);
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/qr/update',
+            'model' => $model
+        ]);
     }
 
     /**

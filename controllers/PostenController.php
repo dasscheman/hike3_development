@@ -105,22 +105,28 @@ class PostenController extends Controller
     public function actionCreate($date)
     {
         $model = new Posten();
-        if (!$model->load(Yii::$app->request->post())) {
-            $model->date = $date;
-            $this->setCookieIndexTab($model->date);
-            return $this->renderPartial('create', [
-                'model' => $model,
-            ]);
-        }
-        $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-        $model->setNewOrderForPosten();
 
-        if(!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save station.'));
+        if (Yii::$app->request->post('Posten') &&
+            $model->load(Yii::$app->request->post())) {
+            $model->setNewOrderForPosten();
+            if($model->save()) {
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
+                return $this->redirect(['posten/index']);
+            }
         } else {
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
+            $model->date = $date;
+            $model->event_ID = Yii::$app->user->identity->selected_event_ID;
+            $this->setCookieIndexTab($model->date);
         }
-        return $this->redirect(['posten/index']);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('create', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/posten/create',
+            'model' => $model
+        ]);
     }
 
     /**
@@ -132,11 +138,6 @@ class PostenController extends Controller
     public function actionUpdate($post_ID)
     {
         $model = $this->findModel($post_ID);
-        if (!$model->load(Yii::$app->request->post())) {
-            return $this->renderPartial('update', [
-                'model' => $model,
-            ]);
-        }
         if (Yii::$app->request->post('submit') == 'delete') {
             $exist = PostPassage::find()
                 ->where('event_ID=:event_id and post_ID=:post_ID')
@@ -154,13 +155,21 @@ class PostenController extends Controller
             }
             return $this->redirect(['posten/index']);
         }
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to station.'));
-        } else {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
+        if (Yii::$app->request->post('Posten') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
+                return $this->redirect(['posten/index']);
+            }
+        }
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->redirect(['posten/index']);
+        return $this->render([
+            '/posten/update',
+            'model' => $model
+        ]);
     }
 
     /**

@@ -145,11 +145,12 @@ class RouteController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($date)
     {
         $model = new Route;
 
-        if (Yii::$app->request->post('Route') && $model->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->post('Route') &&
+            $model->load(Yii::$app->request->post())) {
             $model->setRouteOrder();
             if($model->save()) {
 
@@ -175,7 +176,7 @@ class RouteController extends Controller
             }
         } else {
             // This set the tab from which the call is started.
-            $date = Yii::$app->request->get('date');
+            $date = $date;
             $this->setCookieIndexTab($date);
             $model->setAttributes([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID,
@@ -202,12 +203,6 @@ class RouteController extends Controller
     public function actionUpdate($route_ID)
     {
         $model = $this->findModel($route_ID);
-        if (!$model->load(Yii::$app->request->post())) {
-            return $this->renderPartial('update', [
-                'model' => $model,
-            ]);
-        }
-
         if (Yii::$app->request->post('submit') == 'delete') {
              $exist = Qr::find()
                 ->where('event_ID=:event_id and route_id=:route_id')
@@ -249,12 +244,22 @@ class RouteController extends Controller
             return $this->redirect(['route/index']);
         }
 
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to route.'));
-        } else {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to route.'));
+        if (Yii::$app->request->post('Route') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to route.'));
+                return $this->redirect(['route/index']);
+            }
         }
-        return $this->redirect(['route/index']);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/route/update',
+            'model' => $model
+        ]);
     }
 
     /**
