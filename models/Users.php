@@ -65,6 +65,7 @@ use yii\helpers\ArrayHelper;
  */
 class Users extends AccessControl implements IdentityInterface {
 
+    public $search_friends;
     public $password_repeat;
     const SCENARIO_UPDATE = 'update';
     const SCENARIO_CREATE = 'create';
@@ -92,6 +93,8 @@ class Users extends AccessControl implements IdentityInterface {
             [['username', 'email', 'birthdate'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
+
+            [['search_friends'], 'string', 'min'=>3],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
                 'password', 'macadres', 'authKey', 'accessToken'], 'string', 'max' => 255],
             ['username', 'filter', 'filter' => 'trim'],
@@ -134,6 +137,7 @@ class Users extends AccessControl implements IdentityInterface {
             'selected_event_ID' => Yii::t('app', 'Selected hike'),
             'authKey' => Yii::t('app', 'Auth Key'),
             'accessToken' => Yii::t('app', 'Access Token'),
+            'search_friends' => Yii::t('app', 'Search'),
         ];
     }
 

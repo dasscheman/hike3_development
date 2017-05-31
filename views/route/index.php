@@ -215,6 +215,7 @@ $this->title = Yii::t('app', 'Routes');
             'striped'=>$striped,
             'condensed'=>$condensed,
             'responsive'=>$responsive,
+            'responsiveWrap' => $responsiveWrap,
             'hover'=>$hover,
             'showPageSummary'=>$pageSummary,
             'panel'=>[

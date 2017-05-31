@@ -59,10 +59,24 @@ class UsersController extends Controller
      */
     public function actionSearchNewFriends()
     {
-        $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
-        return $this->render('searchNewFriends', [
+
+
+// d(Yii::$app->request->queryParams);
+// d(Yii::$app->request->post());
+// dd(Yii::$app->request->get());
+
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->post());
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('search-new-friends', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+
+        return $this->render('search-new-friends', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -114,16 +128,22 @@ class UsersController extends Controller
             ->addParams([':user_id' => Yii::$app->user->id])
             ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
 
-
-
         $friendRequestData = new ActiveDataProvider([
             'query' => $queryFriendList,
         ]);
 
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
+        // d(Yii::$app->request->get());
+        //
+        //         d(Yii::$app->request->post());
+        //  dd(Yii::$app->request->queryParams);
         return $this->render('view', [
             'model' => $this->findModel(Yii::$app->user->id),
             'activityFeed' => $feed->getData(),
             'friendRequestData' => $friendRequestData,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 

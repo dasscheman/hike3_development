@@ -74,6 +74,23 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
 
       </div>
       <div class="well">
+      <?php
+      Modal::begin(
+      [
+        'toggleButton' => [
+            'label' => Yii::t('app', 'Search friends'),
+            'class' => 'btn btn-md btn-success'
+        ],
+        'closeButton' => [
+            'label' => 'Close',
+            'class' => 'btn btn-danger btn-sm pull-right',
+        ],
+        'size' => Modal::SIZE_LARGE,
+      ]);
+      echo $this->render('search-new-friends', ['searchModel' => $searchModel, 'dataProvider'=>$dataProvider]);
+      Modal::end();
+
+      ?>
 
       </div>
     </div>

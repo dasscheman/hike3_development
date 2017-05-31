@@ -150,3 +150,8 @@ Hiermee wordt het modal naar voren gehaald.*/
 .navbar-inverse {
   background-color: #002039;
 }
+
+/* Set the header text */
+.kartik-sheet-style {
+    text-align-last: center;
+}

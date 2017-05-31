@@ -21,7 +21,7 @@ class UsersSearch extends Users
             [['user_ID', 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
                 'password', 'macadres', 'birthdate', 'last_login_time',
-                'create_time', 'update_time', 'authKey', 'accessToken'], 'safe'],
+                'create_time', 'update_time', 'authKey', 'accessToken', 'search_friends'], 'safe'],
             [
                 [
                     'user_ID', 'username', 'voornaam', 'achternaam', 'organisatie',
@@ -80,26 +80,26 @@ class UsersSearch extends Users
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
         $this->load($params);
 
+        if(!isset($this->search_friends) ||
+            strlen($this->search_friends) < 3) {
+            $query->where('0=1');
+        }
+        // dd($this);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'birthdate' => $this->birthdate,
-            'last_login_time' => $this->last_login_time,
-            'create_time' => $this->create_time,
-        ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'voornaam', $this->voornaam])
-            ->andFilterWhere(['like', 'achternaam', $this->achternaam])
-            ->andFilterWhere(['like', 'organisatie', $this->organisatie])
-            ->andFilterWhere(['like', 'email', $this->email]);
+        $query->andFilterWhere(
+            ['or',
+                ['like','voornaam',$this->search_friends],
+                ['like','achternaam',$this->search_friends],
+                ['like','organisatie',$this->search_friends],
+                ['like','email',$this->search_friends]
+            ]);
 
         return $dataProvider;
     }

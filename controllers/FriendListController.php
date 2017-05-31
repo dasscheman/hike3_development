@@ -177,13 +177,13 @@ class FriendListController extends Controller
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
 
         if (Yii::$app->getRequest()->isAjax) {
-            return $this->renderPartial('/users/searchNewFriends', [
+            return $this->renderPartial('/users/search-new-friends', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
         }
 
-        return $this->render('/users/searchNewFriends', [
+        return $this->render('/users/search-new-friends', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

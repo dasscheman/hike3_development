@@ -12,6 +12,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
+use app\models\DeelnemersEvent;
 use yii\helpers\Url;
 
 
@@ -52,12 +53,6 @@ AppAsset::register($this);
                         'label' => Yii::t('app','Overview'),
                         'url'=>['/users/view'],
                         'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'view'),
-                    ],
-                    [
-                        'label' => Yii::t('app','Search New Friends'),
-                        'url'=>[
-                            '/users/search-new-friends'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-new-friends'),
                     ],
                     [
                         'label' => Yii::t('app','Friends'),
@@ -103,7 +98,8 @@ AppAsset::register($this);
                     ],
                 ],
             ],
-            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected_event_ID ? '':
+            !Yii::$app->user->identity->selected_event_ID ||
+            DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() > DeelnemersEvent::ROL_post? '':
             ['label' => Yii::t('app','Organisatie'),
                 'items' => [
                     [

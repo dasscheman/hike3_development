@@ -13,11 +13,26 @@ $this->title = Yii::t('app', 'Search for new friends');
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
+    yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
+
+    echo $this->render('_search', ['model' => $searchModel]);
+
+    $bordered = FALSE;
+    $striped = TRUE;
+    $condensed = TRUE;
+    $responsive = FALSE;
+    $hover = TRUE;
+    $pageSummary = FALSE;
+    $heading = FALSE;
+    $exportConfig = TRUE;;
+    $resizableColumns = FALSE;
+    $responsiveWrap = FALSE;
+
     $gridColumns = [
         'voornaam',
         'achternaam',
         'organisatie',
-        'last_login_time',
+        // 'last_login_time',
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{connect}',
@@ -36,36 +51,28 @@ $this->title = Yii::t('app', 'Search for new friends');
         ]
     ];
 
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
-    $responsiveWrap = FALSE;
 
-    yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
 
     echo GridView::widget([
         'id' => 'kv-grid-hike_select',
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        // 'filterModel' => $searchModel,
         'columns'=>$gridColumns,
         'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
         'headerRowOptions'=>['class'=>'kartik-sheet-style'],
         'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+        'resizableColumns' => $resizableColumns,
         'pjax'=>TRUE, // FALSE, anders wordt de header niet opnieuw geladen.
         // set your toolbar
-        'toolbar'=> [
-            '{export}',
-            '{toggleData}',
-        ],
+        'toolbar'=> FALSE,
+        // [
+        //     '{export}',
+        //     '{toggleData}',
+        // ],
         // set export properties
-        'export'=>[
-            'fontAwesome'=>true
-        ],
+        // 'export'=>[
+        //     'fontAwesome'=>true
+        // ],
         // parameters from the demo form
         'bordered'=>$bordered,
         'striped'=>$striped,
