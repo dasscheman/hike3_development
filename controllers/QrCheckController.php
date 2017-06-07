@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\QrCheck;
 use app\models\QrCheckSearch;
+use app\models\DeelnemersEvent;
+use app\models\Eventnames;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
