@@ -159,11 +159,11 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':group_id' => $group_id,
                 ':checked' => TRUE
-            ]);
+            ])
+            ->orderBy('update_time DESC');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['create_time'=>SORT_ASC]],
             'pagination' => [
                 'pageSize' => 1,
             ],

@@ -111,12 +111,11 @@ class HikeActivityFeed extends Model
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->asArray()
             ->orderBy(['create_time'=>SORT_DESC])
-            //->limit(20)
             ->all();
 
         foreach ($hints as $hint) {
             $hintData = NoodEnvelop::findOne($hint['nood_envelop_ID']);
-            $suer = Users::findOne($hint['create_user_ID']);
+            $user = Users::findOne($hint['create_user_ID']);
             $data[] = [
                 'id' => $hint['open_nood_envelop_ID'],
                 'source' => 'openhints',
@@ -138,10 +137,7 @@ class HikeActivityFeed extends Model
                 'attributes' => ['timestamp'],
             ],
         ]);
-        // dd($provider->);
         return $provider;
 
     }
-    // get the rows in the currently requested page
-    // $rows = $provider->getModels();
 }

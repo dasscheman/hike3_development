@@ -95,6 +95,7 @@ class OpenVragenSearch extends OpenVragen
         $queryRoute = Route::find()
             ->select('route_ID')
             ->where('event_ID =:event_id and day_date =:day_date')
+            ->orderBy('route_volgorde')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
 
         // Find all answers for founr group id
@@ -117,7 +118,6 @@ class OpenVragenSearch extends OpenVragen
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['vraag_volgorde'=>SORT_ASC]],
             'pagination' => [
                 'pageSize' => 1,
             ],

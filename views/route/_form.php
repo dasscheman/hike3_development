@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-route-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['route/create', 'route_ID' => $model->route_ID] : ['route/update', 'route_ID' => $model->route_ID]]);
+        'action' => $model->isNewRecord ? ['route/create', 'date' => $model->day_date] : ['route/update', 'route_ID' => $model->route_ID]]);
 
         echo $form->field($model, 'route_name')->textInput(['maxlength' => true]);
         echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);

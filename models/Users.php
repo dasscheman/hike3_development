@@ -90,7 +90,7 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function rules() {
         return [
-            [['username', 'email', 'birthdate'], 'required'],
+            [['username', 'email'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
 

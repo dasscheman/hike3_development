@@ -107,12 +107,8 @@ class SiteController extends Controller
                 );
                 return $this->redirect(['/users/view']);
             }
-
-
-
         }
         return $this->render('/site/index');
-
     }
 
     public function actionOverviewOrganisation()

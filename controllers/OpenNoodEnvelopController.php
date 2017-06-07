@@ -117,7 +117,7 @@ class OpenNoodEnvelopController extends Controller
                 'modelEnvelop' => $modelEnvelop,
             ]);
         }
-        if (Yii::$app->request->post('submit') == 'open-hint') {
+        if (Yii::$app->request->post('open-hint') == 'open-hint') {
             $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
             $model->opened = 1;
 

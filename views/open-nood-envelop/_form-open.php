@@ -44,7 +44,7 @@ use yii\widgets\Pjax;
             [
                 'class' => 'btn btn-xs btn-primary',
                 'value'=>'open-hint',
-                'name'=>'submit'
+                'name'=>'open-hint'
             ]
         );
         ?>

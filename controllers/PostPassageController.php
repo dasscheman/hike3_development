@@ -111,7 +111,7 @@ class PostPassageController extends Controller
             }
         }
         if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_form', [
+            return $this->renderAjax('check-station', [
                 'model' => $model,
                 'action' => $action,
             ]);

@@ -59,6 +59,7 @@ class NoodEnvelopSearch extends NoodEnvelop
         $queryRoute = Route::find()
             ->select('route_ID')
             ->where('event_ID =:event_id and day_date =:day_date')
+            ->orderBy('route_volgorde')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
 
         // Find all open hints for founr group id
@@ -82,7 +83,6 @@ class NoodEnvelopSearch extends NoodEnvelop
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['nood_envelop_volgorde'=>SORT_ASC]],
             'pagination' => [
                 'pageSize' => 1,
             ],
@@ -153,7 +153,7 @@ class NoodEnvelopSearch extends NoodEnvelop
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['nood_envelop_volgorde'=>SORT_ASC]],
+            'sort' => ['defaultOrder' => ['create_time' => SORT_ASC]],
             'pagination' => [
                 'pageSize' => 1,
             ],

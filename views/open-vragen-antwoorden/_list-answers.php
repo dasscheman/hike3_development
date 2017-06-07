@@ -38,5 +38,9 @@ use app\models\DeelnemersEvent;
     <?php echo Html::encode($model->getAttributeLabel('correct')); ?>:
     </b>
     <?php echo GeneralFunctions::printGlyphiconCheck($model->correct);?>
+        <b>
+        <?php echo Html::encode($model->getAttributeLabel('update_time')); ?>:
+        </b>
+        <?php echo Html::encode($model->update_time); ?></br>
 
 </div>
