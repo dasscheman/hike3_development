@@ -6,6 +6,7 @@ use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use app\models\QrCheck;
+use app\models\PostPassage;
 use yii\web\NotFoundHttpException;
 
 class QrCheckAccess {
@@ -25,13 +26,12 @@ class QrCheckAccess {
         }
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::model()->isTimeLeftToday($event_id, $this->groupOfPlayer))) {
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer))) {
             return TRUE;
         }
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            $this->userModel->groupOfPlayer === (int) $this->userModel->ids['group_ID'] and
-            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
+            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
             return TRUE;
         }
         return FALSE;

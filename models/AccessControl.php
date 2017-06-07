@@ -61,7 +61,7 @@ class AccessControl extends HikeActiveRecord {
             // event_ID. When okey, set this id.
             // This is done here in case it is usedby other models.
             $exists = DeelnemersEvent::find()
-                ->where('user_ID=:user_id AND event_ID=_event_id')
+                ->where('user_ID=:user_id AND event_ID=:event_id')
                 ->addParams([
                     ':user_id' => Yii::$app->user->identity->id,
                     ':event_id' => Yii::$app->request->get('event_id')
