@@ -423,8 +423,79 @@ class PostPassage extends HikeActiveRecord
     public function isPostPassedByGroup($group_id, $post_id)
     {
         return PostPassage::find()
-            ->where('event_ID =:event_id AND post_ID =:post_id AND gepasseerd =:gepasseerd')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':post_id' => $post_id, ':gepasseerd' => TRUE])
+            ->where('event_ID =:event_id AND post_ID =:post_id AND gepasseerd =:gepasseerd AND group_ID =:group_id')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':post_id' => $post_id,
+                ':gepasseerd' => TRUE,
+                ':group_id' => $group_id
+            ])
             ->exists();
+    }
+
+    public function isPostChechedOutByGroup($group_id, $post_id)
+    {
+        $data = PostPassage::find()
+            ->where('event_ID =:event_id AND post_ID =:post_id AND gepasseerd =:gepasseerd AND group_ID =:group_id')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':post_id' => $post_id,
+                ':gepasseerd' => TRUE,
+                ':group_id' => $group_id
+            ])
+            ->one();
+        if ($data !== NULL &&
+            $data->vertrek !== NULL) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function determineAction($post_id, $group_id) {
+        $active_day = EventNames::getActiveDayOfHike();
+        $data = Posten::findOne($post_id);
+        $postPassage = PostPassage::find()
+            ->where('post_ID =:post_id AND group_ID =:group_id')
+            ->params([':post_id' => $post_id, ':group_id' => $group_id])
+            ->exists();
+            Posten::getStartPost($active_day);
+        if (Posten::isStartPost($post_id) &&
+            $data->date === $active_day &&
+            !PostPassage::isGroupStarted($group_id, $active_day)) {
+                return 'start';
+        }
+
+        if (!Posten::isStartPost($post_id) &&
+            $data->date === $active_day &&
+            !$postPassage &&
+            !PostPassage::isPostPassedByGroup($group_id, $post_id)) {
+                return 'checkin';
+        }
+
+        if ($data->date === $active_day &&
+            PostPassage::isGroupStarted($group_id, $active_day) &&
+            $postPassage &&
+            PostPassage::isPostPassedByGroup($group_id, $post_id) &&
+            !PostPassage::isPostChechedOutByGroup($group_id, $post_id)
+        ) {
+                return 'checkout';
+        }
+        return FALSE;
+    }
+
+    public function getActionTitle($action, $group_name) {
+        if ($action === 'start') {
+            return Yii::t('app', 'Start hike {groupname}', ['groupname' => $group_name]);
+        }
+
+        if ($action === 'checkin') {
+            return Yii::t('app', 'Checkin {groupname}', ['groupname' => $group_name]);
+        }
+
+        if ($action === 'checkout') {
+            return Yii::t('app', 'Checkout {groupname}', ['groupname' => $group_name]);
+        }
+
+        return FALSE;
     }
 }

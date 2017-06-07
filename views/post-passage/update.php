@@ -13,6 +13,7 @@ $this->title = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'action' => $action,
     ]) ?>
 
 </div>

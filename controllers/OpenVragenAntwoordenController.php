@@ -48,7 +48,7 @@ class OpenVragenAntwoordenController extends Controller
                                 NULL,
                                 NULL,
                                 [
-                                    'nood_envelop_ID' => Yii::$app->request->get('nood_envelop_ID'),
+                                    'open_vragen_ID' => Yii::$app->request->get('open_vragen_ID'),
                                     'group_ID' => Yii::$app->request->get('group_ID')
                                 ]);
                         },
@@ -107,27 +107,6 @@ class OpenVragenAntwoordenController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    // public function actionCreate($open_vragen_ID)
-    // {
-    //     $model = new OpenVragenAntwoorden;
-    //     $modelVraag = OpenVragen::findOne($open_vragen_ID);
-    //     if (Yii::$app->request->isAjax) {
-    //         return $this->renderAjax('_form-dashboard', [
-    //             'model' => $model,
-    //             'modelVraag' => $modelVraag,
-    //         ]);
-    //     }
-    //     return $this->render('create', [
-    //          'model' => $model,
-    //          'modelVraag' => $modelVraag,
-    //     ]);
-    // }
-
-    /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionBeantwoorden($open_vragen_ID)
     {
         $model = new OpenVragenAntwoorden;
@@ -150,97 +129,6 @@ class OpenVragenAntwoordenController extends Controller
 
         return $this->redirect(['site/overview-players']);
     }
-
-    /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    // public function actionBeantwoordenDashboard($open_vragen_ID)
-    // {
-    //     $model = new OpenVragenAntwoorden;
-    //     $modelVraag = OpenVragen::findOne($open_vragen_ID);
-    //
-    //     $model->event_ID = $modelVraag->event_ID;
-    //
-    //     $model->group_ID = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID, Yii::$app->user->id);
-    //     $model->open_vragen_ID = $open_vragen_ID;
-    //     $model->checked = 0;
-    //
-    //     if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
-    //         foreach ($model->getErrors() as $error) {
-    //            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
-    //         }
-    //     } else {
-    //         Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
-    //     }
-    //
-    //     $searchQuestionsModel = new OpenVragenSearch();
-    //     $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
-    //     if (Yii::$app->request->isAjax) {
-    //         return Yii::$app->controller->renderAjax('/open-vragen-antwoorden/view-dashboard', ['model'=>$questionsData]);
-    //         // return $this->renderAjax('_list-dashboard', [
-    //         //     'model' => $questionsData,
-    //         // ]);
-    //     }
-    //     return $this->redirect(['site/index ']);
-    // }
-    //
-    // /**
-    //  * Creates a new OpenNoodEnvelop model.
-    //  * If creation is successful, the browser will be redirected to the 'view' page.
-    //  * @return mixed
-    //  */
-    // public function actionCancelBeantwoording($open_vragen_ID)
-    // {
-    //     $model = OpenVragen::findOne($open_vragen_ID);
-    //
-    //     if (Yii::$app->request->isAjax) {
-    //         return $this->renderAjax('_list', [
-    //             'model' => $model,
-    //         ]);
-    //     }
-    //     return $this->redirect(['site/game-overview']);
-    // }
-    //
-    // /**
-    //  * Creates a new OpenNoodEnvelop model.
-    //  * If creation is successful, the browser will be redirected to the 'view' page.
-    //  * @return mixed
-    //  */
-    // public function actionCancelBeantwoordingDashboard($open_vragen_ID)
-    // {
-    //     $model = OpenVragen::findOne($open_vragen_ID);
-    //
-    //     // $searchQuestionsModel = new OpenVragenSearch();
-    //     // $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams);
-    //     // if (Yii::$app->request->isAjax) {
-    //     //     return Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-dashboard', ['model'=>$questionsData]);
-    //
-    //     if (Yii::$app->request->isAjax) {
-    //         return $this->renderAjax('_list-dashboard', [
-    //             'model' => $model,
-    //         ]);
-    //     }
-    //     return $this->redirect(['site/game-overview']);
-    // }
-    //
-    // /**
-    //  * Creates a new OpenNoodEnvelop model.
-    //  * If creation is successful, the browser will be redirected to the 'view' page.
-    //  * @return mixed
-    //  */
-    // public function actionCancel($open_vragen_antwoorden_ID)
-    // {
-    //     $model = $this->findModel($open_vragen_antwoorden_ID);
-    //
-    //     if (Yii::$app->request->isAjax) {
-    //         return $this->renderAjax('_form-organisation', [
-    //             'model' => $model,
-    //         ]);
-    //     }
-    //     return $this->redirect(['open-vragen-antwoorden/index']);
-    // }
 
     /**
      * Updates an existing OpenVragenAntwoorden model.

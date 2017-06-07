@@ -28,7 +28,7 @@ class OpenNoodenvelopAccess {
             return FALSE;
         }
 
-        if ($this->userModel->groupOfPlayer !== $this->userModel->ids['group_ID']) {
+        if ($this->userModel->groupOfPlayer !== (int) $this->userModel->ids['group_ID']) {
             return FALSE;
         }
 

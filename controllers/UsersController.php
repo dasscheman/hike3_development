@@ -59,13 +59,6 @@ class UsersController extends Controller
      */
     public function actionSearchNewFriends()
     {
-
-
-
-// d(Yii::$app->request->queryParams);
-// d(Yii::$app->request->post());
-// dd(Yii::$app->request->get());
-
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->post());
 

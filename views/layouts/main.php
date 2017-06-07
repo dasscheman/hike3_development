@@ -98,6 +98,7 @@ AppAsset::register($this);
                     ],
                 ],
             ],
+            Yii::$app->user->isGuest ||
             !Yii::$app->user->identity->selected_event_ID ||
             DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() > DeelnemersEvent::ROL_post? '':
             ['label' => Yii::t('app','Organisatie'),

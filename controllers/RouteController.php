@@ -90,7 +90,7 @@ class RouteController extends Controller
     }
 
     /**
-     * Displays a single TblRoute model.
+     * Displays a single Route model.
      * @param integer $id
      * @return mixed
      */
@@ -354,8 +354,13 @@ class RouteController extends Controller
             $model->route_volgorde = $previousModel->route_volgorde;
             $previousModel->route_volgorde = $tempCurrentVolgorde;
 
-            $model->save();
-            $previousModel->save();
+            if ($model->validate() &&
+                $previousModel->validate()) {
+                    $model->save();
+                    $previousModel->save();
+            } else {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
         }
 
         $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);

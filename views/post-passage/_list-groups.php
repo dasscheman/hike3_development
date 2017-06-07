@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use kartik\widgets\AlertBlock;
 use yii\widgets\Pjax;
 use app\models\Posten;
+use app\models\PostPassage;
 use prawee\widgets\ButtonAjax;
 
 /* @var $this GroupsController */
@@ -15,7 +16,7 @@ use prawee\widgets\ButtonAjax;
         <div class="view">
         <?php
             Pjax::begin([
-                'id' => 'post-passage-list-groups' . $model->group_ID,
+                'id' => 'post-passage-list-groups' . $model->group_ID . '-' . $post_id,
                 'enablePushState' => false
             ]);
             echo AlertBlock::widget([
@@ -29,87 +30,48 @@ use prawee\widgets\ButtonAjax;
                 <?php echo Html::encode($model->group_name); ?>
             </h3>
             <?php
-            $posten = new Posten;
-            if ($posten->isStartPost($post_id)) {
+            $action = PostPassage::determineAction($post_id, $model->group_ID);
+            $title = PostPassage::getActionTitle($action, $model->group_name);
+            $postPassage = PostPassage::find()
+                ->where('post_ID =:post_id AND group_ID =:group_id')
+                ->params([':post_id' => $post_id, ':group_id' => $model->group_ID]);
+
+            if ($action) {
                 echo ButtonAjax::widget([
-                    'name' => Yii::t('app', 'Start hike for {group}', ['group' => $model->group_name,]),
-                     'route'=>['post-passage/start', ['group_ID' => $model->group_ID, 'post_ID' => $post_id]],
-                     'modalId'=>'#main-modal',
-                     'modalContent'=>'#main-content-modal',
-                     'options'=>[
-                         'class'=>'btn btn-success',
-                         'title'=>'Start',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                             'post-passage',
-                             'start',
-                             [
-                                 'group_ID' => $model->group_ID,
-                                 'post_ID' => $post_id
-                             ]),
+                    'name' => $title,
+                     'route'=>[
+                         'post-passage/check-station',
+                         'group_ID' => $model->group_ID,
+                         'post_ID' => $post_id,
+                         'action' => $action
+                     ],
+                     'modalId' => '#main-modal',
+                     'modalContent' => '#main-content-modal',
+                     'options' => [
+                         'class' => 'btn btn-success',
+                         'title' => $title,
                      ]
                  ]);
-             }
-
-            if (Yii::$app->user->identity->isActionAllowed('post-passage', 'checkin', ['group_ID' => $model->group_ID, 'post_ID' => $post_id])) {
-                echo ButtonAjax::widget([
-                    'name' => Yii::t('app', 'Check in {group}', ['group' => $model->group_name,]),
-                     'route'=>['post-passage/checkin', ['group_ID' => $model->group_ID, 'post_ID' => $post_id]],
-                     'modalId'=>'#main-modal',
-                     'modalContent'=>'#main-content-modal',
-                     'options'=>[
-                         'class'=>'btn btn-success',
-                         'title'=>'Checkin',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                             'post-passage',
-                             'checkin',
-                             [
-                                 'group_ID' => $model->group_ID,
-                                 'post_ID' => $post_id
-                             ]),
-                     ]
-                ]);
             }
-
-            if (Yii::$app->user->identity->isActionAllowed('post-passage', 'checkout', ['group_ID' => $model->group_ID, 'post_ID' => $post_id])) {
-                echo ButtonAjax::widget([
-                   'name' => Yii::t('app', 'Check out {group}', ['group' => $model->group_name,]),
-                    'route'=>['post-passage/checkout', ['group_ID' => $model->group_ID, 'post_ID' => $post_id]],
-                    'modalId'=>'#main-modal',
-                    'modalContent'=>'#main-content-modal',
-                    'options'=>[
-                        'class'=>'btn btn-info',
-                        'title'=>'Checkout',
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                            'post-passage',
-                            'checkin',
-                            [
-                                'group_ID' => $model->group_ID,
-                                'post_ID' => $post_id
-                            ]),
-                    ]
-                ]);
-            }
-        ?>
+            if($postPassage->exists()) {
+                $postPassageData = $postPassage->one();
+                ?>
+                </br>
+                <b>
+                <?php echo Html::encode($postPassageData->getAttributeLabel('gepasseerd')); ?>
+                </b>
+                <?php echo GeneralFunctions::printGlyphiconCheck($postPassageData->gepasseerd); ?></br>
+                <b>
+                <?php echo Html::encode($postPassageData->getAttributeLabel('binnenkomst')); ?>
+                </b>
+                <?php echo Html::encode($postPassageData->binnenkomst); ?></br>
+                <b>
+                <?php echo Html::encode($postPassageData->getAttributeLabel('vertrek')); ?>
+                </b>
+                <?php echo Html::encode($postPassageData->vertrek); ?></br>
+            <?php } ?>
         </p>
-        <?php
-            $postPassage = $model->getPostPassages()
-            ->where(['post_ID' => $post_id]);
-            //->one();
-            // dd($postPassage);
-        if ($postPassage->exists()) {
-        ?>
-            <b>
-            <?php echo Html::encode($postPassage->one()->getAttributeLabel('gepasseerd')); ?>
-            </b>
-            <?php echo GeneralFunctions::printGlyphiconCheck($postPassage->one()->gepasseerd); ?></br>
-            <b>
-            <?php echo Html::encode($postPassage->one()->getAttributeLabel('binnenkomst')); ?>
-            </b>
-            <?php echo Html::encode($postPassage->one()->binnenkomst); ?></br>
-            <b>
-        <?php
-        }
-        Pjax::end(); ?>
+        <?php Pjax::end(); ?>
         </div>
     </div>
 </div>

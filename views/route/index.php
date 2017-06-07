@@ -128,6 +128,7 @@ $this->title = Yii::t('app', 'Routes');
                 return Route::findOne($key)->getQrCount();
             },
         ],
+        'route_volgorde',
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',

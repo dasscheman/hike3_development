@@ -150,16 +150,15 @@ class NoodEnvelopController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
                 return $this->redirect(['route/index']);
             }
-
-            if (Yii::$app->request->isAjax) {
-                return $this->renderAjax('update', ['model' => $model]);
-            }
-
-            return $this->render([
-                '/nood-envelop/update',
-                'model' => $model
-            ]);
         }
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/nood-envelop/update',
+            'model' => $model
+        ]);
     }
 
     /**

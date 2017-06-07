@@ -57,10 +57,10 @@ class OpenVragenAntwoordenAccess {
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            $this->userModel->groupOfPlayer === $this->userModel->ids['group_ID'] and
+            $this->userModel->groupOfPlayer === (int) $this->userModel->ids['group_ID'] and
             PostPassage::istimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID'])) {
             return TRUE;
-        }
+        };
         return FALSE;
     }
 

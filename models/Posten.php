@@ -226,7 +226,22 @@ class Posten extends HikeActiveRecord
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
-            ->orderBy('post_volgorde ASC')
+            ->orderBy(['post_volgorde' => SORT_ASC])
+            ->exists();
+
+		if ($dataNext) {
+			return TRUE;
+        }
+        return FALSE;
+	}
+
+	public function lowerOrderNumberExists($post_id)
+	{
+        $data = Posten::findOne($post_id);
+        $dataNext = Posten::find()
+            ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
+            ->orderBy(['post_volgorde' => SORT_ASC])
             ->exists();
 
 		if ($dataNext) {
@@ -244,7 +259,7 @@ class Posten extends HikeActiveRecord
         $data = Posten::find()
             ->where('event_ID =:event_id AND date =:date')
             ->params([':event_id' => $event_id, ':date' => $date])
-            ->orderBy(['post_volgorde'=>SORT_ASC])
+            ->orderBy(['post_volgorde' => SORT_ASC])
             ->one();
 
 		if (isset($data->post_ID))
@@ -260,7 +275,7 @@ class Posten extends HikeActiveRecord
     */
 	public function isStartPost($post_id)
 	{
-		if (Posten::higherOrderNumberExists($post_id)) {
+		if (Posten::lowerOrderNumberExists($post_id)) {
 			return FALSE;
 		} else {
 			return TRUE;

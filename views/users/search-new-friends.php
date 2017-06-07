@@ -65,14 +65,6 @@ $this->title = Yii::t('app', 'Search for new friends');
         'pjax'=>TRUE, // FALSE, anders wordt de header niet opnieuw geladen.
         // set your toolbar
         'toolbar'=> FALSE,
-        // [
-        //     '{export}',
-        //     '{toggleData}',
-        // ],
-        // set export properties
-        // 'export'=>[
-        //     'fontAwesome'=>true
-        // ],
         // parameters from the demo form
         'bordered'=>$bordered,
         'striped'=>$striped,

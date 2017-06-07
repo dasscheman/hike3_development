@@ -229,12 +229,20 @@ class PostenController extends Controller
                 ->one();
         }
 
-        $tempCurrentVolgorde = $model->post_volgorde;
-        $model->post_volgorde = $previousModel->post_volgorde;
-        $previousModel->post_volgorde = $tempCurrentVolgorde;
-
-        $model->save();
-        $previousModel->save();
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if(isset($previousModel)) {
+            $tempCurrentVolgorde = $model->post_volgorde;
+            $model->post_volgorde = $previousModel->post_volgorde;
+            $previousModel->post_volgorde = $tempCurrentVolgorde;
+            if ($model->validate() &&
+                $previousModel->validate()) {
+                    $model->save();
+                    $previousModel->save();
+            } else {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
+        }
 
         $event_Id = Yii::$app->user->identity->selected_event_ID;
 		$startDate=EventNames::getStartDate($event_Id);

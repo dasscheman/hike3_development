@@ -88,6 +88,7 @@ $this->title = Yii::t('app', 'Posten');
                 return Posten::findOne($key)->getPostPassagesCount();
             },
         ],
+        'post_volgorde',
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',

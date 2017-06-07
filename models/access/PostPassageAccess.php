@@ -19,55 +19,78 @@ class PostPassageAccess {
         $this->userModel = $arguments[0];
     }
 
-    function PostPassageStart() {
-        $active_day = EventNames::getActiveDayOfHike();
-        $start_post_id = Posten::getStartPost($active_day);
-        if($this->userModel->ids['post_ID'] !== $start_post_id){
-            // the selected post is NOT a start post of current day.
-            return FALSE;
-        }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart AND
-            $this->userModel->rolPlayer <= DeelnemersEvent::ROL_post AND
-            Posten::isStartPost($this->userModel->ids['post_ID']) AND
-            !PostPassage::isGroupStarted($this->userModel->ids['group_ID'], $active_day)) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-
     function PostPassageCheckin() {
         $active_day = EventNames::getActiveDayOfHike();
         $start_post_id = Posten::getStartPost($active_day);
-        if($this->userModel->ids['post_ID'] === $start_post_id){
+        $PostPassage = PostPassage::find()
+            ->where('post_ID =:post_id AND group_ID =:group_id')
+            ->params([':group_id' => $this->userModel->ids['group_ID'], ':post_id' => $this->userModel->ids['post_ID']])
+            ->one();
+
+        if($start_post_id === (int) $this->userModel->ids['post_ID']){
             // the selected post is a start post of current day.
             return FALSE;
         }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart AND
-            $this->userModel->rolPlayer <= DeelnemersEvent::ROL_post AND
-            PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID']) AND
-            !PostPassage::isPostPassedByGroup($this->userModel->ids['group_ID'], $this->userModel->ids['post_ID'])) {
-            return TRUE;
-        }
-        return FALSE;
-    }
 
-    function PostPassageCheckout() {
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart AND
-            $this->userModel->rolPlayer <= DeelnemersEvent::ROL_post AND
-            PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->ids['group_ID']) AND
-            PostPassage::isPostPassedByGroup($this->userModel->ids['group_ID'], $this->userModel->ids['post_ID'])) {
+        if($this->userModel->ids['action'] === 'start') {
+                if(!Posten::isStartPost($this->userModel->ids['post_ID'] )) {
+                    return FALSE;
+                }
+
+                if (PostPassage::isGroupStarted($this->userModel->ids['group_ID'], $active_day)) {
+                    return FALSE;
+                }
+        }
+        if($this->userModel->ids['action'] === 'checkin') {
+            if($PostPassage !== NULL) {
+                return FALSE;
+            }
+
+            if (!PostPassage::isTimeLeftToday($this->userModel->ids['group_ID'])) {
+                return FALSE;
+            }
+        }
+
+        if($this->userModel->ids['action'] === 'checkout') {
+            if($PostPassage === NULL) {
+                return FALSE;
+            }
+
+            if ($PostPassage->event_ID !== Yii::$app->user->identity->selected_event_ID) {
+                return FALSE;
+            }
+
+            if($PostPassage->gepasseerd == FALSE) {
+                return FALSE;
+            }
+
+            if (!PostPassage::isTimeLeftToday($this->userModel->ids['group_ID'])) {
+                return FALSE;
+            }
+        }
+
+        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart &&
+            $this->userModel->rolPlayer <= DeelnemersEvent::ROL_post) {
             return TRUE;
         }
         return FALSE;
     }
 
     function PostPassageUpdate() {
-        $model = $this->findModel($this->userModel->ids['posten_passage_ID']);
-
-        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
+        $PostPassage = PostPassage::findOne($this->userModel->ids['posten_passage_ID']);
+        if($PostPassage === NULL) {
             return FALSE;
         }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
+
+        if ($PostPassage->event_ID !== Yii::$app->user->identity->selected_event_ID) {
+            return FALSE;
+        }
+
+        if(!$PostPassage->gepasseerd) {
+            return FALSE;
+        }
+
+        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart &&
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }

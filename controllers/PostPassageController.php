@@ -5,10 +5,10 @@ namespace app\controllers;
 use Yii;
 use app\models\PostPassage;
 use app\models\PostPassageSearch;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
  * PostPassageController implements the CRUD actions for PostPassage model.
@@ -26,43 +26,37 @@ class PostPassageController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['create', 'createDayStart', 'updateVertrek', 'index', 'update', 'delete', 'cancel'],
+                'only' => ['update', 'start', 'checkin', 'checkout'],
                 'rules' => [
-                    array(
+                    [
                         'allow' => FALSE,
-                        'roles'=>array('?'),
-                    ),
-                    array(
-                        'allow' => TRUE,
-                        'actions'=>array('dynamicpostscore', 'dynamicpostid'),
-                        'roles'=>array('@'),
-                    ),
-                    array(
-                        'allow' => TRUE,
-                        'actions'=>array('cancel-beantwoording', 'cancel'),
-                        'roles'=>array('@'),
-                    ),
+                        'roles'=> ['?'],
+                    ],
                     [
                         'allow' => TRUE,
-                        'actions'=>array('start', 'checkin', 'checkout'),
+                        'actions'=> ['check-station'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
                                 NULL,
                                 [
                                     'post_ID' => Yii::$app->request->get('post_ID'),
-                                    'group_ID' => Yii::$app->request->get('group_ID')
+                                    'group_ID' => Yii::$app->request->get('group_ID'),
+                                    'action' => Yii::$app->request->get('action')
                                 ]);
                         }
                     ],
                     [
                         'allow' => TRUE,
-                        'actions'=>array('index', 'delete', 'createDayStart', 'updateVertrek', 'update'),
+                        'actions'=> ['update'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
                                 NULL,
-                                ['posten_passage_ID' => Yii::$app->request->get('posten_passage_ID')]);
+                                [
+                                    'posten_passage_ID' => Yii::$app->request->get('posten_passage_ID'),
+                                ]
+                            );
                         }
                     ],
                     [
@@ -75,133 +69,57 @@ class PostPassageController extends Controller
     }
 
     /**
-     * Lists all PostPassage models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $searchModel = new PostPassageSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single PostPassage model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new PostPassage model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionStart($group_ID, $post_ID)
-    {
-        if(!Posten::isStartPost($post_ID)) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'This is not start station.'));
-        }
-        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, $group_ID)) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'This group has no time left and cannot be checked in to this station.'));
-        }
-
-        $model = new PostPassage();
-        if ($model->load(Yii::$app->request->post())) {
-            if (!$model->save()) {
-                Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not check in to station.'));
-            }
-
-            if (Yii::$app->request->isAjax) {
-                return $this->renderAjax('_list', [
-                    'model' => $model,
-                ]);
-            }
-            return $this->redirect(['posten/index']);
-        }
-
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
-                'model' => $model,
-            ]);
-        }
-        return $this->redirect(['groups/index-posten']);
-    }
-
-    /**
-     * Creates a new PostPassage model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCheckin($group_ID, $post_ID)
-    {
-        $model = new PostPassage();
-        if (!$model->load(Yii::$app->request->post())) {
-
-           if (Yii::$app->request->isAjax) {
-                return $this->renderAjax('_form', [
-                    'model' => $model,
-                ]);
-           }
-           return $this->render('update', [
-               'model' => $model,
-           ]);
-        }
-        if (!PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, $model->group_ID)) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'This group has no time left and cannot be checked in to this station.'));
-        } elseif (!$model->save()) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not check in to station.'));
-        }
-        if (Yii::$app->request->isAjax) {
-             return $this->renderAjax('_form', [
-                 'model' => $model,
-             ]);
-        }
-        return $this->redirect(['posten/index']);
-    }
-
-    /**
      * Updates an existing PostPassage model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionCheckout($posten_passage_ID)
+    public function actionCheckStation()
     {
-        $model = $this->findModel($posten_passage_ID);
-        if (!$model->load(Yii::$app->request->post())) {
+        // d('checkstation');
+        // dd(Yii::$app->request->get());
+        $action = Yii::$app->request->get('action');
+        $post_ID = Yii::$app->request->get('post_ID');
+        $group_ID = Yii::$app->request->get('group_ID');
 
-           if (Yii::$app->request->isAjax) {
-                return $this->renderAjax('_form', [
-                    'model' => $model,
-                ]);
-           }
-           return $this->render('update', [
-               'model' => $model,
-           ]);
+        if($action === 'checkout') {
+            $model = PostPassage::find()
+                ->where('post_ID =:post_id AND group_ID =:group_id')
+                ->params([':post_id' => $post_ID, ':group_id' => $group_ID])
+                ->one();
+        } else {
+            $model = new PostPassage();
+            $model->gepasseerd = TRUE;
+            $model->event_ID = Yii::$app->user->identity->selected_event_ID;
+            $model->post_ID = $post_ID;
+            $model->group_ID = $group_ID;
         }
-        // $model = $this->findModel($posten_passage_ID);
-        // $model->load(Yii::$app->request->post());
-
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes.'));
+        if (Yii::$app->request->post('PostPassage') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                if($action === 'start') {
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Started'));
+                } else {
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Saved'));
+                }
+                if (Yii::$app->request->isAjax) {
+                    return $this->renderAjax('_list-groups', [
+                        'model' => $model,
+                    ]);
+                }
+                return $this->redirect(['posten/index']);
+            }
         }
-
         if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
+            return $this->renderAjax('_form', [
                 'model' => $model,
+                'action' => $action,
             ]);
         }
-        return $this->redirect(['posten/index']);
+        return $this->render('check-station', [
+           'model' => $model,
+           'action' => $action,
+        ]);
     }
 
     /**
@@ -213,106 +131,27 @@ class PostPassageController extends Controller
     public function actionUpdate($posten_passage_ID)
     {
         $model = $this->findModel($posten_passage_ID);
-        if (!$model->load(Yii::$app->request->post())) {
-           return $this->renderPartial('update', [
-               'model' => $model,
-           ]);
+        $action = 'update';
+        if (Yii::$app->request->post('PostPassage') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes.'));
+                if (Yii::$app->request->isAjax) {
+                    return $this->renderAjax('_list', ['model' => $model]);
+                }
+                return $this->redirect(['groups/index-posten']);
+            }
         }
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes.'));
-        }
-
-        return $this->redirect(['groups/index-posten']);
-    }
-
-    /**
-     * Creates a new OpenNoodEnvelop model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCancel($posten_passage_ID)
-    {
-        $model = $this->findModel($posten_passage_ID);
         if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
+            return $this->renderAjax('_form', [
                 'model' => $model,
+                'action' => $action,
             ]);
         }
-       return $this->redirect(['groups/index-posten']);
-    }
-
-    /**
-     * Deletes an existing PostPassage model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($posten_passage_ID)
-    {
-        $this->findModel($posten_passage_ID)->delete();
-
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('_list', [
-                'model' => $model,
-            ]);
-        }
-        return $this->redirect(['groups/index-posten']);
-    }
-
-    /**
-     * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'groupOverview' page.
-     */
-    public function actionCreateDayStart()
-    {
-        $model = new PostPassage;
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if(isset($_POST['PostPassage']))
-        {
-            $model->attributes=$_POST['PostPassage'];
-            $model->post_ID = Posten::getStartPost($_GET['event_id']);
-            $model->event_ID = $_GET['event_id'];
-            $model->group_ID = $_GET['group_id'];
-
-            if($model->save())
-                return $this->redirect(array(
-                    '/game/groupOverview',
-                    'event_id'=>$model->event_ID,
-                    'group_id'=>$model->group_ID));
-        }
-
-        return $this->render('createDayStart',array(
-            'model'=>$model,
-        ));
-    }
-
-    /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'groupOverview' page.
-     * @param integer $id the ID of the model to be updated
-     */
-    public function actionUpdateVertrek($id)
-    {
-        $model=$this->findModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if(isset($_POST['PostPassage']))
-        {
-            $model->attributes=$_POST['PostPassage'];
-            if($model->save())
-                return $this->redirect(array('/game/groupOverview',
-                              'event_id'=>$model->event_ID,
-                              'group_id'=>$model->group_ID));
-        }
-
-        return $this->render('updateVertrek',array(
-            'model'=>$model,
-        ));
+        return $this->render('update', [
+           'model' => $model,
+           'action' => $action,
+        ]);
     }
 
     /**
