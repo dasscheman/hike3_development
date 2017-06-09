@@ -3,14 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\QrCheck;
-use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Eventnames;
+use app\models\Qr;
+use app\models\QrCheck;
+use app\models\QrCheckSearch;
+use app\models\Route;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 
 /**
  * QrCheckController implements the CRUD actions for QrCheck model.
