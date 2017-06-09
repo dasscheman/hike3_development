@@ -58,7 +58,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
         [
             'attribute' => 'time_walking',
             'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->convert($model->time_walking, 'time');
+                return Yii::$app->setupdatetime->displayFormat($model->time_walking, 'time', TRUE);
             },
             'visible'=> TRUE,
             'filter' => FALSE,
@@ -66,7 +66,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
         [
             'attribute' => 'time_left',
             'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->convert($model->time_left, 'time');
+                return Yii::$app->setupdatetime->displayFormat($model->time_left, 'time', TRUE);
             },
             'visible'=> TRUE,
             'filter' => FALSE,

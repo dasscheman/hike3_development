@@ -53,7 +53,8 @@ class SetupDateTime {
      * To garante consistencie. This function can be used on any datetime, date,
      * time field just before the 'save'.
      */
-    public static function displayFormat($dateStr, $type='date') {
+    public static function displayFormat($dateStr, $type='date', $absoluteTime = FALSE) {
+        \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();
         if ($type === 'datetime') {
               $fmt = 'php:d-m-Y H:i:s';
         }
@@ -63,7 +64,16 @@ class SetupDateTime {
         else {
               $fmt = 'php:d-m-Y';
         }
-        return \Yii::$app->formatter->asDate($dateStr, $fmt);
+
+        if($absoluteTime) {
+            // Krijg niet het de goede tijd terug waneer de looptijd berekend wordt.
+            // Werkt wel wanneer ik hie UTC gebruik. Naderhand weer terug gezet.
+            \Yii::$app->formatter->timeZone = "UTC";
+        }
+        $time = \Yii::$app->formatter->asDate($dateStr, $fmt);
+        \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();
+        return $time;
+
     }
 
 }

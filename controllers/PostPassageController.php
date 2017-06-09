@@ -132,6 +132,16 @@ class PostPassageController extends Controller
     {
         $model = $this->findModel($posten_passage_ID);
         $action = 'update';
+
+        if (Yii::$app->request->post('update') == 'delete') {
+            if($model->delete()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
+            }
+            return $this->redirect(['groups/index-posten']);
+        }
+
         if (Yii::$app->request->post('PostPassage') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {

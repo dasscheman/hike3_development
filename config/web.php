@@ -30,6 +30,7 @@ $config = [
              // 'i18n' => []
         ],
     ],
+    'timeZone' => 'Europe/Berlin', // this is my default
     'components' => [
         'i18n' => [
             'translations' => [
