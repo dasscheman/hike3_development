@@ -134,7 +134,7 @@ class OpenVragenController extends Controller
     {
         $model = $this->findModel($open_vragen_ID);
 
-        if (Yii::$app->request->post('submit') == 'delete') {
+        if (Yii::$app->request->post('update') == 'delete') {
             $exist = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
                 ->addParams(

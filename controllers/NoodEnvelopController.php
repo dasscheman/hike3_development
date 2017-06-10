@@ -126,7 +126,7 @@ class NoodEnvelopController extends Controller
     public function actionUpdate($nood_envelop_ID)
     {
         $model = $this->findModel($nood_envelop_ID);
-        if (Yii::$app->request->post('submit') == 'delete') {
+        if (Yii::$app->request->post('update') == 'delete') {
             $exist = OpenNoodEnvelop::find()
                ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
                ->addParams(

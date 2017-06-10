@@ -71,14 +71,7 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host'=>'biologenkantoor.nl',
-                'username'=>'noreply@biologenkantoor.nl',
-                'password'=>'Vzvr074$',
-                'port'=>'587',
-                //'encryption' => 'tls',
-            ],
+            'transport' => require(__DIR__ . '/email.php')
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

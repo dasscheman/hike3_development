@@ -203,7 +203,7 @@ class RouteController extends Controller
     public function actionUpdate($route_ID)
     {
         $model = $this->findModel($route_ID);
-        if (Yii::$app->request->post('submit') == 'delete') {
+        if (Yii::$app->request->post('update') == 'delete') {
              $exist = Qr::find()
                 ->where('event_ID=:event_id and route_id=:route_id')
                 ->addParams(

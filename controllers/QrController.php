@@ -148,7 +148,7 @@ class QrController extends Controller
     {
         $model = $this->findModel($qr_ID);
 
-        if (Yii::$app->request->post('submit') == 'delete') {
+        if (Yii::$app->request->post('update') == 'delete') {
             $exist = QrCheck::find()
                ->where('event_ID=:event_id and qr_ID=:qr_id')
                ->addParams(

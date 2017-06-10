@@ -138,7 +138,7 @@ class PostenController extends Controller
     public function actionUpdate($post_ID)
     {
         $model = $this->findModel($post_ID);
-        if (Yii::$app->request->post('submit') == 'delete') {
+        if (Yii::$app->request->post('update') == 'delete') {
             $exist = PostPassage::find()
                 ->where('event_ID=:event_id and post_ID=:post_ID')
                 ->addParams(

@@ -14,7 +14,9 @@ $config = [
         'log',
         [
             'class' => 'app\components\LanguageSelector',
-            'supportedLanguages' => ['en_US', 'nl_NL'],
+            'supportedLanguages' => ['nl_NL'],
+            // TODO:
+            //'supportedLanguages' => ['en_US', 'nl_NL'],
         ],
         'app\components\Bootstrap',
     ],
@@ -41,11 +43,11 @@ $config = [
                     ],
                     //'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation']
                 ],
-                'kvgrid' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@kvgrid/yii2-grid/messages',
-                    'forceTranslation' => true
-                ],
+                // 'kvgrid' => [
+                //     'class' => 'yii\i18n\PhpMessageSource',
+                //     'basePath' => '@kvgrid/yii2-grid/messages',
+                //     'forceTranslation' => true
+                // ],
             ],
         ],
         'request' => [
