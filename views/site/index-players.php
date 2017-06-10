@@ -38,11 +38,15 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('time_walking')); ?>:
                     </b>
-                    <?php echo Html::encode(Yii::$app->setupdatetime->convert($groupModel->time_walking, 'time')); ?></br>
+                    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_walking, 'time', TRUE)); ?></br>
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('time_left')); ?>:
                     </b>
-                    <?php echo Html::encode(Yii::$app->setupdatetime->convert($groupModel->time_left, 'time')); ?></br>
+                    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_left, 'time', TRUE)); ?></br>
+                    <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('qr_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->qr_score); ?></br>
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
                     </b>
