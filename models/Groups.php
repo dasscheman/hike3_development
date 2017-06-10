@@ -74,7 +74,7 @@ class Groups extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
             'bonus_score' => Yii::t('app', 'Bonus Score'),
-            'hint_score' => Yii::t('app', 'Hint Score')
+            'hint_score' => Yii::t('app', 'Hint Penalty')
         ];
     }
 
