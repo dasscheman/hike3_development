@@ -76,23 +76,6 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if (!empty(Yii::$app->user->identity->selected_event_ID)) {
-            $event_id = Yii::$app->user->identity->selected_event_ID;
-            $user = DeelnemersEvent::find()
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            if(!isset($user->rol)) {
-                return $this->render('/site/index');
-            }
-            if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
-                return $this->redirect(['/site/overview-players']);
-            }
-            if ($user->rol === DeelnemersEvent::ROL_organisatie) {
-                return $this->redirect(['/site/overview-organisation']);
-            }
-        }
-
         if (!Yii::$app->user->isguest) {
             if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
                 Yii::$app->user->identity->setSelectedEventID();
@@ -106,6 +89,23 @@ class SiteController extends Controller
                     )
                 );
                 return $this->redirect(['/users/view']);
+            }
+
+            if (!empty(Yii::$app->user->identity->selected_event_ID)) {
+                $event_id = Yii::$app->user->identity->selected_event_ID;
+                $user = DeelnemersEvent::find()
+                    ->where('event_ID =:event_id and user_ID =:user_id')
+                    ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
+                    ->one();
+                if(!isset($user->rol)) {
+                    return $this->render('/site/index');
+                }
+                if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
+                    return $this->redirect(['/site/overview-players']);
+                }
+                if ($user->rol === DeelnemersEvent::ROL_organisatie) {
+                    return $this->redirect(['/site/overview-organisation']);
+                }
             }
         }
         return $this->render('/site/index');
