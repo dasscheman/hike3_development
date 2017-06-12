@@ -20,7 +20,9 @@ class OpenNoodenvelopAccess {
     }
 
     function OpenNoodEnvelopOpen() {
-        if ($this->userModel->hikeStatus !== EventNames::STATUS_gestart) {
+        if ($this->userModel->hikeStatus === EventNames::STATUS_opstart ||
+            $this->userModel->hikeStatus === EventNames::STATUS_beindigd ||
+            $this->userModel->hikeStatus === EventNames::STATUS_geannuleerd) {
             return FALSE;
         }
 
