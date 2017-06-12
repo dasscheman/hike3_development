@@ -95,7 +95,8 @@ class OpenVragenSearch extends OpenVragen
         $queryRoute = Route::find()
             ->select('route_ID')
             ->orderBy('route_volgorde');
-        if($event->active_day == NULL) {
+        if($event->active_day == NULL ||
+           $event->active_day == '0000-00-00') {
             $queryRoute->where('event_ID =:event_id and (day_date =:day_date OR day_date =:introductie)')
                 ->params([
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
