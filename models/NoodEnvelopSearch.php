@@ -58,9 +58,19 @@ class NoodEnvelopSearch extends NoodEnvelop
         // Get route id's for current day.
         $queryRoute = Route::find()
             ->select('route_ID')
-            ->where('event_ID =:event_id and day_date =:day_date')
-            ->orderBy('route_volgorde')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
+            ->orderBy('route_volgorde');
+
+        if($event->active_day == NULL) {
+            $queryRoute->where('event_ID =:event_id and (day_date =:day_date OR day_date =:introductie)')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':day_date' => $event->active_day,
+                    ':introductie' => '0000-00-00'
+                ]);
+        } else {
+            $queryRoute->where('event_ID =:event_id and day_date =:day_date')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
+        }
 
         // Find all open hints for founr group id
         $queryOpenHints = OpenNoodEnvelop::find()
