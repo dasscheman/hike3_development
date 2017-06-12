@@ -124,13 +124,8 @@ class QrCheckController extends Controller
         }
 
         if (Route::getDayOfRouteId($qr->route_ID) != EventNames::getActiveDayOfHike()){
-            if((Route::getDayOfRouteId($qr->route_ID) !== '0000-00-00' ||
-                Route::getDayOfRouteId($qr->route_ID) !== NULL) &&
-               (EventNames::getActiveDayOfHike() !== '0000-00-00' ||
-                EventNames::getActiveDayOfHike() !== NULL)) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
-                return $this->redirect(['site/overview-players']);
-            }
+            Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
+            return $this->redirect(['site/overview-players']);
         }
 
         $qrCheck = QrCheck::find()

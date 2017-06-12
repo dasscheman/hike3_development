@@ -366,6 +366,9 @@ class EventNames extends HikeActiveRecord {
         if (isset($data->active_day)) {
             return $data->active_day;
         } else {
+            if ($data->status === STATUS_introductie) {
+                return '0000-00-00';
+            }
             return;
         }
     }
