@@ -150,6 +150,11 @@ class QrCheckController extends Controller
 
         $model->save();
 
+        if ($model->save()){
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not check QR code!'));
+        }
         return $this->redirect(['site/overview-players']);
     }
 
