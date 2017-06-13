@@ -66,7 +66,7 @@ class EventNames extends HikeActiveRecord {
      */
     public function rules() {
         return [
-            [['event_name', 'status', 'organisatie'], 'required'],
+            [['event_name', 'status'], 'required'],
             [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'website', 'image_temp'], 'safe'],
             [['status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_name', 'image', 'organisatie', 'website'], 'string', 'max' => 255],
