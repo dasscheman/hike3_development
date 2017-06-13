@@ -79,10 +79,12 @@ class AccessControl extends HikeActiveRecord {
             $selected = DeelnemersEvent::find()
                 ->where('user_ID=:user_id')
                 ->addParams([':user_id' => Yii::$app->user->identity->id])
-                ->orderBy(['update_time'=>SORT_DESC])
-                ->one();
+                ->orderBy(['update_time'=>SORT_DESC]);
 
-            Yii::$app->user->identity->selected_event_ID = (int) $selected->event_ID;
+            if(!$selected->exists()) {
+                return FALSE;
+            }
+            Yii::$app->user->identity->selected_event_ID = (int) $selected->one()->event_ID;
             Yii::$app->user->identity->save();
         }
     }
