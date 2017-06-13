@@ -90,14 +90,14 @@ class Users extends AccessControl implements IdentityInterface {
      */
     public function rules() {
         return [
-            [['username', 'email'], 'required'],
+            [['username', 'voornaam', 'achternaam', 'email'], 'required'],
             [['birthdate', 'last_login_time', 'create_time', 'update_time'], 'safe'],
             [['create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
 
             [['search_friends'], 'string', 'min'=>3],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
                 'password', 'macadres', 'authKey', 'accessToken'], 'string', 'max' => 255],
-            ['username', 'filter', 'filter' => 'trim'],
+            ['voornaam', 'filter', 'filter' => 'trim'],
             ['username', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This username address has already been taken.')],
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],
@@ -536,7 +536,7 @@ class Users extends AccessControl implements IdentityInterface {
 
     public function sendEmailNewAccount() {
         $message = Yii::$app->mailer->compose('newAccount', [
-                'newMailUsers' => $this->username,
+                'newMailUsers' => $this->email,
                 'newWachtwoord' => $this->password,
             ])
             ->setSubject('Wachtwoord Kiwi.run')
@@ -551,7 +551,7 @@ class Users extends AccessControl implements IdentityInterface {
 
     public function sendEmailWithNewPassword($NewPassword) {
         $message = Yii::$app->mailer->compose('resendPassword', [
-                'newMailUsers' => $this->username,
+                'newMailUsers' => $this->email,
                 'newWachtwoord' => $NewPassword,
             ])
             ->setSubject('Wachtwoord Kiwi.run')
