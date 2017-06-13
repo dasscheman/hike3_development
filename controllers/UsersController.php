@@ -221,7 +221,7 @@ class UsersController extends Controller
                 if($emailSend)
                 {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Email is send.'));
-                    $this->redirect(array('site/index'));
+                    return $this->redirect(['site/login']);
                 } else {
                     throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
                 }
