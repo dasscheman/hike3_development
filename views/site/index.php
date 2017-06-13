@@ -17,7 +17,7 @@ $this->title = 'Kiwi.run';
     ?>
     <div class="jumbotron">
         <h1><?php echo Yii::t('app', 'Welcome') ?></h1>
-
+        'Dit is de vernieuwde hike-app, nu kiwi.run.'
         <p>
             <?php
             echo Html::a(
@@ -32,6 +32,13 @@ $this->title = 'Kiwi.run';
                     Yii::t('app', 'Or login if you have an account'),
                     ['/site/login']
                 );?>
+        </p>
+        <p>
+            <?php
+            echo Html::a(
+                Yii::t('app', 'Forgot password'),
+                ['/users/resend-password-user']
+            );?>
         </p>
     </div>
 </div>
