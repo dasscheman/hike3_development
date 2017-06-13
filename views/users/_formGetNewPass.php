@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\builder\Form;
 use kartik\widgets\ActiveForm;
+use app\components\CustomAlertBlock;
 
 /* @var $this UsersController */
 /* @var $model Users */
@@ -12,6 +13,12 @@ use kartik\widgets\ActiveForm;
 <div class="users-form">
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => FALSE,
+    ]);
+
     $attributes['voornaam'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [
