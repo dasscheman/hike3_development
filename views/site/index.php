@@ -17,7 +17,7 @@ $this->title = 'Kiwi.run';
     ?>
     <div class="jumbotron">
         <h1><?php echo Yii::t('app', 'Welcome') ?></h1>
-        'Dit is de vernieuwde hike-app, nu kiwi.run.'
+		<h3>Dit is de vernieuwde hike-app, nu kiwi.run</h3>
         <p>
             <?php
             echo Html::a(
