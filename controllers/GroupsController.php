@@ -162,7 +162,12 @@ class GroupsController extends Controller
                 ->all();
             if ($groups_leden) {
                 foreach ($groups_leden as $player) {
-                    $player->delete();
+                    try {
+                        $player->delete();
+                    }
+                    catch(\yii\db\IntegrityException $e) {
+                        throw new \yii\web\ForbiddenHttpException('Could not delete this player.');
+                    }
                 }
             }
         }
@@ -171,8 +176,8 @@ class GroupsController extends Controller
             try {
                  $model->delete();
             }
-            catch(Exception $e) {
-                throw new HttpException(400, Yii::t('app'. 'You cannot remove this player'));
+            catch(\yii\db\IntegrityException $e) {
+                throw new \yii\web\ForbiddenHttpException('Could not delete this group.');
             }
             Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {group} from the hike', ['group' => $model->group_name]));
             return $this->redirect(['site/overview-organisation']);
