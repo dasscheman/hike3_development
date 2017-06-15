@@ -220,7 +220,7 @@ class FriendList extends HikeActiveRecord
             ->andwhere(['not in', 'tbl_users.user_ID', $queryDeelnemersEvent])
             ->all();
 
-        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');
+        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'fullName');
         return $arrayRestuls;
 	}
 }

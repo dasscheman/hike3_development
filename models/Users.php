@@ -518,6 +518,11 @@ class Users extends AccessControl implements IdentityInterface {
         }
     }
 
+    public function getFullName()
+    {
+        return $this->voornaam.' '.$this->achternaam;
+    }
+
     /**
      * Retrieves username
      */
