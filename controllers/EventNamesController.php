@@ -7,6 +7,7 @@ use app\models\EventNames;
 use app\models\EventNamesSearch;
 use app\models\DeelnemersEvent;
 use app\models\Route;
+use app\models\Users;
 use app\models\Posten;
 use app\models\Qr;
 use app\models\UploadForm;
@@ -123,8 +124,9 @@ class EventNamesController extends Controller
 
             // when we have an event_id set the user variable and the cookcie to
             // be sure the before validate is not overwriting with the wrong event_id.
-            Yii::$app->user->identity->selected_event_ID = (int) $event_id;
-            Yii::$app->user->identity->save();
+            $modelUser = Users::findOne(Yii::$app->user->identity->id);
+            $modelUser->selected_event_ID = $event_id;
+            $modelUser->save();
 
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = $event_id;
