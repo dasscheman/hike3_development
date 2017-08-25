@@ -1,8 +1,5 @@
 <?php
 
-use app\models\Users;
-use kartik\builder\Form;
-use kartik\detail\DetailView;
 use kartik\widgets\ActiveForm;
 use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
@@ -10,14 +7,8 @@ use yii\helpers\Url;
 use yii\widgets\ListView;
 use kartik\widgets\FileInput;
 use yii\helpers\Html;
-use app\models\Groups;
 use kartik\editable\Editable;
 use app\models\EventNames;
-use app\models\Bonuspunten;
-use app\models\PostPassage;
-use kartik\time\TimePicker;
-use kartik\datetime\DateTimePicker;
-use app\models\DeelnemersEvent;
 use app\components\CustomAlertBlock;
 
 use kartik\widgets\Select2;
@@ -324,6 +315,46 @@ $this->title = Yii::t('app', 'Hike overview');
                 ?>
                 </p>
               </div>
+
+              <div class="well"> <?php
+                  echo Html::a(
+                      Yii::t('app', 'Export Hike'),
+                      [
+                          'export-import/export-route',
+                      ],
+                      [
+                          'title' => Yii::t('app', 'Create an excel file from hike'),
+                          'class'=>'btn btn-primary btn-xs',
+                      ]
+                  );
+//  TODO, import of the export file
+//                    $form = ActiveForm::begin([
+//                        'options'=>['enctype'=>'multipart/form-data'],
+//                        'action' => ['export-import/import-route'],// important
+//                    ]);
+           
+//                    // your fileinput widget for single file upload
+//                    echo $form->field($importModel, 'importFile')->widget(FileInput::classname(), [
+//                        'options'=>[
+//                            'accept'=>'ods'
+//                        ],
+//                        'disabled' => !Yii::$app->user->identity->isActionAllowed('export-import', 'import-route'),
+//                        'pluginOptions'=>[
+//                            'allowedFileExtensions' => ['ods'],
+//                            'uploadLabel' => Yii::t('app',  'upload'),
+//                            'removeLabel' => '',
+//                            'showPreview' => false,
+//                            'showCaption' => false,
+//                            'elCaptionText' => '#customCaption',
+//                            'browseClass' => 'btn btn-primary btn-xs',
+//                            'browseIcon' => '',
+//                            'browseLabel' => Yii::t('app',  'Import route excel'),
+//                        ]
+//                    ])->label(false);
+//                    ActiveForm::end();
+//                    echo '<span id="customCaption" class="text-success">' . Yii::t('app', 'No file selected') . '</span>';
+                ?>
+            </div>
               <?php
               Modal::begin(
                   [
