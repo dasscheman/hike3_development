@@ -15,7 +15,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.5",
+        "yiisoft/yii2": "~2.0.12",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-jui": "^2.0",
@@ -31,7 +31,10 @@
         "kartik-v/yii2-field-range": "*",
         "kartik-v/yii2-mpdf": "@dev",
         "prawee/yii2-widgets": "dev-master",
-        "2amigos/yii2-qrcode-helper" : "~1.0"
+        "2amigos/yii2-qrcode-helper" : "~1.0",
+        "codemix/yii2-excelexport" : "*",
+        "phpoffice/phpexcel": "*",
+        "russ666/yii2-countdown": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
