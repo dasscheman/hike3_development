@@ -70,10 +70,13 @@ $this->title = Yii::t('app', 'Posten');
                 return GridView::ROW_COLLAPSED;
             },
             'detail' => function ($model, $key, $index, $column) {
-                $groups = Groups::find()
+                $db = $model::getDb();
+                $groups = $db->cache(function ($db) {
+                    return Groups::find()
                     ->where('event_ID =:event_id')
                     ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
                     ->all();
+                });
                 return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['post_id'=>$key, 'groups' => $groups]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
@@ -85,7 +88,10 @@ $this->title = Yii::t('app', 'Posten');
         [
             'header' => Yii::t('app', '#groups passed'),
             'value' => function($model, $key, $index, $column){
+                $db = $model::getDb();
+                return  $db->cache(function ($db) use($key){
                 return Posten::findOne($key)->getPostPassagesCount();
+                });
             },
         ],
         'post_volgorde',
