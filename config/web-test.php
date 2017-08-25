@@ -30,6 +30,7 @@ $config = [
              // 'i18n' => []
         ],
     ],
+    'timeZone' => 'Europe/Berlin', // this is my default
     'components' => [
         'i18n' => [
             'translations' => [
@@ -70,14 +71,7 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host'=>'biologenkantoor.nl',
-                'username'=>'noreply@biologenkantoor.nl',
-                'password'=>'test',
-                'port'=>'587',
-                //'encryption' => 'tls',
-            ],
+            'transport' => require(__DIR__ . '/email.php')
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

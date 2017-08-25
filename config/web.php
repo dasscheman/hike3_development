@@ -44,11 +44,11 @@ $config = [
                     ],
                     //'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation']
                 ],
-                'kvgrid' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@kvgrid/yii2-grid/messages',
-                    'forceTranslation' => true
-                ],
+//                'kvgrid' => [
+//                    'class' => 'yii\i18n\PhpMessageSource',
+//                    'basePath' => '@kvgrid/yii2-grid/messages',
+//                    'forceTranslation' => true
+//                ],
             ],
         ],
         'request' => [
@@ -64,13 +64,14 @@ $config = [
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
+            'maxSourceLines' => 20,
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => false,
             'transport' => require(__DIR__ . '/email.php')
         ],
         'log' => [
