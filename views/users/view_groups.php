@@ -7,11 +7,8 @@ use prawee\widgets\ButtonAjax;
 /* @var $model app\models\Route */
 
 ?>
-<div class="tbl-nood-envelop-view">
-<?php
-    // d($model->deelnemersEvents);
-    //dd($model->getDeelnemersEvents());
-?>
+<div class="tbl-users-view-groups">
+
     <h3><?= Html::encode(Yii::t('app', 'Members of group') . ' ' . $model->group_name) ?></h3>
 
     <?php

@@ -26,6 +26,9 @@ use yii\helpers\Json;
  * @property OpenVragenAntwoorden[] $OpenVragenAntwoordens
  * @property PostPassage[] $PostPassages
  * @property QrCheck[] $QrChecks
+ * @property Qr[] $qrs
+ * @property TimeTrailCheck[] $TimeTrailChecks
+ * @property TimeTrailItem[] $timeTrailItem
  */
 class Groups extends HikeActiveRecord
 {
@@ -214,10 +217,46 @@ class Groups extends HikeActiveRecord
             ->sum('score');
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimeTrailChecks()
+    {
+        return $this->hasMany(TimeTrailCheck::className(), ['group_ID' => 'group_ID']);
+    }
+
+	public function getSuccededTimeTrailChecks()
+	{
+
+        return $this->hasMany(TimeTrailCheck::className(), ['group_ID' => 'group_ID'])
+            ->where(['tbl_time_trail_check.succeded' => TRUE]);
+	}
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimeTrailItems()
+    {
+        return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
+            ->viaTable('tbl_time_trail_check', ['group_ID' => 'group_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTrail_score()
+    {
+        return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
+            ->via('succededTimeTrailChecks')
+            ->sum('score');
+    }
+
+
+
     public function getTotal_score()
     {
-        return $this->bonus_score + $this->post_score +
-            $this->qr_score + $this->vragen_score -
+        return $this->bonus_score + $this->post_score + $this->trail_score +
+            $this->qr_score + $this->vragen_score + $this->hint_score -
             $this->hint_score;
 
     }

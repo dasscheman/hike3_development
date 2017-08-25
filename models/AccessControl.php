@@ -71,6 +71,9 @@ class AccessControl extends HikeActiveRecord {
             if($exists){
                 Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_id');
                 Yii::$app->user->identity->save();
+            } else {
+                // This user is not added to the event_id in the GET.
+                return FALSE;
             }
         }
 

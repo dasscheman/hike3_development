@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use app\models\DeelnemersEvent;
-use app\models\Eventnames;
 use app\models\Qr;
 use app\models\QrCheck;
 use app\models\QrCheckSearch;
