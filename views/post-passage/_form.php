@@ -32,7 +32,7 @@ use app\models\Groups;
         $action === 'update') {
         echo $form->field($model, 'binnenkomst')->widget(
             DateTimePicker::classname(), [
-            	'options' => ['placeholder' => Yii::t('app', 'Enter incheck time')],
+            	'options' => ['readonly' => TRUE, 'placeholder' => Yii::t('app', 'Enter incheck time')],
                 'type' => DateTimePicker::TYPE_INPUT,
             	'pluginOptions' => [
             		'autoclose' => true
@@ -44,7 +44,7 @@ use app\models\Groups;
         $action === 'update') {
         echo  $form->field($model, 'vertrek')->widget(
             DateTimePicker::classname(), [
-            	'options' => ['placeholder' => Yii::t('app', 'Enter leave time')],
+            	'options' => ['readonly' => TRUE, 'placeholder' => Yii::t('app', 'Enter leave time')],
                 'type' => DateTimePicker::TYPE_INPUT,
             	'pluginOptions' => [
             		'autoclose' => true
