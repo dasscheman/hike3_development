@@ -9,7 +9,6 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\EventNames;
-use app\models\RouteSearch;
 use app\models\BonuspuntenSearch;
 use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
@@ -18,12 +17,13 @@ use app\models\Route;
 use app\models\Posten;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
-use app\models\OpenVragen;
 use app\models\OpenVragenSearch;
 use app\models\NoodEnvelopSearch;
+use app\models\TimeTrailCheckSearch;
 use yii\web\Cookie;
 use yii\data\ActiveDataProvider;
 use app\models\HikeActivityFeed;
+use app\models\ExportImport;
 
 class SiteController extends Controller
 {
@@ -167,6 +167,7 @@ class SiteController extends Controller
                 'dataProviderCheck' => $dataProviderCheck,
                 'activityFeed' => $feed->getData(),
                 'modelDeelnemer' => new DeelnemersEvent,
+                'importModel'=> new ExportImport,
     		));
         }
         return $this->render('/site/index');
@@ -212,6 +213,10 @@ class SiteController extends Controller
             $feed->pageSize = 9;
             $feed->pageCount = 2;
 
+            $searchTimeTrailCheckModel = new TimeTrailCheckSearch();
+            $timeTrailCheckData = $searchTimeTrailCheckModel->search(Yii::$app->request->queryParams, $group_id);
+
+//dd($timeTrailChecks->timeTrailItem);
             return $this->render('index-players',[
                 'groupModel' => $groupModel,
                 'activityFeed' => $feed->getData(),
@@ -220,7 +225,8 @@ class SiteController extends Controller
                 'openHintsData' => $openHintsData,
                 'closedHintsData' => $closedHintsData,
                 'qrCheckData' => $qrCheckData,
-                'bonusData' => $bonusData
+                'bonusData' => $bonusData,
+                'timeTrailCheckData' => $timeTrailCheckData,
             ]);
         }
         return $this->render('/site/index');
@@ -267,6 +273,11 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionQuickStart()
+    {
+        return $this->render('quick-start');
     }
 
     public function actionLanguage()
