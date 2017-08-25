@@ -29,9 +29,8 @@ class m160121_202415_hints_table extends Migration
         'ENGINE=InnoDB');
 
         $this->createIndex(
-            'envelop_ID', 
+            'nood_envelop_name',
             'tbl_nood_envelop',
-            'route_ID',
             ['nood_envelop_name', 'event_ID', 'route_ID'],
             true);
 
