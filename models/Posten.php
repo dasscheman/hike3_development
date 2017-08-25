@@ -207,12 +207,18 @@ class Posten extends HikeActiveRecord
 
 	public function lowererOrderNumberExists($post_id)
 	{
-        $data = Posten::findOne($post_id);
-        $dataNext = Posten::find()
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($post_id){
+            return Posten::findOne($post_id);
+        });
+
+        $dataNext = $db->cache(function ($db) use($data){
+            return Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
             ->orderBy('post_volgorde DESC')
             ->exists();
+        });
 
 		if ($dataNext) {
 			return TRUE;
@@ -222,13 +228,19 @@ class Posten extends HikeActiveRecord
 
 	public function higherOrderNumberExists($post_id)
 	{
-        $data = Posten::findOne($post_id);
-        $dataNext = Posten::find()
+        $db = self::getDb();
+        $data = $db->cache(function ($db) use($post_id){
+            return Posten::findOne($post_id);
+        });
+
+        $dataNext = $db->cache(function ($db) use($data){
+            return Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
             ->orderBy(['post_volgorde' => SORT_ASC])
             ->exists();
-
+        });
+        
 		if ($dataNext) {
 			return TRUE;
         }
@@ -256,11 +268,14 @@ class Posten extends HikeActiveRecord
 	public function getStartPost($date)
 	{
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $data = Posten::find()
+        $db = self::getDb();
+        $dataNext = $db->cache(function ($db) use($date){
+            return Posten::find()
             ->where('event_ID =:event_id AND date =:date')
             ->params([':event_id' => $event_id, ':date' => $date])
             ->orderBy(['post_volgorde' => SORT_ASC])
             ->one();
+        });
 
 		if (isset($data->post_ID))
 		{
