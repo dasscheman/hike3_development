@@ -64,6 +64,10 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     </b>
                     <?php echo Html::encode($groupModel->hint_score); ?></br>
                     <b>
+                    <?php echo Html::encode($groupModel->getAttributeLabel('trail_score')); ?>:
+                    </b>
+                    <?php echo Html::encode($groupModel->trail_score); ?></br>
+                    <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('total_score')); ?>:
                     </b>
                     <?php echo Html::encode($groupModel->total_score); ?></br>
@@ -80,6 +84,21 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 </div>
             </div>
             <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <?php
+                        echo ListView::widget([
+                            'summary' => FALSE,
+                            'pager' => FALSE,
+                            'dataProvider' => $timeTrailCheckData,
+                            'itemView' => '/time-trail/_list',
+                //            'viewParams' => ['time_trail_item_id' => $time_trail_item_id],
+                            'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                        ]);
+                        ?>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-sm-12">
                         <?php

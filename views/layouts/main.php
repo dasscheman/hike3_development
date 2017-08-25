@@ -13,8 +13,6 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
 use app\models\DeelnemersEvent;
-use yii\helpers\Url;
-
 
 AppAsset::register($this);
 ?>
@@ -134,6 +132,11 @@ AppAsset::register($this);
                         'url'=>['bonuspunten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
                     ],
+                    [
+                        'label'=> Yii::t('app','Time Trails overview'),
+                        'url'=>['time-trail/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('time-trail', 'index')
+                    ],
                 ]
             ],
             // TODO:
@@ -152,6 +155,10 @@ AppAsset::register($this);
             //['label' => 'About', 'url' => ['/site/about']],
             ['label' => Yii::t('app','Info'),
                 'items' => [
+                    [
+                        'label' => Yii::t('app','Quick start'),
+                        'url'=>['/site/quick-start'],
+                    ],
                     [
                         'label' => Yii::t('app','Contact'),
                         'url'=>['/site/contact'],
