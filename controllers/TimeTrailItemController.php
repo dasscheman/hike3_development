@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\TimeTrail;
 use app\models\TimeTrailItem;
 use app\models\TimeTrailItemSearch;
 use yii\web\Controller;
@@ -110,9 +111,6 @@ class TimeTrailItemController extends Controller
         $model = new TimeTrailItem();
         if (Yii::$app->request->post('TimeTrailItem') &&
             $model->load(Yii::$app->request->post())) {
-//            $model->time_trail_ID = Yii::$app->request->get('time_trail_id');
-//            d(Yii::$app->request->get('time_trail_id'));
-//            dd($model->time_trail_ID);
             $model->setNewOrderForTimeTrailItem();
             $model->setUniqueCodeForTimeTrailItem();
             if($model->save()) {
@@ -121,15 +119,13 @@ class TimeTrailItemController extends Controller
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-                      d(Yii::$app->request->get('time_trail_id'));
             $model->time_trail_ID = Yii::$app->request->get('time_trail_id');
-            //$this->setCookieIndexTab($model->date);
         }
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('create', ['model' => $model]);
         }
-//dd($model);
+
         return $this->render([
             '/time-trail-item/create',
             'model' => $model
@@ -139,20 +135,47 @@ class TimeTrailItemController extends Controller
     /**
      * Updates an existing TimeTrailItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param integer $time_trail_item_ID
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($time_trail_item_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($time_trail_item_ID);
+        if (Yii::$app->request->post('update') == 'delete') {
+            $exist = TimeTrailCheck::find()
+                ->where('event_ID=:event_id and time_trail_item_ID=:time_trail_item_id')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                        ':time_trail_item_id' => $model->time_trail_item_ID
+                    ])
+                ->exists();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->time_trail_item_ID]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if (!$exist) {
+                $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail item.'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
+            }
+            return $this->redirect(['time-trail/index']);
         }
+
+        if (Yii::$app->request->post('TimeTrailItem') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
+                return $this->redirect(['time-trail/index']);
+            }
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/time-trail-item/update',
+            'model' => $model
+        ]);
     }
 
     /**
@@ -227,6 +250,63 @@ class TimeTrailItemController extends Controller
             // return the pdf output as per the destination setting
             return $pdf->render();
         }
+	}
+
+	/*
+	 * Deze actie wordt gebruikt voor de grid velden. 
+	 */
+	public function actionMoveUpDown($time_trail_item_ID, $up_down)
+	{
+        $modelItem = $this->findModel($time_trail_item_ID);
+        if ($up_down === 'up') {
+            $previousModel = TimeTrailItem::find()
+                ->where('event_ID =:event_id and time_trail_ID =:time_trail_ID and volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':time_trail_ID' => $modelItem->time_trail_ID, ':order' => $modelItem->volgorde])
+                ->orderBy('volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = TimeTrailItem::find()
+                ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':time_trail_ID' => $modelItem->time_trail_ID, ':order' => $modelItem->volgorde])
+                ->orderBy('volgorde ASC')
+                ->one();
+        }
+
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if(isset($previousModel)) {
+
+            $tempCurrentVolgorde = $modelItem->volgorde;
+            $modelItem->volgorde = $previousModel->volgorde;
+            $previousModel->volgorde = $tempCurrentVolgorde;
+            if ($modelItem->validate() &&
+                $previousModel->validate()) {
+                    $modelItem->save();
+                    $previousModel->save();
+            } else {
+               Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
+        }
+
+        $searchModel = new TimeTrailItemSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $model = TimeTrail::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->all();
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('time-trail/index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'model' => $model,
+            ]);
+        }
+
+        return $this->render('/time-trail/index',[
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+        ]);
 	}
 
     /**

@@ -42,7 +42,10 @@ class TimeTrailItemSearch extends TimeTrailItem
     public function search($params)
     {
        //d($params);
-        $query = TimeTrailItem::find($params);
+        $query = TimeTrailItem::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->orderBy('volgorde ASC');
+
 
         // add conditions that should always apply here
 
