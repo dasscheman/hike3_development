@@ -30,7 +30,7 @@ $this->title = Yii::t('app', 'Time Trails');
     $heading = FALSE;
     $exportConfig = TRUE;
     $responsiveWrap = FALSE;
-
+    $dataArray = [];
 //
 //     d($searchModel);
 //     dd($dataProvider);
