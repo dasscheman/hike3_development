@@ -11,13 +11,10 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\Qr;
 use app\models\EventNames;
-use app\models\Bonuspunten;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
-use app\models\Posten;
 use yii\web\Cookie;
 
-use dosamigos\qrcode\QrCode;
 /**
  * RouteController implements the CRUD actions for Route model.
  */
@@ -205,7 +202,7 @@ class RouteController extends Controller
         $model = $this->findModel($route_ID);
         if (Yii::$app->request->post('update') == 'delete') {
              $exist = Qr::find()
-                ->where('event_ID=:event_id and route_id=:route_id')
+                ->where('event_ID=:event_id and route_ID=:route_id')
                 ->addParams(
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
@@ -215,7 +212,7 @@ class RouteController extends Controller
 
             if (!$exist) {
                 $exist = OpenVragen::find()
-                    ->where('event_ID=:event_id and route_id=:route_id')
+                    ->where('event_ID=:event_id and route_ID=:route_id')
                     ->addParams(
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
@@ -226,7 +223,7 @@ class RouteController extends Controller
 
             if (!$exist) {
                 $exist = NoodEnvelop::find()
-                    ->where('event_ID=:event_id and route_id=:route_id')
+                    ->where('event_ID=:event_id and route_ID=:route_id')
                     ->addParams(
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,

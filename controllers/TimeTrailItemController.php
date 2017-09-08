@@ -194,7 +194,7 @@ class TimeTrailItemController extends Controller
     public function actionQrcode($code) {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
-    	$link = "www.kiwi.run/index.php?r=time-trail-check/create&event_id=".$event_id."&code=".$code;
+    	$link = Yii::$app->request->hostInfo . "/index.php?r=time-trail-check/create&event_id=".$event_id."&code=".$code;
         return QrCode::jpg(
             $link,
             Yii::$app->params['timetrail_code_path'] . $code . '.jpg',
