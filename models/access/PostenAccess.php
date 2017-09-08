@@ -47,12 +47,16 @@ class PostenAccess {
     }
 
     function PostenMoveUpDown() {
+        $post_id = $this->userModel->ids['post_ID'];
+  
+        $data = $this->findModel($post_id);
+
         if ($this->userModel->parameters['move_action'] == 'down'){
-            return Posten::higherOrderNumberExists($this->userModel->ids['post_ID']);
+            return Posten::higherOrderNumberExists($data->date, $data->post_volgorde);
         }
 
         if ($this->userModel->parameters['move_action'] == 'up'){
-            return Posten::lowererOrderNumberExists($this->userModel->ids['post_ID']);
+            return Posten::lowererOrderNumberExists($data->date, $data->post_volgorde);
         }
         return FALSE;
     }
