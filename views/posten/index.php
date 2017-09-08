@@ -73,9 +73,9 @@ $this->title = Yii::t('app', 'Posten');
                 $db = $model::getDb();
                 $groups = $db->cache(function ($db) {
                     return Groups::find()
-                    ->where('event_ID =:event_id')
-                    ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
-                    ->all();
+                        ->where('event_ID =:event_id')
+                        ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+                        ->all();
                 });
                 return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['post_id'=>$key, 'groups' => $groups]);
             },
