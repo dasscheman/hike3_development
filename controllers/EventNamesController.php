@@ -10,19 +10,12 @@ use app\models\Route;
 use app\models\Users;
 use app\models\Posten;
 use app\models\Qr;
-use app\models\UploadForm;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use yii\web\HttpException;
 use yii\helpers\Json;
-use yii\helpers\Url;
-use app\components\SetupDateTime;
-use yii\caching\Cache;
-use DateInterval;
-use DatePeriod;
 use DateTime;
 
 /**
