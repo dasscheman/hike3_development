@@ -318,9 +318,15 @@ class PostPassage extends HikeActiveRecord
             ->Params([':group_id' => $group_id])
             ->orderBy('binnenkomst ASC');
 
-        $postPassagesData = $queryPassage->all();
-		$aantalPosten = $queryPassage->count();
+        $db = self::getDb();
+        $postPassagesData = $db->cache(function ($db) use ($queryPassage){
+            return $queryPassage->all();
+        });
 
+        $aantalPosten = $db->cache(function ($db) use ($queryPassage){
+            return $queryPassage->count();
+        });
+        
 		$totalTime = 0;
 		$timeLastStint = 0;
 		$timeLeftLastPost = 0;

@@ -106,8 +106,12 @@ class Groups extends HikeActiveRecord
      */
     public function getBonus_score()
     {
-        return $this->hasMany(Bonuspunten::className(), ['group_ID' => 'group_ID'])
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasMany(Bonuspunten::className(), ['group_ID' => 'group_ID'])
+                ->sum('score');
+        });
+        return $data;
     }
 
     /**
@@ -152,9 +156,13 @@ class Groups extends HikeActiveRecord
 
     public function getHint_score()
     {
-        return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
-            ->via('openNoodEnvelops')
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
+                ->via('openNoodEnvelops')
+                ->sum('score');
+        });
+        return $data;
     }
 
     /**
@@ -182,9 +190,13 @@ class Groups extends HikeActiveRecord
 
     public function getVragen_score()
     {
-        return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
-            ->via('correctOpenVragenAntwoordens')
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
+                ->via('correctOpenVragenAntwoordens')
+                ->sum('score');
+        });
+        return $data;
     }
 
     /**
@@ -197,9 +209,13 @@ class Groups extends HikeActiveRecord
 
     public function getPost_score()
     {
-        return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID'])
-            ->via('postPassages')
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID'])
+                ->via('postPassages')
+                ->sum('score');
+        });
+        return $data;
     }
 
     /**
@@ -212,9 +228,13 @@ class Groups extends HikeActiveRecord
 
     public function getQr_score()
     {
-        return $this->hasOne(Qr::className(), ['qr_ID' => 'qr_ID'])
-            ->via('qrChecks')
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasOne(Qr::className(), ['qr_ID' => 'qr_ID'])
+                ->via('qrChecks')
+                ->sum('score');
+        });
+        return $data;
     }
 
     /**
@@ -246,9 +266,13 @@ class Groups extends HikeActiveRecord
      */
     public function getTrail_score()
     {
-        return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
-            ->via('succededTimeTrailChecks')
-            ->sum('score');
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
+                ->via('succededTimeTrailChecks')
+                ->sum('score');
+        });
+        return $data;
     }
 
 
@@ -332,12 +356,14 @@ class Groups extends HikeActiveRecord
 	{
 		$counter = 0;
 		$temp_score = 0;
-
-		$data = Groups::find()
-            ->where('event_ID =:event_ID')
-            ->params([':event_ID' => Yii::$app->user->identity->selected_event_ID])
-            ->all();
-
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return Groups::find()
+                ->where('event_ID =:event_ID')
+                ->params([':event_ID' => Yii::$app->user->identity->selected_event_ID])
+                ->all();
+        });
+        
 		foreach($data as $item)
 		{
 			$groupsArray[$item->group_ID] = $item->total_score;

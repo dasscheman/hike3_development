@@ -98,7 +98,11 @@ class Bonuspunten extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        $db = self::getDb();
+        $data = $db->cache(function ($db){
+            return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        });
+        return $data;
     }
 
     /**

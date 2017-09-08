@@ -324,17 +324,22 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function isHintOpenedByGroup()
     {
-        $group_id = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('event_ID =:event_id AND user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-            ->one();
-
-        $data = OpenNoodEnvelop::find()
+        $db = self::getDb();
+        $group_id = $db->cache(function ($db){
+            return DeelnemersEvent::find()
+                ->select('group_ID')
+                ->where('event_ID =:event_id AND user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
+                ->one();
+        });
+        
+        $data = $db->cache(function ($db) use ($group_id){
+            return OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
             ->exists();
-
+        });
+        
         return $data;
     }
 

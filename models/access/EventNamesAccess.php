@@ -74,7 +74,12 @@ class EventNamesAccess {
      */
     protected function findModel($id)
     {
-        if (($model = EventNames::findOne($id)) !== null) {
+        $db = Yii::$app->getDb();
+        $model = $db->cache(function ($db) use($id) {
+            return EventNames::findOne($id);
+        });
+        if ($model !== null) {
+
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
