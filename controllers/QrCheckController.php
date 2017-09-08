@@ -147,9 +147,8 @@ class QrCheckController extends Controller
         $model->event_ID = $qr->event_ID;
         $model->group_ID = $groupPlayer;
 
-        $model->save();
-
         if ($model->save()){
+            Yii::$app->cache->flush();
             Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
         } else {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not check QR code!'));
@@ -168,6 +167,7 @@ class QrCheckController extends Controller
         $model = $this->findModel($qr_check_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->cache->flush();
             return $this->redirect(['view', 'id' => $model->qr_check_ID]);
         } else {
             return $this->render('update', [

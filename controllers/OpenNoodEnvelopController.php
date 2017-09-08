@@ -124,6 +124,7 @@ class OpenNoodEnvelopController extends Controller
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
             }  else {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is opened.'));
             }
         }
@@ -144,6 +145,7 @@ class OpenNoodEnvelopController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'open_nood_envelop_ID' => $model->open_nood_envelop_ID]);
         } else {
+            Yii::$app->cache->flush();
             return $this->render('update', [
                 'model' => $model,
             ]);

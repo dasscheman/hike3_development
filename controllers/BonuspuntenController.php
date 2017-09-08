@@ -84,6 +84,7 @@ class BonuspuntenController extends Controller
         $model = new Bonuspunten();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->cache->flush();
             return $this->redirect(['site/index']);
         } else {
             return $this->renderPartial('create', [
@@ -101,6 +102,7 @@ class BonuspuntenController extends Controller
     public function actionDelete($bonuspunten_ID)
     {
         if ($this->findModel($bonuspunten_ID)->delete()) {
+            Yii::$app->cache->flush();
             Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspoints are deleted'));
             return $this->redirect(['bonuspunten/index']);
         }
@@ -133,6 +135,7 @@ class BonuspuntenController extends Controller
                     Yii::$app->session->setFlash('error', Json::encode($error));
                 }
             } else {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
             }
         }

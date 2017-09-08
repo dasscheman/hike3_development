@@ -173,6 +173,7 @@ class TimeTrailCheckController extends Controller
         if ($timeTrailCheckPrevious->validate()){
             $timeTrailCheckPrevious->save(FALSE);
         }
+        Yii::$app->cache->flush();
         return $this->redirect(['time-trail/status']);
     }
 
@@ -187,6 +188,7 @@ class TimeTrailCheckController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->cache->flush();
             return $this->redirect(['view', 'id' => $model->time_trail_check_ID]);
         } else {
             return $this->render('update', [
