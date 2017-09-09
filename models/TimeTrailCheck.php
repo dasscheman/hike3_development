@@ -44,7 +44,7 @@ class TimeTrailCheck extends HikeActiveRecord
             [['time_trail_item_ID', 'event_ID', 'group_ID'], 'required'],
             [['time_trail_item_ID', 'event_ID', 'group_ID', 'succeded', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['start_time', 'end_time', 'create_time', 'update_time'], 'safe'],
-            [['time_trail_item_ID', 'group_ID'], 'unique', 'targetAttribute' => ['time_trail_item_ID', 'group_ID'], 'message' => 'The combination of Time Trail Item  ID and Group  ID has already been taken.'],
+            [['time_trail_item_ID', 'group_ID'], 'unique', 'targetAttribute' => ['time_trail_item_ID', 'group_ID'], 'message' => 'The combination of Time Trail Item and Group has already been taken.'],
             [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'user_ID']],
             [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
             [['group_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Groups::className(), 'targetAttribute' => ['group_ID' => 'group_ID']],
