@@ -90,10 +90,9 @@ $this->title = Yii::t('app', 'Hike overzicht');
                         echo ListView::widget([
                             'summary' => FALSE,
                             'pager' => FALSE,
-                            'dataProvider' => $timeTrailCheckData,
+                            'dataProvider' => $timeTrailCheckDataLastItem,
                             'itemView' => '/time-trail/_list',
-                //            'viewParams' => ['time_trail_item_id' => $time_trail_item_id],
-                            'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                            'emptyText' => FALSE,
                         ]);
                         ?>
                     </div>
@@ -126,6 +125,9 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 ?>
             </div>
             <div class="col-sm-3 well">
+                <div class="well">
+                    <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
+                </div>
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
                 </div>
