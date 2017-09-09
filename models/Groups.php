@@ -280,8 +280,7 @@ class Groups extends HikeActiveRecord
     public function getTotal_score()
     {
         return $this->bonus_score + $this->post_score + $this->trail_score +
-            $this->qr_score + $this->vragen_score + $this->hint_score -
-            $this->hint_score;
+            $this->qr_score + $this->vragen_score - $this->hint_score;
 
     }
 
