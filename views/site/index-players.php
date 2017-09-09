@@ -1,16 +1,9 @@
 <?php
 
-use app\models\Route;
-use kartik\detail\DetailView;
-use kartik\grid\GridView;
-use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\ListView;
-use app\models\ActivityFeed;
 use app\components\CustomAlertBlock;
-use app\components\SetupDateTime;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
