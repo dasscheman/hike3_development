@@ -25,6 +25,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
+    $responsiveWrap = FALSE;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -59,6 +60,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'attribute' => 'rank',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'time_walking',
@@ -67,6 +69,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             },
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'time_left',
@@ -75,6 +78,7 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             },
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
@@ -93,16 +97,12 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'expandTitle' => Yii::t('app', 'Open view stations'),
             'collapseTitle' => Yii::t('app', 'Close view stations'),
         ],
-      //  [
-      //      'header' => Yii::t('app', '#Hints'),
-      //      'value' => function($key){
-      //          return Route::findOne($key)->getNoodEnvelops();
-      //      },
-      //  ],
+
         [
             'attribute' => 'bonus_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'header'=> '<span class="glyphicon glyphicon-eye-open"></span>',
@@ -132,6 +132,8 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
         'headerRowOptions' => ['class'=>'kartik-sheet-style'],
         'filterRowOptions' => ['class'=>'kartik-sheet-style'],
         'resizableColumns' => $resizableColumns,
+        'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+        'responsiveWrap' => $responsiveWrap,
         'pjax' => TRUE, // pjax is set to always true for this demo
         // set your toolbar
         'toolbar'=> [
