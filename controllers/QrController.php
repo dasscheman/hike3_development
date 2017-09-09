@@ -237,7 +237,7 @@ class QrController extends Controller
     public function actionQrcode($qr_code) {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
-    	$link = Yii::$app->request->hostInfo . "/index.php?r=qr-check/create&event_id=".$event_id."&qr_code=".$qr_code;
+    	$link = Yii::$app->request->hostInfo . Yii::$app->homeUrl ."?r=qr-check/create&event_id=".$event_id."&qr_code=".$qr_code;
         return QrCode::jpg(
             $link,
             Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',

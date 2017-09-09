@@ -10,6 +10,7 @@ use app\models\DeelnemersEvent;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * TimeTrailCheckController implements the CRUD actions for TimeTrailCheck model.
@@ -85,70 +86,50 @@ class TimeTrailCheckController extends Controller
             return $this->redirect(['site/overview-players']);
         }
 
-        $timeTrailCheck = TimeTrailCheck::find()
-            ->where('event_ID =:event_id AND time_trail_item_ID =:time_trail_item_ID AND group_ID =:group_id')
-            ->params([
-                ':event_id' => $timeTrailItem->event_ID,
-                ':time_trail_item_ID'  => $timeTrailItem->time_trail_item_ID,
-                ':group_id'  => $groupPlayer
-            ])
-            ->one();
+        $timeTrailCheck = $timeTrailItem->getTimeTrailItemCheckedByGroupCurrentUser();
 
-        if (isset($timeTrailCheck->time_trail_check_ID)){
+        if ($timeTrailCheck != NULL){
             Yii::$app->session->setFlash('error', Yii::t('app', 'Your group already scanned this time trail code.'));
             return $this->redirect(['time-trail/status']);
-//            return $this->redirect(['site/overview-players']);
         }
+        // Er is nog geen check voor huidig item, daarom overschrijven we hier de variable
+        $timeTrailCheck = new TimeTrailCheck;
 
         // Get the previous items
-        $timeTrailItemPrevious = TimeTrailItem::find()
-            ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde <:volgorde')
-            ->params([
-                ':event_id' => $timeTrailItem->event_ID,
-                ':time_trail_ID'  => $timeTrailItem->time_trail_ID,
-                ':volgorde'  => $timeTrailItem->volgorde,
-            ])
-            ->one();
+        $timeTrailItemPrevious = $timeTrailItem->getPreviousItem();
 
-        // Almost every thing is checked, now we can create the checked time trail record.
-        $model = new TimeTrailCheck;
+        if($timeTrailItemPrevious != NULL) {
+            // Er is een vorig item, dat we moeten controleren en checken.
+            $timeTrailCheckPrevious = $timeTrailItemPrevious->getTimeTrailItemCheckedByGroupCurrentUser();
 
-        if (isset($timeTrailItemPrevious->time_trail_item_ID)){
-            // Er is een vorig item aanwezig, controleren of het of dat item al gechecked is.\
-            $timeTrailCheckPrevious = TimeTrailCheck::find()
-                ->where('event_ID =:event_id AND time_trail_item_ID =:time_trail_item_ID AND group_ID =:group_id')
-                ->params([
-                    ':event_id' => $timeTrailItem->event_ID,
-                    ':time_trail_item_ID' => $timeTrailItemPrevious->time_trail_item_ID,
-                    ':group_id' => $groupPlayer
-                ]);
-
-            if (!$timeTrailCheckPrevious->exists()) {
+            if ($timeTrailCheckPrevious == NULL) {
+                // Er is een vorig item aanwezig, dat niet gechecked is...
                 Yii::$app->session->setFlash('error', Yii::t('app', 'It seems you missed a time trail point.'));
                 return $this->redirect(['site/overview-players']);
             }
 
-            $timeTrailCheckPrevious = $timeTrailCheckPrevious->one();
-            // Er is een vorig item dat al gechecked is. Nu moet de eindtijd gezet worden
-            // en bepaald of de groep succes heeft.
-            if(!isset($timeTrailCheckPrevious->start_time)) {
+            if($timeTrailCheckPrevious->start_time == NULL) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Something went wrong!!.'));
                 return $this->redirect(['site/overview-players']);
             }
 
+            // Er is een vorig item dat al gechecked is. Nu moet de eindtijd gezet worden
+            // en bepaald of de groep succes heeft.
             $end_date = strtotime($timeTrailCheckPrevious->start_time) + (strtotime($timeTrailCheckPrevious->timeTrailItem->max_time)  - strtotime('TODAY'));
             $timeTrailCheckPrevious->end_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
 
             if ($end_date>time()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'You made it'));
-                $timeTrailCheckPrevious->succeded = TRUE;
+                $timeTrailCheckPrevious->succeded = 1;
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'You are to late'));
-                $timeTrailCheckPrevious->succeded = FALSE;
+                $timeTrailCheckPrevious->succeded = 0;
             }
 
             if (!$timeTrailCheckPrevious->validate()){
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Something went wrong with saving!!.'));
+                // Hier hebben we de vorige check gevalideerd. En in het geval er iets niet
+                // goed is zetten we errors en gaan terug naar het spelers overzicht.
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Something went wrong with saving!!.'));
                 foreach ($timeTrailCheckPrevious->getErrors() as $error) {
                     Yii::$app->session->setFlash('error', Json::encode($error));
                 }
@@ -156,23 +137,25 @@ class TimeTrailCheckController extends Controller
             }
         }
 
-        $model->time_trail_item_ID = $timeTrailItem->time_trail_item_ID;
-        $model->event_ID = $timeTrailItem->event_ID;
-        $model->group_ID = $groupPlayer;
-        $model->start_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
+        $timeTrailCheck->time_trail_item_ID = $timeTrailItem->time_trail_item_ID;
+        $timeTrailCheck->event_ID = $timeTrailItem->event_ID;
+        $timeTrailCheck->group_ID = $groupPlayer;
+        $timeTrailCheck->start_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
 
-        if (!$model->validate()){
+        if (!$timeTrailCheck->save()){
             Yii::$app->session->setFlash('success', Yii::t('app', 'Something went wrong with saving!!'));
-            foreach ($timeTrailCheckPrevious->getErrors() as $error) {
+            foreach ($timeTrailCheck->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));
             }
             return $this->redirect(['site/overview-players']);
         }
 
-        $model->save(FALSE);
-        if ($timeTrailCheckPrevious->validate()){
+        // Als er een vorig item is, dan moet vorig check nog opgeslagen worden.
+        if($timeTrailItemPrevious != NULL) {
+            // Deze hadden we al gevalideerd, dus dat zal nog wel goed zijn.
             $timeTrailCheckPrevious->save(FALSE);
         }
+        
         Yii::$app->cache->flush();
         return $this->redirect(['time-trail/status']);
     }
