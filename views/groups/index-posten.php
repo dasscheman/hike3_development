@@ -2,9 +2,8 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use kartik\grid\ExpandRowColumn;
 use yii\bootstrap\Modal;
-use app\components\SetupDateTime;
+use app\components\CustomAlertBlock;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TblGroupsSearch */
@@ -30,6 +29,12 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
     Modal::end();
+
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 20000,
+    ]);
 
     $gridColumns = [
         'group_name',
