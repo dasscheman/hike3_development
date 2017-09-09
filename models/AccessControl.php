@@ -139,7 +139,7 @@ class AccessControl extends HikeActiveRecord {
     function setGroupOfPlayer(){
         if ($this->rolPlayer === DeelnemersEvent::ROL_deelnemer &&
             isset($this->event_id)) {
-            $this->groupOfPlayer = DeelnemersEvent::getGroupOfPlayer($this->event_id, Yii::$app->user->identity->id);
+            $this->groupOfPlayer = DeelnemersEvent::getGroupOfPlayer();
         }
     }
 }
