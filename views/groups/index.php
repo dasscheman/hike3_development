@@ -72,6 +72,11 @@ $this->title = Yii::t('app', 'Overview groups scores');
             'filter' => FALSE,
         ],
         [
+            'attribute' => 'trail_score',
+            'visible'=> TRUE,
+            'filter' => FALSE,
+        ],
+        [
             'attribute' => 'hint_score',
             'visible'=> TRUE,
             'filter' => FALSE,
