@@ -9,6 +9,11 @@ use app\models\DeelnemersEvent;
 use app\models\Route;
 use app\models\Users;
 use app\models\Posten;
+use app\models\NoodEnvelop;
+use app\models\OpenVragen;
+use app\models\TimeTrail;
+use app\models\TimeTrailItem;
+use app\models\Groups;
 use app\models\Qr;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -130,7 +135,7 @@ class EventNamesController extends Controller
             $modelDeelnemersEvent->rol = 1;
             $modelDeelnemersEvent->group_ID = NULL;
 
-            $modelRoute->day_date = '0000-00-00';
+            //$modelRoute->day_date = '0000-00-00';
             $modelRoute->route_name = "Introductie";
             $modelRoute->event_ID = $event_id;
             $modelRoute->route_volgorde = 1;
@@ -281,17 +286,32 @@ class EventNamesController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($event_ID)
     {
+        $model = $this->findModel($event_ID);
+
         try
         {
-            $this->findModel($id)->delete();
+            NoodEnvelop::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            OpenVragen::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            Posten::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            Qr::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            TimeTrail::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            TimeTrailItem::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            Route::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            Groups::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            DeelnemersEvent::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            $model->delete();
         }
-        catch(CDbException $e)
+        catch(Exception $e)
         {
-            throw new CHttpException(400, Yii::t('app/error', 'You cannot remove this hike'));
+            throw new HttpException(400, Yii::t('app'. 'You cannot remove this hike.'));
         }
-        $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+
+
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {username} from the hike', ['username' => $model->event_name]));
+        return $this->redirect(['event-names/select-hike']);
+
     }
 
     public function actionUpload()

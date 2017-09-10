@@ -73,14 +73,15 @@ $this->title = Yii::t('app', 'Select hike');
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',
-            'template' => '{select}',
+            'template' => '{select} {delete}',
             'buttons' => [
                 'select' => function ($url, $model) {
                     return Html::a(
                         '<span class="fa fa-search"></span>Select',
                         [
                             'event-names/select-hike',
-                            'event_ID' => $model->event_ID],
+                            'event_ID' => $model->event_ID
+                        ],
                         [
                             'id' => 'select-hike-'. $model->event_ID,
                             'title' => Yii::t('app', 'Select hike'),
@@ -88,11 +89,29 @@ $this->title = Yii::t('app', 'Select hike');
                         ]
                     );
                 },
+                'delete' => function($url, $model){
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-trash"></span>', ['delete', 'event_ID' => $model->event_ID],
+                        [
+                            'class' => '',
+                            'data' => [
+                                'confirm' => 'Are you absolutely sure ? You will lose all the information about this user with this action.',
+                                'method' => 'post',
+                            ],
+                        ]
+                    );
+                },
             ],
             'visibleButtons' => [
                 'select' => function ($model, $key, $index) {
                     return $model->event_ID == Yii::$app->user->identity->selected_event_ID ? FALSE : TRUE;
-                 }
+                },
+                'delete' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'event-names',
+                        'delete',
+                        ['event_ID' => $key]);
+                }
             ]
         ],
     ];
