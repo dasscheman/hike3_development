@@ -5,7 +5,7 @@ use russ666\widgets\Countdown;
 /* @var $this GroupsController */
 /* @var $data Groups */
 
-if (Yii::$app->controller->action->id == 'status' && $model->getTimeTrailItem()->one()->getNextItem() == NULL) {
+if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()->one()->getNextItem() != NULL) {
     ?>
     <div class="well">
 
