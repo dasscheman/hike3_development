@@ -201,6 +201,27 @@ class EventNames extends HikeActiveRecord {
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getTimteTrail() {
+        return $this->hasMany(TimteTrail::className(), ['event_ID' => 'event_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimeTrailItem() {
+        return $this->hasMany(TimeTrailItem::className(), ['event_ID' => 'event_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimteTrailCheck() {
+        return $this->hasMany(TimeTrailCheck::className(), ['event_ID' => 'event_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getRoutes() {
         return $this->hasMany(Route::className(), ['event_ID' => 'event_ID']);
     }
