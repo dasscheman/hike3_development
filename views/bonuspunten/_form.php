@@ -1,10 +1,8 @@
 <?php
 
-use app\components\SetupDateTime;
 use app\models\EventNames;
 use app\models\Posten;
 use app\models\Groups;
-use kartik\date\DatePicker;
 use kartik\widgets\DepDrop;
 use yii\helpers\Html;
 use yii\helpers\Url;

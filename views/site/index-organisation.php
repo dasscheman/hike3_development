@@ -198,22 +198,20 @@ $this->title = Yii::t('app', 'Hike overview');
                 </p>
                 <p>
                     <?php
-                    echo ButtonAjax::widget([
-                        'name' => Yii::t('app', 'Assign bonuspoints'),
-                        'route' => [
-                            '/bonuspunten/create',
-                        ],
-                        'modalId'=>'#main-modal',
-                        'modalContent'=>'#main-content-modal',
-                        'options' => [
+                    Modal::begin([
+                    	'toggleButton' => [
+                            'label' => Yii::t('app', 'bonus'),
+                            'id' => 'modalAddBonusButton',
                             'class' => 'btn btn-xs btn-success',
-                            'title' => Yii::t('app', 'Assign bonuspoints'),
                             'disabled' => !Yii::$app->user->identity->isActionAllowed(
                                 'bonuspunten',
                                 'create'
                             ),
-                        ]
+                        ],
                     ]);
+                    echo $this->render('/bonuspunten/create', [
+                        'model' => new \app\models\Bonuspunten]);
+                    Modal::end();
                     ?>
                 </p>
               </div>
