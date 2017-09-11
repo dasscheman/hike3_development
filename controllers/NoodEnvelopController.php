@@ -137,6 +137,7 @@ class NoodEnvelopController extends Controller
                ->exists();
             if (!$exist) {
                 $model->delete();
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted hint.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it is opened by at least one group.'));
@@ -147,6 +148,7 @@ class NoodEnvelopController extends Controller
         if (Yii::$app->request->post('NoodEnvelop') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
                 return $this->redirect(['route/index']);
             }

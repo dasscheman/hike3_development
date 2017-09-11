@@ -151,6 +151,7 @@ class PostenController extends Controller
                 $model->delete();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted station.'));
             } else {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
             }
             return $this->redirect(['posten/index']);
@@ -158,6 +159,7 @@ class PostenController extends Controller
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
                 return $this->redirect(['posten/index']);
             }

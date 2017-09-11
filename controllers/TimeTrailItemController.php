@@ -153,6 +153,7 @@ class TimeTrailItemController extends Controller
 
             if (!$exist) {
                 $model->delete();
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail item.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
@@ -162,7 +163,8 @@ class TimeTrailItemController extends Controller
 
         if (Yii::$app->request->post('TimeTrailItem') &&
             $model->load(Yii::$app->request->post())) {
-            if ($model->save()) {
+            if ($model->save()) {                
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
                 return $this->redirect(['time-trail/index']);
             }
