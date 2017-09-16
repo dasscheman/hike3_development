@@ -2,11 +2,13 @@
 
 namespace app\models\access;
 
+use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use yii\web\NotFoundHttpException;
 use app\models\Groups;
 
+use yii\helpers\Html;
 class SiteAccess {
 
     public $userModel;
@@ -29,10 +31,8 @@ class SiteAccess {
                 return TRUE;
             }
 
-                            return TRUE;
             if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie &&
-                NULL !== $model = Groups::findOne($this->userModel->ids['group_ID'])) {
-
+                NULL !== $model = Groups::findOne(Yii::$app->request->get('group_ID'))) {
                 if ($model->event_ID !== $this->userModel->event_id) {
                     return FALSE;
                 }
@@ -46,11 +46,8 @@ class SiteAccess {
             return FALSE;
             }
 
-            function GroupsUpdate() {
-                $model = $this->findModel($this->userModel->ids['group_ID']);
-
-
-
+        function GroupsUpdate() {
+            $model = $this->findModel($this->userModel->ids['group_ID']);
             return FALSE;
         }
 
