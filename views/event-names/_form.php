@@ -2,15 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\builder\Form;
-//use kartik\daterange\DateRangePicker;
-//use kartik\file\FileInput;
 use kartik\widgets\ActiveForm;
-use kartik\date\DatePicker;
-use app\models\EventNames;
-use yii\helpers\Url;
-use kartik\widgets\DepDrop;
-//use kartik\editable\Editable;
-//use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\EventNames */
@@ -93,16 +85,20 @@ use kartik\widgets\DepDrop;
     <br>
 
     <div class="form-group">
-        <?= Html::submitButton(
-            $model->isNewRecord ?
-            Yii::t('app', 'Create') :
-            Yii::t('app', 'Save'),
+        <?php
+        if($model->isNewRecord) {
+            echo Html::submitButton(Yii::t('app', 'Create'), ['name' => 'create']);
+        } else {
+            echo Html::submitButton(Yii::t('app', 'Save'),
             [
                 'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                 'id' => $action,
                 'data-method'=>'post',
-                'data-pjax' => 'event-names-create-form'
-            ]) ?>
+                'data-pjax' => 'event-names-create-form',
+                'name'=>'update'
+            ]);
+
+        }?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
