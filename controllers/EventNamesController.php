@@ -283,7 +283,7 @@ class EventNamesController extends Controller
     /**
      * Deletes an existing EventNames model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param integer $event_ID
      * @return mixed
      */
     public function actionDelete($event_ID)
@@ -299,8 +299,8 @@ class EventNamesController extends Controller
             TimeTrail::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             TimeTrailItem::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             Route::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
-            Groups::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             DeelnemersEvent::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
+            Groups::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             $model->delete();
         }
         catch(Exception $e)
