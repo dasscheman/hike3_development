@@ -1,45 +1,118 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
+use app\models\DeelnemersEvent;
+use prawee\widgets\ButtonAjax;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\TblNoodEnvelopSearch */
+/* @var $searchModel app\models\NoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Tbl Nood Envelops');
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::t('app', 'Search hints');
 ?>
-<div class="tbl-nood-envelop-index">
+<div class="nood-envelop-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Tbl Nood Envelop'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    Modal::begin(['id'=>'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
 
-    <?= GridView::widget([
+    $gridColumns = [
+        [
+        'attribute' => 'nood_envelop_name',
+        ],
+        [
+        'attribute' => 'route_name',
+        'value' => 'route.route_name'
+        ],
+        [
+        'attribute' => 'score',
+        ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header'=>'Actions',
+            'template' => '{open}',
+            'buttons' => [
+                'open' => function ($url, $model) {
+                    return ButtonAjax::widget([
+                        'name' => Yii::t('app', 'Open Hint'),
+                        'route' => [
+                            '/open-nood-envelop/open',
+                            'nood_envelop_ID'=>$model->nood_envelop_ID,
+                            'group_ID' => DeelnemersEvent::getGroupOfPlayer()
+                        ],
+                        'modalId'=>'#main-modal',
+                        'modalContent'=>'#main-content-modal',
+                        'options' => [
+                            'class' => 'btn btn-xs btn-success',
+                            'title' => Yii::t('app', 'Open Hint'),
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed('open-nood-envelop', 'open', ['nood_envelop_ID'=>$model->nood_envelop_ID, 'group_ID' => DeelnemersEvent::getGroupOfPlayer()]),
+                        ]
+                    ]);
+
+
+//                    return Html::a(
+//                        '<span class="fa fa-search"></span>Open',
+//                        [
+//                            '/open-nood-envelop/open',
+//                            'nood_envelop_ID'=>$model->nood_envelop_ID,
+//                            'group_ID' => DeelnemersEvent::getGroupOfPlayer()
+//                        ],
+//                        [
+//                            'id' => 'open-hint-'. $model->nood_envelop_ID,
+//                            'title' => Yii::t('app', 'Open hint'),
+//                            'class'=>'btn btn-primary btn-xs',
+//                        ]
+//                    );
+                },
+            ],
+            'visibleButtons' => [
+                'open' => function ($model, $key, $index) {
+                    return Yii::$app->user->identity->isActionAllowed(
+                        'open-nood-envelop',
+                        'open',
+                        ['nood_envelop_ID'=>$model->nood_envelop_ID, 'group_ID' => DeelnemersEvent::getGroupOfPlayer()]);
+                }
+            ]
+        ],
+    ];
+
+    $bordered = FALSE;
+    $striped = TRUE;
+    $condensed = TRUE;
+    $responsive = FALSE;
+    $hover = TRUE;
+    $pageSummary = FALSE;
+    $heading = FALSE;
+    $exportConfig = FALSE;
+
+    echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'nood_envelop_ID',
-            'nood_envelop_name',
-            'event_ID',
-            'route_ID',
-            'nood_envelop_volgorde',
-            // 'coordinaat',
-            // 'opmerkingen',
-            // 'score',
-            // 'create_time',
-            // 'create_user_ID',
-            // 'update_time',
-            // 'update_user_ID',
-
-            ['class' => 'yii\grid\ActionColumn'],
+        'summary' => FALSE,
+        'columns' => $gridColumns,
+        'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+        'headerRowOptions'=>['class'=>'kartik-sheet-style'],
+        'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+        'pjax' => TRUE, // pjax is set to always true for this demo
+        'toolbar' => FALSE,
+        // parameters from the demo form
+        'bordered'=>$bordered,
+        'striped'=>$striped,
+        'condensed'=>$condensed,
+        'responsive'=>$responsive,
+        'hover'=>$hover,
+        'showPageSummary'=>$pageSummary,
+        'panel'=>[
+            'type'=>GridView::TYPE_INFO,
+            'heading'=>$heading,
         ],
+        'persistResize'=>false,
+        'exportConfig'=>$exportConfig,
     ]); ?>
 
 </div>

@@ -70,10 +70,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-vraag', ['model'=>$questionsData]); ?>
                 </div>
                 <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
-                </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/bonuspunten/view-dashboard', ['model' => $bonusData]); ?>
+                    <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -121,14 +118,17 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
                 </div>
+<!--                <div class="well">
+                    <?php //echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
+                </div>-->
                 <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
-                </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
+                    <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
                 </div>
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', ['model' => $qrCheckData]); ?>
+                </div>
+                <div class="well">
+                    <?php echo Yii::$app->controller->renderPartial('/bonuspunten/view-dashboard', ['model' => $bonusData]); ?>
                 </div>
             </div>
         </div>

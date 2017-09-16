@@ -126,6 +126,7 @@ class OpenNoodEnvelopController extends Controller
             }  else {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is opened.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'All opened hints are displayed on this dashboard.'));
             }
         }
 
