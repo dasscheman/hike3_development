@@ -83,14 +83,9 @@ class GroupsController extends Controller
      */
     public function actionIndexActivity()
     {
-//        $searchModel = new GroupsSearch();
-//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $feed = new HikeActivityFeed;
-//        $feed->pageSize = 10;
         return $this->render('index-activity', [
             'activityFeed' => $feed->getData(),
-//            'searchModel' => $searchModel,
-//            'dataProvider' => $dataProvider,
         ]);
     }
 
