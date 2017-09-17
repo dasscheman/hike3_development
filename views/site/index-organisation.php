@@ -1,7 +1,6 @@
 <?php
 
 use kartik\widgets\ActiveForm;
-use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\widgets\ListView;
@@ -11,7 +10,6 @@ use kartik\editable\Editable;
 use app\models\EventNames;
 use app\components\CustomAlertBlock;
 
-use kartik\widgets\Select2;
 /* @var $this yii\web\View */
 
 $this->title = Yii::t('app', 'Hike overview');
@@ -121,144 +119,37 @@ $this->title = Yii::t('app', 'Hike overview');
                     <?php echo Html::encode($eventModel->getAttributeLabel('max_time')); ?>:
                     </b>
                     <?php echo Html::encode((empty($eventModel->max_time)) ? '(not set)' : $eventModel->max_time); ?></br>
-              </div>
-              <div class="well">
-                <h3><?php echo Yii::t('app', 'actions')?></h3>
+                </div>
+
+
                 <?php
-                if ($eventModel->status === EventNames::STATUS_opstart) { ?>
-                    <p>
-                        <?php
-                        echo Html::a(
-                                Yii::t('app', 'Add route items'),
-                                ['/route/index'],
-                                [
-                                    'class' => 'btn btn-xs btn-success',
-                                ]);
-                        ?>
-                    </p>
-                    <p>
-                        <?php
-                        echo Html::a(
-                                Yii::t('app', 'Add stations'),
-                                ['/posten/index'],
-                                [
-                                    'class' => 'btn btn-xs btn-success',
-                                ]);
-                        ?>
-                    </p> <?php
-                }
-                ?>
-                <p>
-                    <?php
-                    Modal::begin([
+                Modal::begin(
+                    [
+                        'id' =>'modalCreateGroup',
                         'toggleButton' => [
-                            'label' => Yii::t('app', 'Change settings hike'),
-                            'id' => 'modalChangeSettingsButton',
+                            'label' => Yii::t('app', 'Add runner group to hike'),
                             'class' => 'btn btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                'event-names',
-                                'update',
-                                [
-                                    'event_ID' => $eventModel->event_ID,
-                                    'action' => 'change_settings'
-                                ]),
+                            'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'create'),
                         ],
-                    ]);
-                    ?>
+                    ]
+                );
+
+                echo $this->render('/groups/create', ['model' => $groupModel]);
+                Modal::end();
+                ?>
                 </p>
-                <p>
-                    <?php
 
-                    echo $this->render('/event-names/update', [
-                        'model' => $eventModel,
-                        'action' => 'change_settings']);
-                    Modal::end();
-
-                    // TimePicker within a bootstrap modal window with initial values.
-                    Modal::begin([
-                    	'toggleButton' => [
-                            'label' => Yii::t('app', 'Change max time hike'),
-                            'id' => 'modalChangeMaxTimeButton',
-                            'class' => 'btn btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                'event-names',
-                                'update',
-                                [
-                                    'event_ID' => $eventModel->event_ID,
-                                    'action' => 'set_max_time'
-                                ]),
-                        ],
-                    ]);
-                    echo $this->render('/event-names/update', [
-                        'model' => $eventModel,
-                        'action' => 'set_max_time']);
-                    Modal::end();
-
-                    ?>
-                </p>
-                <p>
-                    <?php
-                    Modal::begin([
-                    	'toggleButton' => [
-                            'label' => Yii::t('app', 'bonus'),
-                            'id' => 'modalAddBonusButton',
-                            'class' => 'btn btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                'bonuspunten',
-                                'create'
-                            ),
-                        ],
-                    ]);
-                    echo $this->render('/bonuspunten/create', [
-                        'model' => new \app\models\Bonuspunten]);
-                    Modal::end();
-                    ?>
-                </p>
-              </div>
-
-              <p>
-                  <?php
-                      echo ListView::widget([
-                          'summary' => FALSE,
-                          'pager' => FALSE,
-                          'dataProvider' => $dataProviderCheck,
-                          'itemView' => '/open-vragen-antwoorden/_list-controle',
-                          'emptyText' => Yii::t('app', 'No question which should be checked'),
-                      ]);
-                  ?>
-              </p>
-              <p>
-              <?php
-
-              Modal::begin(
-                 [
-                     'options' => [
-                         'tabindex' => true // important for Select2 to work properly
-                     ],
-                     'toggleButton' => [
-                         'label' => Yii::t('app', 'Add organizer to hike'),
-                         'id' => 'modalAddOrganisationButton',
-                         'class' => 'btn btn-xs btn-success',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
-                     ],
-                 ]
-              );
-
-              echo $this->render('/deelnemers-event/create', ['model' => $modelDeelnemer]);
-              Modal::end();?>
-              </p>
-              <?php
-              echo ListView::widget([
-                  'summary' => FALSE,
-                  'pager' => FALSE,
-                  'dataProvider' => $organisatieData,
-                  'itemView' => '/deelnemers-event/_list',
-                  'emptyText' => Yii::t('app', 'No organisation.'),
-              ]); ?>
-              <p>
-
-
+                <?php
+                echo ListView::widget([
+                    'summary' => FALSE,
+                    'pager' => FALSE,
+                    'dataProvider' => $groupsData,
+                    'itemView' => '/groups/_list',
+                    'emptyText' => Yii::t('app', 'No groups added to the hike.'),
+                ]);
+                ?>
             </div>
+
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-12">
@@ -270,61 +161,61 @@ $this->title = Yii::t('app', 'Hike overview');
                     </div>
                 </div>
                 <?php
-              echo ListView::widget([
-                  'summary' => FALSE,
-                  'pager' => [
-                      'prevPageLabel' => Yii::t('app', 'previous'),
-                      'nextPageLabel' => Yii::t('app', 'next'),
-                      'maxButtonCount' => 5,
-                      'options' => [
-                         'class' => 'pagination pagination-sm',
-                      ],
-                  ],
-                  'dataProvider' => $activityFeed,
-                  'itemView' => '/groups/_list-feed',
-                  'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
-              ]);
-              ?>
+                echo ListView::widget([
+                    'summary' => FALSE,
+                    'pager' => [
+                        'prevPageLabel' => Yii::t('app', 'previous'),
+                        'nextPageLabel' => Yii::t('app', 'next'),
+                        'maxButtonCount' => 5,
+                        'options' => [
+                           'class' => 'pagination pagination-sm',
+                        ],
+                    ],
+                    'dataProvider' => $activityFeed,
+                    'itemView' => '/groups/_list-feed',
+                    'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
+                ]);
+                ?>
             </div>
 
             <div class="col-sm-3 well">
-              <div class="thumbnail">
-                <?php
-                $form = ActiveForm::begin([
-                    'options'=>['enctype'=>'multipart/form-data'],
-                    'action' => ['event-names/upload','event_ID' => $eventModel->event_ID],// important
-                ]); ?>
-                <p>
-                <?php
-                // your fileinput widget for single file upload
-                echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
-                    'options'=>['accept'=>'image/*'],
-                    'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload', ['event_ID' => $eventModel->event_ID]),
-                    'pluginOptions'=>[
-                        'allowedFileExtensions' => ['jpg', 'jpeg', 'gif','png'],
-                        'uploadLabel' => Yii::t('app',  'save'),
-                        'removeLabel' => '',
-                        'browseClass' => 'btn btn-primary btn-block',
-                        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
-                        'browseLabel' => '',
-            ]
-                ]);
-                ActiveForm::end();
-                ?>
-                </p>
-              </div>
+                <div class="thumbnail">
+                    <?php
+                    $form = ActiveForm::begin([
+                        'options'=>['enctype'=>'multipart/form-data'],
+                        'action' => ['event-names/upload','event_ID' => $eventModel->event_ID],// important
+                    ]); ?>
+                    <p>
+                    <?php
+                    // your fileinput widget for single file upload
+                    echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
+                        'options'=>['accept'=>'image/*'],
+                        'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload', ['event_ID' => $eventModel->event_ID]),
+                        'pluginOptions'=>[
+                            'allowedFileExtensions' => ['jpg', 'jpeg', 'gif','png'],
+                            'uploadLabel' => Yii::t('app',  'save'),
+                            'removeLabel' => '',
+                            'browseClass' => 'btn btn-primary btn-block',
+                            'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
+                            'browseLabel' => '',
+                ]
+                    ]);
+                    ActiveForm::end();
+                    ?>
+                    </p>
+                </div>
 
-              <div class="well"> <?php
-                  echo Html::a(
-                      Yii::t('app', 'Export Hike'),
-                      [
-                          'export-import/export-route',
-                      ],
-                      [
-                          'title' => Yii::t('app', 'Create an excel file from hike'),
-                          'class'=>'btn btn-primary btn-xs',
-                      ]
-                  );
+                <div class="well"> <?php
+                    echo Html::a(
+                        Yii::t('app', 'Export Hike'),
+                        [
+                            'export-import/export-route',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Create an excel file from hike'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
 //  TODO, import of the export file
 //                    $form = ActiveForm::begin([
 //                        'options'=>['enctype'=>'multipart/form-data'],
@@ -352,35 +243,144 @@ $this->title = Yii::t('app', 'Hike overview');
 //                    ActiveForm::end();
 //                    echo '<span id="customCaption" class="text-success">' . Yii::t('app', 'No file selected') . '</span>';
                 ?>
-            </div>
-              <?php
-              Modal::begin(
-                  [
-                      'id' =>'modalCreateGroup',
-                      'toggleButton' => [
-                          'label' => Yii::t('app', 'Add runner group to hike'),
-                          'class' => 'btn btn-xs btn-success',
-                          'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'create'),
-                      ],
-                  ]
-              );
+                </div>
 
-              echo $this->render('/groups/create', ['model' => $groupModel]);
-              Modal::end();
-              ?>
-              </p>
+                <div class="well">
+                    <h3><?php echo Yii::t('app', 'actions')?></h3>
+                    <?php
+                    if ($eventModel->status === EventNames::STATUS_opstart) { ?>
+                        <p>
+                            <?php
+                            echo Html::a(
+                                    Yii::t('app', 'Add route items'),
+                                    ['/route/index'],
+                                    [
+                                        'class' => 'btn btn-xs btn-success',
+                                    ]);
+                            ?>
+                        </p>
+                        <p>
+                            <?php
+                            echo Html::a(
+                                    Yii::t('app', 'Add stations'),
+                                    ['/posten/index'],
+                                    [
+                                        'class' => 'btn btn-xs btn-success',
+                                    ]);
+                            ?>
+                        </p> <?php
+                    }
+                    ?>
+                    <p>
+                        <?php
+                        Modal::begin([
+                            'toggleButton' => [
+                                'label' => Yii::t('app', 'Change settings hike'),
+                                'id' => 'modalChangeSettingsButton',
+                                'class' => 'btn btn-xs btn-success',
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                    'event-names',
+                                    'update',
+                                    [
+                                        'event_ID' => $eventModel->event_ID,
+                                        'action' => 'change_settings'
+                                    ]),
+                            ],
+                        ]);
+                        ?>
+                    </p>
+                    <p>
+                        <?php
 
-              <?php
-              echo ListView::widget([
-                  'summary' => FALSE,
-                  'pager' => FALSE,
-                  'dataProvider' => $groupsData,
-                  'itemView' => '/groups/_list',
-                  'emptyText' => Yii::t('app', 'No groups added to the hike.'),
-              ]);
-              ?>
+                        echo $this->render('/event-names/update', [
+                            'model' => $eventModel,
+                            'action' => 'change_settings']);
+                        Modal::end();
+
+                        // TimePicker within a bootstrap modal window with initial values.
+                        Modal::begin([
+                            'toggleButton' => [
+                                'label' => Yii::t('app', 'Change max time hike'),
+                                'id' => 'modalChangeMaxTimeButton',
+                                'class' => 'btn btn-xs btn-success',
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                    'event-names',
+                                    'update',
+                                    [
+                                        'event_ID' => $eventModel->event_ID,
+                                        'action' => 'set_max_time'
+                                    ]),
+                            ],
+                        ]);
+                        echo $this->render('/event-names/update', [
+                            'model' => $eventModel,
+                            'action' => 'set_max_time']);
+                        Modal::end();
+
+                        ?>
+                    </p>
+                    <p>
+                        <?php
+                        Modal::begin([
+                            'toggleButton' => [
+                                'label' => Yii::t('app', 'bonus'),
+                                'id' => 'modalAddBonusButton',
+                                'class' => 'btn btn-xs btn-success',
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
+                                    'bonuspunten',
+                                    'create'
+                                ),
+                            ],
+                        ]);
+                        echo $this->render('/bonuspunten/create', [
+                            'model' => new \app\models\Bonuspunten]);
+                        Modal::end();
+                        ?>
+                    </p>
+                </div>
+
+                <p>
+                    <?php
+                        echo ListView::widget([
+                            'summary' => FALSE,
+                            'pager' => FALSE,
+                            'dataProvider' => $dataProviderCheck,
+                            'itemView' => '/open-vragen-antwoorden/_list-controle',
+                            'emptyText' => Yii::t('app', 'No question which should be checked'),
+                        ]);
+                    ?>
+                </p>
+                <p>
+                    <?php
+
+                    Modal::begin(
+                        [
+                            'options' => [
+                                'tabindex' => true // important for Select2 to work properly
+                            ],
+                            'toggleButton' => [
+                                'label' => Yii::t('app', 'Add organizer to hike'),
+                                'id' => 'modalAddOrganisationButton',
+                                'class' => 'btn btn-xs btn-success',
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
+                            ],
+                        ]
+                    );
+
+                    echo $this->render('/deelnemers-event/create', ['model' => $modelDeelnemer]);
+                    Modal::end();?>
+                </p>
+                <?php
+                echo ListView::widget([
+                    'summary' => FALSE,
+                    'pager' => FALSE,
+                    'dataProvider' => $organisatieData,
+                    'itemView' => '/deelnemers-event/_list',
+                    'emptyText' => Yii::t('app', 'No organisation.'),
+                ]); ?>
+        
+
             </div>
-          </div>
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\DeelnemersEvent;
+use app\models\HikeActivityFeed;
 
 /**
  * GroupsController implements the CRUD actions for Groups model.
@@ -73,6 +74,23 @@ class GroupsController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Groups models.
+     * @return mixed
+     */
+    public function actionIndexActivity()
+    {
+//        $searchModel = new GroupsSearch();
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $feed = new HikeActivityFeed;
+//        $feed->pageSize = 10;
+        return $this->render('index-activity', [
+            'activityFeed' => $feed->getData(),
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
         ]);
     }
 

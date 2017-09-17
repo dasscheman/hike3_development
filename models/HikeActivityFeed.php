@@ -190,10 +190,105 @@ class HikeActivityFeed extends Model
             'pagination' => $pages,
             'sort' => [
                 'defaultOrder' => ['timestamp'=>SORT_DESC],
-                'attributes' => ['timestamp'],
+                'attributes' => ['timestamp', 'source', 'title', 'description', 'score', 'username', 'groupname'],
             ],
         ]);
         return $provider;
+    }
 
+    public function search($params)
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $query = Groups::find()
+            ->where("event_ID =:event_id")
+            ->addParams([':event_id' => $event_id]);
+
+        $bonusQuery = Bonuspunten::find()
+            ->select([
+                'group_ID as bonus_group_ID',
+                'IFNULL(SUM(score), 0) as bonus_score'
+            ])
+            ->groupBy('bonus_group_ID');
+
+        $openHintQuery = OpenNoodEnvelop::find()
+            ->select([
+                'tbl_open_nood_envelop.group_ID as hint_group_ID',
+                'IFNULL(SUM(tbl_nood_envelop.score), 0) as hint_score'
+            ])
+            ->innerJoinWith('noodEnvelop', false)
+            ->groupBy('tbl_open_nood_envelop.group_ID');
+
+        $passedPostQuery = PostPassage::find()
+            ->select([
+                'tbl_post_passage.group_ID as post_group_ID',
+                'IFNULL(SUM(tbl_posten.score), 0) as post_score'
+            ])
+            ->innerJoinWith('post', false)
+            ->groupBy('tbl_post_passage.group_ID');
+
+        $QrQuery = QrCheck::find()
+            ->select([
+                'tbl_qr_check.group_ID as qr_group_ID',
+                'IFNULL(SUM(tbl_qr.score), 0) as qr_score'
+            ])
+            ->innerJoinWith('qr', false)
+            ->groupBy('tbl_qr_check.group_ID');
+
+        $TrailQuery = TimeTrailCheck::find()
+            ->select([
+                'tbl_time_trail_check.group_ID as trail_group_ID',
+                'tbl_time_trail_check.succeded as succeded',
+                'IFNULL(SUM(tbl_time_trail_item.score), 0) as trail_score'
+            ])
+            ->where('succeded=:succeded')
+            ->innerJoinWith('timeTrailItem', false)
+            ->addParams([':succeded' => TRUE])
+            ->groupBy('tbl_time_trail_check.group_ID');
+
+        $VraagQuery = OpenVragenAntwoorden::find()
+            ->select([
+                'tbl_open_vragen_antwoorden.group_ID as vraag_group_ID',
+                'tbl_open_vragen_antwoorden.correct as correct',
+                'tbl_open_vragen_antwoorden.checked as checked',
+                'IFNULL(SUM(tbl_open_vragen.score), 0) as vragen_score'
+            ])
+            ->where('correct=:correct')
+            ->andWhere('checked=:checked')
+            ->innerJoinWith('openVragen', TRUE)
+            ->addParams([':correct' => TRUE, ':checked' => TRUE])
+            ->groupBy('tbl_open_vragen_antwoorden.group_ID');
+
+        $query->leftJoin(['orderBonusSum' => $bonusQuery], 'orderBonusSum.bonus_group_ID = group_ID');
+        $query->leftJoin(['orderOpenHintSum' => $openHintQuery], 'orderOpenHintSum.hint_group_ID = group_ID');
+        $query->leftJoin(['orderPassedPostsSum' => $passedPostQuery], 'orderPassedPostsSum.post_group_ID = group_ID');
+        $query->leftJoin(['orderQrSum' => $QrQuery], 'orderQrSum.qr_group_ID = group_ID');
+        $query->leftJoin(['orderTrailSum' => $TrailQuery], 'orderTrailSum.trail_group_ID = group_ID');
+        $query->leftJoin(['orderVraagSum' => $VraagQuery], 'orderVraagSum.vraag_group_ID = group_ID');
+
+        $query->groupBy('tbl_groups.group_ID');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'group_ID' => $this->group_ID,
+            'event_ID' => $this->event_ID,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        $query->andFilterWhere(['LIKE', 'group_name', $this->group_name]);
+        return $dataProvider;
     }
 }
