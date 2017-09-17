@@ -149,7 +149,11 @@ class QrCheckController extends Controller
 
         if ($model->save()){
             Yii::$app->cache->flush();
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
+            if($model->getQr()->score < 0) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Checked QR code! But you received penalty points...'));
+            } else {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
+            }
         } else {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not check QR code!'));
         }
