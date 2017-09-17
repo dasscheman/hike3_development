@@ -45,4 +45,9 @@ $this->title = 'Login';
         </div>
 
     <?php ActiveForm::end(); ?>
+    <?php
+        echo Html::a(
+            Yii::t('app', 'Forgot password'),
+            ['/users/resend-password-user']
+    );?>
 </div>
