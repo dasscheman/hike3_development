@@ -21,6 +21,21 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     'delay' => FALSE,
                 ]);
                 ?>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <?php
+                        echo ListView::widget([
+                            'summary' => FALSE,
+                            'pager' => FALSE,
+                            'dataProvider' => $timeTrailCheckDataLastItem,
+                            'itemView' => '/time-trail/_list',
+                            'emptyText' => FALSE,
+                        ]);
+                        ?>
+                    </div>
+                </div>
+
                 <div class="well">
                     <h3><?php echo  $groupModel->group_name ?></h3>
                     <?php echo '(' . Html::encode($groupModel->group_members) . ')'; ?></br>
@@ -74,20 +89,6 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <?php
-                        echo ListView::widget([
-                            'summary' => FALSE,
-                            'pager' => FALSE,
-                            'dataProvider' => $timeTrailCheckDataLastItem,
-                            'itemView' => '/time-trail/_list',
-                            'emptyText' => FALSE,
-                        ]);
-                        ?>
-                    </div>
-                </div>
-
                 <div class="row">
                     <div class="col-sm-12">
                         <?php
