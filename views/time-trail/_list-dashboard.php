@@ -20,7 +20,7 @@ use app\components\GeneralFunctions;
 
 
     if (!$model->getTimeTrailItem()->one()->getNextItem()) {
-        echo Html::encode(Yii::t('app', 'The time traail is finished.')); ?></br><?php
+        echo Html::encode(Yii::t('app', 'The time trail is finished.')); ?></br><?php
     } elseif ($model->end_time == NULL) {
         if ($end_date>time()) {
         ?>
