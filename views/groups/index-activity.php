@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Activity groups');
+$this->title = Yii::t('app', 'Overview of last activity of a group');
 ?>
 <div class="tbl-groups-index">
 
@@ -37,7 +38,6 @@ $this->title = Yii::t('app', 'Activity groups');
 
     echo GridView::widget([
         'dataProvider' => $activityFeed,
-        'filterModel' => $activityFeed,
         'columns' => $gridColumns,
         'containerOptions' => ['style'=>'overflow: auto'], // only set when $responsive = false
         'headerRowOptions' => ['class'=>'kartik-sheet-style'],

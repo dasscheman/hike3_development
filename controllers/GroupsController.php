@@ -85,7 +85,7 @@ class GroupsController extends Controller
     {
         $feed = new HikeActivityFeed;
         return $this->render('index-activity', [
-            'activityFeed' => $feed->getData(),
+            'activityFeed' => $feed->getLastGroupsActivity(),
         ]);
     }
 

@@ -132,6 +132,7 @@ class GroupsSearch extends Groups
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['rank'=>SORT_DESC]]
         ]);
 
         /**
