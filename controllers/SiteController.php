@@ -40,7 +40,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions'=>['overview', 'overview-players', 'overview-organisation'],
+                        'actions'=>['overview', 'overview-players', 'overview-organisation', 'cache-flush'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
@@ -354,6 +354,11 @@ class SiteController extends Controller
                     \'Organisation/Stations\' to create stations.')
             );
         }
+    }
 
+    public function actionCacheFlush()
+    {
+        Yii::$app->cache->flush();
+        return $this->redirect(['/site/overview-organisation']);
     }
 }

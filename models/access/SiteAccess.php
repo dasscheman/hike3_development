@@ -26,6 +26,13 @@ class SiteAccess {
             return FALSE;
         }
 
+        function SiteCacheFlush() {
+            if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+                return TRUE;
+            }
+            return FALSE;
+        }
+
         function SiteOverviewPlayers() {
             if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
                 return TRUE;
@@ -44,7 +51,7 @@ class SiteAccess {
                 return TRUE;
             }
             return FALSE;
-            }
+        }
 
         function GroupsUpdate() {
             $model = $this->findModel($this->userModel->ids['group_ID']);

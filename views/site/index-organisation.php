@@ -205,17 +205,32 @@ $this->title = Yii::t('app', 'Hike overview');
                     </p>
                 </div>
 
-                <div class="well"> <?php
-                    echo Html::a(
-                        Yii::t('app', 'Export Hike'),
-                        [
-                            'export-import/export-route',
-                        ],
-                        [
-                            'title' => Yii::t('app', 'Create an excel file from hike'),
-                            'class'=>'btn btn-primary btn-xs',
-                        ]
-                    );
+                <div class="well">
+                    <p>
+                        <?php
+                        echo Html::a(
+                            Yii::t('app', 'Export Hike'),
+                            [
+                                'export-import/export-route',
+                            ],
+                            [
+                                'title' => Yii::t('app', 'Create an excel file from hike'),
+                                'class'=>'btn btn-primary btn-xs',
+                            ]
+                        );
+                    ?> </p>
+                    <p> <?php
+                        echo Html::a(
+                            Yii::t('app', 'Cache Flush'),
+                            [
+                                'site/cache-flush',
+                            ],
+                            [
+                                'title' => Yii::t('app', 'Cache flush'),
+                                'class'=>'btn btn-primary btn-xs',
+                            ]
+                        ); ?>
+                    </p> <?php
 //  TODO, import of the export file
 //                    $form = ActiveForm::begin([
 //                        'options'=>['enctype'=>'multipart/form-data'],
