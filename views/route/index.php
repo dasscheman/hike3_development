@@ -188,7 +188,7 @@ $this->title = Yii::t('app', 'Routes');
         'options' => ['id' => 'Introduction'],
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
-            'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => '0000-00-00']]),
+            'dataProvider'=>$searchModel->searchIntroRouteInEvent(),
             'columns'=>$gridColumns,
             'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
             'headerRowOptions'=>['class'=>'kartik-sheet-style'],

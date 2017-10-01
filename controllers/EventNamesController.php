@@ -126,6 +126,8 @@ class EventNamesController extends Controller
             $modelUser = Users::findOne(Yii::$app->user->identity->id);
             $modelUser->selected_event_ID = $event_id;
             $modelUser->save();
+            Yii::$app->user->identity->selected_event_ID = $event_id;
+            Yii::$app->user->identity->save();
 
             $model->attributes = Yii::$app->request->post('EventNames');
             $model->event_ID = $event_id;
