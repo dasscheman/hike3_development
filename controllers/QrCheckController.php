@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\DeelnemersEvent;
+use app\models\EventNames;
 use app\models\Qr;
 use app\models\QrCheck;
 use app\models\QrCheckSearch;
@@ -149,7 +150,7 @@ class QrCheckController extends Controller
 
         if ($model->save()){
             Yii::$app->cache->flush();
-            if($model->getQr()->score < 0) {
+            if($model->qr->score < 0) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Checked QR code! But you received penalty points...'));
             } else {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
