@@ -19,30 +19,29 @@ class PostPassageAccess {
         $this->userModel = $arguments[0];
     }
 
-    function PostPassageCheckin() {
+    function PostPassageCheckStation() {
         $active_day = EventNames::getActiveDayOfHike();
         $start_post_id = Posten::getStartPost($active_day);
         $PostPassage = PostPassage::find()
             ->where('post_ID =:post_id AND group_ID =:group_id')
             ->params([':group_id' => $this->userModel->ids['group_ID'], ':post_id' => $this->userModel->ids['post_ID']])
             ->one();
-
-        if($start_post_id === (int) $this->userModel->ids['post_ID']){
-            // the selected post is a start post of current day.
-            return FALSE;
-        }
-
+        
         if($this->userModel->ids['action'] === 'start') {
-                if(!Posten::isStartPost($this->userModel->ids['post_ID'] )) {
-                    return FALSE;
-                }
+            if(!Posten::isStartPost($this->userModel->ids['post_ID'])) {
+                return FALSE;
+            }
 
-                if (PostPassage::isGroupStarted($this->userModel->ids['group_ID'], $active_day)) {
-                    return FALSE;
-                }
+            if (PostPassage::isGroupStarted($this->userModel->ids['group_ID'], $active_day)) {
+                return FALSE;
+            }
         }
         if($this->userModel->ids['action'] === 'checkin') {
             if($PostPassage !== NULL) {
+                return FALSE;
+            }
+
+            if (!PostPassage::isGroupStarted($this->userModel->ids['group_ID'], $active_day)) {
                 return FALSE;
             }
 

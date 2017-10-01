@@ -258,11 +258,11 @@ class Posten extends HikeActiveRecord
         $event_id = Yii::$app->user->identity->selected_event_ID;
         $db = self::getDb();
         $data = $db->cache(function ($db) use($date, $event_id){
-        $data = Posten::find()
-            ->where('event_ID =:event_id AND date =:date')
-            ->params([':event_id' => $event_id, ':date' => $date])
-            ->orderBy(['post_volgorde' => SORT_ASC])
-            ->one();
+            return Posten::find()
+                ->where('event_ID =:event_id AND date =:date')
+                ->params([':event_id' => $event_id, ':date' => $date])
+                ->orderBy(['post_volgorde' => SORT_ASC])
+                ->one();
         });
 
 		if (isset($data->post_ID))
