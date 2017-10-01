@@ -104,4 +104,39 @@ class RouteSearch extends Route
 
         return $dataProvider;
     }
+
+    public function searchIntroRouteInEvent()
+    {
+        $query = Route::find()
+            ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:day_date)')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':day_date' => '0000-00-00'
+            ])
+            ->orderBy('route_volgorde ASC');
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination'  => false,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+           return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'route_ID' => $this->route_ID,
+            'event_ID' => Yii::$app->user->identity->selected_event_ID,
+            'day_date' => $this->day_date,
+            'route_volgorde' => $this->route_volgorde,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ]);
+
+        return $dataProvider;
+    }
 }
