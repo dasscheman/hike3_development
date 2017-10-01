@@ -122,7 +122,7 @@ class TimeTrailItem extends HikeActiveRecord
      */
     public function getTimeTrail()
     {
-        return $this->hasOne(TblTimeTrail::className(), ['time_trail_ID' => 'time_trail_ID']);
+        return $this->hasOne(TimeTrail::className(), ['time_trail_ID' => 'time_trail_ID']);
     }
 
     /**
@@ -130,7 +130,57 @@ class TimeTrailItem extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(TblUsers::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+    }
+
+    /**
+     * Get the previous item, returns null when not exist.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPreviousItem()
+    {
+       return  TimeTrailItem::find()
+           ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde <:volgorde')
+            ->params([
+                ':event_id' => $this->event_ID,
+                ':time_trail_ID'  => $this->time_trail_ID,
+                ':volgorde'  => $this->volgorde,
+            ])
+           ->orderBy(['volgorde' => SORT_DESC])
+            ->one();
+    }
+
+    /**
+     * Get the previous item, returns null when not exist.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNextItem()
+    {
+       return  TimeTrailItem::find()
+           ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde >:volgorde')
+            ->params([
+                ':event_id' => $this->event_ID,
+                ':time_trail_ID'  => $this->time_trail_ID,
+                ':volgorde'  => $this->volgorde,
+            ])
+           ->orderBy(['volgorde' => SORT_ASC])
+           ->one();
+    }
+
+    /**
+     * Get the checked item for current user. Returns NULL when not exist.
+     */   
+    public function getTimeTrailItemCheckedByGroupCurrentUser()
+    {
+
+        $data = DeelnemersEvent::find()
+            ->where('event_ID = :event_Id AND user_ID=:user_Id')
+            ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':user_Id' => Yii::$app->user->identity->id])
+            ->one();
+
+        return $this->hasMany(TimeTrailCheck::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
+            ->andWhere(['group_ID' => $data->group_ID])
+            ->one();
     }
 
     public function setNewOrderForTimeTrailItem()

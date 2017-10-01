@@ -59,7 +59,7 @@ class OpenVragenAntwoordenAccess {
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
             PostPassage::istimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
             return TRUE;
-        };
+        }
         return FALSE;
     }
 

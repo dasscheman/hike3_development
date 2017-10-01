@@ -41,6 +41,13 @@ class GroupsAccess {
         return FALSE;
     }
 
+    public function GroupsIndexActivity() {
+        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
     function GroupsUpdate() {
         $model = $this->findModel($this->userModel->ids['group_ID']);
 

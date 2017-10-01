@@ -1,4 +1,4 @@
-<?php
+<?php //
 
 use app\components\SetupDateTime;
 use app\models\EventNames;
@@ -20,6 +20,11 @@ use yii\widgets\Pjax;
 <div class="tbl-bonuspunten-form">
 
     <?php
+
+    // THIS FORM IS OBSOLETE!!!!
+    // CAN BE REMOVED!!
+dd('KAK OF TOCH NIET VERWIJDEREN?!');
+
     // Pjax::begin([
     //     'id' => 'bonuspunten-form-' . $model->bouspunten_ID,
     //     'enablePushState' => FALSE,
@@ -32,6 +37,8 @@ use yii\widgets\Pjax;
     // ]);
 
     $form = ActiveForm::begin([
+
+//        'id' => 'event-names-LALALA',
         // 'options'=>[
         //     'data-pjax'=>TRUE,
         // ],
@@ -48,7 +55,7 @@ use yii\widgets\Pjax;
             Groups::getGroupOptionsForEvent(),
             [
                 'prompt'=>'Select...',
-                'id' => 'bonuspunten-group-dropdown-create'
+                'id' => 'c'
             ]);
     }
     echo $form->field($model, 'date')->dropDownList(
@@ -58,15 +65,24 @@ use yii\widgets\Pjax;
             'id' => 'date-' . $model->bouspunten_ID
         ]);
 
+    echo $form->field($model, 'post_ID')->dropDownList(
+        Posten::getPostNameOptions(),
+        [
+            'prompt'=>'Select...',
+            'id' => 'posten-group-field-creaate'
+        ]);
+
     // EXAMPLE Dependent Dropdown
-    echo $form->field($model, 'post_ID')->widget(DepDrop::classname(), [
-        'options' => ['id' => 'post_ID-' . $model->bouspunten_ID],
-        'pluginOptions' => [
-            'depends' => ['date-' . $model->bouspunten_ID],
-            'placeholder' => 'Select...',
-            'url' => Url::to(['/posten/lists-posts'])
-        ]
-    ]);
+    // TODO dit werkt nog niet. Wordt niet bijgewerkt na het selecteren van een datum
+//    echo $form->field($model, 'post_ID')->widget(DepDrop::classname(), [
+//        'name' => 'post_ID',
+//        'options' => ['id' => 'post_ID-' . $model->bouspunten_ID],
+//        'pluginOptions' => [
+//            'depends' => ['date-' . $model->bouspunten_ID],
+//            'placeholder' => 'Select...',
+//            'url' => Url::to(['/posten/lists-posts'])
+//        ]
+//    ]);
 
     echo $form->field($model, 'omschrijving')->textInput();
     echo $form->field($model, 'score')->textInput(['type' =>  'number']);

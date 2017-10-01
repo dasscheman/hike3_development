@@ -17,6 +17,13 @@ class NoodenvelopAccess {
         $this->userModel = $arguments[0];
     }
 
+    public function NoodEnvelopIndex() {
+        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
     function NoodEnvelopCreate() {
         if($this->userModel->rolPlayer !== DeelnemersEvent::ROL_organisatie) {
             return FALSE;

@@ -17,6 +17,7 @@ class GroupsSearch extends Groups
     public $post_score;
 	public $qr_score;
 	public $vragen_score;
+	public $trail_score;
 	public $total_score;
 	public $rank;
 	public $time_walking;
@@ -92,6 +93,17 @@ class GroupsSearch extends Groups
             ->innerJoinWith('qr', false)
             ->groupBy('tbl_qr_check.group_ID');
 
+        $TrailQuery = TimeTrailCheck::find()
+            ->select([
+                'tbl_time_trail_check.group_ID as trail_group_ID',
+                'tbl_time_trail_check.succeded as succeded',
+                'IFNULL(SUM(tbl_time_trail_item.score), 0) as trail_score'
+            ])
+            ->where('succeded=:succeded')
+            ->innerJoinWith('timeTrailItem', false)
+            ->addParams([':succeded' => TRUE])
+            ->groupBy('tbl_time_trail_check.group_ID');
+
         $VraagQuery = OpenVragenAntwoorden::find()
             ->select([
                 'tbl_open_vragen_antwoorden.group_ID as vraag_group_ID',
@@ -109,16 +121,18 @@ class GroupsSearch extends Groups
         $query->leftJoin(['orderOpenHintSum' => $openHintQuery], 'orderOpenHintSum.hint_group_ID = group_ID');
         $query->leftJoin(['orderPassedPostsSum' => $passedPostQuery], 'orderPassedPostsSum.post_group_ID = group_ID');
         $query->leftJoin(['orderQrSum' => $QrQuery], 'orderQrSum.qr_group_ID = group_ID');
+        $query->leftJoin(['orderTrailSum' => $TrailQuery], 'orderTrailSum.trail_group_ID = group_ID');
         $query->leftJoin(['orderVraagSum' => $VraagQuery], 'orderVraagSum.vraag_group_ID = group_ID');
 
         $query->select([
             '*',
-            '(COALESCE(bonus_score, 0) + COALESCE(post_score, 0) + COALESCE(qr_score, 0) + COALESCE(vragen_score, 0) - COALESCE(hint_score, 0)) as total_score'
+            '(COALESCE(bonus_score, 0) + COALESCE(post_score, 0) + COALESCE(qr_score, 0) + COALESCE(vragen_score, 0) + COALESCE(trail_score, 0) - COALESCE(hint_score, 0)) as total_score'
         ]);
         $query->groupBy('tbl_groups.group_ID');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['rank'=>SORT_DESC]]
         ]);
 
         /**
@@ -148,6 +162,11 @@ class GroupsSearch extends Groups
                      'asc' => ['qr_score' => SORT_ASC],
                      'desc' => ['qr_score' => SORT_DESC],
                      'label' => 'Order Hint Score'
+                 ],
+                 'trail_score' => [
+                     'asc' => ['trail_score' => SORT_ASC],
+                     'desc' => ['trail_score' => SORT_DESC],
+                     'label' => 'Order Trail Score'
                  ],
                  'vragen_score' => [
                      'asc' => ['vragen_score' => SORT_ASC],

@@ -40,7 +40,7 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions'=>['overview', 'overview-players', 'overview-organisation'],
+                        'actions'=>['overview', 'overview-players', 'overview-organisation', 'cache-flush'],
                         'allow' => TRUE,
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed();
@@ -214,9 +214,9 @@ class SiteController extends Controller
             $feed->pageCount = 2;
 
             $searchTimeTrailCheckModel = new TimeTrailCheckSearch();
+            $timeTrailCheckDataLastItem = $searchTimeTrailCheckModel->searchLastItem(Yii::$app->request->queryParams, $group_id);
             $timeTrailCheckData = $searchTimeTrailCheckModel->search(Yii::$app->request->queryParams, $group_id);
 
-//dd($timeTrailChecks->timeTrailItem);
             return $this->render('index-players',[
                 'groupModel' => $groupModel,
                 'activityFeed' => $feed->getData(),
@@ -227,6 +227,7 @@ class SiteController extends Controller
                 'qrCheckData' => $qrCheckData,
                 'bonusData' => $bonusData,
                 'timeTrailCheckData' => $timeTrailCheckData,
+                'timeTrailCheckDataLastItem' => $timeTrailCheckDataLastItem,
             ]);
         }
         return $this->render('/site/index');
@@ -353,6 +354,11 @@ class SiteController extends Controller
                     \'Organisation/Stations\' to create stations.')
             );
         }
+    }
 
+    public function actionCacheFlush()
+    {
+        Yii::$app->cache->flush();
+        return $this->redirect(['/site/overview-organisation']);
     }
 }

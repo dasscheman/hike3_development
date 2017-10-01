@@ -39,7 +39,10 @@ class TimeTrailController extends Controller
     {
         $searchModel = new TimeTrailItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $model = TimeTrail::find()->all();
+        $model = TimeTrail::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

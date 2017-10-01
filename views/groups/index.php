@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use kartik\grid\ExpandRowColumn;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -24,8 +23,7 @@ $this->title = Yii::t('app', 'Overview groups scores');
     $heading = FALSE;
     $exportConfig = TRUE;
     $resizableColumns = FALSE;
-
-
+    $responsiveWrap = FALSE;
 
     $gridColumns = [
         'group_name',
@@ -50,36 +48,49 @@ $this->title = Yii::t('app', 'Overview groups scores');
             'attribute' => 'rank',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'bonus_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'post_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'qr_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'vragen_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
+        ],
+        [
+            'attribute' => 'trail_score',
+            'visible'=> TRUE,
+            'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'hint_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
             'attribute' => 'total_score',
             'visible'=> TRUE,
             'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
         ],
     ];
 
@@ -106,6 +117,8 @@ $this->title = Yii::t('app', 'Overview groups scores');
         'striped' => $striped,
         'condensed' => $condensed,
         'responsive' => $responsive,
+        'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+        'responsiveWrap' => $responsiveWrap,
         'hover' => $hover,
         'showPageSummary' => $pageSummary,
         'panel' => [

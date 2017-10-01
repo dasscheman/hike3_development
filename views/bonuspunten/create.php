@@ -11,7 +11,7 @@ use yii\helpers\Html;
 
     <h1><?= Html::encode(Yii::t('app', 'Assign Bonuspoints')) ?></h1>
 
-    <?= $this->render('_form-dashboard', [
+    <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
 

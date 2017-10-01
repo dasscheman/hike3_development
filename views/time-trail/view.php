@@ -35,7 +35,7 @@ $dataProvider = new ArrayDataProvider([
                 'dataProvider' => $dataProvider,
                 'itemView' => '/time-trail/_list',
     //            'viewParams' => ['time_trail_item_id' => $time_trail_item_id],
-                'emptyText' => 'Er zijn nog geen groepen aangemaakt voor deze hike.',
+                'emptyText' => 'Er is nog geen time trail gestart.',
             ]);
             ?>
         </div>

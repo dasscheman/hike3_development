@@ -23,6 +23,12 @@ $this->title = 'About';
     <h2><?= Html::encode('change log') ?></h2>
     <h3><?= Html::encode('3.1') ?></h3>
     <p>
+        Added overview of activity per group.
+    </p>
+    <p>
+        Added search for hints page.
+    </p>
+    <p>
         Added Export functionality. You can export a complete hike.
     </p>
     <p>
@@ -32,6 +38,12 @@ $this->title = 'About';
     </p>
     <p>
         Added manuals. This is not complete and we are still experimenting with different formats.
+    </p>
+    <p>
+        Implemented caching for optimization.
+    </p>
+    <p>
+        Added the functionality to delete an hike.
     </p>
     <p>
         Added change log.

@@ -11,8 +11,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use yii\data\ActiveDataProvider;
-use app\models\OpenVragenSearch;
 use \yii\helpers\Json;
 
 /**
@@ -123,6 +121,7 @@ class OpenVragenAntwoordenController extends Controller
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
             }  else {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Question is answered.'));
             }
         }
@@ -145,6 +144,7 @@ class OpenVragenAntwoordenController extends Controller
                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
             }
         } else {
+            Yii::$app->cache->flush();
             Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
         }
 
@@ -196,6 +196,8 @@ class OpenVragenAntwoordenController extends Controller
             foreach ($model->getErrors() as $error) {
                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
             }
+        } else {
+            Yii::$app->cache->flush();
         }
         // TODO
         // Now the overview page is completly reloaded after a question check.
@@ -217,6 +219,8 @@ class OpenVragenAntwoordenController extends Controller
             foreach ($model->getErrors() as $error) {
                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
             }
+        } else {
+            Yii::$app->cache->flush();
         }
         // TODO
         // Now the overview page is completly reloaded after a question check.

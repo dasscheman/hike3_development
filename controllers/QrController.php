@@ -161,6 +161,7 @@ class QrController extends Controller
                 $model->delete();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted silent station.'));
             } else {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
             }
             return $this->redirect(['route/index']);
@@ -169,6 +170,7 @@ class QrController extends Controller
         if (Yii::$app->request->post('Qr') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
                 return $this->redirect(['route/index']);
             }
@@ -237,7 +239,7 @@ class QrController extends Controller
     public function actionQrcode($qr_code) {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
-    	$link = "www.kiwi.run/index.php?r=qr-check/create&event_id=".$event_id."&qr_code=".$qr_code;
+    	$link = Yii::$app->request->hostInfo . Yii::$app->homeUrl ."?r=qr-check/create&event_id=".$event_id."&qr_code=".$qr_code;
         return QrCode::jpg(
             $link,
             Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',

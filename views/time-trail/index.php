@@ -10,7 +10,7 @@ use prawee\widgets\ButtonAjax;
 use app\components\CustomAlertBlock;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\PostenSearch */
+/* @var $searchModel app\models\TimeTrailItemSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', 'Time Trails');
@@ -30,11 +30,7 @@ $this->title = Yii::t('app', 'Time Trails');
     $heading = FALSE;
     $exportConfig = TRUE;
     $responsiveWrap = FALSE;
-
-//
-//     d($searchModel);
-//     dd($dataProvider);
-
+    $dataArray = [];
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -45,12 +41,24 @@ $this->title = Yii::t('app', 'Time Trails');
         'useSessionFlash' => true,
         'delay' => 20000,
     ]);
+
+    echo ButtonAjax::widget([
+        'name'=> Yii::t('app', 'Add time trail'),
+        'route'=>['time-trail/create'],
+        'modalId'=>'#main-modal',
+        'modalContent'=>'#main-content-modal',
+        'options'=>[
+            'class' => 'btn btn-success pull-right',
+            'title' => Yii::t('app', 'Create new time trail'),
+            'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail', 'create'),
+        ]
+    ]);
+
     $count=0;
     $gridColumns = [
         [
             'attribute' => 'time_trail_item_name',
             'format' => 'raw',
-           // here comes the problem - instead of parent_region I need to have parent
             'value'=>function ($model, $key, $index, $column) {
                 return ButtonAjax::widget([
                     'name'=>$model->time_trail_item_name,
@@ -77,6 +85,7 @@ $this->title = Yii::t('app', 'Time Trails');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
+            'allowBatchToggle' => FALSE,
             'expandTitle' => Yii::t('app', 'Open view time trail code'),
             'collapseTitle' => Yii::t('app', 'Close view time trail code'),
         ],
@@ -118,7 +127,7 @@ $this->title = Yii::t('app', 'Time Trails');
                         '<span class="glyphicon glyphicon-chevron-up"></span>',
                         [
                             'time-trail-item/move-up-down',
-                            'time_trail_ID' => $model->time_trail_ID,
+                            'time_trail_item_ID' => $model->time_trail_item_ID,
                             'up_down' => 'up',
                         ],
                         [
@@ -190,19 +199,6 @@ $this->title = Yii::t('app', 'Time Trails');
                 'pjax'=>true, // pjax is set to always true for this demo
                 // set your toolbar
                 'toolbar'=> [
-                    ['content'=>
-                        ButtonAjax::widget([
-                            'name'=> Yii::t('app', 'Add time trail'),
-                            'route'=>['time-trail/create'],
-                            'modalId'=>'#main-modal',
-                            'modalContent'=>'#main-content-modal',
-                            'options'=>[
-                                'class' => 'btn btn-success',
-                                'title' => Yii::t('app', 'Create new time trail'),
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail', 'create'),
-                            ]
-                        ]),
-                    ],
                     ['content'=>
                         ButtonAjax::widget([
                             'name'=> Yii::t('app', 'Add time trail Item'),

@@ -145,6 +145,7 @@ class OpenVragenController extends Controller
                 ->exists();
             if (!$exist) {
                 $model->delete();
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted question.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at least one group.'));
@@ -155,6 +156,7 @@ class OpenVragenController extends Controller
         if (Yii::$app->request->post('OpenVragen') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
                 return $this->redirect(['route/index']);
             }

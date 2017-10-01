@@ -3,11 +3,8 @@
 namespace app\models;
 
 use Yii;
-use yii\base\NotSupportedException;
-use yii\db\ActiveRecord;
 use yii\helpers\Security;
 use yii\web\IdentityInterface;
-use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -545,7 +542,7 @@ class Users extends AccessControl implements IdentityInterface {
                 'newWachtwoord' => $this->password,
             ])
             ->setSubject('Wachtwoord Kiwi.run')
-            ->setFrom('noreply@kiwi.run')
+            ->setFrom(Yii::$app->params['noreply_email'])
             ->setTo($this->email);
 
         if ($message->send()) {
@@ -560,7 +557,7 @@ class Users extends AccessControl implements IdentityInterface {
                 'newWachtwoord' => $NewPassword,
             ])
             ->setSubject('Wachtwoord Kiwi.run')
-            ->setFrom('noreply@kiwi.run')
+            ->setFrom(Yii::$app->params['noreply_email'])
             ->setTo($this->email);
 
         if ($message->send()) {

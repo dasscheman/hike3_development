@@ -48,8 +48,13 @@ use prawee\widgets\ButtonAjax;
                      'modalId' => '#main-modal',
                      'modalContent' => '#main-content-modal',
                      'options' => [
-                         'class' => 'btn btn-success',
-                         'title' => $title,
+                        'class' => 'btn btn-success',
+                        'title' => $title,
+                        'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'check-station', [
+                            'group_ID' => $model->group_ID,
+                            'post_ID' => $post_id,
+                            'action' => $action
+                        ]),
                      ]
                  ]);
             }

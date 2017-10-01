@@ -318,9 +318,15 @@ class PostPassage extends HikeActiveRecord
             ->Params([':group_id' => $group_id])
             ->orderBy('binnenkomst ASC');
 
-        $postPassagesData = $queryPassage->all();
-		$aantalPosten = $queryPassage->count();
+        $db = self::getDb();
+        $postPassagesData = $db->cache(function ($db) use ($queryPassage){
+            return $queryPassage->all();
+        });
 
+        $aantalPosten = $db->cache(function ($db) use ($queryPassage){
+            return $queryPassage->count();
+        });
+        
 		$totalTime = 0;
 		$timeLastStint = 0;
 		$timeLeftLastPost = 0;
@@ -415,9 +421,20 @@ class PostPassage extends HikeActiveRecord
     public function isGroupStarted($group_id, $active_day)
     {
         $start_post_id = Posten::getStartPost($active_day);
+        $data = PostPassage::find()
+            ->where('event_ID =:event_id AND post_ID =:post_id AND group_ID =:group_id')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':post_id' => $start_post_id,
+                ':group_id' => $group_id
+            ])
+            ->one();
 
-        // This is not complete correct use of function but it will do.
-        return PostPassage::isPostPassedByGroup($group_id, $start_post_id);
+        if($data AND
+           $data->vertrek < strtotime(date('Y-m-d H:i:s')) ) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
     public function isPostPassedByGroup($group_id, $post_id)

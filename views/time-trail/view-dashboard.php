@@ -4,14 +4,15 @@ use yii\widgets\ListView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Route */
+/* @var $model app\models\TimeTrail */
 
 ?>
-<div class="tbl-open-nood-envelop-view-dashboard-open">
-    <h3> <?php echo Yii::t('app', 'Open hint') ?> </h3>
+<div class="tbl-time-trail-view-dashboard">
+    <h3> <?php echo Yii::t('app', 'Checked time trails') ?> </h3>
     <p>
         <?php
-        Pjax::begin(['id' => 'nood-envelop-view-dashboard-open', 'enablePushState' => false]);
+        // this is needed for the pagination.
+        Pjax::begin(['id' => 'time-trail-view-dashboard-list', 'enablePushState' => false]);
         ?>
     </p>
     <?php
@@ -26,9 +27,9 @@ use yii\widgets\Pjax;
                 ],
             ],
             'dataProvider' => $model,
-            'itemView' => '/open-nood-envelop/_list-dashboard',
-            'emptyText' => Yii::t('app', 'No hints that can be opened.'),
+            'itemView' => '/time-trail/_list-dashboard',
+            'emptyText' => 'Er is nog geen time trail gestart.',
         ]);
     ?>
-    <?php Pjax::end(); ?>
+    <?php  Pjax::end(); ?>
 </div>

@@ -19,9 +19,28 @@ use kartik\widgets\TimePicker;
             'time-trail-item/update',
             'time_trail_item_ID' => $model->time_trail_item_ID
         ]]);
-
-    echo $form->field($model, 'time_trail_item_name')->textInput(['maxlength' => true]);
-    echo $form->field($model, 'score')->textInput(['maxlength' => true]);
+    
+    echo $form->field($model, 'time_trail_item_name')->textInput([
+        'maxlength' => true,
+        'placeholder' => Yii::t(
+            'app',
+            'Recognizable name which will be printed on the qr sheet.'
+        )
+    ]);
+    echo $form->field($model, 'score')->textInput([
+        'maxlength' => true,
+        'placeholder' => Yii::t(
+            'app',
+            'Points a group get for scannin the next qr code in time.'
+        )
+    ]);
+    echo $form->field($model, 'instruction')->textarea([
+        'rows' => 6,
+        'placeholder' => Yii::t(
+            'app',
+            'Instructions for the next point. They see this instruction when they scan this item.'
+        )
+    ]);
     echo $form->field($model, 'time_trail_ID')->hiddenInput(['value'=> $model->time_trail_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     echo $form->field($model, 'max_time')->widget(
@@ -35,9 +54,14 @@ use kartik\widgets\TimePicker;
                 'defaultTime' => '10:00'
             ]
         ]
+    )->label(
+        Yii::t(
+            'app',
+            'Max time (hh:mm) a group get to scan the next item.'
+        )
     );
-
     ?>
+    
     <div class="form-group">
         <?php
         echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);

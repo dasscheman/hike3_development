@@ -95,6 +95,11 @@ AppAsset::register($this);
                         'url'=>['groups/index-posten'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index-posten')
                     ],
+                    [
+                        'label'=> Yii::t('app','Search hints'),
+                        'url'=>['nood-envelop/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('nood-envelop', 'index')
+                    ],
                 ],
             ],
             Yii::$app->user->isGuest ||
@@ -112,16 +117,21 @@ AppAsset::register($this);
                         'url'=>['/posten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('posten', 'index')
                     ],
-                   [
-                       'label'=>Yii::t('app', 'Overview opened hints'),
-                       'url'=>['/open-nood-envelop/index'],
-                       'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('open-nood-envelop', 'index')
-                   ],
-                   [
-                       'label'=>Yii::t('app', 'Overview checked silent stations'),
-                       'url'=>['/qr-check/index'],
-                       'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
-                   ],
+                    [
+                        'label'=> Yii::t('app','Activity groups'),
+                        'url'=>['groups/index-activity'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index-activity')
+                    ],
+                    [
+                        'label'=>Yii::t('app', 'Overview opened hints'),
+                        'url'=>['/open-nood-envelop/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('open-nood-envelop', 'index')
+                    ],
+                    [
+                        'label'=>Yii::t('app', 'Overview checked silent stations'),
+                        'url'=>['/qr-check/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
+                    ],
                     [
                         'label'=> Yii::t('app','Answers overview'),
                         'url'=> ['open-vragen-antwoorden/index'],

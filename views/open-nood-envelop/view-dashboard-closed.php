@@ -1,8 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\ListView;
-use kartik\widgets\AlertBlock;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */

@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use app\models\PostPassage;
-use app\models\PostPassageSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -76,8 +75,6 @@ class PostPassageController extends Controller
      */
     public function actionCheckStation()
     {
-        // d('checkstation');
-        // dd(Yii::$app->request->get());
         $action = Yii::$app->request->get('action');
         $post_ID = Yii::$app->request->get('post_ID');
         $group_ID = Yii::$app->request->get('group_ID');
@@ -97,6 +94,7 @@ class PostPassageController extends Controller
         if (Yii::$app->request->post('PostPassage') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 if($action === 'start') {
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Started'));
                 } else {
@@ -145,6 +143,7 @@ class PostPassageController extends Controller
         if (Yii::$app->request->post('PostPassage') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes.'));
                 if (Yii::$app->request->isAjax) {
                     return $this->renderAjax('_list', ['model' => $model]);
