@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\DeelnemersEvent;
+use yii\filters\AccessControl;
 
 /**
  * TimeTrailController implements the CRUD actions for TimeTrail model.
@@ -28,6 +29,52 @@ class TimeTrailController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'status', 'create', 'update', 'delete'],
+                'rules' => [
+                    array(
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
+                    ),
+                    [
+                        'allow' => TRUE,
+                        'actions' => ['index', 'create'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed();
+                        },
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions' => ['status'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                [
+                                    'group_ID' => Yii::$app->request->get('group_ID')
+                                ]);
+                        },
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions' => ['update', 'delete'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['time_trail_ID' => Yii::$app->request->get('time_trail_ID')]);
+                        },
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -95,14 +142,12 @@ class TimeTrailController extends Controller
 
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
-//            $model->setNewOrderForTimeTrail();
             if($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail.'));
                 return $this->redirect(['time-trail/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-            //$this->setCookieIndexTab($model->date);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -121,17 +166,46 @@ class TimeTrailController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($time_trail_ID)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($time_trail_ID);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->time_trail_ID]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+
+         if (Yii::$app->request->post('update') == 'delete') {
+             $exist = TimeTrailItem::find()
+                ->where('event_ID=:event_id and time_trail_ID=:time_trail_ID')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                        ':time_trail_ID' => $model->time_trail_ID
+                    ])
+                ->exists();
+
+            if (!$exist) {
+                $model->delete();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail.'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail, it contains items which should be removed first.'));
+            }
+            return $this->redirect(['time-trail/index']);
         }
+
+        if (Yii::$app->request->post('TimeTrail') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail.'));
+                return $this->redirect(['time-trail/index']);
+            }
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('update', ['model' => $model]);
+        }
+
+        return $this->render([
+            '/time-trail/update',
+            'model' => $model
+        ]);
     }
 
     /**

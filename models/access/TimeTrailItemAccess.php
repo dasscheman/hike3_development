@@ -64,40 +64,21 @@ class TimeTrailItemAccess {
         }
         return FALSE;
     }
-//    public function TimeTrailIndex() {
-//        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-//            return TRUE;
-//        }
-//        return FALSE;
-//    }
-//
-//    function QrQrcode() {
-//        $model = Qr::find()
-//            ->where('qr_code =:qr_code')
-//            ->params([':qr_code' => $this->userModel->ids['qr_code']])
-//            ->one();
-//
-//        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
-//            return FALSE;
-//        }
-//        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-//            return TRUE;
-//        }
-//        return FALSE;
-//    }
-//
-//    function QrReport() {
-//        $model = $this->findModel($this->userModel->ids['qr_ID']);
-//
-//        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
-//            return FALSE;
-//        }
-//        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
-//            return TRUE;
-//        }
-//        return FALSE;
-//    }
-//
+
+    function TimeTrailItemDelete() {
+        $model = $this->findModel($this->userModel->ids['time_trail_item_ID']);
+        if ($model->getTimeTrailChecks()->one() != NULL) {
+             return FALSE;
+        }
+        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
+            return FALSE;
+        }
+        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
     function TimeTrailItemUpdate() {
         $model = $this->findModel($this->userModel->ids['time_trail_item_ID']);
         if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {

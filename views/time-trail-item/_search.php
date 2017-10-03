@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'time_trail_item_name') ?>
 
-    <?= $form->field($model, 'trail_item_code') ?>
+    <?= $form->field($model, 'code') ?>
 
     <?= $form->field($model, 'event_ID') ?>
 

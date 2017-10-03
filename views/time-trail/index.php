@@ -189,7 +189,7 @@ $this->title = Yii::t('app', 'Time Trails');
 		    'label' =>$item->time_trail_name,
             'active' => $item->time_trail_ID === Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
 		    'content' => GridView::widget([
-                'id' => 'kv-grid-' . $item->time_trail_name, //'kv-grid-demo',
+                'id' => 'kv-grid-' . $item->time_trail_ID, //'kv-grid-demo',
                 'dataProvider' => $searchModel->search(['TimeTrailItemSearch' => ['time_trail_ID' => $item->time_trail_ID]]),
                 'columns' => $gridColumns,
                 'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
@@ -199,16 +199,31 @@ $this->title = Yii::t('app', 'Time Trails');
                 'pjax'=>true, // pjax is set to always true for this demo
                 // set your toolbar
                 'toolbar'=> [
-                    ['content'=>
+                [
+                    'content'=>
                         ButtonAjax::widget([
                             'name'=> Yii::t('app', 'Add time trail Item'),
-                            'route'=>['time-trail-item/create', 'time_trail_id' => $item->time_trail_ID],
+                            'route'=>['time-trail-item/create', 'time_trail_ID' => $item->time_trail_ID],
                             'modalId'=>'#main-modal',
                             'modalContent'=>'#main-content-modal',
                             'options'=>[
                                 'class' => 'btn btn-success',
                                 'title' => Yii::t('app', 'Create new time trail item'),
                                 'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail-item', 'create'),
+                            ]
+                        ]),
+                ],
+                [
+                    'content'=>
+                        ButtonAjax::widget([
+                            'name'=> Yii::t('app', 'Edit time trail'),
+                            'route'=>['time-trail/update', 'time_trail_ID' => $item->time_trail_ID],
+                            'modalId'=>'#main-modal',
+                            'modalContent'=>'#main-content-modal',
+                            'options'=>[
+                                'class' => 'btn btn-primary',
+                                'title' => Yii::t('app', 'Update time trail'),
+                                'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail', 'update', ['time_trail_ID' => $item->time_trail_ID]),
                             ]
                         ]),
                     ],

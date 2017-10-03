@@ -228,8 +228,11 @@ class TimeTrailItem extends HikeActiveRecord
 	{
         $data = TimeTrailItem::findOne($time_trail_item_id);
         $dataNext = TimeTrailItem::find()
-            ->where('event_ID =:event_id AND volgorde <:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':order' => $data->volgorde])
+            ->where('event_ID =:event_id AND volgorde <:order AND time_trail_ID =:time_trail_id')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':order' => $data->volgorde,
+                ':time_trail_id' => $data->time_trail_ID])
             ->orderBy('volgorde DESC')
             ->exists();
 
@@ -243,8 +246,11 @@ class TimeTrailItem extends HikeActiveRecord
 	{
         $data = TimeTrailItem::findOne($time_trail_item_id);
         $dataNext = TimeTrailItem::find()
-            ->where('event_ID =:event_id AND volgorde >:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':order' => $data->volgorde])
+            ->where('event_ID =:event_id AND volgorde >:order AND time_trail_ID =:time_trail_id')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':order' => $data->volgorde,
+                ':time_trail_id' => $data->time_trail_ID])
             ->orderBy(['volgorde' => SORT_ASC])
             ->exists();
 

@@ -29,6 +29,45 @@ class TimeTrailCheckController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+                        'access' => [
+                'class' => AccessControl::className(),
+                'only' => [],
+                'rules' => [
+                    array(
+                        'allow' => FALSE,
+                        'roles'=>array('?'),
+                    ),
+                    [
+                        'allow' => TRUE,
+                        'actions' => ['open'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                [
+                                    'nood_envelop_ID' => Yii::$app->request->get('nood_envelop_ID'),
+                                    'group_ID' => Yii::$app->request->get('group_ID')
+                                ]);
+                        },
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => TRUE,
+                        'actions' => ['index', 'update', 'delete'],
+                        'matchCallback'=> function () {
+                            return Yii::$app->user->identity->isActionAllowed(
+                                NULL,
+                                NULL,
+                                ['open_nood_envelop_ID' => Yii::$app->request->get('open_nood_envelop_ID')]);
+                        },
+                        'roles'=>array('@'),
+                    ],
+                    [
+                        'allow' => FALSE,  // deny all users
+                        'roles'=> ['*'],
+                    ],
+                ],
+            ]
         ];
     }
 

@@ -5,7 +5,7 @@ namespace app\models\access;
 use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
-use app\models\Qr;
+use app\models\TimeTrail;
 use yii\web\NotFoundHttpException;
 
 class TimeTrailAccess {
@@ -34,11 +34,8 @@ class TimeTrailAccess {
         return FALSE;
     }
 
-    function QrQrcode() {
-        $model = Qr::find()
-            ->where('qr_code =:qr_code')
-            ->params([':qr_code' => $this->userModel->ids['qr_code']])
-            ->one();
+    public function TimeTrailUpdate() {
+        $model = $this->findModel($this->userModel->ids['time_trail_ID']);
 
         if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
@@ -49,8 +46,8 @@ class TimeTrailAccess {
         return FALSE;
     }
 
-    function QrReport() {
-        $model = $this->findModel($this->userModel->ids['qr_ID']);
+    public function TimeTrailDelete() {
+        $model = $this->findModel($this->userModel->ids['time_trail_ID']);
 
         if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
             return FALSE;
@@ -61,13 +58,8 @@ class TimeTrailAccess {
         return FALSE;
     }
 
-    function QrUpdate() {
-        $model = $this->findModel($this->userModel->ids['qr_ID']);
-
-        if ($model->event_ID !== Yii::$app->user->identity->selected_event_ID) {
-            return FALSE;
-        }
-        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_organisatie) {
+    function TimeTrailstatus() {
+        if ($this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
         return FALSE;
@@ -82,7 +74,7 @@ class TimeTrailAccess {
      */
     protected function findModel($id)
     {
-        if (($model = Qr::findOne($id)) !== null) {
+        if (($model = TimeTrail::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

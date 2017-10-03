@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\TimeTrail;
+use app\models\TimeTrailCheck;
 use app\models\TimeTrailItem;
 use app\models\TimeTrailItemSearch;
 use yii\web\Controller;
@@ -186,11 +187,28 @@ class TimeTrailItemController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($time_trail_item_ID)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($time_trail_item_ID);
 
-        return $this->redirect(['index']);
+        try
+        {
+            $model->delete();
+        }
+        catch(Exception $e)
+        {
+            throw new HttpException(400, Yii::t('app'. 'You cannot remove this time trail item.'));
+        }
+        
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Removed time trail item'));
+
+        $searchModel = new TimeTrailItemSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionQrcode($code) {

@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'time_trail_item_ID:datetime',
             'time_trail_ID:datetime',
             'time_trail_item_name',
-            'trail_item_code',
+            'code',
             'event_ID',
             // 'trail_item_volgorde',
             // 'score',

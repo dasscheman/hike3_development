@@ -11,7 +11,11 @@ use yii\widgets\ActiveForm;
 <div class="tbl-time-trail-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['time-trail/create'] : ['time-trail/update', 'time_trail_ID' => $model->time_trail_ID]]);
+        'action' => $model->isNewRecord ? [
+            'time-trail/create'
+        ] : [
+            'time-trail/update',
+            'time_trail_ID' => $model->time_trail_ID]]);
 
     echo $form->field($model, 'time_trail_name')->textInput(['maxlength' => true]);
 
