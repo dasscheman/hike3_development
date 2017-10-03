@@ -26,12 +26,8 @@ class QrCheckAccess {
         }
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer))) {
-            return TRUE;
-        }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
+            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and 
+            PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
             return TRUE;
         }
         return FALSE;

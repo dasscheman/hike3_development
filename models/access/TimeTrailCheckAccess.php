@@ -5,6 +5,7 @@ namespace app\models\access;
 use Yii;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use app\models\PostPassage;
 use app\models\TimeTrailCheck;
 use yii\web\NotFoundHttpException;
 
@@ -25,14 +26,11 @@ class TimeTrailCheckAccess {
         }
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
-            $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and ( PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer))) {
-            return TRUE;
-        }
-        if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            PostPassage::model()->istimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
+            PostPassage::isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
             return TRUE;
         }
+
         return FALSE;
     }
 

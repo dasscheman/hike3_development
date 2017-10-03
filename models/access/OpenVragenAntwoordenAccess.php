@@ -79,13 +79,13 @@ class OpenVragenAntwoordenAccess {
 
         if ($this->userModel->hikeStatus == EventNames::STATUS_introductie and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            $this->userModel->groupOfPlayer == $group_id) {
+            $this->userModel->groupOfPlayer == $this->userModel->groupOfPlayer) {
             return TRUE;
         }
         if ($this->userModel->hikeStatus == EventNames::STATUS_gestart and
             $this->userModel->rolPlayer == DeelnemersEvent::ROL_deelnemer and
-            $this->userModel->groupOfPlayer == $group_id and
-            PostPassage::model()->isTimeLeftToday($event_id, $group_id)) {
+            $this->userModel->groupOfPlayer == $this->userModel->groupOfPlayer and
+            PostPassage::model()->isTimeLeftToday($this->userModel->event_id, $this->userModel->groupOfPlayer)) {
             return TRUE;
         }
         if (($this->userModel->hikeStatus == EventNames::STATUS_introductie or

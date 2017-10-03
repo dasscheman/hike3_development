@@ -520,22 +520,6 @@ class Users extends AccessControl implements IdentityInterface {
         return $this->voornaam.' '.$this->achternaam;
     }
 
-    /**
-     * Retrieves username
-     */
-    public function getUserEmail($user_Id) {
-        $criteria = new CDbCriteria();
-        $criteria->condition = 'user_ID =:id';
-        $criteria->params = array(':id' => $user_Id);
-
-        if (Users::model()->exists($criteria)) {
-            $data = Users::model()->find($criteria);
-            return $data->email;
-        } else {
-            return "nvt";
-        }
-    }
-
     public function sendEmailNewAccount() {
         $message = Yii::$app->mailer->compose('newAccount', [
                 'newMailUsers' => $this->email,
