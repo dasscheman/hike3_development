@@ -120,7 +120,7 @@ class TimeTrailItemController extends Controller
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-            $model->time_trail_ID = Yii::$app->request->get('time_trail_id');
+            $model->time_trail_ID = Yii::$app->request->get('time_trail_ID');
         }
 
         if (Yii::$app->request->isAjax) {
