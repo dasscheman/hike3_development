@@ -9,6 +9,7 @@ use app\models\TimeTrailItem;
 use app\models\DeelnemersEvent;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 
