@@ -40,7 +40,7 @@ class TimeTrailCheckController extends Controller
                     ),
                     [
                         'allow' => TRUE,
-                        'actions' => ['open'],
+                        'actions' => ['open', 'create'],
                         'matchCallback'=> function () {
                             return Yii::$app->user->identity->isActionAllowed(
                                 NULL,
