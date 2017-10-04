@@ -41,6 +41,7 @@ use yii\widgets\ActiveForm;
             )
         ]);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
+    echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);

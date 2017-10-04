@@ -45,6 +45,7 @@ use yii\widgets\ActiveForm;
             'Points for passing this station. Use positive integers.'
         )]);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
+    echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
 
     <div class="form-open-vragen">
