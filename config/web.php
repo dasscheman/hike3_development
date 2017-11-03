@@ -23,11 +23,6 @@ $config = [
     'modules' => [
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
-             // enter optional module parameters below - only if you need to
-             // use your own export download action or custom translation
-             // message source
-             // 'downloadAction' => 'gridview/export/download',
-             // 'i18n' => []
         ],
     ],
     'timeZone' => 'Europe/Berlin', // this is my default
@@ -44,11 +39,6 @@ $config = [
                     ],
                     //'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation']
                 ],
-//                'kvgrid' => [
-//                    'class' => 'yii\i18n\PhpMessageSource',
-//                    'basePath' => '@kvgrid/yii2-grid/messages',
-//                    'forceTranslation' => true
-//                ],
             ],
         ],
         'formatter' => [
@@ -64,7 +54,7 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\Users',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false, //true,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
