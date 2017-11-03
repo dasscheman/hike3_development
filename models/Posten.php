@@ -4,7 +4,6 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
-use app\Components\SetupDateTime;
 
 /**
  * This is the model class for table "tbl_posten".
@@ -26,6 +25,7 @@ use app\Components\SetupDateTime;
  * @property EventNames $event
  * @property Users $updateUser
  */
+
 class Posten extends HikeActiveRecord
 {
     /**
@@ -282,25 +282,6 @@ class Posten extends HikeActiveRecord
 			return FALSE;
 		} else {
 			return TRUE;
-		}
-	}
-
-	public function existPostForActiveDay($event_id)
-	{
-        dd('NIET MEER NODIG??');
-		$date = EventNames::getActiveDayOfHike($event_id);
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
-		$criteria->order = "post_volgorde ASC";
-		$data = Posten::find($criteria);
-
-		if (isset($data->post_ID))
-		{
-			return true;
-		} else {
-			return false;
 		}
 	}
 
