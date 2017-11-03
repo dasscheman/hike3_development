@@ -3,8 +3,7 @@
 namespace app\models;
 
 use Yii;
-use yii\db\Query;
-use app\models\ArrayHelper;
+
 /**
  * This is the model class for table "tbl_friend_list".
  *
@@ -137,34 +136,7 @@ class FriendList extends HikeActiveRecord
 			$statusOptions[$status] : "unknown status ({$status})";
 	}
 
-   	/**
-	* Retrieves a list of users
-	* @return array an array of all available users'.
-	*/
-
-	public function getFriendNameOptions()
-	{
-		$criteria=new CDbCriteria();
-		//Bestaande vrienden worden uitgefilterd uit de user lijst.
-		// de huidige gebruiker wordt er ook uitgefilterd.
-		$criteria->addCondition("t.user_ID IN ( SELECT friends_with_user_ID
-								FROM `tbl_friend_list`
-								WHERE user_ID =:currentuser AND status =2)
-                                AND t.user_ID <>:currentuser");
-		$criteria->order = username;
-		$criteria->params = array(':currentuser'=>Yii::app()->user->id);
-
-		Yii::app()->user->id;
-		$data = Users::model()->findAll($criteria);
-
-		foreach($data as $m)
-		{
-			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
-		}
-		return $results;
-	}
-
-       	/**
+ 	/**
 	* Retrieves a list of users
 	* @return array an array of all available users'.
 	*/
