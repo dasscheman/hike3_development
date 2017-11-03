@@ -145,50 +145,6 @@ class Qr extends HikeActiveRecord
 		return($UniqueQrCode);
 	}
 
-	public function getQrCode($event_id, $qr_id)
-	{
-
-        dd('NIET MEER NODIG??');
-		$data = Qr::find('event_ID = :event_Id AND qr_ID=:qr_id',
-						    array(':event_Id' => $event_id,
-							  ':qr_id' => $qr_id));
-		return($data->qr_code);
-	}
-
-	public function getQrRouteID($qr_id)
-	{
-
-        dd('NIET MEER NODIG??');
-		$data = Qr::find('qr_ID=:qr_id',
-						    array(':qr_id' => $qr_id));
-		if(isset($data->route_ID)){
-			return $data->route_ID;
-		} else {
-			return false;
-		}
-	}
-
-	public function getQrId($event_id, $qr_code)
-	{
-
-        dd('NIET MEER NODIG??');
-		$data = Qr::find('event_ID = :event_Id AND qr_code=:qr_code',
-						    array(':event_Id' => $event_id,
-							  ':qr_code' => $qr_code));
-		return($data->qr_ID);
-	}
-
-
-	public function getQrCodeName($event_id, $qr_id)
-	{
-
-        dd('NIET MEER NODIG??');
-		$data = Qr::find('event_ID = :event_Id AND qr_ID=:qr_id',
-						    array(':event_Id' => $event_id,
-							  ':qr_id' => $qr_id));
-		return($data->qr_name);
-	}
-
 	public function setNewOrderForQr()
 	{
         $max_order = Qr::find()
@@ -207,17 +163,6 @@ class Qr extends HikeActiveRecord
         } else {
             $this->qr_volgorde = $max_order+1;
         }
-	}
-
-	public function getNumberQrRouteId($route_id)
-	{
-        dd('NIET MEER NODIG??');
-        $data = Qr::find()
-            ->where('event_ID =:event_id AND route_ID =:route_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_id' =>$route_id])
-            ->count();
-
-		return $data;
 	}
 
 	public function lowererOrderNumberExists($qr_id)
