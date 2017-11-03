@@ -8,7 +8,6 @@ use app\models\EventNames;
 use app\models\Qr;
 use app\models\QrCheck;
 use app\models\QrCheckSearch;
-use app\models\Route;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -123,7 +122,9 @@ class QrCheckController extends Controller
             return $this->redirect(['site/overview-players']);
         }
 
-        if (Route::getDayOfRouteId($qr->route_ID) != EventNames::getActiveDayOfHike()){
+        if ($qr->route->day_date != EventNames::getActiveDayOfHike()){
+            if($qr->route->day_date != '0000-00-00' &&
+               EventNames::getActiveDayOfHike() != NULL)
             Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
             return $this->redirect(['site/overview-players']);
         }
@@ -192,34 +193,6 @@ class QrCheckController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-    }
-
-    /**
-    * Displays a particular model.
-    * @param integer $id the ID of the model to be displayed
-    */
-    public function actionViewPlayers()
-    {
-        $event_id = $_GET['event_id'];
-        $group_id = $_GET['group_id'];
-
-        //$day_id = EventNames::model()->getActiveDayOfHike($event_id);
-
-        $where = "event_ID = $event_id AND group_ID = $group_id";
-        $qrCheckDataProvider=new CActiveDataProvider('QrCheck',
-            array(
-            'criteria'=>array(
-                'condition'=>$where,
-                'order'=>'qr_check_ID DESC',
-                ),
-            'pagination'=>array(
-                'pageSize'=>40,
-            ),
-        ));
-
-        return $this->render('viewPlayers',array(
-            'qrCheckDataProvider'=>$qrCheckDataProvider,
-        ));
     }
 
     /**
