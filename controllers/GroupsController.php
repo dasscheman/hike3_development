@@ -205,18 +205,6 @@ class GroupsController extends Controller
         return $this->redirect(['site/overview-organisation']);
     }
 
-	/**
-	 * Lists all models.
-	 */
-	public function actionOverview()
-	{
-        //TODO dit moet anders, maar even kijken of deze functie nog gebruikt wordt.
-//		$dataProvider=new CActiveDataProvider('Groups');
-//		$this->render('index',array(
-//			'dataProvider'=>$dataProvider,
-//		));
-	}
-
     /**
      * Finds the Groups model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
