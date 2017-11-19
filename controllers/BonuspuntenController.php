@@ -27,14 +27,23 @@ class BonuspuntenController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 // We will override the default rule config with the new AccessRule class
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'cancel'],
+                'only' => ['index', 'create', 'update'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'delete', 'create', 'update', 'view'],
-                        'allow' => TRUE,
-                        'matchCallback' => function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['bonuspunten_ID' => Yii::$app->request->get('bonuspunten_ID')]);
-                        }
+                        'allow' =>  true,
+                        'actions' => ['index'],
+                        'roles' =>  ['bonuspuntenIndex'],
+                    ],
+                    [
+                        'allow' =>  true,
+                        'actions' => ['create'],
+                        'roles' =>  ['bonuspuntenCreate'],
+                    ],
+                    [
+                        'allow' =>  true,
+                        'actions' => ['update'],
+
+                        'roles' =>  ['bonuspuntenUpdate'],
                     ],
                     [
                         'allow' => FALSE,  // deny all users
