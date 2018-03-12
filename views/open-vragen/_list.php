@@ -32,7 +32,7 @@ use kartik\widgets\AlertBlock;
                         'options' => [
                             'class' => 'btn btn-xs btn-success',
                             'title' => Yii::t('app', 'Edit question'),
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed('open-vragen', 'update', ['open_vragen_ID' => $model->open_vragen_ID]),
+                            'disabled' => !Yii::$app->user->can('organisatie'),
                         ]
                     ]);
                 ?>

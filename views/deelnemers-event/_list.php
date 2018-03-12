@@ -22,7 +22,7 @@ use yii\bootstrap\Modal;
             'options' => [
                 'class' => 'btn btn-link',
                 'title' => Yii::t('app', 'Edit player'),
-                'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'update', ['deelnemers_ID' => $model->deelnemers_ID]),
+                'disabled' => !Yii::$app->user->can('organisatie'),
             ]
         ]);
     ?>

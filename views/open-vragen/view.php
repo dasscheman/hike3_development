@@ -22,7 +22,7 @@ use yii\widgets\ListView;
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->identity->isActionAllowed('open-vragen', 'create'),
+                 'disabled' => !Yii::$app->user->can('organisatieIntroductie') && !Yii::$app->user->can('organisatieOpstart'),
              ]
          ]);
         ?>

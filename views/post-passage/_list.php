@@ -29,7 +29,7 @@ use prawee\widgets\ButtonAjax;
                 <?php echo Html::encode($model->post->post_name); ?>
             </h3>
             <?php
-            if (Yii::$app->user->identity->isActionAllowed('post-passage', 'update', ['posten_passage_ID' => $model->posten_passage_ID])) {
+            if (Yii::$app->user->can('organisatie')) {
                 echo ButtonAjax::widget([
                    'name' => Yii::t('app', 'Edit station checkin'),
                    'route' => ['/post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID],
@@ -38,7 +38,7 @@ use prawee\widgets\ButtonAjax;
                    'options' => [
                        'class' => 'btn btn-xs btn-success',
                        'title' => Yii::t('app', 'Edit station checkin'),
-                       'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'update', ['posten_passage_ID' => $model->posten_passage_ID]),
+                       'disabled' => !Yii::$app->user->can('organisatie'),
                    ]
                ]);
             }

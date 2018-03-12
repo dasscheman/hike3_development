@@ -27,7 +27,7 @@ use yii\data\ArrayDataProvider;
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create silent station',
-                 'disabled' => !Yii::$app->user->identity->isActionAllowed('qr', 'create'),
+                 'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
              ]
          ]);
         ?>

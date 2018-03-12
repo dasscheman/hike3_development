@@ -40,7 +40,8 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
               ]);
               echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
               Pjax::end();
-              Modal::end(); ?>
+              Modal::end();
+              ?>
 
           <?php echo Html::encode($model->email); ?></br>
           <b>

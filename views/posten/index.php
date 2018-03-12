@@ -57,7 +57,7 @@ $this->title = Yii::t('app', 'Posten');
                      'options'=>[
                          'class'=> 'btn btn-xs btn-primary',
                          'title'=>'Edit',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed('posten', 'update', ['post_ID' => $key]),
+                         'disabled' => !Yii::$app->user->can('organisatie'),
                      ]
                  ]);
             },
@@ -131,18 +131,18 @@ $this->title = Yii::t('app', 'Posten');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'posten',
-                        'moveUpDown',
-                        ['post_ID' => $key],
-                        ['move_action' => 'up', 'date' => $model->date]);
+                    if(Yii::$app->user->can('organisatie') &&
+                        Posten::lowererOrderNumberExists($model->date, $model->post_volgorde)) {
+                        return TRUE;
+                    }
+                    return FALSE;
                  },
                 'down' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'posten',
-                        'moveUpDown',
-                        ['post_ID' => $key],
-                        ['move_action' => 'down', 'date' => $model->date]);
+                    if(Yii::$app->user->can('organisatie') &&
+                        Posten::higherOrderNumberExists($model->date, $model->post_volgorde)) {
+                        return TRUE;
+                    }
+                    return FALSE;
                  }
             ]
         ],
@@ -172,7 +172,7 @@ $this->title = Yii::t('app', 'Posten');
                             'options'=>[
                                 'class' => 'btn btn-success',
                                 'title' => Yii::t('app', 'Create new station'),
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('posten', 'create'),
+                                'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
                             ]
                         ]),
                     ],

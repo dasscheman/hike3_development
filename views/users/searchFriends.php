@@ -18,7 +18,7 @@ $this->title = Yii::t('app', 'Friends');
         'achternaam',
         'organisatie',
         'email',
-        'last_login_time'
+        'last_login_at'
     ];
 
     $bordered = FALSE;

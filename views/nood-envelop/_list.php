@@ -24,7 +24,7 @@ use yii\bootstrap\Modal;
                 'options'=>[
                     'class'=>'btn btn-xs btn-success',
                     'title'=> Yii::t('app', 'Modify hint'),
-                    'disabled' => !Yii::$app->user->identity->isActionAllowed('nood-envelop', 'update', ['nood_envelop_ID' => $model->nood_envelop_ID]),
+                    'disabled' => !Yii::$app->user->can('organisatie'),
                 ]
             ]); ?>
         </p>

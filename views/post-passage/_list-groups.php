@@ -50,11 +50,7 @@ use prawee\widgets\ButtonAjax;
                      'options' => [
                         'class' => 'btn btn-success',
                         'title' => $title,
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'check-station', [
-                            'group_ID' => $model->group_ID,
-                            'post_ID' => $post_id,
-                            'action' => $action
-                        ]),
+                        'disabled' => !Yii::$app->user->can('organisatieGestartTime'),
                      ]
                  ]);
             }
