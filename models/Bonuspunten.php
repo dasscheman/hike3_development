@@ -100,7 +100,7 @@ class Bonuspunten extends HikeActiveRecord
     {
         $db = self::getDb();
         $data = $db->cache(function ($db){
-            return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+            return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
         });
         return $data;
     }
@@ -134,7 +134,7 @@ class Bonuspunten extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
 	/**

@@ -91,7 +91,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -115,7 +115,7 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**
@@ -125,19 +125,6 @@ class NoodEnvelop extends HikeActiveRecord
     {
         return $this->hasMany(OpenNoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
     }
-
-	public function getNoodEnvelopName($envelop_id)
-	{
-
-        dd('DEZE IS depricated');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->nood_envelop_name))
-			{return($data->nood_envelop_name);}
-		else
-			{return;}
-	}
 
     /**
     * Retrieves the score of an post.
@@ -149,45 +136,6 @@ class NoodEnvelop extends HikeActiveRecord
             $data->score : 0;
     }
 
-	public function getCoordinaten($envelop_id)
-	{
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->coordinaat))
-			{return($data->coordinaat);}
-		else
-			{return;}
-	}
-
-	public function getOpmerkingen($envelop_id)
-	{
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->opmerkingen))
-			{return($data->opmerkingen);}
-		else
-			{return;}
-	}
-
-	public function getEventDayOfEnvelop($envelop_id)
-	{
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->route_ID))
-		{
-			$date = Route::model()->getDayOfRouteId($data->route_ID);
-			return $date;
-		}
-		else
-			{return;}
-	}
-
 	public function getRouteIdOfEnvelop($envelop_id)
 	{
 		$data = NoodEnvelop::model()->find('nood_envelop_ID =:envelop_id',
@@ -197,40 +145,6 @@ class NoodEnvelop extends HikeActiveRecord
 		} else {
 			return false;
 		}
-	}
-
-	public function getNoodEnvelopVolgnummer($envelop_id)
-	{
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->nood_envelop_volgorde))
-			{return($data->nood_envelop_volgorde);}
-		else
-			{return('Geen Hint volgnummer beschikbaar.');}
-	}
-
-	public function getNumberNoodEnvelopRouteId($event_id, $route_id)
-	{
-        dd('NIET MEER NODIG??');
-        $criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND route_ID =:route_id';
-		$criteria->params=array(':event_id' => $event_id, ':route_id' =>$route_id);
-
-		return NoodEnvelop::model()->count($criteria);
-	}
-
-	public function getRouteNameOfEnvelopId($envelop_id)
-	{
-        dd('NIET MEER NODIG??');
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $envelop_id";
-		$data = NoodEnvelop::model()->find($criteria);
-		if(isset($data->route_ID))
-			{return(Route::model()->getRouteName($data->route_ID));}
-		else
-			{return('Geen Hint volgnummer beschikbaar.');}
 	}
 
 	public function setNewOrderForNoodEnvelop()
@@ -250,73 +164,6 @@ class NoodEnvelop extends HikeActiveRecord
         } else {
             $this->nood_envelop_volgorde = $max_order+1;
         }
-	}
-
-	public function lowererOrderNumberExists($event_id, $id, $envelop_order, $route_id)
-	{
-        dd('NIET MEER NODIG??');
-                $data = Qr::find($qr_id);
-        $dataNext = Qr::find()
-            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->exist();
-
-		if ($dataNext) {
-			return TRUE;
-        }
-        return FALSE;
-
-
-
-
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID=:route_id AND nood_envelop_volgorde >=:order';
-		$criteria->params=array(':event_id' => $event_id,
-								':id' => $id,
-								':route_id' => $route_id ,
-								':order' => intval($envelop_order));
-
-		if (NoodEnvelop::model()->exists($criteria))
-			return true;
-		else
-			return false;
-	}
-
-	public function higherOrderNumberExists($event_id, $id, $envelop_order, $route_id)
-	{
-        dd('NIET MEER NODIG??');
-                $data = Qr::find($qr_id);
-        $dataNext = Qr::find()
-            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_order])
-            ->exist();
-
-		if ($dataNext) {
-			return TRUE;
-        }
-        return FALSE;
-
-
-
-
-
-
-
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID =:route_id AND nood_envelop_volgorde <=:order';
-		$criteria->params=array(':event_id' => $event_id,
-								':id' => $id,
-								':route_id' => $route_id,
-								':order' => intval($envelop_order));
-
-		if (NoodEnvelop::model()->exists($criteria))
-			return true;
-		else
-			return false;
 	}
 
     /**

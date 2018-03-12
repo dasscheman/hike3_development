@@ -9,6 +9,7 @@ $config = [
         '@kvgrid' => '/vendor/kartik-v',
     ],
     'id' => 'basic',
+    'name' => 'kiwi.run',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
@@ -21,17 +22,33 @@ $config = [
         'app\components\Bootstrap',
     ],
     'modules' => [
+        'user' => [
+            'class' => 'dektrium\user\Module',
+            'modelMap' => [
+                'User' => 'app\models\Users',
+                'LoginForm' => 'app\models\LoginForm',
+            ],
+            'controllerMap' => [
+                'admin' => 'app\controllers\user\AdminController',
+                'registration' => 'app\controllers\user\RegistrationController',
+                'recovery' => 'app\controllers\user\RecoveryController',
+                'security' => 'app\controllers\user\SecurityController',
+            ],
+            'mailer' => [
+                'viewPath' => '@app/mail/user',
+            ],
+            'admins' => ['dasman']
+        ],
+        'rbac' => 'dektrium\rbac\RbacWebModule',
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
-             // enter optional module parameters below - only if you need to
-             // use your own export download action or custom translation
-             // message source
-             // 'downloadAction' => 'gridview/export/download',
-             // 'i18n' => []
-        ],
+         ]
     ],
-    'timeZone' => 'Europe/Berlin', // this is my default
+    'timeZone' => 'Europe/Amsterdam', // this is my default
     'components' => [
+//        'authManager' => [
+//            'class' => 'dektrium\rbac\components\DbManager',
+//        ],
         'i18n' => [
             'translations' => [
                 'app*' => [
@@ -62,9 +79,16 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'user' => [
-            'identityClass' => 'app\models\Users',
-            'enableAutoLogin' => true,
+//        'user' => [
+//            'identityClass' => 'app\models\Users',
+//            'enableAutoLogin' => true,
+//        ],
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@dektrium/user/views' => '@app/views/users'
+                ],
+            ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

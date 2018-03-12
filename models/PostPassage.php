@@ -97,7 +97,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -129,7 +129,7 @@ class PostPassage extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
 	/**
@@ -158,92 +158,6 @@ class PostPassage extends HikeActiveRecord
             self::STATUS_passed => Yii::t('app', 'Passed'),
         ];
     }
-
-	public function postPassageGroupDataProvider($event_id, $group_id)
-	{
-	    $where = "event_ID = $event_id AND group_ID = $group_id";
-
-	    $dataProvider=new CActiveDataProvider('PostPassage',
-		array(
-		    'criteria'=>array(
-			'condition'=>$where,
-			'order'=>'post_ID DESC',
-			),
-		    'pagination'=>array(
-			'pageSize'=>5,
-		    ),
-	    ));
-	    return $dataProvider;
-
-	}
-
-	public function postPassageAllDataProvider($event_id)
-	{
-	    $where = "event_ID = $event_id";
-
-	    $dataProvider=new CActiveDataProvider('PostPassage',
-		array(
-		    'criteria'=>array(
-			'condition'=>$where,
-			'order'=>'binnenkomst DESC',
-			),
-		    'pagination'=>array(
-			'pageSize'=>5,
-		    ),
-	    ));
-	    return $dataProvider;
-
-	}
-
-	/**
-	 * Returns de tijd van de laatste post passage van een groep
-	 * Als groep geen enkele post is gepasserd return = nvt
-	 */
-	public function getLaatstePostPassageTijd($event_id, $group_id)
-	{
-		if(!isset($group_id))
-		{
-			return('Geen groepsgegevens');
-		};
-
-		$criteria=new CDbCriteria;
-		$criteria->select = 'binnenkomst';
-		$criteria->condition = 'event_ID=:event_id AND group_ID=:group_id';
-		$criteria->order =  'binnenkomst DESC';
-		$criteria->params=array(':event_id'=>$event_id,
-					':group_id' => $group_id);
-		$data=PostPassage::find($criteria);
-
-		if(isset($data->binnenkomst))
-			{ return($data->binnenkomst);}
-		else
-			{ return('nvt');}
-	}
-
-	/**
-	 * Returns de post naam van de laatste post passage van een groep
-	 * Als groep geen enkele post is gepasserd return = nvt
-	 */
-	public function getLaatstePostPassageNaam($event_id, $group_id)
-	{
-		if(!isset($group_id))
-		{
-			return('Geen groepsgegevens');
-		};
-
-		$criteria=new CDbCriteria;
-		$criteria->select = 'post_ID';
-		$criteria->condition = 'event_ID=:event_id AND group_ID=:group_id';
-		$criteria->order =  'binnenkomst DESC';
-		$criteria->params=array(':event_id'=>$event_id,
-					':group_id' => $group_id);
-		$data=PostPassage::find($criteria);
-
-		if(isset($data->post_ID))
-			{ return($data->post_ID);}
-		else
-			{ return('nvt');}
-	}
 
 	/**
 	 * Returns de score voor het passeren van de posten voor een groep

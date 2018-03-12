@@ -15,13 +15,12 @@ use yii\filters\AccessControl;
 /**
  * TimeTrailController implements the CRUD actions for TimeTrail model.
  */
-class TimeTrailController extends Controller
-{
+class TimeTrailController extends Controller {
+
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -31,49 +30,26 @@ class TimeTrailController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'status', 'create', 'update', 'delete'],
                 'rules' => [
-                    array(
+                    [
                         'allow' => FALSE,
-                        'roles'=>array('?'),
-                    ),
-                    [
-                        'allow' => TRUE,
-                        'actions' => ['index', 'create'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
-                        },
-                        'roles'=>array('@'),
+                        'roles' => ['?'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions' => ['status'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(
-                                NULL,
-                                NULL,
-                                [
-                                    'group_ID' => Yii::$app->request->get('group_ID')
-                                ]);
-                        },
-                        'roles'=>array('@'),
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'delete'],
+                        'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions' => ['update', 'delete'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(
-                                NULL,
-                                NULL,
-                                ['time_trail_ID' => Yii::$app->request->get('time_trail_ID')]);
-                        },
-                        'roles'=>array('@'),
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['organisatieOpstart', 'organisatieIntroductie'],
                     ],
                     [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
                     ],
-                ],
+                ]
             ]
         ];
     }
@@ -82,8 +58,7 @@ class TimeTrailController extends Controller
      * Lists all TimeTrail models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TimeTrailItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $model = TimeTrail::find()
@@ -91,9 +66,9 @@ class TimeTrailController extends Controller
             ->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'model' => $model,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+                'model' => $model,
         ]);
     }
 
@@ -102,10 +77,9 @@ class TimeTrailController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                'model' => $this->findModel($id),
         ]);
     }
 
@@ -114,8 +88,7 @@ class TimeTrailController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionStatus()
-    {
+    public function actionStatus() {
         $event_id = Yii::$app->user->identity->selected_event_ID;
         $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
         $timeTrailChecks = TimeTrailCheck::find()
@@ -127,7 +100,7 @@ class TimeTrailController extends Controller
             ])
             ->all();
         return $this->render('view', [
-            'models' => $timeTrailChecks,
+                'models' => $timeTrailChecks,
         ]);
     }
 
@@ -136,13 +109,12 @@ class TimeTrailController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new TimeTrail();
 
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
-            if($model->save()) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail.'));
                 return $this->redirect(['time-trail/index']);
             }
@@ -155,8 +127,8 @@ class TimeTrailController extends Controller
         }
 
         return $this->render([
-            '/time-trail/create',
-            'model' => $model
+                '/time-trail/create',
+                'model' => $model
         ]);
     }
 
@@ -166,19 +138,18 @@ class TimeTrailController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($time_trail_ID)
-    {
+    public function actionUpdate($time_trail_ID) {
         $model = $this->findModel($time_trail_ID);
 
 
-         if (Yii::$app->request->post('update') == 'delete') {
-             $exist = TimeTrailItem::find()
+        if (Yii::$app->request->post('update') == 'delete') {
+            $exist = TimeTrailItem::find()
                 ->where('event_ID=:event_id and time_trail_ID=:time_trail_ID')
                 ->addParams(
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':time_trail_ID' => $model->time_trail_ID
-                    ])
+                ])
                 ->exists();
 
             if (!$exist) {
@@ -203,8 +174,8 @@ class TimeTrailController extends Controller
         }
 
         return $this->render([
-            '/time-trail/update',
-            'model' => $model
+                '/time-trail/update',
+                'model' => $model
         ]);
     }
 
@@ -214,8 +185,7 @@ class TimeTrailController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -228,12 +198,16 @@ class TimeTrailController extends Controller
      * @return TimeTrail the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = TimeTrail::findOne($id)) !== null) {
+    protected function findModel($id) {
+        $model = TimeTrail::findOne([
+                'time_trail_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
