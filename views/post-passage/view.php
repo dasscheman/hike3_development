@@ -24,7 +24,7 @@ use yii\helpers\Html;
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->identity->isActionAllowed('post-passage', 'create', ['post_ID' => $model->post_ID]),
+                 'disabled' => !Yii::$app->user->can('organisatie'),
              ]
          ]);
         ?>

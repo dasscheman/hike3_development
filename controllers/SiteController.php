@@ -25,30 +25,35 @@ use yii\data\ActiveDataProvider;
 use app\models\HikeActivityFeed;
 use app\models\ExportImport;
 
-class SiteController extends Controller
-{
-    public function behaviors()
-    {
+class SiteController extends Controller {
+
+    public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'overview', 'overview-players', 'overview-organisation'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['error'],
+                        'allow' => true
+                    ],
+                    [
+                        'actions' => ['logout', 'index', 'overview'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions'=>['overview', 'overview-players', 'overview-organisation', 'cache-flush'],
-                        'allow' => TRUE,
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
-                        }
+                        'allow' => true,
+                        'actions' => ['overview-players'],
+                        'roles' => ['deelnemer'],
                     ],
                     [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
+                        'allow' => true,
+                        'actions' => ['overview-organisation', 'cache-flush'],
+                        'roles' => ['organisatie'],
+                    ],
+                    [
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
                     ],
                 ],
             ],
@@ -61,8 +66,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actions()
-    {
+    public function actions() {
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -74,17 +78,14 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex()
-    {
+    public function actionIndex() {
         if (!Yii::$app->user->isguest) {
             if (Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
                 Yii::$app->user->identity->setSelectedEventID();
             } else {
                 Yii::$app->session->setFlash(
-                    'warning',
-                    Yii::t(
-                        'app',
-                        'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
+                    'warning', Yii::t(
+                        'app', 'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
                         If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
                     )
                 );
@@ -97,7 +98,7 @@ class SiteController extends Controller
                     ->where('event_ID =:event_id and user_ID =:user_id')
                     ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                     ->one();
-                if(!isset($user->rol)) {
+                if (!isset($user->rol)) {
                     return $this->render('/site/index');
                 }
                 if ($user->rol === DeelnemersEvent::ROL_deelnemer && !empty($user->group_ID)) {
@@ -111,8 +112,7 @@ class SiteController extends Controller
         return $this->render('/site/index');
     }
 
-    public function actionOverviewOrganisation()
-    {
+    public function actionOverviewOrganisation() {
         if (!empty(Yii::$app->user->identity->selected_event_ID)) {
             $event_id = Yii::$app->user->identity->selected_event_ID;
             $this->setSiteIndexMessage($event_id);
@@ -147,9 +147,9 @@ class SiteController extends Controller
             $queryCheckQuestions = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and checked=:checked')
                 ->addParams([
-                    'event_id' => Yii::$app->user->identity->selected_event_ID,
-                    'checked' => 0,
-                ]);
+                'event_id' => Yii::$app->user->identity->selected_event_ID,
+                'checked' => 0,
+            ]);
             $dataProviderCheck = new ActiveDataProvider([
                 'query' => $queryCheckQuestions
             ]);
@@ -159,27 +159,26 @@ class SiteController extends Controller
             $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
 
-    		return $this->render('/site/index-organisation', array(
-                'eventModel' => $eventModel,
-    			'organisatieData' => $providerOrganisatie,
-    			'groupsData' => $providerGroups,
-                'groupModel' => $groupModel,
-                'dataProviderCheck' => $dataProviderCheck,
-                'activityFeed' => $feed->getData(),
-                'modelDeelnemer' => new DeelnemersEvent,
-                'importModel'=> new ExportImport,
-    		));
+            return $this->render('/site/index-organisation', array(
+                    'eventModel' => $eventModel,
+                    'organisatieData' => $providerOrganisatie,
+                    'groupsData' => $providerGroups,
+                    'groupModel' => $groupModel,
+                    'dataProviderCheck' => $dataProviderCheck,
+                    'activityFeed' => $feed->getData(),
+                    'modelDeelnemer' => new DeelnemersEvent,
+                    'importModel' => new ExportImport,
+            ));
         }
         return $this->render('/site/index');
-	}
+    }
 
-    public function actionOverviewPlayers()
-    {
+    public function actionOverviewPlayers() {
         if (isset(Yii::$app->user->identity->selected_event_ID)) {
             $event_id = Yii::$app->user->identity->selected_event_ID;
 
             if (NULL !== Yii::$app->request->get('group_ID') &&
-                DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie ) {
+                DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie) {
                 $group_id = Yii::$app->request->get('group_ID');
             } else {
                 $temp = DeelnemersEvent::find()
@@ -187,8 +186,7 @@ class SiteController extends Controller
                     ->where('event_ID =:event_id and user_ID =:user_id')
                     ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                     ->one();
-                    $group_id = $temp->group_ID;
-
+                $group_id = $temp->group_ID;
             }
             $searchQuestionsModel = new OpenVragenSearch();
             $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
@@ -217,72 +215,44 @@ class SiteController extends Controller
             $timeTrailCheckDataLastItem = $searchTimeTrailCheckModel->searchLastItem(Yii::$app->request->queryParams, $group_id);
             $timeTrailCheckData = $searchTimeTrailCheckModel->search(Yii::$app->request->queryParams, $group_id);
 
-            return $this->render('index-players',[
-                'groupModel' => $groupModel,
-                'activityFeed' => $feed->getData(),
-                'questionsData' => $questionsData,
-                'answerData' => $answerData,
-                'openHintsData' => $openHintsData,
-                'closedHintsData' => $closedHintsData,
-                'qrCheckData' => $qrCheckData,
-                'bonusData' => $bonusData,
-                'timeTrailCheckData' => $timeTrailCheckData,
-                'timeTrailCheckDataLastItem' => $timeTrailCheckDataLastItem,
+            return $this->render('index-players', [
+                    'groupModel' => $groupModel,
+                    'activityFeed' => $feed->getData(),
+                    'questionsData' => $questionsData,
+                    'answerData' => $answerData,
+                    'openHintsData' => $openHintsData,
+                    'closedHintsData' => $closedHintsData,
+                    'qrCheckData' => $qrCheckData,
+                    'bonusData' => $bonusData,
+                    'timeTrailCheckData' => $timeTrailCheckData,
+                    'timeTrailCheckDataLastItem' => $timeTrailCheckDataLastItem,
             ]);
         }
         return $this->render('/site/index');
     }
 
-    public function actionLogin()
-    {
-        if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $last_login = $model->previous_login_time;
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Welcome ' . Yii::$app->user->identity->username . '. Your last visit was on ' . $last_login));
-            return $this->goBack();
-        }
-        return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    public function actionContact()
-    {
+    public function actionContact() {
         $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) ) {
-            if($model->contact()) {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->contact()) {
                 Yii::$app->session->setFlash('contactFormSubmitted');
             }
             return $this->refresh();
         }
         return $this->render('contact', [
-            'model' => $model,
+                'model' => $model,
         ]);
     }
 
-    public function actionAbout()
-    {
+    public function actionAbout() {
         return $this->render('about');
     }
 
-    public function actionQuickStart()
-    {
+    public function actionQuickStart() {
         return $this->render('quick-start');
     }
 
-    public function actionLanguage()
-    {
+    public function actionLanguage() {
         $language = Yii::$app->request->get('language');
         // TODO:
         $language = 'nl';
@@ -292,23 +262,22 @@ class SiteController extends Controller
             'name' => 'language',
             'value' => $language,
             'expire' => time() + 60 * 60 * 24 * 30, // 30 days
-            ]);
+        ]);
         Yii::$app->response->cookies->add($languageCookie);
         return $this->render('index');
     }
 
-	/**
-	 * This is the default 'index' action that is invoked
-	 * when an action is not explicitly requested by users.
-	 */
-	public function actionHelp()
-	{
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
+    /**
+     * This is the default 'index' action that is invoked
+     * when an action is not explicitly requested by users.
+     */
+    public function actionHelp() {
+        // renders the view file 'protected/views/site/index.php'
+        // using the default layout 'protected/views/layouts/main.php'
 
-		$this->layout='/layouts/column2';
-		$this->render('help');
-	}
+        $this->layout = '/layouts/column2';
+        $this->render('help');
+    }
 
     protected function setSiteIndexMessage($event_id) {
         $model = EventNames::find()
@@ -316,10 +285,9 @@ class SiteController extends Controller
             ->params([':event_id' => $event_id])
             ->one();
 
-        if ($model->status == EventNames::STATUS_opstart){
+        if ($model->status == EventNames::STATUS_opstart) {
             Yii::$app->session->setFlash('info', Yii::t(
-                'app',
-                'The hike is has status setup.
+                    'app', 'The hike is has status setup.
                     Users cannot see anything of the hike. They can see the
                     different hike elements when the hike has status introduction or started')
             );
@@ -330,12 +298,10 @@ class SiteController extends Controller
             ->params([':event_id' => $model->event_ID])
             ->count();
 
-        if($route < 5) {
+        if ($route < 5) {
             Yii::$app->session->setFlash(
-                'route',
-                Yii::t(
-                    'app',
-                    'You have no or a few route items, click on the menu item
+                'route', Yii::t(
+                    'app', 'You have no or a few route items, click on the menu item
                     \'Organisation/Route Overview\' to create route item,
                     questions, silent stations and hints.')
             );
@@ -345,20 +311,18 @@ class SiteController extends Controller
             ->where('event_ID =:event_id')
             ->params([':event_id' => $model->event_ID])
             ->count();
-        if($station < 4) {
+        if ($station < 4) {
             Yii::$app->session->setFlash(
-                'post',
-                Yii::t(
-                    'app',
-                    'You have no or a few stations, click on the menu item
+                'post', Yii::t(
+                    'app', 'You have no or a few stations, click on the menu item
                     \'Organisation/Stations\' to create stations.')
             );
         }
     }
 
-    public function actionCacheFlush()
-    {
+    public function actionCacheFlush() {
         Yii::$app->cache->flush();
         return $this->redirect(['/site/overview-organisation']);
     }
+
 }

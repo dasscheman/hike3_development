@@ -103,7 +103,7 @@ class NoodEnvelopSearch extends NoodEnvelop
         if($event->active_day == NULL ||
            $event->active_day == '0000-00-00') {
             $query->andWhere(
-                'tbl_route.event_ID =:event_id and (tbl_route.day_date =:day_date OR tbl_route.day_date =:introductie)')
+                'tbl_route.event_ID =:event_id and (ISNULL(tbl_route.day_date) OR tbl_route.day_date =:day_date OR tbl_route.day_date =:introductie)')
                 ->params([
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':day_date' => $event->active_day,

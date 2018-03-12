@@ -21,7 +21,7 @@ use prawee\widgets\ButtonAjax;
              'options'=>[
                  'class'=>'btn btn-success',
                  'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->identity->isActionAllowed('nood-envelop', 'create'),
+                 'disabled' => !Yii::$app->user->can('organisatieIntrodutie') && !Yii::$app->user->can('organisatieOpstart'),
              ]
          ]);
         ?>

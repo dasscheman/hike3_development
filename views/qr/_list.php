@@ -3,11 +3,8 @@ use kartik\widgets\AlertBlock;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use prawee\widgets\ButtonAjax;
-use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 
-
-use dosamigos\qrcode\QrCode;
 /* @var $this GroupsController */
 /* @var $data Groups */
 
@@ -36,7 +33,7 @@ use dosamigos\qrcode\QrCode;
                     'options'=>[
                         'class'=>'btn btn-xs btn-success',
                         'title'=> Yii::t('app', 'Modify silent station'),
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed('qr', 'update', ['qr_ID' => $model->qr_ID]),
+                        'disabled' => !Yii::$app->user->can('organisatie'),
                     ]
                 ]);?>
             </p>

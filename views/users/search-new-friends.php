@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Search for new friends');
         'voornaam',
         'achternaam',
         'organisatie',
-        // 'last_login_time',
+        // 'last_login_at',
         [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{connect}',

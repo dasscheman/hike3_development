@@ -15,10 +15,9 @@ use app\models\HikeActivityFeed;
 /**
  * GroupsController implements the CRUD actions for Groups model.
  */
-class GroupsController extends Controller
-{
-    public function behaviors()
-    {
+class GroupsController extends Controller {
+
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -26,39 +25,25 @@ class GroupsController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'create'],
                 'rules' => [
                     [
-                        'actions' => ['create'],
-                        'allow' => TRUE,
+                        'allow' => true,
+                        'actions' => ['index', 'index-posten'],
+                        'roles' => ['deelnemer',  'organisatie'],
                     ],
-
+                    [
+                        'allow' => true,
+                        'actions' => ['create', 'index-activity', 'update'],
+                        'roles' => ['organisatie'],
+                    ],
+                    [
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
+                    ],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'index-posten', 'update', 'delete', 'view', 'create'],
-                'rules' => [
-                    array(
-                        'allow' => FALSE,  // deny all guest users
-                        'roles' => array('?'),
-                    ),
-                    array(
-                        'allow' => TRUE, // allow admin user to perform 'viewplayers' actions
-                        'actions'=>array('index', 'index-posten', 'update', 'delete', 'view', 'create'),
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['group_ID' => Yii::$app->request->get('group_ID')]);
-                        }
-                    ),
-                    [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
-                    ],
-                ],
-            ]
         ];
     }
 
@@ -66,14 +51,13 @@ class GroupsController extends Controller
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new GroupsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -81,11 +65,10 @@ class GroupsController extends Controller
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndexActivity()
-    {
+    public function actionIndexActivity() {
         $feed = new HikeActivityFeed;
         return $this->render('index-activity', [
-            'activityFeed' => $feed->getLastGroupsActivity(),
+                'activityFeed' => $feed->getLastGroupsActivity(),
         ]);
     }
 
@@ -93,26 +76,13 @@ class GroupsController extends Controller
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndexPosten()
-    {
+    public function actionIndexPosten() {
         $searchModel = new GroupsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index-posten', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Groups model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -121,13 +91,12 @@ class GroupsController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new Groups();
 
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('_form', [
-                'model' => $model,
+                    'model' => $model,
             ]);
         }
 
@@ -152,16 +121,14 @@ class GroupsController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($group_ID)
-    {
+    public function actionUpdate($group_ID) {
         $model = $this->findModel($group_ID);
         if (!$model->load(Yii::$app->request->post())) {
             foreach ($model->deelnemersEvents as $item) {
                 $model->users_temp[] = $item->user_ID;
-
             }
             return $this->render('update', [
-                'model' => $model,
+                    'model' => $model,
             ]);
         }
 
@@ -177,8 +144,7 @@ class GroupsController extends Controller
                 foreach ($groups_leden as $player) {
                     try {
                         $player->delete();
-                    }
-                    catch(\yii\db\IntegrityException $e) {
+                    } catch (\yii\db\IntegrityException $e) {
                         throw new \yii\web\ForbiddenHttpException('Could not delete this player.');
                     }
                 }
@@ -187,9 +153,8 @@ class GroupsController extends Controller
 
         if (Yii::$app->request->post('action') == 'delete') {
             try {
-                 $model->delete();
-            }
-            catch(\yii\db\IntegrityException $e) {
+                $model->delete();
+            } catch (\yii\db\IntegrityException $e) {
                 throw new \yii\web\ForbiddenHttpException('Could not delete this group.');
             }
             Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {group} from the hike', ['group' => $model->group_name]));
@@ -212,12 +177,16 @@ class GroupsController extends Controller
      * @return Groups the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = Groups::findOne($id)) !== null) {
+    protected function findModel($id) {
+        $model = Groups::findOne([
+                'groups_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

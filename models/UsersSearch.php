@@ -18,30 +18,30 @@ class UsersSearch extends Users
     public function rules()
     {
         return [
-            [['user_ID', 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
+            [['id', 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['username', 'voornaam', 'achternaam', 'organisatie', 'email',
-                'password', 'macadres', 'birthdate', 'last_login_time',
+                'password', 'macadres', 'birthdate', 'last_login_at',
                 'create_time', 'update_time', 'authKey', 'accessToken', 'search_friends'], 'safe'],
             [
                 [
-                    'user_ID', 'username', 'voornaam', 'achternaam', 'organisatie',
-                    'email', 'password', 'macadres', 'birthdate', 'last_login_time',
+                    'id', 'username', 'voornaam', 'achternaam', 'organisatie',
+                    'email', 'password', 'macadres', 'birthdate', 'last_login_at',
                     'create_time', 'create_user_ID', 'update_time', 'update_user_ID'
                 ],
                 'safe', 'on'=>'search'
             ],
             [
                 [
-                    'user_ID', 'username', 'voornaam', 'achternaam', 'organisatie',
-                    'email', 'password', 'macadres', 'birthdate', 'last_login_time',
+                    'id', 'username', 'voornaam', 'achternaam', 'organisatie',
+                    'email', 'password', 'macadres', 'birthdate', 'last_login_at',
                     'create_time', 'create_user_ID', 'update_time', 'update_user_ID'
                 ],
                 'safe', 'on'=>'searchPending'
             ],
             [
                 [
-                    'user_ID', 'username', 'voornaam', 'achternaam', 'organisatie',
-                    'email', 'password', 'macadres', 'birthdate', 'last_login_time',
+                    'id', 'username', 'voornaam', 'achternaam', 'organisatie',
+                    'email', 'password', 'macadres', 'birthdate', 'last_login_at',
                     'create_time', 'create_user_ID', 'update_time', 'update_user_ID'
                 ],
                 'safe', 'on'=>'searchFriends'
@@ -69,12 +69,12 @@ class UsersSearch extends Users
     {
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
-                        ->where('user_ID=:user_id')
+                        ->where('id=:user_id')
                         ->addParams([':user_id' => Yii::$app->user->id]);
 
         $query = Users::find();
-        $query->where(['not in', 'tbl_users.user_ID', $queryFriendList])
-              ->andwhere('tbl_users.user_ID<>:user_id')
+        $query->where(['not in', 'user.id', $queryFriendList])
+              ->andwhere('user.id<>:user_id')
               ->addParams([':user_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
@@ -112,7 +112,7 @@ class UsersSearch extends Users
                         ->where('user_ID=:user_id')
                         ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
                         ->addParams([':user_id' => Yii::$app->user->id]);
-        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
+        $query->where(['in', 'user.id', $queryFriendList])
               ->addParams([':user_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
@@ -129,7 +129,7 @@ class UsersSearch extends Users
 
         $query->andFilterWhere([
             'birthdate' => $this->birthdate,
-            'last_login_time' => $this->last_login_time,
+            'last_login_at' => $this->last_login_at,
             'create_time' => $this->create_time,
         ]);
 
@@ -150,8 +150,8 @@ class UsersSearch extends Users
                         ->where('user_ID=:user_id')
                         ->addParams([':user_id' => Yii::$app->user->id])
                         ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
-        $query->where(['in', 'tbl_users.user_ID', $queryFriendList])
-              ->andwhere('tbl_users.user_ID<>:user_id')
+        $query->where(['in', 'user.id', $queryFriendList])
+              ->andwhere('usser.id<>:user_id')
               ->addParams([':user_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
@@ -168,7 +168,7 @@ class UsersSearch extends Users
 
         $query->andFilterWhere([
             'birthdate' => $this->birthdate,
-            'last_login_time' => $this->last_login_time,
+            'last_login_at' => $this->last_login_at,
             'create_time' => $this->create_time,
         ]);
 

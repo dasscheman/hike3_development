@@ -90,7 +90,7 @@ class Qr extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -114,7 +114,7 @@ class Qr extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**

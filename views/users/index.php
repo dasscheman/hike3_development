@@ -25,7 +25,7 @@ $this->title = Yii::t('app', 'Search for new friends');
             'organisatie',
             'email',
              'birthdate',
-            'last_login_time',
+            'last_login_at',
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{connect}',

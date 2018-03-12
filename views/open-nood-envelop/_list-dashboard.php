@@ -33,7 +33,7 @@ use app\models\DeelnemersEvent;
             'options' => [
                 'class' => 'btn btn-xs btn-success',
                 'title' => Yii::t('app', 'Open Hint'),
-                'disabled' => !Yii::$app->user->identity->isActionAllowed('open-nood-envelop', 'open', ['nood_envelop_ID'=>$model->nood_envelop_ID, 'group_ID' => $group_ID]),
+                'disabled' => !Yii::$app->user->can('deelnemerIntroductie') && !Yii::$app->user->can('deelnemerGestartTime')
             ]
         ]);
     }

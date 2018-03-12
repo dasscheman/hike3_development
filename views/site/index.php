@@ -22,7 +22,7 @@ $this->title = 'Kiwi.run';
             <?php
             echo Html::a(
                     Yii::t('app', 'Create new kiwi.run account'),
-                    ['/users/create'],
+                    ['/user/registration/register'],
                     ['class' => 'btn btn-xl btn-success']
                 );?>
         </p>
@@ -30,14 +30,14 @@ $this->title = 'Kiwi.run';
             <?php
             echo Html::a(
                     Yii::t('app', 'Or login if you have an account'),
-                    ['/site/login']
+                    ['/user/security/login']
                 );?>
         </p>
         <p>
             <?php
             echo Html::a(
                 Yii::t('app', 'Forgot password'),
-                ['/users/resend-password-user']
+                ['/user/recovery/request']
             );?>
         </p>
     </div>
