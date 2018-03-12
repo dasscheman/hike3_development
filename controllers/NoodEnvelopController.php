@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\NoodEnvelop;
+use app\models\EventNames;
 use app\models\NoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

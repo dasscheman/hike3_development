@@ -42,7 +42,7 @@ $config = [
         'rbac' => 'dektrium\rbac\RbacWebModule',
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
-         ]
+        ],
     ],
     'timeZone' => 'Europe/Amsterdam', // this is my default
     'components' => [
@@ -61,11 +61,6 @@ $config = [
                     ],
                     //'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation']
                 ],
-//                'kvgrid' => [
-//                    'class' => 'yii\i18n\PhpMessageSource',
-//                    'basePath' => '@kvgrid/yii2-grid/messages',
-//                    'forceTranslation' => true
-//                ],
             ],
         ],
         'formatter' => [
@@ -79,10 +74,6 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-//        'user' => [
-//            'identityClass' => 'app\models\Users',
-//            'enableAutoLogin' => true,
-//        ],
         'view' => [
             'theme' => [
                 'pathMap' => [

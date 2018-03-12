@@ -282,56 +282,6 @@ class PostPassage extends HikeActiveRecord
 		return $totalTime;
 	}
 
-	public function isFirstPostOfDayForGroup($event_id, $group_id)
-	{
-        $dataEvent = EventNames::find()
-            ->where('event_ID = :event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
-            ->one();
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
-		$criteria->order = "post_volgorde DESC";
-		$dataPosten = Posten::findAll($criteria);
-
-    	foreach($dataPosten as $obj)
-        {
-            $criteria = new CDbCriteria();
-			$criteria->condition = 'event_ID =:event_id AND post_ID =:post_id AND group_ID =:group_id';
-			$criteria->params=array(':event_id' => $event_id, ':post_id' =>$obj->post_ID, ':group_id' =>$group_id);
-			$dataPostenPassage = PostPassage::find($criteria);
-
-			if (isset($dataPostenPassage->posten_passage_ID)) {
-				return false;
-			}
-        }
-		return true;
-	}
-
-	public function notAllPostsOfDayPassedByGroup($event_id, $group_id)
-	{
-		$date = EventNames::getActiveDayOfHike($event_id);
-
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'event_ID =:event_id AND date =:date';
-		$criteria->params=array(':event_id' => $event_id, ':date' =>$date);
-		$criteria->order = "post_volgorde DESC";
-		$dataPosten = Posten::findAll($criteria);
-
-    	foreach($dataPosten as $obj)
-        {
-            $criteria = new CDbCriteria();
-			$criteria->condition = 'event_ID =:event_id AND post_ID =:post_id AND group_ID =:group_id';
-			$criteria->params=array(':event_id' => $event_id, ':post_id' =>$obj->post_ID, ':group_id' =>$group_id);
-			$dataPostenPassage = PostPassage::find($criteria);
-			if (!isset($dataPostenPassage->posten_passage_ID)) {
-				return true;
-			}
-        }
-		return false;
-	}
-
     public function isGroupStarted($group_id, $active_day)
     {
         $start_post_id = Posten::getStartPost($active_day);

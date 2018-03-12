@@ -8,7 +8,6 @@ use app\models\EventNames;
 use app\models\Qr;
 use app\models\QrCheck;
 use app\models\QrCheckSearch;
-use app\models\Route;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -93,7 +92,9 @@ class QrCheckController extends Controller {
             return $this->redirect(['site/overview-players']);
         }
 
-        if (Route::getDayOfRouteId($qr->route_ID) != EventNames::getActiveDayOfHike()) {
+        if ($qr->route->day_date != EventNames::getActiveDayOfHike()){
+            if($qr->route->day_date != '0000-00-00' &&
+               EventNames::getActiveDayOfHike() != NULL)
             Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
             return $this->redirect(['site/overview-players']);
         }
