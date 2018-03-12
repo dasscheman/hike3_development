@@ -5,12 +5,13 @@ namespace app\rbac;
 use Yii;
 use yii\rbac\Rule;
 use app\models\DeelnemersEvent;
+use app\models\PostPassage;
 use app\models\EventNames;
 
 /**
  * Checks if authorID matches user passed via params
  */
-class BonuspuntenUpdateRule extends Rule
+class DeelnemerGestartTimeRule extends Rule
 {
     /**
      * @param string|int $user the user ID.
@@ -20,8 +21,9 @@ class BonuspuntenUpdateRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->deelnemersEventsByUserID->event->status >= EventNames::STATUS_introductie and
-            Yii::$app->user->identity->deelnemersEventsByUserID->rol == DeelnemersEvent::ROL_organisatie) {
+        if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
+            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer &&
+            PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->identity->getGroupUserForEvent())) {
             return TRUE;
         }
 

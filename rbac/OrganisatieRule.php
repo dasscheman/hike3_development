@@ -9,7 +9,7 @@ use app\models\DeelnemersEvent;
 /**
  * Checks if authorID matches user passed via params
  */
-class DeelnemersEventUpdateRule extends Rule
+class OrganisatieRule extends Rule
 {
     /**
      * @param string|int $user the user ID.
@@ -19,7 +19,7 @@ class DeelnemersEventUpdateRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->deelnemersEventsByUserID->rol == DeelnemersEvent::ROL_organisatie) {
+        if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }
 

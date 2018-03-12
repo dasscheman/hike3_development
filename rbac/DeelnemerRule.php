@@ -5,12 +5,11 @@ namespace app\rbac;
 use Yii;
 use yii\rbac\Rule;
 use app\models\DeelnemersEvent;
-use app\models\EventNames;
 
 /**
  * Checks if authorID matches user passed via params
  */
-class BonuspuntenCreateRule extends Rule
+class DeelnemerRule extends Rule
 {
     /**
      * @param string|int $user the user ID.
@@ -20,10 +19,10 @@ class BonuspuntenCreateRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->deelnemersEventsByUserID->event->status >= EventNames::STATUS_introductie and
-            Yii::$app->user->identity->deelnemersEventsByUserID->rol == DeelnemersEvent::ROL_organisatie) {
+        if (Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
+
         return FALSE;
     }
 }
