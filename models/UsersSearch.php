@@ -69,7 +69,7 @@ class UsersSearch extends Users
     {
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
-                        ->where('id=:user_id')
+                        ->where('user_ID=:user_id')
                         ->addParams([':user_id' => Yii::$app->user->id]);
 
         $query = Users::find();

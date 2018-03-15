@@ -36,8 +36,8 @@ class PostenController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'moveUpDown'],
-                        'roles' => ['organiastie'],
+                        'actions' => ['index', 'update', 'move-up-down', 'lists-posts'],
+                        'roles' => ['organisatie'],
                     ],
                     [
                         'allow' => true,
@@ -156,7 +156,7 @@ class PostenController extends Controller {
      */
     protected function findModel($id) {
         $model = Posten::findOne([
-                'posten_ID' => $id,
+                'post_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {

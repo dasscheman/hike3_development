@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use kartik\mpdf\Pdf;
 use dosamigos\qrcode\QrCode;
 use yii\filters\AccessControl;
+use yii\web\Cookie;
 
 /**
  * TimeTrailItemController implements the CRUD actions for TimeTrailItem model.
@@ -38,17 +39,12 @@ class TimeTrailItemController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['moveUpDown'],
-                        'roles' => ['TimeTrailItemMoveUpDown'],
-                    ],
-                    [
-                        'allow' => true,
                         'actions' => ['create'],
                         'roles' => ['organisatieOpstart', 'organisatieIntroductie'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['report', 'qrcode', 'delete', 'update'],
+                        'actions' => ['report', 'qrcode', 'delete', 'update', 'move-up-down'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -97,12 +93,14 @@ class TimeTrailItemController extends Controller {
             $model->setNewOrderForTimeTrailItem();
             $model->setUniqueCodeForTimeTrailItem();
             if ($model->save()) {
+                $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail item.'));
                 return $this->redirect(['time-trail/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->time_trail_ID = Yii::$app->request->get('time_trail_ID');
+            $this->setCookieIndexTab($model->time_trail_ID);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -191,7 +189,8 @@ class TimeTrailItemController extends Controller {
     public function actionQrcode($code) {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
-        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=time-trail-check/create&event_id=" . $event_id . "&code=" . $code;
+        $link = Url::to(['time-trail-check/create', 'event_id' => $event_id, 'code' => $code], true);
+//        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=time-trail-check/create&event_id=" . $event_id . "&code=" . $code;
         return QrCode::jpg(
                 $link, Yii::$app->params['timetrail_code_path'] . $code . '.jpg', 1, 3, 1, TRUE);
     }
@@ -313,10 +312,22 @@ class TimeTrailItemController extends Controller {
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
+            $this->setCookieIndexTab($model->time_trail_ID);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function setCookieIndexTab($date) {
+        $cookies = Yii::$app->getResponse()->getCookies();
+        $cookies->remove('time_trail_tab');
+        $cookie = new Cookie([
+            'name' => 'time_trail_tab',
+            'value' => $date,
+            'expire' => time() + 86400 * 365,
+        ]);
+        $cookies->add($cookie);
     }
 
 }

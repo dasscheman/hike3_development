@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use app\models\NoodEnvelop;
-use app\models\EventNames;
 use app\models\NoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -35,7 +34,7 @@ class NoodEnvelopController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['index'],
-                        'roles' => ['deelnemer'],
+                        'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
                         'allow' => true,

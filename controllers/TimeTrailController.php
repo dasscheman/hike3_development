@@ -11,6 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\DeelnemersEvent;
 use yii\filters\AccessControl;
+use yii\web\Cookie;
 
 /**
  * TimeTrailController implements the CRUD actions for TimeTrail model.
@@ -44,6 +45,11 @@ class TimeTrailController extends Controller {
                         'allow' => true,
                         'actions' => ['create'],
                         'roles' => ['organisatieOpstart', 'organisatieIntroductie'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['status'],
+                        'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
                         'allow' => FALSE, // deny all users
@@ -115,6 +121,7 @@ class TimeTrailController extends Controller {
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail.'));
                 return $this->redirect(['time-trail/index']);
             }
@@ -141,7 +148,7 @@ class TimeTrailController extends Controller {
     public function actionUpdate($time_trail_ID) {
         $model = $this->findModel($time_trail_ID);
 
-
+        $this->setCookieIndexTab($time_trail_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = TimeTrailItem::find()
                 ->where('event_ID=:event_id and time_trail_ID=:time_trail_ID')
@@ -204,10 +211,22 @@ class TimeTrailController extends Controller {
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
+            $this->setCookieIndexTab($model->time_trail_ID);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function setCookieIndexTab($date) {
+        $cookies = Yii::$app->getResponse()->getCookies();
+        $cookies->remove('time_trail_tab');
+        $cookie = new Cookie([
+            'name' => 'time_trail_tab',
+            'value' => $date,
+            'expire' => time() + 86400 * 365,
+        ]);
+        $cookies->add($cookie);
     }
 
 }

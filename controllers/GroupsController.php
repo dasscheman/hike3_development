@@ -31,7 +31,7 @@ class GroupsController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['index', 'index-posten'],
-                        'roles' => ['deelnemer',  'organisatie'],
+                        'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
                         'allow' => true,
@@ -179,7 +179,7 @@ class GroupsController extends Controller {
      */
     protected function findModel($id) {
         $model = Groups::findOne([
-                'groups_ID' => $id,
+                'group_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {

@@ -41,12 +41,12 @@ class EventNamesController extends Controller {
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['upload', 'delete', 'change-status'],
+                        'actions' => ['upload', 'delete', 'change-status', 'change-settings'],
                         'roles' => ['organisatie'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['setMaxTime', 'change-settings', 'change-day'],
+                        'actions' => ['setMaxTime', 'change-day'],
                         'roles' => ['organisatieGestart'],
                     ],
                     [
@@ -421,10 +421,22 @@ class EventNamesController extends Controller {
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
         if (NULL !== Yii::$app->request->get('event_ID')) {
-            Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
-            Yii::$app->user->identity->save();
-            Yii::$app->cache->flush();
-            return $this->redirect(['/site/index']);
+            $modelDeelnemersEvent = DeelnemersEvent::find()
+                ->where([
+                    'event_ID' => Yii::$app->request->get('event_ID'),
+                    'user_ID' => Yii::$app->user->identity->id
+                ])
+                ->one();
+
+            if(isset($modelDeelnemersEvent->rol) &&
+                $modelDeelnemersEvent->rol >= 1 ) {
+                Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
+                Yii::$app->user->identity->save();
+                Yii::$app->cache->flush();
+                return $this->redirect(['/site/index']);
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Computer says no.'));
+           }
         }
 
         return $this->render('select-hike', [

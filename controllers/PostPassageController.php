@@ -151,7 +151,7 @@ class PostPassageController extends Controller {
      */
     protected function findModel($id) {
         $model = PostPassage::findOne([
-                'post_passage_ID' => $id,
+                'posten_passage_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {

@@ -12,6 +12,7 @@ use yii\filters\AccessControl;
 use app\models\QrCheck;
 use kartik\mpdf\Pdf;
 use dosamigos\qrcode\QrCode;
+use yii\helpers\Url;
 
 /**
  * QrController implements the CRUD actions for Qr model.
@@ -172,7 +173,8 @@ class QrController extends Controller {
     public function actionQrcode($qr_code) {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
-        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=qr-check/create&event_id=" . $event_id . "&qr_code=" . $qr_code;
+        $link = Url::to(['qr-check/create', 'event_id' => $event_id, 'qr_code' => $qr_code], true);
+//        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=qr-check/create&event_id=" . $event_id . "&qr_code=" . $qr_code;
         return QrCode::jpg(
                 $link, Yii::$app->params['qr_code_path'] . $qr_code . '.jpg', 1, 3, 1, TRUE);
     }

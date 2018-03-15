@@ -32,7 +32,7 @@ class DeelnemersEventController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['create', 'update'],
-                        'roles' => ['organistie'],
+                        'roles' => ['organisatie'],
                     ],
                     [
                         'allow' => FALSE, // deny all users

@@ -129,7 +129,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         'toggleButton' => [
                             'label' => Yii::t('app', 'Add runner group to hike'),
                             'class' => 'btn btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->can('deelnemerOrganisatie'),
+                            'disabled' => !Yii::$app->user->can('organisatie'),
                         ],
                     ]
                 );
@@ -293,7 +293,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Change settings hike'),
                                 'id' => 'modalChangeSettingsButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatieStart'),
+                                'disabled' => !Yii::$app->user->can('organisatieOpstart'),
                             ],
                         ]);
                         ?>
@@ -312,7 +312,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Change max time hike'),
                                 'id' => 'modalChangeMaxTimeButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatieStart'),
+                                'disabled' => !Yii::$app->user->can('organisatieGestart'),
                             ],
                         ]);
                         echo $this->render('/event-names/update', [
@@ -329,7 +329,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'bonus'),
                                 'id' => 'modalAddBonusButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatieIntroductieStart'),
+                                'disabled' => !Yii::$app->user->can('organisatie'),
                             ],
                         ]);
                         echo $this->render('/bonuspunten/create', [

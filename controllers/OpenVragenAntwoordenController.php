@@ -31,12 +31,12 @@ class OpenVragenAntwoordenController extends Controller {
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index',  'update-organisatie'],
                         'roles' => ['organisatie'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['antwoordGoed',  'antwoordFout'],
+                        'actions' => ['antwoord-goed',  'antwoord-fout'],
                         'roles' => ['organisatieIntroductie', 'organisatieGestart'],
                     ],
                     [

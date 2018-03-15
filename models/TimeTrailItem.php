@@ -50,10 +50,10 @@ class TimeTrailItem extends HikeActiveRecord
             [['time_trail_ID', 'max_time', 'create_time', 'update_time'], 'safe'],
             [['time_trail_item_name', 'code', 'instruction'], 'string', 'max' => 255],
             [['code', 'event_ID'], 'unique', 'targetAttribute' => ['code', 'event_ID'], 'message' => 'The combination of Trail Item Code and Event  ID has already been taken.'],
-            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'user_ID']],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
             [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
             [['time_trail_ID'], 'exist', 'skipOnError' => true, 'targetClass' => TimeTrail::className(), 'targetAttribute' => ['time_trail_ID' => 'time_trail_ID']],
-            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'user_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
         ];
     }
 

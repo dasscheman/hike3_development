@@ -6,7 +6,6 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\EventNames;
 use app\models\BonuspuntenSearch;
@@ -44,7 +43,7 @@ class SiteController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['overview-players'],
-                        'roles' => ['deelnemer'],
+                        'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
                         'allow' => true,

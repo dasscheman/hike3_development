@@ -187,7 +187,7 @@ $this->title = Yii::t('app', 'Time Trails');
     foreach ($model as $key => $item) {
         $dataArray[$count]=array(
 		    'label' =>$item->time_trail_name,
-            'active' => $item->time_trail_ID === Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
+            'active' => $item->time_trail_ID == Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $item->time_trail_ID, //'kv-grid-demo',
                 'dataProvider' => $searchModel->search(['TimeTrailItemSearch' => ['time_trail_ID' => $item->time_trail_ID]]),

@@ -52,7 +52,6 @@ $this->title = Yii::t('app', 'Overview passed stations and bonuspoints');
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
             'allowBatchToggle' => FALSE,
-//            'expandIcon' => 'group_name',
             'expandTitle' => Yii::t('app', 'Open view users'),
             'collapseTitle' => Yii::t('app', 'Close view users'),
         ],

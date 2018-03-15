@@ -65,6 +65,12 @@ class RegistrationController extends Controller {
         }
 
         if ($user->attemptConfirmation($code)) {
+            // the following three lines were added:
+            $auth = \Yii::$app->authManager;
+            $authorRole = $auth->getRole('gebruiker');
+            $auth->assign($authorRole, $user->getId());
+
+
             return $this->redirect(['/user/security/login']);
         }
 

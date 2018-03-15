@@ -49,12 +49,12 @@ class Bonuspunten extends HikeActiveRecord
 		return [
 			[['event_ID', 'group_ID', 'omschrijving',], 'required'],
 			[['event_ID', 'post_ID', 'group_ID', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
-			[['event_ID', 'post_ID', 'group_ID', 'score','create_time', 'update_time', 'date', 'create_time', 'update_time'], 'safe'],
+			[['event_ID', 'post_ID', 'group_ID', 'score','create_time', 'update_time', 'date', 'create_time', 'update_time', 'omschrijving'], 'safe'],
 			[['omschrijving'], 'string', 'max' => 255],
 			[
-			    ['omschrijving', 'group_ID', 'event_ID'],
+			    ['group_ID', 'event_ID', 'omschrijving'],
                 'unique',
-                'targetAttribute' => ['omschrijving', 'group_ID', 'event_ID'],
+                'targetAttribute' => ['group_ID', 'event_ID', 'omschrijving'],
                 'message' => Yii::t('app', 'These points are already assigned to this group.')
 			]
 		];

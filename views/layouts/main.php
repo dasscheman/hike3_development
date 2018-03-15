@@ -12,7 +12,6 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
-use app\models\DeelnemersEvent;
 
 AppAsset::register($this);
 ?>
@@ -87,17 +86,17 @@ AppAsset::register($this);
                 'items' => [
                     [
                         'label' => Yii::t('app','Overview groups scores'),
-                        'url' => ['groups/index'],
+                        'url' => ['/groups/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                     [
                         'label'=> Yii::t('app','Passed Stations & bonuspoints'),
-                        'url'=>['groups/index-posten'],
+                        'url'=>['/groups/index-posten'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                     [
                         'label'=> Yii::t('app','Search hints'),
-                        'url'=>['nood-envelop/index'],
+                        'url'=>['/nood-envelop/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                 ],
@@ -117,7 +116,7 @@ AppAsset::register($this);
                     ],
                     [
                         'label'=> Yii::t('app','Activity groups'),
-                        'url'=>['groups/index-activity'],
+                        'url'=>['/groups/index-activity'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
@@ -132,17 +131,17 @@ AppAsset::register($this);
                     ],
                     [
                         'label'=> Yii::t('app','Answers overview'),
-                        'url'=> ['open-vragen-antwoorden/index'],
+                        'url'=> ['/open-vragen-antwoorden/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Bonus Points overview'),
-                        'url'=>['bonuspunten/index'],
+                        'url'=>['/bonuspunten/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Time Trails overview'),
-                        'url'=>['time-trail/index'],
+                        'url'=>['/time-trail/index'],
                         'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                 ]

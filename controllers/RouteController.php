@@ -37,7 +37,7 @@ class RouteController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update'],
+                        'actions' => ['index', 'move-up-down', 'update'],
                         'roles' => ['organisatie'],
                     ],
                     [
