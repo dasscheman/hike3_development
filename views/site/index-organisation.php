@@ -362,7 +362,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Add organizer to hike'),
                                 'id' => 'modalAddOrganisationButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organistie'),
+                                'disabled' => !Yii::$app->user->can('organisatie'),
                             ],
                         ]
                     );
