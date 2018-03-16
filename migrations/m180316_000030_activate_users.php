@@ -7,7 +7,7 @@ use app\components\GeneralFunctions;
 /**
  * Class m171104_143306_update_rbac_data
  */
-class m180316_000030_assign_role_to_users extends Migration {
+class m180316_000030_activate_users extends Migration {
 
     /**
      * @inheritdoc
