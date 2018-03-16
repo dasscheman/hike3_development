@@ -16,7 +16,8 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
     public function safeUp()
     {
         $events = EventNames::find()
-            ->where(['active_day' => '0000-00-00']);
+            ->where(['active_day' => '0000-00-00'])
+            ->all();
 
         foreach ($events as $event) {
             $event->active_day = NULL;
