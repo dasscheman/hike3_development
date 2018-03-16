@@ -32,6 +32,10 @@ class m171130_143306_migrate_user_table extends Migration
                 $update_time = strtotime($user['update_time']);
             }
 
+            if($user['birthdate'] === '0000-00-00') {
+               $user['birthdate'] = NULL ;
+            }
+
             $this->insert('user', [
                 'id' => $user['user_ID'],
                 'username' => $user['username'],
