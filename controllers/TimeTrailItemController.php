@@ -14,6 +14,7 @@ use kartik\mpdf\Pdf;
 use dosamigos\qrcode\QrCode;
 use yii\filters\AccessControl;
 use yii\web\Cookie;
+use yii\helpers\Url;
 
 /**
  * TimeTrailItemController implements the CRUD actions for TimeTrailItem model.
