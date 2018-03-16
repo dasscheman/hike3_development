@@ -6,6 +6,7 @@ use Yii;
 use yii\rbac\Rule;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use app\models\PostPassage;
 
 /**
  * Checks if authorID matches user passed via params
