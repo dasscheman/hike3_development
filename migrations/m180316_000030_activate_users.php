@@ -19,7 +19,7 @@ class m180316_000030_activate_users extends Migration {
             ->all();
 
         foreach ($users as $user) {
-            $user->password_hash = password_hash(GeneralFunctions::randomString(8));
+            $user->password_hash = password_hash(GeneralFunctions::randomString(8), PASSWORD_DEFAULT);
             $user->confirmed_at = $user->created_at;
             $user->save();
         }
