@@ -45,7 +45,7 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
         }
 
         $postPassages = PostPassage::find()
-            ->where(['binnenkomst' => '0000-00-00'])
+            ->where(['binnenkomst' => '0000-00-00 00:00:00'])
             ->all();
 
         foreach ($postPassages as $postPassage) {
@@ -54,7 +54,7 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
         }
 
         $postPassages = PostPassage::find()
-            ->where(['vertrek' => '0000-00-00'])
+            ->where(['vertrek' => '0000-00-00 00:00:00'])
             ->all();
 
         foreach ($postPassages as $postPassage) {
