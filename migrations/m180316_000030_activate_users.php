@@ -3,6 +3,7 @@
 //use Yii;
 use yii\db\Migration;
 use app\components\GeneralFunctions;
+use app\models\Users;
 
 /**
  * Class m171104_143306_update_rbac_data
@@ -13,7 +14,7 @@ class m180316_000030_activate_users extends Migration {
      * @inheritdoc
      */
     public function safeUp() {
-        $users = User::find()
+        $users = Users::find()
             ->where('id != 2')
             ->all();
 
