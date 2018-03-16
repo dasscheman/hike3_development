@@ -15,7 +15,8 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
      */
     public function safeUp()
     {
-        $events = Yii::$app->db->createCommand("SELECT * FROM tbl_event_names WHERE active_day='0000-00-00'")->queryAll();
+        $events = EventNames::find()
+            ->where(['active_day' => '0000-00-00']);
 
         foreach ($events as $event) {
             $event->active_day = NULL;
