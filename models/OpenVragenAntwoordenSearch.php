@@ -81,8 +81,8 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         ];
         $dataProvider->sort->attributes['username'] =
         [
-            'asc' => ['tbl_users.username' => SORT_ASC],
-            'desc' => ['tbl_users.username' => SORT_DESC],
+            'asc' => ['user.username' => SORT_ASC],
+            'desc' => ['user.username' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['route_name'] =
         [

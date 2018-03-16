@@ -37,7 +37,7 @@ use kartik\widgets\Select2;
                    'label' => Yii::t('app', 'Edit'),
                    'id' => 'modalAddOrganisationButton',
                    'class' => 'btn btn-xs btn-link',
-                   'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'update', ['group_ID' => $model->group_ID]),
+                   'disabled' => !Yii::$app->user->can('organisatie'),
                ],
            ]
         );

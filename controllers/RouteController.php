@@ -18,10 +18,9 @@ use yii\web\Cookie;
 /**
  * RouteController implements the CRUD actions for Route model.
  */
-class RouteController extends Controller
-{
-    public function behaviors()
-    {
+class RouteController extends Controller {
+
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -31,34 +30,24 @@ class RouteController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'update', 'delete', 'create', 'viewIntroductie', 'moveUpDown', 'view'],
                 'rules' => [
-                    array(
+                    [
                         'allow' => FALSE,
-                        'roles' => array('?'),
-                    ),
-                    [
-                        'allow' => TRUE,
-                        'actions'=> ['create'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
-                        }
+                        'roles' => ['?'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions'=> [
-                            'index', 'update', 'delete', 'viewIntroductie', 'moveUpDown', 'view'
-                        ],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(
-                                NULL,
-                                NULL,
-                                ['route_ID' => Yii::$app->request->get('route_ID')]);
-                        }
+                        'allow' => true,
+                        'actions' => ['index', 'move-up-down', 'update'],
+                        'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['organisatieOpstart'],
+                    ],
+                    [
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
                     ],
                 ]
             ]
@@ -69,20 +58,19 @@ class RouteController extends Controller
      * Lists all Route models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $event_Id = Yii::$app->user->identity->selected_event_ID;
-        $startDate=EventNames::getStartDate($event_Id);
-        $endDate=EventNames::getEndDate($event_Id);
+        $startDate = EventNames::getStartDate($event_Id);
+        $endDate = EventNames::getEndDate($event_Id);
 
         $searchModel = new RouteSearch();
 
         $this::setRouteIndexMessage($event_Id);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
         ]);
     }
 
@@ -91,49 +79,46 @@ class RouteController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $route_id = $_GET['route_id'];
         $event_id = $_GET['event_id'];
 
         $where = "event_ID = $event_id AND route_ID =$route_id";
 
-        $vragenDataProvider=new CActiveDataProvider('OpenVragen',
-            array(
-            'criteria'=>array(
-                'condition'=>$where,
-                'order'=>'vraag_volgorde ASC',
-             ),
-            'pagination'=>array(
-                'pageSize'=>50,
+        $vragenDataProvider = new CActiveDataProvider('OpenVragen', array(
+            'criteria' => array(
+                'condition' => $where,
+                'order' => 'vraag_volgorde ASC',
+            ),
+            'pagination' => array(
+                'pageSize' => 50,
             ),
         ));
 
-        $envelopDataProvider=new CActiveDataProvider('NoodEnvelop',
-            array(
-            'criteria'=>array(
-                'condition'=>$where,
-                'order'=>'nood_envelop_volgorde ASC',
-             ),
-            'pagination'=>array(
-                'pageSize'=>50,
+        $envelopDataProvider = new CActiveDataProvider('NoodEnvelop', array(
+            'criteria' => array(
+                'condition' => $where,
+                'order' => 'nood_envelop_volgorde ASC',
+            ),
+            'pagination' => array(
+                'pageSize' => 50,
             ),
         ));
 
-        $qrDataProvider=new CActiveDataProvider('Qr', array(
-            'criteria'=>array(
-                'condition'=>$where,
-                'order'=>'qr_volgorde ASC',
-             ),
-            'pagination'=>array(
-                'pageSize'=>15,
+        $qrDataProvider = new CActiveDataProvider('Qr', array(
+            'criteria' => array(
+                'condition' => $where,
+                'order' => 'qr_volgorde ASC',
+            ),
+            'pagination' => array(
+                'pageSize' => 15,
             ),
         ));
         return $this->render('view', [
-            'model' => $this->findModel($id),
-            'vragenDataProvider'=>$vragenDataProvider,
-            'envelopDataProvider'=>$envelopDataProvider,
-            'qrDataProvider'=>$qrDataProvider,
+                'model' => $this->findModel($id),
+                'vragenDataProvider' => $vragenDataProvider,
+                'envelopDataProvider' => $envelopDataProvider,
+                'qrDataProvider' => $qrDataProvider,
         ]);
     }
 
@@ -142,14 +127,13 @@ class RouteController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date)
-    {
+    public function actionCreate($date) {
         $model = new Route;
 
         if (Yii::$app->request->post('Route') &&
             $model->load(Yii::$app->request->post())) {
             $model->setRouteOrder();
-            if($model->save()) {
+            if ($model->save()) {
 
                 // QR record can only be set after the routemodel save.
                 // Because route_ID is not available before save.
@@ -186,8 +170,8 @@ class RouteController extends Controller
         }
 
         return $this->render([
-            '/route/create',
-            'model' => $model
+                '/route/create',
+                'model' => $model
         ]);
     }
 
@@ -197,17 +181,16 @@ class RouteController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($route_ID)
-    {
+    public function actionUpdate($route_ID) {
         $model = $this->findModel($route_ID);
         if (Yii::$app->request->post('update') == 'delete') {
-             $exist = Qr::find()
+            $exist = Qr::find()
                 ->where('event_ID=:event_id and route_ID=:route_id')
                 ->addParams(
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':route_id' => $model->route_ID
-                    ])
+                ])
                 ->exists();
 
             if (!$exist) {
@@ -217,7 +200,7 @@ class RouteController extends Controller
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
-                        ])
+                    ])
                     ->exists();
             }
 
@@ -228,7 +211,7 @@ class RouteController extends Controller
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
-                        ])
+                    ])
                     ->exists();
             }
 
@@ -254,81 +237,16 @@ class RouteController extends Controller
         }
 
         return $this->render([
-            '/route/update',
-            'model' => $model
+                '/route/update',
+                'model' => $model
         ]);
     }
 
-    /**
-     * Deletes an existing TblRoute model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+    /*
+     * Deze actie wordt gebruikt voor de grid velden. 
      */
-    public function actionDelete($id)
-    {
 
-        dd('NIET MEER NODIG?');
-        try {
-            $this->findModel($id)->delete();
-        }
-            catch(CDbException $e)
-		{
-			throw new CHttpException(400,"Je kan dit routeonderdeel niet verwijderen. Verwijder eerst alle onderdelen van deze route (vragen, stille posten)");
-		}
-
-        return $this->redirect(isset($_POST['returnUrl']) ?
-			$_POST['returnUrl'] : array('/startup/startupOverview',
-							'event_id'=>$_GET['event_id']));
-    }
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionViewIntroductie()
-	{
-		$event_Id = $_GET['event_id'];
-		$introductieId = Route::getIntroductieRouteId($event_Id);
-
-		if (! isset($introductieId))
-			$introductieId = 0;
-
-		$where = "event_ID = $event_Id AND route_ID = $introductieId";
-		$openVragenDataProvider=new CActiveDataProvider('OpenVragen',
-			array(
-			 'criteria'=>array(
-				'condition'=>$where,
-				'order'=>'vraag_volgorde ASC',
-			  ),
-			'pagination'=>array(
-				'pageSize'=>30,
-			),
-		));
-
-		$qrDataProvider=new CActiveDataProvider('Qr',
-			array(
-			 'criteria'=>array(
-				'condition'=>$where,
-				'order'=>'qr_volgorde ASC',
-			  ),
-			'pagination'=>array(
-				'pageSize'=>30,
-			),
-		));
-
-		$dataModel=array(
-			'vragenData'=>$openVragenDataProvider,
-			'qrData'=>$qrDataProvider
-		);
-
-		return $this->render('viewIntroductie', $dataModel);
-	}
-
-	/*
-	 * Deze actie wordt gebruikt voor de grid velden. 
-	 */
-	public function actionMoveUpDown($route_ID, $up_down)
-	{
+    public function actionMoveUpDown($route_ID, $up_down) {
         $model = $this->findModel($route_ID);
         if ($up_down === 'up') {
             $previousModel = Route::find()
@@ -346,37 +264,37 @@ class RouteController extends Controller
 
         // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
         // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
-        if(isset($previousModel)) {
+        if (isset($previousModel)) {
             $tempCurrentVolgorde = $model->route_volgorde;
             $model->route_volgorde = $previousModel->route_volgorde;
             $previousModel->route_volgorde = $tempCurrentVolgorde;
 
             if ($model->validate() &&
                 $previousModel->validate()) {
-                    $model->save();
-                    $previousModel->save();
+                $model->save();
+                $previousModel->save();
             } else {
-               Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
             }
         }
 
-        $startDate=EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
-        $endDate=EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
+        $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
         $searchModel = new RouteSearch();
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('/route/index', [
-                'searchModel' => $searchModel,
-                'startDate' => $startDate,
-                'endDate' => $endDate]);
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate]);
         }
 
-        return $this->render('/route/index',[
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
+        return $this->render('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
         ]);
-	}
+    }
 
     /**
      * Finds the Route model based on its primary key value.
@@ -385,9 +303,12 @@ class RouteController extends Controller
      * @return Route the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = Route::findOne($id)) !== null) {
+    protected function findModel($id) {
+        $model = Route::findOne([
+                'route_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
             $this->setCookieIndexTab($model->day_date);
             return $model;
         } else {
@@ -400,15 +321,13 @@ class RouteController extends Controller
             ->where('event_ID =:event_id')
             ->params([':event_id' => $event_id]);
 
-        if ($route->count() < 3 ) {
-           Yii::$app->session->setFlash(
-               'route',
-               Yii::t(
-                   'app',
-                   'Here you can create route items for each day.
+        if ($route->count() < 3) {
+            Yii::$app->session->setFlash(
+                'route', Yii::t(
+                    'app', 'Here you can create route items for each day.
                    The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with kiwi.run.
                    For each route item you can create questions, hints or silent stations.')
-           );
+            );
         }
         $questionModel = new OpenVragen;
         $questions = $questionModel->find()
@@ -416,13 +335,11 @@ class RouteController extends Controller
             ->params([':event_id' => $event_id]);
 
         if ($questions->count() < 3) {
-           Yii::$app->session->setFlash(
-               'question',
-               Yii::t(
-                   'app',
-                   'Questions are visable by player only when the hike is started and the same day is selected.
+            Yii::$app->session->setFlash(
+                'question', Yii::t(
+                    'app', 'Questions are visable by player only when the hike is started and the same day is selected.
                    The field {awnser} is never visable by players.', ['awnser' => $questionModel->getAttributeLabel('goede_antwoord'),])
-           );
+            );
         }
 
         $hintsModel = new NoodEnvelop;
@@ -431,20 +348,17 @@ class RouteController extends Controller
             ->params([':event_id' => $event_id]);
 
         if ($hints->count() < 3) {
-           Yii::$app->session->setFlash(
-               'hint',
-               Yii::t(
-                   'app',
-                   'Hints are visable by player only when the hike is started and the same day is selected.
+            Yii::$app->session->setFlash(
+                'hint', Yii::t(
+                    'app', 'Hints are visable by player only when the hike is started and the same day is selected.
                    The field {remark} and {cordinate} are only visable by players when whey open a hint.
                    The score fields are penalty score, use positive interger numbers.
-                   Use the {name} to give a clear description what this hint is about',
-                   [
-                       'remark' => $hintsModel->getAttributeLabel('opmerkingen'),
-                       'cordinate' => $hintsModel->getAttributeLabel('coordinaat'),
-                       'name' => $hintsModel->getAttributeLabel('nood_envelop_name'),
-                   ])
-           );
+                   Use the {name} to give a clear description what this hint is about', [
+                    'remark' => $hintsModel->getAttributeLabel('opmerkingen'),
+                    'cordinate' => $hintsModel->getAttributeLabel('coordinaat'),
+                    'name' => $hintsModel->getAttributeLabel('nood_envelop_name'),
+                ])
+            );
         }
 
         $qrModel = new Qr;
@@ -453,26 +367,25 @@ class RouteController extends Controller
             ->params([':event_id' => $event_id]);
 
         if ($qr->count() <= $route->count()) {
-           Yii::$app->session->setFlash(
-               'qr',
-               Yii::t(
-                   'app',
-                   'Silent station have to be printed and hanged along the hike route.
+            Yii::$app->session->setFlash(
+                'qr', Yii::t(
+                    'app', 'Silent station have to be printed and hanged along the hike route.
                    Players get points when they scan the QR code.
                    A silent station is automaticly created for each route item'
-               )
-           );
+                )
+            );
         }
     }
 
-    public function setCookieIndexTab($date){
+    public function setCookieIndexTab($date) {
         $cookies = Yii::$app->getResponse()->getCookies();
         $cookies->remove('route_day_tab');
         $cookie = new Cookie([
-           'name' => 'route_day_tab',
-           'value' => $date,
-           'expire' => time() + 86400 * 365,
+            'name' => 'route_day_tab',
+            'value' => $date,
+            'expire' => time() + 86400 * 365,
         ]);
         $cookies->add($cookie);
     }
+
 }

@@ -12,7 +12,6 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
-use app\models\DeelnemersEvent;
 
 AppAsset::register($this);
 ?>
@@ -51,13 +50,13 @@ AppAsset::register($this);
                     [
                         'label' => Yii::t('app','Overview'),
                         'url'=>['/users/view'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'view'),
+                        'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
                     [
                         'label' => Yii::t('app','Friends'),
                         'url'=>[
                             '/users/search-friends'],
-                        'visible' => Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('users', 'search-friends'),
+                        'visible' => Yii::$app->user->isGuest ? FALSE : TRUE,
                     ],
                     [
                         'label' => Yii::t('app','Select Hike'),
@@ -76,78 +75,80 @@ AppAsset::register($this);
                     ],
                     [
                         'label' => isset(Yii::$app->user->identity->voornaam )?'Logout ' . Yii::$app->user->identity->voornaam: '',
-                        'url' => ['/site/logout'],
+                        'url' => ['/user/security/logout'],
                         'linkOptions' => ['data-method' => 'post'],
                         'visible' => !Yii::$app->user->isGuest,
                     ],
                 ],
             ],
-            Yii::$app->user->isGuest || !Yii::$app->user->identity->selected_event_ID ? '':
+            !Yii::$app->user->can('gebruiker')?'':
             ['label' => Yii::t('app','Game'),
                 'items' => [
                     [
                         'label' => Yii::t('app','Overview groups scores'),
-                        'url' => ['groups/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index')
+                        'url' => ['/groups/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                     [
                         'label'=> Yii::t('app','Passed Stations & bonuspoints'),
-                        'url'=>['groups/index-posten'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index-posten')
+                        'url'=>['/groups/index-posten'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                     [
                         'label'=> Yii::t('app','Search hints'),
-                        'url'=>['nood-envelop/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('nood-envelop', 'index')
+                        'url'=>['/nood-envelop/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('gebruiker')
                     ],
                 ],
             ],
-            Yii::$app->user->isGuest ||
-            !Yii::$app->user->identity->selected_event_ID ||
-            DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() > DeelnemersEvent::ROL_post? '':
+            !Yii::$app->user->can('organisatie')? '':
             ['label' => Yii::t('app','Organisatie'),
                 'items' => [
                     [
                         'label'=> Yii::t('app','Route Overview'),
                         'url'=>['/route/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('route', 'index')
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('Organisatie')
                     ],
                     [
                         'label'=>Yii::t('app','Stations'),
                         'url'=>['/posten/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('posten', 'index')
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Activity groups'),
-                        'url'=>['groups/index-activity'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('groups', 'index-activity')
+                        'url'=>['/groups/index-activity'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=>Yii::t('app', 'Overview opened hints'),
                         'url'=>['/open-nood-envelop/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('open-nood-envelop', 'index')
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=>Yii::t('app', 'Overview checked silent stations'),
                         'url'=>['/qr-check/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('qr', 'index')
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Answers overview'),
-                        'url'=> ['open-vragen-antwoorden/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('open-vragen-antwoorden', 'index')
+                        'url'=> ['/open-vragen-antwoorden/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Bonus Points overview'),
-                        'url'=>['bonuspunten/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('bonuspunten', 'index')
+                        'url'=>['/bonuspunten/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                     [
                         'label'=> Yii::t('app','Time Trails overview'),
-                        'url'=>['time-trail/index'],
-                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->identity->isActionAllowed('time-trail', 'index')
+                        'url'=>['/time-trail/index'],
+                        'visible'=> Yii::$app->user->isGuest ? FALSE : Yii::$app->user->can('organisatie')
                     ],
                 ]
+            ],
+            [
+                'label' => 'Admin',
+                'url'=>['/user/admin/index'],
             ],
             // TODO:
             // ['label' => Yii::t('app','Language'),
@@ -180,7 +181,7 @@ AppAsset::register($this);
                 ]
             ],
             Yii::$app->user->isGuest ?
-                ['label' => 'Login', 'url' => ['/site/login']] :
+                ['label' => 'Login', 'url' => ['/user/security/login']] :
                 '',
         ],
     ]);

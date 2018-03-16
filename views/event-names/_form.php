@@ -48,12 +48,13 @@ use kartik\widgets\ActiveForm;
                 'startAttribute' => 'start_date',
                 'endAttribute' => 'end_date',
                 'pluginOptions' => [
-                    'minDate' => date('d-m-Y'),
+//                    'minDate' => date('d-m-Y'),
                     "dateLimit" => [
                         'days' => 10
                     ],
                     'locale' => [
-                        'format' => 'DD-MM-YYYY',
+//                        'format' => 'DD-MM-YYYY',
+                        'format' => 'YYYY-MM-DD',
                         'separator' => Yii::t('app', ' t/m ')],
                 ]
             ]
@@ -71,7 +72,7 @@ use kartik\widgets\ActiveForm;
         'id' => 'event-names-form',
         'type' => ActiveForm::TYPE_VERTICAL,
         'formConfig' => ['labelSpan' => 20],
-        'action' => $model->isNewRecord ? ['event-names/create', 'action' => $action] : ['event-names/update', 'event_ID' => $model->event_ID, 'action' => $action]]);
+        'action' => $model->isNewRecord ? ['event-names/create', 'action' => $action] : ['event-names/change-settings', 'event_ID' => $model->event_ID, 'action' => $action]]);
 
     echo Form::widget([
         'model' => $model,

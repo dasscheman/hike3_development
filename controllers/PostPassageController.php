@@ -12,10 +12,9 @@ use yii\web\NotFoundHttpException;
 /**
  * PostPassageController implements the CRUD actions for PostPassage model.
  */
-class PostPassageController extends Controller
-{
-    public function behaviors()
-    {
+class PostPassageController extends Controller {
+
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -25,42 +24,24 @@ class PostPassageController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['update', 'start', 'checkin', 'checkout'],
                 'rules' => [
                     [
                         'allow' => FALSE,
-                        'roles'=> ['?'],
+                        'roles' => ['?'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions'=> ['check-station'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(
-                                NULL,
-                                NULL,
-                                [
-                                    'post_ID' => Yii::$app->request->get('post_ID'),
-                                    'group_ID' => Yii::$app->request->get('group_ID'),
-                                    'action' => Yii::$app->request->get('action')
-                                ]);
-                        }
+                        'allow' => true,
+                        'actions' => ['check-station'],
+                        'roles' => ['organisatieGestartTime'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions'=> ['update'],
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(
-                                NULL,
-                                NULL,
-                                [
-                                    'posten_passage_ID' => Yii::$app->request->get('posten_passage_ID'),
-                                ]
-                            );
-                        }
+                        'allow' => true,
+                        'actions' => ['update', 'create'],
+                        'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
                     ],
                 ]
             ]
@@ -73,13 +54,12 @@ class PostPassageController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionCheckStation()
-    {
+    public function actionCheckStation() {
         $action = Yii::$app->request->get('action');
         $post_ID = Yii::$app->request->get('post_ID');
         $group_ID = Yii::$app->request->get('group_ID');
 
-        if($action === 'checkout') {
+        if ($action === 'checkout') {
             $model = PostPassage::find()
                 ->where('post_ID =:post_id AND group_ID =:group_id')
                 ->params([':post_id' => $post_ID, ':group_id' => $group_ID])
@@ -95,14 +75,14 @@ class PostPassageController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                if($action === 'start') {
+                if ($action === 'start') {
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Started'));
                 } else {
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Saved'));
                 }
                 if (Yii::$app->request->isAjax) {
                     return $this->renderAjax('_list-groups', [
-                        'model' => $model,
+                            'model' => $model,
                     ]);
                 }
                 return $this->redirect(['posten/index']);
@@ -110,13 +90,13 @@ class PostPassageController extends Controller
         }
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('check-station', [
-                'model' => $model,
-                'action' => $action,
+                    'model' => $model,
+                    'action' => $action,
             ]);
         }
         return $this->render('check-station', [
-           'model' => $model,
-           'action' => $action,
+                'model' => $model,
+                'action' => $action,
         ]);
     }
 
@@ -126,13 +106,12 @@ class PostPassageController extends Controller
      * @param integer $posten_passage_ID
      * @return mixed
      */
-    public function actionUpdate($posten_passage_ID)
-    {
+    public function actionUpdate($posten_passage_ID) {
         $model = $this->findModel($posten_passage_ID);
         $action = 'update';
 
         if (Yii::$app->request->post('update') == 'delete') {
-            if($model->delete()) {
+            if ($model->delete()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
@@ -153,13 +132,13 @@ class PostPassageController extends Controller
         }
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
-                'model' => $model,
-                'action' => $action,
+                    'model' => $model,
+                    'action' => $action,
             ]);
         }
         return $this->render('update', [
-           'model' => $model,
-           'action' => $action,
+                'model' => $model,
+                'action' => $action,
         ]);
     }
 
@@ -170,12 +149,16 @@ class PostPassageController extends Controller
      * @return PostPassage the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = PostPassage::findOne($id)) !== null) {
+    protected function findModel($id) {
+        $model = PostPassage::findOne([
+                'posten_passage_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

@@ -78,7 +78,7 @@ class DeelnemersEvent extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -102,7 +102,7 @@ class DeelnemersEvent extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**
@@ -110,7 +110,7 @@ class DeelnemersEvent extends HikeActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'user_ID']);
     }
 
     /**
@@ -279,8 +279,8 @@ class DeelnemersEvent extends HikeActiveRecord
 
         $result = Users::find()
            // ->select('id,name')->asArray()
-            ->where(['in', 'tbl_users.user_ID', $queryFriendList])
-            ->andwhere(['not in', 'tbl_users.user_ID', $queryDeelnemersEvent])
+            ->where(['in', 'user.id', $queryFriendList])
+            ->andwhere(['not in', 'user.id', $queryDeelnemersEvent])
             ->all();
 
         $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');

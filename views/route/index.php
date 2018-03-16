@@ -56,7 +56,7 @@ $this->title = Yii::t('app', 'Routes');
                      'options'=>[
                          'class'=> 'btn btn-xs btn-primary',
                          'title'=>'Edit',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'update', ['route_ID' => $key]),
+                         'disabled' => !Yii::$app->user->can('organisatie'),
                      ]
                  ]);
             },
@@ -165,18 +165,18 @@ $this->title = Yii::t('app', 'Routes');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'route',
-                        'moveUpDown',
-                        ['route_ID' => $key],
-                        ['move_action' => 'up', 'date' => $model->day_date]);
+                    if(Yii::$app->user->can('organisatie') &&
+                        Route::lowererOrderNumberExists($model->route_ID)) {
+                        return TRUE;
+                    }
+                    return FALSE;
                  },
                 'down' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'route',
-                        'moveUpDown',
-                        ['route_ID' => $key],
-                        ['move_action' => 'down', 'date' => $model->day_date]);
+                    if(Yii::$app->user->can('organisatie') &&
+                        Route::higherOrderNumberExists($model->route_ID)) {
+                        return TRUE;
+                    }
+                    return FALSE;
                  }
             ]
         ],
@@ -206,7 +206,7 @@ $this->title = Yii::t('app', 'Routes');
                         'options'=>[
                             'class'=>'btn btn-success',
                             'title'=>Yii::t('app', 'Create new route item'),
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create'),
+                            'disabled' => !Yii::$app->user->can('organisatieOpstart'),
                         ]
                     ]),
                 ],
@@ -253,8 +253,8 @@ $this->title = Yii::t('app', 'Routes');
                             'modalContent'=>'#main-content-modal',
                             'options'=>[
                                 'class'=>'btn btn-success',
-                                'title'=>'Button for create application',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('route', 'create'),
+                                'title'=>Yii::t('app', 'Create new route item'),
+                                'disabled' => !Yii::$app->user->can('organisatieOpstart'),
                             ]
                         ]),
                     ],

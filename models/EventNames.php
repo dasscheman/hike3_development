@@ -125,14 +125,14 @@ class EventNames extends HikeActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCreateUser() {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getUpdateUser() {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**
@@ -399,14 +399,13 @@ class EventNames extends HikeActiveRecord {
             ->one();
         });
 
-        if (isset($data->active_day)) {
-            return $data->active_day;
-        } else {
+        if (isset($data->status)) {
             if ($data->status === EventNames::STATUS_introductie) {
-                return '0000-00-00';
+                return NULL;
             }
-            return;
+            return $data->active_day;
         }
+        return FALSE;
     }
 
     public function determineNewHikeId() {

@@ -77,8 +77,8 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
         ];
         $dataProvider->sort->attributes['username'] =
         [
-            'asc' => ['tbl_users.username' => SORT_ASC],
-            'desc' => ['tbl_users.username' => SORT_DESC],
+            'asc' => ['user.username' => SORT_ASC],
+            'desc' => ['user.username' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['route_name'] =
         [
@@ -107,7 +107,7 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
             ->andFilterWhere(['like', 'tbl_groups.group_name', $this->group_name])
             ->andFilterWhere(['like', 'tbl_nood_envelop.nood_envelop_name', $this->nood_envelop_name])
             ->andFilterWhere(['like', 'tbl_nood_envelop.score', $this->score])
-            ->andFilterWhere(['like', 'tbl_users.username', $this->username])
+            ->andFilterWhere(['like', 'user.username', $this->username])
             ->andFilterWhere(['like', 'tbl_route.route_name', $this->route_name]);
 
         return $dataProvider;

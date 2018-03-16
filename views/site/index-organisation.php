@@ -129,7 +129,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         'toggleButton' => [
                             'label' => Yii::t('app', 'Add runner group to hike'),
                             'class' => 'btn btn-xs btn-success',
-                            'disabled' => !Yii::$app->user->identity->isActionAllowed('groups', 'create'),
+                            'disabled' => !Yii::$app->user->can('organisatie'),
                         ],
                     ]
                 );
@@ -190,7 +190,7 @@ $this->title = Yii::t('app', 'Hike overview');
                     // your fileinput widget for single file upload
                     echo $form->field($eventModel, 'image_temp')->widget(FileInput::classname(), [
                         'options'=>['accept'=>'image/*'],
-                        'disabled' => !Yii::$app->user->identity->isActionAllowed('event-names', 'upload', ['event_ID' => $eventModel->event_ID]),
+                        'disabled' => !Yii::$app->user->can('organisatie'),
                         'pluginOptions'=>[
                             'allowedFileExtensions' => ['jpg', 'jpeg', 'gif','png'],
                             'uploadLabel' => Yii::t('app',  'save'),
@@ -198,7 +198,7 @@ $this->title = Yii::t('app', 'Hike overview');
                             'browseClass' => 'btn btn-primary btn-block',
                             'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
                             'browseLabel' => '',
-                ]
+                        ]
                     ]);
                     ActiveForm::end();
                     ?>
@@ -293,13 +293,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Change settings hike'),
                                 'id' => 'modalChangeSettingsButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                    'event-names',
-                                    'update',
-                                    [
-                                        'event_ID' => $eventModel->event_ID,
-                                        'action' => 'change_settings'
-                                    ]),
+                                'disabled' => !Yii::$app->user->can('organisatieOpstart'),
                             ],
                         ]);
                         ?>
@@ -318,13 +312,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Change max time hike'),
                                 'id' => 'modalChangeMaxTimeButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                    'event-names',
-                                    'update',
-                                    [
-                                        'event_ID' => $eventModel->event_ID,
-                                        'action' => 'set_max_time'
-                                    ]),
+                                'disabled' => !Yii::$app->user->can('organisatieGestart'),
                             ],
                         ]);
                         echo $this->render('/event-names/update', [
@@ -341,10 +329,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'bonus'),
                                 'id' => 'modalAddBonusButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                                    'bonuspunten',
-                                    'create'
-                                ),
+                                'disabled' => !Yii::$app->user->can('organisatie'),
                             ],
                         ]);
                         echo $this->render('/bonuspunten/create', [
@@ -377,7 +362,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'Add organizer to hike'),
                                 'id' => 'modalAddOrganisationButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('deelnemers-event', 'create'),
+                                'disabled' => !Yii::$app->user->can('organisatie'),
                             ],
                         ]
                     );

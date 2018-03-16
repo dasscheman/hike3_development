@@ -90,7 +90,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -114,7 +114,7 @@ class OpenVragenAntwoorden extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**
@@ -164,58 +164,10 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     }
 
     /**
-     * Check of een bepaalde vraag is beantwoord door een group, Retruns true of false
-     */
-    public function isQuestionUsed($vragen_id)
-    {
-        $criteria = new CDbCriteria;
-        $criteria->condition="open_vragen_ID = $vragen_id";
-        $data = OpenVragenAntwoorden::model()->find($criteria);
-        if(isset($data->antwoord_spelers))
-            {return true;}
-        else
-            {return(false);}
-    }
-
-    /**
-     * Check of een bepaalde vraag is beantwoord door een gegeven group, Retruns JA of NEE
-     */
-    public function isVraagBeantwoord($event_id,
-				      $group_id,
-				      $vragen_id)
-    {
-        $criteria = new CDbCriteria;
-        $criteria->condition="event_ID = $event_id AND
-                              group_ID = $group_id AND
-                              open_vragen_ID = $vragen_id";
-        $data = OpenVragenAntwoorden::model()->find($criteria);
-        if(isset($data->antwoord_spelers))
-            {return('Ja');}
-        else
-            {return('Nee');}
-    }
-
-    /**
      * Check of een bepaalde vraag is gecontroleerd, Retruns JA of NEE
      * Als JA dan moet het niet meer mogelijk zijn om die vraag te
      * beantwoorden door een groep.
      */
-    public function isVraagGecontroleerd($event_id,
-                                        $group_id,
-                                        $vragen_id)
-    {
-        $criteria = new CDbCriteria;
-        $criteria->condition="event_ID = $event_id AND
-                              group_ID = $group_id AND
-                              open_vragen_ID = $vragen_id";
-        $data = OpenVragenAntwoorden::model()->find($criteria);
-
-        if(isset($data->checked) AND $data->checked == 1)
-            {return('Ja');}
-        else
-            {return('Nee');}
-    }
-
     public function isAntwoordGecontroleerd($id)
     {
         $data = OpenVragenAntwoorden::find()
@@ -226,23 +178,5 @@ class OpenVragenAntwoorden extends HikeActiveRecord
             return true;
         else
             return false;
-    }
-
-    /**
-     * Check of een bepaald antwoord goed is. Retruns JA of NEE
-     */
-    public function isVraagGoed($event_id,
-				$group_id,
-				$vragen_id)
-    {
-        $criteria = new CDbCriteria;
-        $criteria->condition="event_ID = $event_id AND
-                              group_ID = $group_id AND
-                              open_vragen_ID = $vragen_id";
-        $data = OpenVragenAntwoorden::model()->find($criteria);
-        if(isset($data->correct) AND $data->correct == 1)
-            {return('Ja');}
-        else
-            {return('Nee');}
     }
 }

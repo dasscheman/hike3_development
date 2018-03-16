@@ -20,8 +20,6 @@ use kartik\widgets\Select2;
             <h4>
                 <?php echo $model['title'];?>
             </h4>
-            <?php echo $model['description'];?>
-            -
             <?php echo $model['timestamp']; ?>
         </div>
     </div>

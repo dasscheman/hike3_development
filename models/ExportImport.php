@@ -70,13 +70,25 @@ class ExportImport extends Model
                 'G' => 'opmerkingen',
                 'I' => 'score',
             ],
+        ],
+        'TimeTrail' => [
+            'model',
+            'cells' => [
+                'A' => 'nood_envelop_ID',
+                'B' => 'nood_envelop_name',
+                'C' => 'event_ID',
+                'D' => 'route_ID',
+                'E' => 'nood_envelop_volgorde',
+                'F' => 'coordinaat',
+                'G' => 'opmerkingen',
+                'I' => 'score',
+            ],
         ]
     ];
 
     public function rules()
     {
         return [
-            // [['importFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'ods'],
             [['importFile'], 'file', 'extensions' => 'ods', 'skipOnEmpty' => false, 'checkExtensionByMimeType' => FALSE],
         ];
     }
@@ -120,7 +132,6 @@ class ExportImport extends Model
             d($id);
             d($cell->getValue());
         }
-dd('a;sflkj');
 
         $highestRowRoute = $sheetRoute->getHighestRow();
         $highestColumnRoute = $sheetRoute->getHighestColumn();

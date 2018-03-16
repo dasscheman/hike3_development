@@ -31,7 +31,7 @@ use yii\widgets\Pjax;
 
     $form = ActiveForm::begin([
         'options'=>[
-            'data-pjax'=>TRUE,
+//            'data-pjax'=>TRUE,
         ],
     ]); ?>
     <?php

@@ -4,8 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use app\models\NoodEnvelop;
-use app\models\EventNames;
-use app\models\RouteSearch;
 use app\models\NoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -16,10 +14,9 @@ use app\models\OpenNoodEnvelop;
 /**
  * NoodEnvelopController implements the CRUD actions for TblNoodEnvelop model.
  */
-class NoodEnvelopController extends Controller
-{
-    public function behaviors()
-    {
+class NoodEnvelopController extends Controller {
+
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -29,29 +26,29 @@ class NoodEnvelopController extends Controller
             ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['viewPlayers', 'moveUpDown','viewPlayers', 'create', 'index', 'update', 'delete'],
                 'rules' => [
-                    array(
+                    [
                         'allow' => FALSE,
-                        'roles'=>array('?'),
-                    ),
-                    [
-                        'allow' => TRUE,
-                        'actions'=>array('create'),
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed();
-                        },
+                        'roles' => ['?'],
                     ],
                     [
-                        'allow' => TRUE,
-                        'actions'=>array('index', 'update', 'delete', 'viewPlayers', 'moveUpDown'),
-                        'matchCallback'=> function () {
-                            return Yii::$app->user->identity->isActionAllowed(NULL, NULL, ['nood_envelop_ID' => Yii::$app->request->get('nood_envelop_ID')]);
-                        },
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
-                        'allow' => FALSE,  // deny all users
-                        'roles'=> ['*'],
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['organisatieIntrodutie',  'organisatieOpstart'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['organisatie'],
+                    ],
+                    [
+                        'allow' => FALSE, // deny all users
+                        'roles' => ['*'],
                     ],
                 ]
             ],
@@ -62,26 +59,13 @@ class NoodEnvelopController extends Controller
      * Lists all NoodEnvelop models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new NoodEnvelopSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single TblNoodEnvelop model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -90,15 +74,14 @@ class NoodEnvelopController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($route_ID)
-    {
+    public function actionCreate($route_ID) {
         $model = new NoodEnvelop();
 
         if (Yii::$app->request->post('NoodEnvelop') &&
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForNoodEnvelop();
 
-            if($model->save()) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
                 return $this->redirect(['route/index']);
             }
@@ -112,8 +95,8 @@ class NoodEnvelopController extends Controller
         }
 
         return $this->render([
-            '/nood-envelop/create',
-            'model' => $model
+                '/nood-envelop/create',
+                'model' => $model
         ]);
     }
 
@@ -123,18 +106,17 @@ class NoodEnvelopController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($nood_envelop_ID)
-    {
+    public function actionUpdate($nood_envelop_ID) {
         $model = $this->findModel($nood_envelop_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = OpenNoodEnvelop::find()
-               ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
-               ->addParams(
-                   [
-                       ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                       ':nood_envelop_id' => $model->nood_envelop_ID
-                   ])
-               ->exists();
+                ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
+                ->addParams(
+                    [
+                        ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                        ':nood_envelop_id' => $model->nood_envelop_ID
+                ])
+                ->exists();
             if (!$exist) {
                 $model->delete();
                 Yii::$app->cache->flush();
@@ -158,94 +140,12 @@ class NoodEnvelopController extends Controller
         }
 
         return $this->render([
-            '/nood-envelop/update',
-            'model' => $model
+                '/nood-envelop/update',
+                'model' => $model
         ]);
     }
 
-    /**
-     * Deletes an existing TblNoodEnvelop model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($nood_envelop_ID)
-    {
-
-        dd('NIET MEER NODIG');
-        $model = $this->findModel($nood_envelop_ID);
-
-        $exist = OpenNoodEnvelop::find()
-           ->where('event_ID=:event_id and nood_envelop_ID=:nood_envelop_id')
-           ->addParams(
-               [
-                   ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                   ':nood_envelop_id' => $model->nood_envelop_ID
-               ])
-           ->exists();
-
-        if (!$exist) {
-            $model->delete();
-        }
-
-        return $this->render('/route/index', [
-            'searchModel' => $searchModel,
-            'startDate' => $startDate,
-            'endDate' => $endDate
-        ]);
-
-
-
-
-        $nood_envelop_ID = $_GET['nood_envelop_id'];
-
-        try
-        {
-            $this->findModel($id)->delete();
-        }
-        catch(CDbException $e)
-        {
-            throw new CHttpException(400,"Je kan deze hint niet verwijderen.");
-        }
-        return $this->redirect(isset($_POST['returnUrl']) ?
-					$_POST['returnUrl'] : array('/route/view',
-								    'event_id'=>$_GET['event_id'],
-								    'route_id'=>$_GET['route_id']));
-    }
-
-    /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
-     */
-    public function actionViewPlayers()
-    {
-        $event_id = $_GET['event_id'];
-
-        $active_day = EventNames::getActiveDayOfHike($event_id);
-
-        $noodEnvelopDataProvider=new CActiveDataProvider('NoodEnvelop',
-            array(
-                'criteria'=>array(
-                     'join'=>'JOIN tbl_route route ON route.route_ID = t.route_ID',
-                     'condition'=>'route.day_date =:active_day
-                                    AND route.event_ID =:event_id',
-                     'params'=>array(':active_day'=>$active_day,
-                                      ':event_id'=>$event_id),
-                     'order'=>'route_ID ASC, nood_envelop_volgorde ASC'
-                    ),
-                'pagination'=>array(
-                    'pageSize'=>30,
-                ),
-            )
-        );
-
-        return $this->render('viewPlayers',array(
-            'noodEnvelopDataProvider'=>$noodEnvelopDataProvider,
-        ));
-    }
-
-    public function actionMoveUpDown()
-    {
+    public function actionMoveUpDown() {
         $event_id = $_GET['event_id'];
         $nood_envelop_id = $_GET['nood_envelop_id'];
         $nood_envelop_volgorde = $_GET['volgorde'];
@@ -256,19 +156,17 @@ class NoodEnvelopController extends Controller
 
         $criteria = new CDbCriteria;
 
-        if ($up_down=='up')
-        {
+        if ($up_down == 'up') {
             $criteria->condition = 'event_ID =:event_id AND route_ID=:route_id AND nood_envelop_volgorde <:order';
-            $criteria->params=array(':event_id' => $event_id, ':route_id' => $route_id , ':order' => $nood_envelop_volgorde);
-            $criteria->order= 'nood_envelop_volgorde DESC';
+            $criteria->params = array(':event_id' => $event_id, ':route_id' => $route_id, ':order' => $nood_envelop_volgorde);
+            $criteria->order = 'nood_envelop_volgorde DESC';
         }
-        if ($up_down=='down')
-        {
+        if ($up_down == 'down') {
             $criteria->condition = 'event_ID =:event_id AND route_ID=:route_id AND nood_envelop_volgorde >:order';
-            $criteria->params=array(':event_id' => $event_id, ':route_id' => $route_id , ':order' => $nood_envelop_volgorde);
-            $criteria->order= 'nood_envelop_volgorde ASC';
+            $criteria->params = array(':event_id' => $event_id, ':route_id' => $route_id, ':order' => $nood_envelop_volgorde);
+            $criteria->order = 'nood_envelop_volgorde ASC';
         }
-        $criteria->limit=1;
+        $criteria->limit = 1;
         $previousModel = NoodEnvelop::findAll($criteria);
 
         $tempCurrentVolgorde = $currentModel->nood_envelop_volgorde;
@@ -278,16 +176,15 @@ class NoodEnvelopController extends Controller
         $currentModel->save();
         $previousModel[0]->save();
 
-        if (Route::routeIdIntroduction($currentModel->route_ID))
-        {
+        if (Route::routeIdIntroduction($currentModel->route_ID)) {
             return $this->redirect(array('route/viewIntroductie',
-                "route_id"=>$currentModel->route_ID,
-                "event_id"=>$currentModel->event_ID,));
+                    "route_id" => $currentModel->route_ID,
+                    "event_id" => $currentModel->event_ID,));
         } else {
             return $this->redirect(array(
-                'route/view',
-                "route_id"=>$currentModel->route_ID,
-                "event_id"=>$currentModel->event_ID,));
+                    'route/view',
+                    "route_id" => $currentModel->route_ID,
+                    "event_id" => $currentModel->event_ID,));
         }
     }
 
@@ -298,12 +195,16 @@ class NoodEnvelopController extends Controller
      * @return TblNoodEnvelop the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
-        if (($model = NoodEnvelop::findOne($id)) !== null) {
+    protected function findModel($id) {
+        $model = NoodEnvelop::findOne([
+                'nood_envelop_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

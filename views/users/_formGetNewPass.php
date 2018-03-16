@@ -19,13 +19,6 @@ use app\components\CustomAlertBlock;
         'delay' => FALSE,
     ]);
 
-    $attributes['voornaam'] = [
-        'type' => Form::INPUT_TEXT,
-        'options' => [
-            'placeholder' => Yii::t('app', 'Voornaam')
-        ],
-    ];
-
     $attributes['email'] = [
         'type' => Form::INPUT_TEXT,
         'options' => [

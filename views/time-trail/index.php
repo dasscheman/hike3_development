@@ -50,7 +50,7 @@ $this->title = Yii::t('app', 'Time Trails');
         'options'=>[
             'class' => 'btn btn-success pull-right',
             'title' => Yii::t('app', 'Create new time trail'),
-            'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail', 'create'),
+            'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
         ]
     ]);
 
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Time Trails');
                      'options'=>[
                          'class'=> 'btn btn-xs btn-primary',
                          'title'=>'Edit',
-                         'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail-item', 'update', ['time_trail_item_ID' => $key]),
+                         'disabled' => !Yii::$app->user->can('organisatie'),
                      ]
                  ]);
             },
@@ -168,26 +168,26 @@ $this->title = Yii::t('app', 'Time Trails');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'time-trail-item',
-                        'moveUpDown',
-                        ['time_trail_item_ID' => $key],
-                        ['move_action' => 'up', 'time_trail_item_ID' => $model->time_trail_item_ID]);
+                    if(Yii::$app->user->can('organisatie') &&
+                        TimeTrailItem::lowererOrderNumberExists($model->time_trail_item_ID)) {
+                        return TRUE;
+                    }
+                    return FALSE;
                  },
                 'down' => function ($model, $key, $index) {
-                    return Yii::$app->user->identity->isActionAllowed(
-                        'time-trail-item',
-                        'moveUpDown',
-                        ['time_trail_item_ID' => $key],
-                        ['move_action' => 'down', 'time_trail_item_ID' => $model->time_trail_item_ID]);
-                 },
+                    if(Yii::$app->user->can('organisatie') &&
+                        TimeTrailItem::higherOrderNumberExists($model->time_trail_item_ID)) {
+                        return TRUE;
+                    }
+                    return FALSE;
+                 }
             ]
         ],
     ];
     foreach ($model as $key => $item) {
         $dataArray[$count]=array(
 		    'label' =>$item->time_trail_name,
-            'active' => $item->time_trail_ID === Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
+            'active' => $item->time_trail_ID == Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
 		    'content' => GridView::widget([
                 'id' => 'kv-grid-' . $item->time_trail_ID, //'kv-grid-demo',
                 'dataProvider' => $searchModel->search(['TimeTrailItemSearch' => ['time_trail_ID' => $item->time_trail_ID]]),
@@ -209,7 +209,7 @@ $this->title = Yii::t('app', 'Time Trails');
                             'options'=>[
                                 'class' => 'btn btn-success',
                                 'title' => Yii::t('app', 'Create new time trail item'),
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail-item', 'create'),
+                                'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
                             ]
                         ]),
                 ],
@@ -223,7 +223,7 @@ $this->title = Yii::t('app', 'Time Trails');
                             'options'=>[
                                 'class' => 'btn btn-primary',
                                 'title' => Yii::t('app', 'Update time trail'),
-                                'disabled' => !Yii::$app->user->identity->isActionAllowed('time-trail', 'update', ['time_trail_ID' => $item->time_trail_ID]),
+                                'disabled' => !Yii::$app->user->can('organisatie'),
                             ]
                         ]),
                     ],

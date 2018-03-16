@@ -3,8 +3,7 @@
 namespace app\models;
 
 use Yii;
-use yii\db\Query;
-use app\models\ArrayHelper;
+
 /**
  * This is the model class for table "tbl_friend_list".
  *
@@ -75,7 +74,7 @@ class FriendList extends HikeActiveRecord
      */
     public function getCreateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'create_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'create_user_ID']);
     }
 
     /**
@@ -83,7 +82,7 @@ class FriendList extends HikeActiveRecord
      */
     public function getFriendsWithUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'friends_with_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'friends_with_user_ID']);
     }
 
     /**
@@ -91,7 +90,7 @@ class FriendList extends HikeActiveRecord
      */
     public function getUpdateUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'update_user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
     /**
@@ -99,7 +98,7 @@ class FriendList extends HikeActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['user_ID' => 'user_ID']);
+        return $this->hasOne(Users::className(), ['id' => 'user_ID']);
     }
 
 	/**
@@ -137,45 +136,18 @@ class FriendList extends HikeActiveRecord
 			$statusOptions[$status] : "unknown status ({$status})";
 	}
 
-   	/**
-	* Retrieves a list of users
-	* @return array an array of all available users'.
-	*/
-
-	public function getFriendNameOptions()
-	{
-		$criteria=new CDbCriteria();
-		//Bestaande vrienden worden uitgefilterd uit de user lijst.
-		// de huidige gebruiker wordt er ook uitgefilterd.
-		$criteria->addCondition("t.user_ID IN ( SELECT friends_with_user_ID
-								FROM `tbl_friend_list`
-								WHERE user_ID =:currentuser AND status =2)
-                                AND t.user_ID <>:currentuser");
-		$criteria->order = username;
-		$criteria->params = array(':currentuser'=>Yii::app()->user->id);
-
-		Yii::app()->user->id;
-		$data = Users::model()->findAll($criteria);
-
-		foreach($data as $m)
-		{
-			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
-		}
-		return $results;
-	}
-
-       	/**
+ 	/**
 	* Retrieves a list of users
 	* @return array an array of all available users'.
 	*/
 
 	public function getFriendNames()
 	{
-        $sql = 'SELECT tbl_users.user_ID IN (SELECT friends_with_user_ID
+        $sql = 'SELECT user.id IN (SELECT friends_with_user_ID
                 FROM `tbl_friend_list`
                 WHERE tbl_friend_list.user_ID =' . Yii::$app->user->id . ' AND tbl_friend_list.status =2)
                 FROM tbl_users
-                WHERE tbl_users.user_ID <>' . Yii::$app->user->id;
+                WHERE user.id <>' . Yii::$app->user->id;
         $model = Users::findBySql($sql)->all();
 
 		foreach($model as $m)
@@ -216,11 +188,11 @@ class FriendList extends HikeActiveRecord
         }
 
         $result = Users::find()
-            ->where(['in', 'tbl_users.user_ID', $queryFriendList])
-            ->andwhere(['not in', 'tbl_users.user_ID', $queryDeelnemersEvent])
+            ->where(['in', 'user.id', $queryFriendList])
+            ->andwhere(['not in', 'user.id', $queryDeelnemersEvent])
             ->all();
 
-        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'fullName');
+        $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'id', 'fullName');
         return $arrayRestuls;
 	}
 }

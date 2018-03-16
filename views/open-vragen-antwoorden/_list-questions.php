@@ -30,13 +30,7 @@ use app\models\DeelnemersEvent;
             'options' => [
                 'class' => 'btn btn-xs btn-success',
                 'title' => Yii::t('app', 'Open Hint'),
-                'disabled' => !Yii::$app->user->identity->isActionAllowed(
-                    'open-vragen-antwoorden',
-                    'beantwoorden',
-                    [
-                        'open_vragen_ID' => $model->open_vragen_ID,
-                        'group_ID' => $group_ID
-                    ]),
+                'disabled' => !Yii::$app->user->can('deelnemerIntroductie') && !Yii::$app->user->can('deelnemerGestartTime'),
             ]
         ]);
     ?>
