@@ -46,9 +46,9 @@ $config = [
     ],
     'timeZone' => 'Europe/Amsterdam', // this is my default
     'components' => [
-//        'authManager' => [
-//            'class' => 'dektrium\rbac\components\DbManager',
-//        ],
+        'authManager' => [
+            'class' => 'dektrium\rbac\components\DbManager',
+        ],
         'i18n' => [
             'translations' => [
                 'app*' => [

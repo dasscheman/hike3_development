@@ -25,6 +25,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'authManager' => [
+            'class' => 'dektrium\rbac\components\DbManager',
+        ],
     ],
     'modules' => [
         'user' => [
