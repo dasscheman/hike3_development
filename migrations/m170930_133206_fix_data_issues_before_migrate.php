@@ -4,6 +4,7 @@
 use yii\db\Migration;
 use app\models\EventNames;
 use app\models\Route;
+use app\models\Posten;
 
 /**
  * Class m171104_143306_update_rbac_data
@@ -31,6 +32,15 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
         foreach ($routes as $route) {
             $route->day_date = NULL;
             $route->save(FALSE);
+        }
+
+        $posten = Posten::find()
+            ->where(['date' => '0000-00-00'])
+            ->all();
+
+        foreach ($posten as $post) {
+            $post->date = NULL;
+            $post->save(FALSE);
         }
     }
 
