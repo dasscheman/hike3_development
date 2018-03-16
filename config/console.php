@@ -24,6 +24,9 @@ $config = [
                 ],
             ],
         ],
+        'setupdatetime' => [
+            'class' => 'app\components\SetupDateTime',
+        ],
         'db' => $db,
         'authManager' => [
             'class' => 'dektrium\rbac\components\DbManager',
