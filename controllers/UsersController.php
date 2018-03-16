@@ -36,7 +36,7 @@ class UsersController extends Controller {
 //                        'roles' => ['*'],
                     ],
                     [
-                        'actions' => ['index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'ChangePassword'],
+                        'actions' => ['index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'change-password'],
                         'allow' => TRUE,
                         'roles' => ['@'],
                     ],
