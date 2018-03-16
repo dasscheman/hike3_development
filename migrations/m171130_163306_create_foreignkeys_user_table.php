@@ -2,7 +2,6 @@
 
 //use Yii;
 use yii\db\Migration;
-use app\models\Users;
 
 
 /**
