@@ -30,7 +30,7 @@ class m170930_133206_fix_data_issues_before_migrate extends Migration
 
         foreach ($routes as $route) {
             $route->day_date = NULL;
-            $route->save();
+            $route->save(FALSE);
         }
     }
 
