@@ -307,7 +307,7 @@ class EventNamesController extends Controller {
                 'user_ID' => Yii::$app->user->identity->id]);
 
         if($check->rol !== DeelnemersEvent::ROL_organisatie) {
-            throw new HttpException(400, Yii::t('app' . 'You cannot remove this hike.'));
+            throw new HttpException(400, Yii::t('app', 'You cannot remove this hike.'));
         }
 
         $model = EventNames::findOne([
@@ -325,7 +325,7 @@ class EventNamesController extends Controller {
             Groups::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             $model->delete();
         } catch (Exception $e) {
-            throw new HttpException(400, Yii::t('app' . 'You cannot remove this hike.'));
+            throw new HttpException(400, Yii::t('app', 'You cannot remove this hike.'));
         }
 
         Yii::$app->session->setFlash('info', Yii::t('app', 'Removed hike'));
