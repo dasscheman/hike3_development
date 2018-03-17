@@ -98,6 +98,7 @@ class EventNamesController extends Controller {
     public function actionCreate() {
         $model = new EventNames();
         $model->status = 1;
+        Yii::$app->cache->flush();
 
         // De gebruiker die de hike aanmaakt moet ook gelijk aangemaakt worden als organisatie
         $modelDeelnemersEvent = new DeelnemersEvent;
@@ -181,6 +182,20 @@ class EventNamesController extends Controller {
                         ]);
                         $modelStartPost->save();
                     }
+                    $dayname = Yii::$app->setupdatetime->getDay($i);
+                    // Wanneer er een hike aangemaakt wordt, dan wordt er voor
+                    // elke dag een route aangemaakt.
+                    if (!Route::routeExistForDay($day)) {
+
+                        $modelRoute = new Route;
+                        $modelRoute->setAttributes([
+                            'event_ID' => $model->event_ID,
+                            'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
+                            'day_date' => $day,
+                            'route_volgorde' => 1
+                        ]);
+                        $modelRoute->save();
+                    }
                 }
 
                 if ($model->status == EventNames::STATUS_gestart) {
@@ -209,6 +224,7 @@ class EventNamesController extends Controller {
      * @return mixed
      */
     public function actionChangeSettings($event_ID, $action) {
+        Yii::$app->cache->flush();
         $model = $this->findModel($event_ID);
 
         if (!$model->load(Yii::$app->request->post())) {
@@ -245,6 +261,21 @@ class EventNamesController extends Controller {
                                 'score' => 0,
                             ]);
                             $modelStartPost->save();
+                        }
+
+                        $dayname = Yii::$app->setupdatetime->getDay($i);
+                        // Wanneer er een hike aangemaakt wordt, dan wordt er voor
+                        // elke dag een route aangemaakt.
+                        if (!Route::routeExistForDay($day)) {
+
+                            $modelRoute = new Route;
+                            $modelRoute->setAttributes([
+                                'event_ID' => $model->event_ID,
+                                'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
+                                'day_date' => $day,
+                                'route_volgorde' => 1
+                            ]);
+                            $modelRoute->save();
                         }
                     }
                 }
