@@ -6,6 +6,7 @@ use app\models\HikeActiveRecord;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use Yii;
+use kartik\daterange\DateRangeBehavior;
 
 /**
  * This is the model class for table "tbl_event_names".
@@ -67,7 +68,7 @@ class EventNames extends HikeActiveRecord {
     public function rules() {
         return [
             [['event_name', 'status'], 'required'],
-            [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'website', 'image_temp'], 'safe'],
+            [['start_date', 'end_date', 'active_day', 'max_time', 'create_time', 'update_time', 'website', 'image_temp', 'daterange'], 'safe'],
             [['status', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['event_name', 'image', 'organisatie', 'website'], 'string', 'max' => 255],
 //            [['image'], 'unsafe', 'on'=>'update'],
@@ -98,13 +99,18 @@ class EventNames extends HikeActiveRecord {
         ];
     }
 
-    public function beforeValidate() {
-        if (parent::beforeValidate()) {
-            $this->start_date = Yii::$app->setupdatetime->storeFormat($this->start_date, 'date');
-            $this->end_date = Yii::$app->setupdatetime->storeFormat($this->end_date, 'date');
-            return(true);
-        }
-        return(false);
+    public function behaviors() {
+        return [
+            [
+                'class' => DateRangeBehavior::className(),
+                'attribute' => 'daterange',
+                'dateStartAttribute' => 'start_date',
+                'dateEndAttribute' => 'end_date',
+                'dateStartFormat' => 'Y-m-d',
+                'dateEndFormat' => 'Y-m-d',
+
+            ]
+        ];
     }
 
     /**

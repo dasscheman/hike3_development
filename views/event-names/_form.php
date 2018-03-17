@@ -48,14 +48,12 @@ use kartik\widgets\ActiveForm;
                 'startAttribute' => 'start_date',
                 'endAttribute' => 'end_date',
                 'pluginOptions' => [
-//                    'minDate' => date('d-m-Y'),
-                    "dateLimit" => [
+                    'dateLimit' => [
                         'days' => 10
                     ],
                     'locale' => [
-//                        'format' => 'DD-MM-YYYY',
-                        'format' => 'YYYY-MM-DD',
-                        'separator' => Yii::t('app', ' t/m ')],
+                        'format' => 'YYYY-MM-DD'
+                        ],
                 ]
             ]
         ];

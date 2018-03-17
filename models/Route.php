@@ -253,4 +253,18 @@ class Route extends HikeActiveRecord
         }
         return FALSE;
 	}
+
+	public function routeExistForDay($date)
+	{
+        $exists = Route::find()
+            ->where('event_ID=:event_id')
+            ->andwhere('day_date=:day_date')
+            ->addParams(
+                [
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':day_date' => $date,
+                ])
+            ->exists();
+        return $exists;
+	}
 }
