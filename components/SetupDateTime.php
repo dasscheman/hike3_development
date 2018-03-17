@@ -76,4 +76,7 @@ class SetupDateTime {
 
     }
 
+    public static function getDay($dateStr) {
+        return \Yii::$app->formatter->asDate($dateStr, 'php:l');
+    }
 }
