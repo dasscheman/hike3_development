@@ -107,7 +107,10 @@ $this->title = Yii::t('app', 'Select hike');
                     return $model->event_ID == Yii::$app->user->identity->selected_event_ID ? FALSE : TRUE;
                 },
                 'delete' => function ($model, $key, $index) {
-                    return Yii::$app->user->can('eventNamesDelete');
+                    if(!Yii::$app->user->isGuest && $key !==Yii::$app->user->identity->selected_event_ID){
+                        return TRUE;
+                    }
+                    return FALSE;
                 }
             ]
         ],

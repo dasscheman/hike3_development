@@ -41,7 +41,7 @@ class EventNamesController extends Controller {
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['upload', 'delete', 'change-status', 'change-settings'],
+                        'actions' => ['upload', 'change-status', 'change-settings'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -51,7 +51,7 @@ class EventNamesController extends Controller {
                     ],
                     [
                         'allow' => TRUE,
-                        'actions' => ['select-hike', 'create'],
+                        'actions' => ['select-hike', 'create', 'delete'],
                         'roles' => ['@'],
                     ],
                     [
@@ -300,7 +300,17 @@ class EventNamesController extends Controller {
      * @return mixed
      */
     public function actionDelete($event_ID) {
-        $model = $this->findModel($event_ID);
+
+        $check = DeelnemersEvent::findOne([
+                'event_ID' => $event_ID,
+                'user_ID' => Yii::$app->user->identity->id]);
+
+        if($check->rol !== DeelnemersEvent::ROL_organisatie) {
+            throw new HttpException(400, Yii::t('app' . 'You cannot remove this hike.'));
+        }
+
+        $model = EventNames::findOne([
+                'event_ID' => $event_ID]);
 
         try {
             NoodEnvelop::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
