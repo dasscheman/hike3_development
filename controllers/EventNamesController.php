@@ -22,6 +22,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use DateTime;
+use yii\web\HttpException;
 
 /**
  * EventNamesController implements the CRUD actions for EventNames model.
