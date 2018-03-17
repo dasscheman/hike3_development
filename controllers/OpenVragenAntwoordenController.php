@@ -37,7 +37,7 @@ class OpenVragenAntwoordenController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['antwoord-goed',  'antwoord-fout'],
-                        'roles' => ['organisatieIntroductie', 'organisatieGestart'],
+                        'roles' => ['organisatie'],
                     ],
                     [
                         'allow' => true,
