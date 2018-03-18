@@ -19,6 +19,8 @@ use Yii;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Users $createUser
  * @property EventNames $event
@@ -45,6 +47,7 @@ class NoodEnvelop extends HikeActiveRecord
             [['nood_envelop_name', 'event_ID', 'route_ID', 'opmerkingen', 'score'], 'required'],
             [['event_ID', 'route_ID', 'nood_envelop_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['nood_envelop_name', 'coordinaat'], 'string', 'max' => 255],
             [['opmerkingen'], 'string', 'max' => 1050],
             [

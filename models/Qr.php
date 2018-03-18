@@ -19,6 +19,8 @@ use app\components\GeneralFunctions;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Users $createUser
  * @property EventNames $event
@@ -45,6 +47,7 @@ class Qr extends HikeActiveRecord
             [['qr_name', 'qr_code', 'event_ID', 'route_ID', 'score'], 'required'],
             [['event_ID', 'route_ID', 'qr_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['qr_name', 'qr_code'], 'string', 'max' => 255],
             [
                 ['qr_code', 'event_ID'],

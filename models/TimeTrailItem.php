@@ -21,6 +21,8 @@ use app\components\GeneralFunctions;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property TblTimeTrailCheck[] $tblTimeTrailChecks
  * @property TblGroups[] $groups
@@ -48,6 +50,7 @@ class TimeTrailItem extends HikeActiveRecord
             [['time_trail_ID', 'event_ID', 'volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['time_trail_item_name', 'code', 'instruction', 'event_ID', 'score'], 'required'],
             [['time_trail_ID', 'max_time', 'create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['time_trail_item_name', 'code', 'instruction'], 'string', 'max' => 255],
             [['code', 'event_ID'], 'unique', 'targetAttribute' => ['code', 'event_ID'], 'message' => 'The combination of Trail Item Code and Event  ID has already been taken.'],
             [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],

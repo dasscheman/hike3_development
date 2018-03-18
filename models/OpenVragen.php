@@ -20,6 +20,8 @@ use Yii;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Users $createUser
  * @property EventNames $event
@@ -47,6 +49,7 @@ class OpenVragen extends HikeActiveRecord
             [['event_ID', 'route_ID', 'vraag_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['omschrijving'], 'string'],
             [['create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['open_vragen_name', 'vraag', 'goede_antwoord'], 'string', 'max' => 255],
             [
                 ['open_vragen_name', 'event_ID', 'route_ID'],

@@ -18,6 +18,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Bonuspunten[] $Bonuspuntens
  * @property PostPassage[] $PostPassages
@@ -45,12 +47,12 @@ class Posten extends HikeActiveRecord
             [['post_name', 'event_ID', 'score'], 'required'],
             [['event_ID', 'score', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['date', 'create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['post_name'], 'string', 'max' => 255],
-            [
-                ['post_name', 'event_ID', 'date'],
-                'unique',
-                'targetAttribute' => ['post_name', 'event_ID', 'date'],
-                'message' => Yii::t('app', 'This station name exist for this day.')]
+            [['post_name', 'event_ID', 'date'], 'unique', 'targetAttribute' => ['post_name', 'event_ID', 'date'], 'message' => Yii::t('app', 'This station name exist for this day.')],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
+            [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
         ];
     }
 
