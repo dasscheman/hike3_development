@@ -41,7 +41,7 @@ class OpenVragenController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['update', 'ajaxupdate'],
+                        'actions' => ['update', 'map-update','ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -94,7 +94,7 @@ class OpenVragenController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new question.'));
-                return $this->redirect(['route/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->route_ID = $route_ID;
@@ -112,15 +112,26 @@ class OpenVragenController extends Controller
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $open_vragen_ID
+     * @return type
+     */
+    public function actionMapUpdate($open_vragen_ID)
+    {
+        return $this->actionUpdate($open_vragen_ID, true);
+    }
+
+    /**
      * Updates an existing OpenVragen model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $open_vragen_ID
      * @return mixed
      */
-    public function actionUpdate($open_vragen_ID)
+    public function actionUpdate($open_vragen_ID, $map = null)
     {
         $model = $this->findModel($open_vragen_ID);
-
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
@@ -138,7 +149,11 @@ class OpenVragenController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at least one group.'));
             }
-            echo "<script>window.close();</script>";
+            if ($map === true) {
+                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                return;
+            }
+            return $this->redirect(['route/index']);
         }
 
         if (Yii::$app->request->post('OpenVragen') &&
@@ -146,8 +161,11 @@ class OpenVragenController extends Controller
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
-                echo "<script>window.close();</script>";
-                return $this->redirect(['map/index']);
+                if ($map === true) {
+                    echo "<script>window.close();</script>";
+                    return;
+                }
+                return $this->redirect(['route/index']);
             }
         }
 

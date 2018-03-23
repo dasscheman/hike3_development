@@ -41,7 +41,7 @@ class TimeTrailController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'delete'],
+                        'actions' => ['index', 'update', 'map-update', 'delete'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -147,12 +147,24 @@ class TimeTrailController extends Controller
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $time_trail_ID
+     * @return type
+     */
+    public function actionMapUpdate($time_trail_ID)
+    {
+        return $this->actionUpdate($time_trail_ID, true);
+    }
+
+    /**
      * Updates an existing TimeTrail model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($time_trail_ID)
+    public function actionUpdate($time_trail_ID, $map = null)
     {
         $model = $this->findModel($time_trail_ID);
 
@@ -174,16 +186,22 @@ class TimeTrailController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail, it contains items which should be removed first.'));
             }
-            echo "<script>window.close();</script>";
-            return $this->redirect(['map/index']);
+            if ($map === true) {
+                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                return;
+            }
+            return $this->redirect(['route/index']);
         }
 
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail.'));
-                echo "<script>window.close();</script>";
-                return $this->redirect(['map/index']);
+                if ($map === true) {
+                    echo "<script>window.close();</script>";
+                    return;
+                }
+                return $this->redirect(['route/index']);
             }
         }
 

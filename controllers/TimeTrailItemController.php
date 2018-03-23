@@ -48,7 +48,7 @@ class TimeTrailItemController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['report', 'qrcode', 'delete', 'update', 'move-up-down', 'ajaxupdate'],
+                        'actions' => ['report', 'qrcode', 'delete', 'update', 'map-update', 'move-up-down', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -121,12 +121,24 @@ class TimeTrailItemController extends Controller
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $time_trail_item_ID
+     * @return type
+     */
+    public function actionMapUpdate($time_trail_item_ID)
+    {
+        return $this->actionUpdate($time_trail_item_ID, true);
+    }
+
+    /**
      * Updates an existing TimeTrailItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $time_trail_item_ID
      * @return mixed
      */
-    public function actionUpdate($time_trail_item_ID)
+    public function actionUpdate($time_trail_item_ID, $map = null)
     {
         $model = $this->findModel($time_trail_item_ID);
         if (Yii::$app->request->post('update') == 'delete') {
@@ -147,8 +159,11 @@ class TimeTrailItemController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
             }
-            echo "<script>window.close();</script>";
-            return $this->redirect(['map/index']);
+            if ($map === true) {
+                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                return;
+            }
+            return $this->redirect(['route/index']);
         }
 
         if (Yii::$app->request->post('TimeTrailItem') &&
@@ -156,8 +171,12 @@ class TimeTrailItemController extends Controller
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
-                echo "<script>window.close();</script>";
-                return $this->redirect(['map/index']);
+
+                if ($map === true) {
+                    echo "<script>window.close();</script>";
+                    return;
+                }
+                return $this->redirect(['route/index']);
             }
         }
 

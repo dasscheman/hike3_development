@@ -38,7 +38,7 @@ class QrController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'qrcode', 'report', 'ajaxupdate'],
+                        'actions' => ['index', 'update', 'map-update', 'qrcode', 'report', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -89,7 +89,7 @@ class QrController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
-                return $this->redirect(['route/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->route_ID = $route_ID;
@@ -107,12 +107,24 @@ class QrController extends Controller
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $qr_ID
+     * @return type
+     */
+    public function actionMapUpdate($qr_ID)
+    {
+        return $this->actionUpdate($qr_ID, true);
+    }
+
+    /**
      * Updates an existing Qr model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $qr_ID
      * @return mixed
      */
-    public function actionUpdate($qr_ID)
+    public function actionUpdate($qr_ID, $map = null)
     {
         $model = $this->findModel($qr_ID);
 
@@ -133,7 +145,11 @@ class QrController extends Controller
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
             }
-            echo "<script>window.close();</script>";
+            if ($map === true) {
+                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                return;
+            }
+            return $this->redirect(['route/index']);
         }
 
         if (Yii::$app->request->post('Qr') &&
@@ -141,8 +157,11 @@ class QrController extends Controller
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
-                echo "<script>window.close();</script>";
-                return $this->redirect(['map/index']);
+                if ($map === true) {
+                    echo "<script>window.close();</script>";
+                    return;
+                }
+                return $this->redirect(['route/index']);
             }
         }
 

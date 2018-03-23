@@ -14,9 +14,10 @@ use app\models\OpenNoodEnvelop;
 /**
  * NoodEnvelopController implements the CRUD actions for TblNoodEnvelop model.
  */
-class NoodEnvelopController extends Controller {
-
-    public function behaviors() {
+class NoodEnvelopController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -29,7 +30,7 @@ class NoodEnvelopController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -44,11 +45,11 @@ class NoodEnvelopController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['update', 'ajaxupdate'],
+                        'actions' => ['update', 'map-update', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -60,7 +61,8 @@ class NoodEnvelopController extends Controller {
      * Lists all NoodEnvelop models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new NoodEnvelopSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -75,7 +77,8 @@ class NoodEnvelopController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($route_ID) {
+    public function actionCreate($route_ID)
+    {
         $model = new NoodEnvelop();
 
         if (Yii::$app->request->post('NoodEnvelop') &&
@@ -84,7 +87,7 @@ class NoodEnvelopController extends Controller {
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
-                return $this->redirect(['route/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->route_ID = $route_ID;
@@ -102,12 +105,25 @@ class NoodEnvelopController extends Controller {
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $nood_envelop_ID
+     * @return type
+     */
+    public function actionMapUpdate($nood_envelop_ID)
+    {
+        return $this->actionUpdate($nood_envelop_ID, true);
+    }
+
+    /**
      * Updates an existing NoodEnvelop model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($nood_envelop_ID) {
+    public function actionUpdate($nood_envelop_ID, $map = null)
+    {
         $model = $this->findModel($nood_envelop_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = OpenNoodEnvelop::find()
@@ -116,7 +132,8 @@ class NoodEnvelopController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':nood_envelop_id' => $model->nood_envelop_ID
-                ])
+                ]
+                )
                 ->exists();
             if (!$exist) {
                 $model->delete();
@@ -124,6 +141,10 @@ class NoodEnvelopController extends Controller {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted hint.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it is opened by at least one group.'));
+            }
+            if ($map === true) {
+                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                return;
             }
             return $this->redirect(['route/index']);
         }
@@ -133,8 +154,9 @@ class NoodEnvelopController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
-                if(Yii::$app->request->post('map')) {
+                if ($map === true) {
                     echo "<script>window.close();</script>";
+                    return;
                 }
                 return $this->redirect(['route/index']);
             }
@@ -143,13 +165,14 @@ class NoodEnvelopController extends Controller {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/nood-envelop/update',
-                'model' => $model
-        ]);
+                ['model' => $model]
+        );
     }
 
-    public function actionMoveUpDown() {
+    public function actionMoveUpDown()
+    {
         $event_id = $_GET['event_id'];
         $nood_envelop_id = $_GET['nood_envelop_id'];
         $nood_envelop_volgorde = $_GET['volgorde'];
@@ -192,12 +215,13 @@ class NoodEnvelopController extends Controller {
         }
     }
 
-    public function actionAjaxupdate(){
+    public function actionAjaxupdate()
+    {
         $model = $this->findModel(Yii::$app->request->post('nood_envelop_id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
-        if($model->save()){
-            return TRUE;
+        if ($model->save()) {
+            return true;
         } else {
             return $model->getErrors();
         }
@@ -210,7 +234,8 @@ class NoodEnvelopController extends Controller {
      * @return TblNoodEnvelop the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = NoodEnvelop::findOne([
                 'nood_envelop_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -221,5 +246,4 @@ class NoodEnvelopController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

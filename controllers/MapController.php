@@ -256,7 +256,7 @@ class MapController extends Controller
             // Provide a shared InfoWindow to the marker
             $marker->attachInfoWindow(
                 new InfoWindow([
-                'content' => '<a href="' . Url::to(['posten/update', 'post_ID' => $post->post_ID], true) . '" target="_blank">' . $post->post_name . '</a>'
+                'content' => '<a href="' . Url::to(['posten/map-update', 'post_ID' => $post->post_ID], true) . '" target="_blank">' . $post->post_name . '</a>'
                 ])
             );
 
@@ -342,7 +342,7 @@ class MapController extends Controller
             // Provide a shared InfoWindow to the marker
             $marker->attachInfoWindow(
                 new InfoWindow([
-                'content' => '<a href="' . Url::to(['qr/update', 'qr_ID' => $post->qr_ID], true) . '" target="_blank">' . $post->qr_name . '</a>'
+                'content' => '<a href="' . Url::to(['qr/map-update', 'qr_ID' => $post->qr_ID], true) . '" target="_blank">' . $post->qr_name . '</a>'
                 ])
             );
 
@@ -427,7 +427,7 @@ class MapController extends Controller
             // Provide a shared InfoWindow to the marker
             $marker->attachInfoWindow(
                 new InfoWindow([
-                'content' => '<a href="' . Url::to(['nood-envelop/update', 'nood_envelop_ID' => $post->nood_envelop_ID], true) . '" target="_blank">' . $post->nood_envelop_name . '</a>'
+                'content' => '<a href="' . Url::to(['nood-envelop/map-update', 'nood_envelop_ID' => $post->nood_envelop_ID], true) . '" target="_blank">' . $post->nood_envelop_name . '</a>'
                 ])
             );
 
@@ -512,7 +512,7 @@ class MapController extends Controller
             // Provide a shared InfoWindow to the marker
             $marker->attachInfoWindow(
                 new InfoWindow([
-                'content' => '<a href="' . Url::to(['open-vragen/update', 'open_vragen_ID' => $post->open_vragen_ID], true) . '" target="_blank">' . $post->open_vragen_name . '</a>'
+                'content' => '<a href="' . Url::to(['open-vragen/map-update', 'open_vragen_ID' => $post->open_vragen_ID], true) . '" target="_blank">' . $post->open_vragen_name . '</a>'
                 ])
             );
 
@@ -611,7 +611,7 @@ class MapController extends Controller
                 // Provide a shared InfoWindow to the marker
                 $marker->attachInfoWindow(
                     new InfoWindow([
-                    'content' => '<a href="' . Url::to(['time-trail-item/update', 'time_trail_item_ID' => $item->time_trail_item_ID], true) . '" target="_blank">' . $item->time_trail_item_name . '</a>'
+                    'content' => '<a href="' . Url::to(['time-trail-item/map-update', 'time_trail_item_ID' => $item->time_trail_item_ID], true) . '" target="_blank">' . $item->time_trail_item_name . '</a>'
                     ])
                 );
 
