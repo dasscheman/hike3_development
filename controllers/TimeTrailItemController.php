@@ -15,6 +15,7 @@ use dosamigos\qrcode\QrCode;
 use yii\filters\AccessControl;
 use yii\web\Cookie;
 use yii\helpers\Url;
+use yii\helpers\Json;
 
 /**
  * TimeTrailItemController implements the CRUD actions for TimeTrailItem model.
@@ -160,7 +161,7 @@ class TimeTrailItemController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
             }
             if ($map === true) {
-                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
             return $this->redirect(['route/index']);
@@ -173,7 +174,7 @@ class TimeTrailItemController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
 
                 if ($map === true) {
-                    echo "<script>window.close();</script>";
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
                 return $this->redirect(['route/index']);
@@ -341,13 +342,15 @@ class TimeTrailItemController extends Controller
 
     public function actionAjaxupdate()
     {
-        $model = $this->findModel(Yii::$app->request->post('time_trail_item_ID'));
+        $model = $this->findModel(Yii::$app->request->post('id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
         if ($model->save()) {
             return true;
         } else {
-            return $model->getErrors();
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 

@@ -23,13 +23,15 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use DateTime;
 use yii\web\HttpException;
+use app\models\CustomMap;
 
 /**
  * EventNamesController implements the CRUD actions for EventNames model.
  */
-class EventNamesController extends Controller {
-
-    public function behaviors() {
+class EventNamesController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -51,12 +53,12 @@ class EventNamesController extends Controller {
                         'roles' => ['organisatieGestart'],
                     ],
                     [
-                        'allow' => TRUE,
+                        'allow' => true,
                         'actions' => ['select-hike', 'create', 'delete'],
                         'roles' => ['@'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -69,7 +71,8 @@ class EventNamesController extends Controller {
      * Lists all EventNames models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new EventNamesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -85,7 +88,8 @@ class EventNamesController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -96,7 +100,8 @@ class EventNamesController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new EventNames();
         $model->status = 1;
         Yii::$app->cache->flush();
@@ -124,7 +129,7 @@ class EventNamesController extends Controller {
             $modelDeelnemersEvent->event_ID = $event_id;
             $modelDeelnemersEvent->user_ID = Yii::$app->user->id;
             $modelDeelnemersEvent->rol = 1;
-            $modelDeelnemersEvent->group_ID = NULL;
+            $modelDeelnemersEvent->group_ID = null;
 
             //$modelRoute->day_date = '0000-00-00';
             $modelRoute->route_name = "Introductie";
@@ -172,7 +177,6 @@ class EventNamesController extends Controller {
                     // Wanneer er een hike aangemaakt wordt, dan wordt er voor
                     // elke dag een route aangemaakt.
                     if (!Route::routeExistForDay($day)) {
-
                         $modelRoute = new Route;
                         $modelRoute->setAttributes([
                             'event_ID' => $model->event_ID,
@@ -186,10 +190,13 @@ class EventNamesController extends Controller {
 
                 if ($model->status == EventNames::STATUS_gestart) {
                     Yii::$app->session->setFlash(
-                        'warning', Yii::t(
-                            'app', 'You created a new hike. Here you add players.
+                        'warning',
+                        Yii::t(
+                            'app',
+                            'You created a new hike. Here you add players.
                                 On the route overview page you can create the route of an hike.
-                                Players cannot see this when the hike status is setup.')
+                                Players cannot see this when the hike status is setup.'
+                        )
                     );
                 }
                 return $this->redirect(['/site/overview-organisation']);
@@ -209,7 +216,8 @@ class EventNamesController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionChangeSettings($event_ID, $action) {
+    public function actionChangeSettings($event_ID, $action)
+    {
         Yii::$app->cache->flush();
         $model = $this->findModel($event_ID);
 
@@ -222,7 +230,6 @@ class EventNamesController extends Controller {
 
         if (Yii::$app->request->get('action') == 'change_settings' ||
             Yii::$app->request->get('action') == 'set_max_time') {
-
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the changes.'));
             } else {
@@ -237,7 +244,6 @@ class EventNamesController extends Controller {
                         // Wanneer er een hike aangemaakt wordt, dan wordt er voor
                         // elke dag een route aangemaakt.
                         if (!Route::routeExistForDay($day)) {
-
                             $modelRoute = new Route;
                             $modelRoute->setAttributes([
                                 'event_ID' => $model->event_ID,
@@ -255,8 +261,10 @@ class EventNamesController extends Controller {
                 }
                 if (Yii::$app->request->get('action') == 'set_max_time') {
                     Yii::$app->session->setFlash('success', Yii::t(
-                            'app', 'You set the max time. This is the max walking time the groups have to finish.
-                        Time spend on a station is not included.'));
+                            'app',
+                        'You set the max time. This is the max walking time the groups have to finish.
+                        Time spend on a station is not included.'
+                    ));
                 }
             }
         }
@@ -269,13 +277,13 @@ class EventNamesController extends Controller {
      * @param integer $event_ID
      * @return mixed
      */
-    public function actionDelete($event_ID) {
-
+    public function actionDelete($event_ID)
+    {
         $check = DeelnemersEvent::findOne([
                 'event_ID' => $event_ID,
                 'user_ID' => Yii::$app->user->identity->id]);
 
-        if($check->rol !== DeelnemersEvent::ROL_organisatie) {
+        if ($check->rol !== DeelnemersEvent::ROL_organisatie) {
             throw new HttpException(400, Yii::t('app', 'You cannot remove this hike.'));
         }
 
@@ -301,7 +309,8 @@ class EventNamesController extends Controller {
         return $this->redirect(['event-names/select-hike']);
     }
 
-    public function actionUpload() {
+    public function actionUpload()
+    {
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if ($model->load(Yii::$app->request->post())) {
@@ -325,7 +334,8 @@ class EventNamesController extends Controller {
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionChangeStatus() {
+    public function actionChangeStatus()
+    {
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
@@ -339,24 +349,34 @@ class EventNamesController extends Controller {
         if ($model->save()) {
             Yii::$app->cache->flush();
             if ($model->status == EventNames::STATUS_opstart) {
-                Yii::$app->session->setFlash('warning', Yii::t(
-                        'app', 'The hike is has status setup.
+                Yii::$app->session->setFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                    'The hike is has status setup.
                         Users cannot see anything of the hike. They can see the
-                        different hike elements when the hike has status introduction or started')
+                        different hike elements when the hike has status introduction or started'
+                )
                 );
             }
             if ($model->status == EventNames::STATUS_introductie) {
-                Yii::$app->session->setFlash('warning', Yii::t(
-                        'app', 'The hike is has status introduction.
+                Yii::$app->session->setFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                    'The hike is has status introduction.
                         Users can see the questions for the introduction and they
-                        can scan the silent stations for the introduction.')
+                        can scan the silent stations for the introduction.'
+                )
                 );
             }
             if ($model->status == EventNames::STATUS_gestart) {
                 Yii::$app->session->setFlash('warning', Yii::t(
-                        'app', 'The hike is started, active day is set on start date.
+                        'app',
+                    'The hike is started, active day is set on start date.
                         For this day user can see the questions, scan stations and open hints.
-                        Don\'t forget to set the max time if you want to have a time limit.'));
+                        Don\'t forget to set the max time if you want to have a time limit.'
+                ));
             }
         } else {
             // validation failed: $errors is an array containing error messages
@@ -373,7 +393,8 @@ class EventNamesController extends Controller {
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionChangeDay() {
+    public function actionChangeDay()
+    {
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
@@ -401,7 +422,8 @@ class EventNamesController extends Controller {
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionSetMaxTime() {
+    public function actionSetMaxTime()
+    {
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
@@ -412,7 +434,7 @@ class EventNamesController extends Controller {
         $model->load(Yii::$app->request->post());
 
         if ($model->validate()) {
-            $model->save(FALSE);
+            $model->save(false);
             Yii::$app->cache->flush();
             if ($model->status == EventNames::STATUS_gestart) {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
@@ -427,11 +449,13 @@ class EventNamesController extends Controller {
         return $this->redirect(['site/overview-organisation'], 200);
     }
 
-    public function actionSelectHike() {
+    public function actionSelectHike()
+    {
         $modelEvents = EventNames::find()
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
-        if (NULL !== Yii::$app->request->get('event_ID')) {
+        if (null !== Yii::$app->request->get('event_ID')) {
+            CustomMap::setCookieIndexRoute(null);
             $modelDeelnemersEvent = DeelnemersEvent::find()
                 ->where([
                     'event_ID' => Yii::$app->request->get('event_ID'),
@@ -439,15 +463,15 @@ class EventNamesController extends Controller {
                 ])
                 ->one();
 
-            if(isset($modelDeelnemersEvent->rol) &&
-                $modelDeelnemersEvent->rol >= 1 ) {
+            if (isset($modelDeelnemersEvent->rol) &&
+                $modelDeelnemersEvent->rol >= 1) {
                 Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
                 Yii::$app->user->identity->save();
                 Yii::$app->cache->flush();
                 return $this->redirect(['/site/index']);
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Computer says no.'));
-           }
+            }
         }
 
         return $this->render('select-hike', [
@@ -462,7 +486,8 @@ class EventNamesController extends Controller {
      * @return EventNames the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = EventNames::findOne([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
         if ($model !== null) {
@@ -471,5 +496,4 @@ class EventNamesController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

@@ -6,6 +6,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use app\models\DeelnemersEvent;
+use app\models\EventNames;
 use app\models\Qr;
 use app\models\RouteSearch;
 use app\models\Posten;
@@ -13,17 +15,15 @@ use app\models\OpenVragen;
 use app\models\NoodEnvelop;
 use app\models\TimeTrail;
 use app\models\TimeTrailItem;
-use yii\web\Cookie;
 use dosamigos\google\maps\LatLng;
-use dosamigos\google\maps\Map;
 use dosamigos\google\maps\overlays\Marker;
 use dosamigos\google\maps\overlays\InfoWindow;
 use dosamigos\google\maps\Event;
-use dosamigos\google\maps\overlays\Icon;
 use app\models\Route;
 use yii\web\NotFoundHttpException;
-use yii\helpers\Url;
 use app\models\CustomMap;
+
+use yii\helpers\Console;
 
 class MapController extends Controller
 {
@@ -36,6 +36,16 @@ class MapController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index'],
+                        'roles' => ['organisatie', 'deelnemer'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['group-view'],
+                        'roles' => ['deelnemer'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['edit', 'view'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -54,6 +64,52 @@ class MapController extends Controller
     }
 
     public function actionIndex()
+    {
+        if (Yii::$app->user->isguest) {
+            return $this->render('/site/index');
+        }
+        if (!Yii::$app->user->identity->getDeelnemersEventsByUserID()->exists()) {
+            Yii::$app->session->setFlash(
+                'warning',
+                Yii::t(
+                    'app',
+                    'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
+                    If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
+                )
+            );
+            return $this->redirect(['/users/view']);
+        }
+
+        switch (Yii::$app->user->identity->getStatusForEvent()) {
+            case EventNames::STATUS_opstart:
+                if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie) {
+                    return $this->redirect(['/map/edit']);
+                }
+                break;
+            case EventNames::STATUS_introductie:
+            case EventNames::STATUS_gestart:
+                if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie) {
+                    return $this->redirect(['/map/view']);
+                }
+                if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_deelnemer) {
+                    return $this->redirect(['/map/group-view']);
+                }
+                break;
+            case EventNames::STATUS_beindigd:
+                if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie ||
+                    Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_deelnemer) {
+                    return $this->redirect(['/map/view']);
+                }
+                break;
+            case EventNames::STATUS_geannuleerd:
+            default:
+                return $this->redirect(['/site/index']);
+        }
+
+        return $this->redirect(['/site/index']);
+    }
+
+    public function actionEdit()
     {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
@@ -89,21 +145,24 @@ class MapController extends Controller
         $routeSearchModel = new RouteSearch();
         $routeDataProvider = $routeSearchModel->searchRouteInEvent(Yii::$app->request->queryParams);
 
+        $screen = Yii::$app->getRequest()->getCookies()->getValue('screen_size') - 520;
+        if ($screen === null ||
+            $screen < 250) {
+            $screen = 250;
+        }
         $coord = new LatLng(['lat' => 52.082689705630365, 'lng' => 5.264233018789355]);
-        $map = new Map([
+        $map = new CustomMap([
             'center' => $coord,
             'zoom' => 14,
             'width' => '100%',
+            'height' => $screen,
         ]);
 
-        $this->setPostMarkers($map, $routeModel->day_date);
-        $this->setQrMarkers($map, $routeModel->route_ID);
-        $this->setHintMarkers($map, $routeModel->route_ID);
-        $this->setvragenMarkers($map, $routeModel->route_ID);
-        $this->setTimeTrailMarkers($map);
-
-
-
+        $map->setPostMarkers($routeModel->day_date, true);
+        $map->setQrMarkers($routeModel->route_ID, true);
+        $map->setHintMarkers($routeModel->route_ID, true);
+        $map->setvragenMarkers($routeModel->route_ID, true);
+        $map->setTimeTrailMarkers(true);
 
         // Lets add a marker now
         $marker = new Marker([
@@ -114,7 +173,9 @@ class MapController extends Controller
             'title' => 'New item',
         ]);
 
-
+        if ($map->getMarkersCenterCoordinates() !== null) {
+            $marker->setPosition($map->getMarkersCenterCoordinates());
+        }
         // Provide a shared InfoWindow to the marker
         $marker->attachInfoWindow(
             new InfoWindow([
@@ -140,7 +201,6 @@ class MapController extends Controller
                         y[i].value=event.latLng.lng();    // Change the content
                     }
                 }
-
                 setLngLat()
             "
         ]);
@@ -157,7 +217,6 @@ class MapController extends Controller
         $hintModel->longitude = $marker->getLng();
         $timeTrailItemModel->latitude = $marker->getLat();
         $timeTrailItemModel->longitude = $marker->getLng();
-
 
         // Add marker to the map
         $map->addOverlay($marker);
@@ -176,6 +235,95 @@ class MapController extends Controller
                 'routeSearchModel' => $routeSearchModel,
                 'routeDataProvider' => $routeDataProvider,
                 'marker' => $marker,
+                'map' => $map
+        ]);
+    }
+
+    public function actionGroupView()
+    {
+        $group = Yii::$app->user->identity->getGroupUserForEvent();
+        $routeModel = $this->findRouteModel(Yii::$app->request->get('route_ID'));
+
+        $timeTrailData = TimeTrail::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->all();
+
+        $routeSearchModel = new RouteSearch();
+        $routeDataProvider = $routeSearchModel->searchRouteInEvent(Yii::$app->request->queryParams);
+
+        $screen = Yii::$app->getRequest()->getCookies()->getValue('screen_size') - 320;
+        if ($screen === null ||
+            $screen < 250) {
+            $screen = 250;
+        }
+
+        $coord = new LatLng(['lat' => 52.082689705630365, 'lng' => 5.264233018789355]);
+        $map = new CustomMap([
+            'center' => $coord,
+            'zoom' => 14,
+            'width' => '100%',
+            'height' => $screen,
+        ]);
+
+        $map->setPostMarkers($routeModel->day_date, false, $group);
+        $map->setQrMarkers($routeModel->route_ID, false, $group);
+        $map->setHintMarkers($routeModel->route_ID, false, $group);
+//        $map->setvragenMarkers($routeModel->route_ID, false, $group);
+        $map->setTimeTrailMarkers(false, $group);
+
+        if ($map->getMarkersCenterCoordinates() !== null) {
+            $map->center = $map->getMarkersCenterCoordinates();
+        }
+        $map->zoom = 2 + $map->getMarkersFittingZoom();
+        return $this->render('view', [
+                'routeModel' => $routeModel,
+                'timeTrailData' => $timeTrailData,
+                'routeSearchModel' => $routeSearchModel,
+                'routeDataProvider' => $routeDataProvider,
+                'map' => $map
+        ]);
+    }
+
+    public function actionView()
+    {
+        $routeModel = $this->findRouteModel(Yii::$app->request->get('route_ID'));
+
+        $timeTrailData = TimeTrail::find()
+            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->all();
+
+        $routeSearchModel = new RouteSearch();
+        $routeDataProvider = $routeSearchModel->searchRouteInEvent(Yii::$app->request->queryParams);
+
+        $coord = new LatLng(['lat' => 52.082689705630365, 'lng' => 5.264233018789355]);
+
+        $screen = Yii::$app->getRequest()->getCookies()->getValue('screen_size') - 320;
+        if ($screen === null ||
+            $screen < 250) {
+            $screen = 250;
+        }
+
+        $map = new CustomMap([
+            'center' => $coord,
+            'zoom' => 14,
+            'width' => $screen,
+        ]);
+
+        $map->setPostMarkers($routeModel->day_date, false);
+        $map->setQrMarkers($routeModel->route_ID, false);
+        $map->setHintMarkers($routeModel->route_ID, false);
+        $map->setvragenMarkers($routeModel->route_ID, false);
+        $map->setTimeTrailMarkers(false);
+
+        if ($map->getMarkersCenterCoordinates() !== null) {
+            $map->center = $map->getMarkersCenterCoordinates();
+        }
+        $map->zoom = 2 + $map->getMarkersFittingZoom();
+        return $this->render('view', [
+                'routeModel' => $routeModel,
+                'timeTrailData' => $timeTrailData,
+                'routeSearchModel' => $routeSearchModel,
+                'routeDataProvider' => $routeDataProvider,
                 'map' => $map
         ]);
     }
@@ -214,449 +362,6 @@ class MapController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-    protected function setPostMarkers(&$map, $date)
-    {
-        $model = Posten::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'date' => $date
-        ]);
-
-        if (!$model->exists()) {
-            return;
-        }
-
-        $icon = new Icon(['url' => Url::to('@web/images/map_icons/star-3.png')]);
-        foreach ($model->all() as $post) {
-            if ($post->latitude === null) {
-                $latitude = 0.000;
-            } else {
-                $latitude = $post->latitude;
-            }
-
-            if ($post->longitude === null) {
-                $longitude = 0.0000;
-            } else {
-                $longitude = $post->longitude;
-            }
-
-            $coord = new LatLng(['lat' => $latitude, 'lng' => $longitude]);
-
-            // Lets add a marker now
-            $marker = new Marker([
-                'position' => $coord,
-                'title' => $post->post_name,
-                'icon' => $icon,
-                'draggable' => true,
-            ]);
-
-            // Provide a shared InfoWindow to the marker
-            $marker->attachInfoWindow(
-                new InfoWindow([
-                'content' => '<a href="' . Url::to(['posten/map-update', 'post_ID' => $post->post_ID], true) . '" target="_blank">' . $post->post_name . '</a>'
-                ])
-            );
-
-            $link = Url::to(['posten/ajaxupdate'], true);
-            $event = new Event([
-                "trigger" => "dragend",
-                "js" =>
-                "
-                    function savePost () {
-                        latitude = event.latLng.lat()
-                        longitude = event.latLng.lng();
-                        $.ajax({
-                            url: '$link',
-                            type: 'POST',
-                            data: {
-                                latitude: latitude,
-                                longitude: longitude,
-                                post_id: $post->post_ID,
-                                map: true
-                            },
-                            success: function (data) {
-                            },
-                            error: function(jqXHR, errMsg) {
-                                // handle error
-                                alert(errMsg + data);
-                            }
-                        });
-                    };
-         
-                    krajeeDialog.confirm('" . Yii::t('app', 'Are you sure you want to save new location?') . "', function (result) {
-                        if (result) {
-                            savePost();
-                        } else {
-                            location.reload();
-                        }
-                    });
-
-                "
-            ]);
-
-            $marker->addEvent($event);
-            // Add marker to the map
-            $map->addOverlay($marker);
-        }
-    }
-
-    protected function setQrMarkers(&$map, $route_id)
-    {
-        $model = Qr::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
-        if (!$model->exists()) {
-            return;
-        }
-
-        $icon = new Icon(['url' => Url::to('@web/images/map_icons/qr-code.png')]);
-        foreach ($model->all() as $post) {
-            if ($post->latitude === null) {
-                $latitude = 0.0000;
-            } else {
-                $latitude = $post->latitude;
-            }
-
-            if ($post->longitude === null) {
-                $longitude = 0.000;
-            } else {
-                $longitude = $post->longitude;
-            }
-
-            $coord = new LatLng(['lat' => $latitude, 'lng' => $longitude]);
-
-            // Lets add a marker now
-            $marker = new Marker([
-                'position' => $coord,
-                'title' => $post->qr_name,
-                'icon' => $icon,
-                'draggable' => true,
-            ]);
-
-            // Provide a shared InfoWindow to the marker
-            $marker->attachInfoWindow(
-                new InfoWindow([
-                'content' => '<a href="' . Url::to(['qr/map-update', 'qr_ID' => $post->qr_ID], true) . '" target="_blank">' . $post->qr_name . '</a>'
-                ])
-            );
-
-            $link = Url::to(['qr/ajaxupdate'], true);
-            $event = new Event([
-                "trigger" => "dragend",
-                "js" =>
-                "
-                    function saveQr () {
-                        latitude = event.latLng.lat()
-                        longitude = event.latLng.lng();
-                        $.ajax({
-                            url: '$link',
-                            type: 'POST',
-                            data: {
-                                latitude: latitude,
-                                longitude: longitude,
-                                qr_id: $post->qr_ID,
-                                map: true
-                            },
-                            success: function (data) {
-                            },
-                            error: function(jqXHR, errMsg) {
-                                // handle error
-                                alert(errMsg + data);
-                            }
-                        });
-                    };
-
-                    krajeeDialog.confirm('" . Yii::t('app', 'Are you sure you want to save new location?') . "', function (result) {
-                        if (result) {
-                            saveQr();
-                        } else {
-                            location.reload();
-                        }
-                    });
-                "
-            ]);
-
-            $marker->addEvent($event);
-            // Add marker to the map
-            $map->addOverlay($marker);
-        }
-    }
-
-    protected function setHintMarkers(&$map, $route_id)
-    {
-        $model = NoodEnvelop::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
-        if (!$model->exists()) {
-            return;
-        }
-
-        $icon = new Icon(['url' => Url::to('@web/images/map_icons/postal.png')]);
-        foreach ($model->all() as $post) {
-            if ($post->latitude === null) {
-                $latitude = 0.000;
-            } else {
-                $latitude = $post->latitude;
-            }
-
-            if ($post->longitude === null) {
-                $longitude = 0.000;
-            } else {
-                $longitude = $post->longitude;
-            }
-
-            $coord = new LatLng(['lat' => $latitude, 'lng' => $longitude]);
-
-            // Lets add a marker now
-            $marker = new Marker([
-                'position' => $coord,
-                'title' => $post->nood_envelop_name,
-                'icon' => $icon,
-                'draggable' => true,
-            ]);
-
-            // Provide a shared InfoWindow to the marker
-            $marker->attachInfoWindow(
-                new InfoWindow([
-                'content' => '<a href="' . Url::to(['nood-envelop/map-update', 'nood_envelop_ID' => $post->nood_envelop_ID], true) . '" target="_blank">' . $post->nood_envelop_name . '</a>'
-                ])
-            );
-
-            $link = Url::to(['nood-envelop/ajaxupdate'], true);
-            $event = new Event([
-                "trigger" => "dragend",
-                "js" =>
-                "
-                    function saveHint () {
-                        latitude = event.latLng.lat()
-                        longitude = event.latLng.lng();
-                        $.ajax({
-                            url: '$link',
-                            type: 'POST',
-                            data: {
-                                latitude: latitude,
-                                longitude: longitude,
-                                nood_envelop_id: $post->nood_envelop_ID,
-                                map: true
-                            },
-                            success: function (data) {
-                            },
-                            error: function(jqXHR, errMsg) {
-                                // handle error
-                                alert(errMsg + data);
-                            }
-                        });
-                    };
-
-                    krajeeDialog.confirm('" . Yii::t('app', 'Are you sure you want to save new location?') . "', function (result) {
-                        if (result) {
-                            saveHint();
-                        } else {
-                            location.reload();
-                        }
-                    });
-                "
-            ]);
-
-            $marker->addEvent($event);
-            // Add marker to the map
-            $map->addOverlay($marker);
-        }
-    }
-
-    protected function setvragenMarkers(&$map, $route_id)
-    {
-        $model = OpenVragen::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
-        if (!$model->exists()) {
-            return;
-        }
-
-        $icon = new Icon(['url' => Url::to('@web/images/map_icons/notvisited.png')]);
-        foreach ($model->all() as $post) {
-            if ($post->latitude === null) {
-                $latitude = 0.0000;
-            } else {
-                $latitude = $post->latitude;
-            }
-
-            if ($post->longitude === null) {
-                $longitude = 0.000;
-            } else {
-                $longitude = $post->longitude;
-            }
-
-            $coord = new LatLng(['lat' => $latitude, 'lng' => $longitude]);
-
-            // Lets add a marker now
-            $marker = new Marker([
-                'position' => $coord,
-                'title' => $post->open_vragen_name,
-                'icon' => $icon,
-                'draggable' => true,
-            ]);
-
-            // Provide a shared InfoWindow to the marker
-            $marker->attachInfoWindow(
-                new InfoWindow([
-                'content' => '<a href="' . Url::to(['open-vragen/map-update', 'open_vragen_ID' => $post->open_vragen_ID], true) . '" target="_blank">' . $post->open_vragen_name . '</a>'
-                ])
-            );
-
-            $link = Url::to(['open-vragen/ajaxupdate'], true);
-            $event = new Event([
-                "trigger" => "dragend",
-                "js" =>
-                "
-                    function saveQuestion () {
-                        latitude = event.latLng.lat()
-                        longitude = event.latLng.lng();
-                        $.ajax({
-                            url: '$link',
-                            type: 'POST',
-                            data: {
-                                latitude: latitude,
-                                longitude: longitude,
-                                open_vragen_id: $post->open_vragen_ID,
-                                map: true
-                            },
-                            success: function (data) {
-                            },
-                            error: function(jqXHR, errMsg, data) {
-                                // handle error
-                                alert(errMsg + data);
-                            }
-                        });
-                    };
-
-                    krajeeDialog.confirm('" . Yii::t('app', 'Are you sure you want to save new location?') . "', function (result) {
-                        if (result) {
-                            saveQuestion();
-                        } else {
-                            location.reload();
-                        }
-                    });
-                "
-            ]);
-
-            $marker->addEvent($event);
-            // Add marker to the map
-            $map->addOverlay($marker);
-        }
-    }
-
-    protected function setTimeTrailMarkers(&$map)
-    {
-        $model = TimeTrail::find()
-            ->where([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            ])
-            ->orderBy([
-                'time_trail_ID' => SORT_ASC
-            ]);
-
-        if (!$model->exists()) {
-            return;
-        }
-
-        $kleur = 0;
-        foreach ($model->all() as $timeTrail) {
-            $items = TimeTrailItem::find()
-                ->where([
-                    'time_trail_ID' => $timeTrail->time_trail_ID,
-                ])
-                ->orderBy([
-                    'volgorde' => SORT_ASC
-                ])
-                ->all();
-            $count = 1;
-            foreach ($items as $item) {
-                $kleuren = new CustomMap();
-                $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_' . $count . '.png')]);
-                if ($item->latitude === null) {
-                    $latitude = 0.0000;
-                } else {
-                    $latitude = $item->latitude;
-                }
-
-                if ($item->longitude === null) {
-                    $longitude = 0.000;
-                } else {
-                    $longitude = $item->longitude;
-                }
-
-                $coord = new LatLng(['lat' => $latitude, 'lng' => $longitude]);
-
-                // Lets add a marker now
-                $marker = new Marker([
-                    'position' => $coord,
-                    'title' => $item->time_trail_item_name,
-                    'icon' => $icon,
-                    'draggable' => true,
-                ]);
-
-                // Provide a shared InfoWindow to the marker
-                $marker->attachInfoWindow(
-                    new InfoWindow([
-                    'content' => '<a href="' . Url::to(['time-trail-item/map-update', 'time_trail_item_ID' => $item->time_trail_item_ID], true) . '" target="_blank">' . $item->time_trail_item_name . '</a>'
-                    ])
-                );
-
-                $link = Url::to(['time-trail-item/ajaxupdate'], true);
-                $event = new Event([
-                    "trigger" => "dragend",
-                    "js" =>
-                    "
-                        function saveTrailItem () {
-                            latitude = event.latLng.lat()
-                            longitude = event.latLng.lng();
-                            $.ajax({
-                                url: '$link',
-                                type: 'POST',
-                                data: {
-                                    latitude: latitude,
-                                    longitude: longitude,
-                                    time_trail_item_ID: $item->time_trail_item_ID,
-                                    map: true
-                                },
-                                success: function (data) {
-                                },
-                                error: function(jqXHR, errMsg, data) {
-                                    // handle error
-                                    alert(errMsg + data);
-                                }
-                            });
-                        };
-
-                        krajeeDialog.confirm('" . Yii::t('app', 'Are you sure you want to save new location?') . "', function (result) {
-                            if (result) {
-                                saveTrailItem();
-                            } else {
-                                location.reload();
-                            }
-                        });
-                    "
-                ]);
-
-                $marker->addEvent($event);
-                // Add marker to the map
-                $map->addOverlay($marker);
-                $count++;
-            }
-            $kleur++;
         }
     }
 }

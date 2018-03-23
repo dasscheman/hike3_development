@@ -16,7 +16,7 @@ use kartik\widgets\TimePicker;
             'time-trail-item/create',
             'time_trail_ID' => $model->time_trail_ID
         ] : [
-            'time-trail-item/update',
+            'time-trail-item/' .  Yii::$app->controller->action->id,
             'time_trail_item_ID' => $model->time_trail_item_ID
         ]]);
     
@@ -50,8 +50,8 @@ use kartik\widgets\TimePicker;
         [
             'attribute' => 'max_time',
             'pluginOptions' => [
-                'showSeconds' => FALSE,
-                'showMeridian' => FALSE,
+                'showSeconds' => false,
+                'showMeridian' => false,
                 'minuteStep' => 1,
                 'defaultTime' => '10:00'
             ]

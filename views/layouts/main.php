@@ -42,7 +42,7 @@ AppAsset::register($this);
 
             echo NavX::widget(
                 [
-                'options' => ['class' => 'navbar-nav navbar-right'],
+                'options' => ['class' => 'navbar-nav navbar-right click-menu'],
                 'items' => [
                     [
                         'label' => Yii::t('app', 'Profiel'),
@@ -101,9 +101,11 @@ AppAsset::register($this);
                             ],
                         ],
                         ],
-                    !Yii::$app->user->can('organisatie') ? '' :
+                    !Yii::$app->user->can('organisatie') && !Yii::$app->user->can('deelnemer')? '' :
                         [
                         'label' => Yii::t('app', 'Map'),
+                        'options' => [
+                            'id' => 'map-click'],
                         'url' => ['/map/index'],
                         'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('Organisatie')
                         ],

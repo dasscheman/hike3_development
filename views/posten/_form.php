@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 
 <div class="tbl-posten-form">
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['posten/create', 'date' => $model->date] : ['posten/update', 'post_ID' => $model->post_ID]]);
+        'action' => $model->isNewRecord ? ['posten/create', 'date' => $model->date] : ['posten/' .  Yii::$app->controller->action->id, 'post_ID' => $model->post_ID]]);
 
     echo $form->field($model, 'post_name')->textInput(['maxlength' => true]);
     echo $form->field($model, 'score')->textInput();

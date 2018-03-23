@@ -21,12 +21,14 @@ use Yii;
  * @property integer $update_user_ID
  * @property string $latitude
  * @property string $longitude
+ * @property int $show_coordinates
  *
  * @property Users $createUser
  * @property EventNames $event
  * @property Route $route
  * @property Users $updateUser
  * @property OpenNoodEnvelop[] $OpenNoodEnvelops
+ * @property Groups[] $groups
  */
 class NoodEnvelop extends HikeActiveRecord
 {
@@ -45,15 +47,16 @@ class NoodEnvelop extends HikeActiveRecord
     {
         return [
             [['nood_envelop_name', 'event_ID', 'route_ID', 'opmerkingen', 'score'], 'required'],
-            [['event_ID', 'route_ID', 'nood_envelop_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
+            [['event_ID', 'route_ID', 'nood_envelop_volgorde', 'score', 'create_user_ID', 'update_user_ID', 'show_coordinates'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['latitude', 'longitude'], 'number'],
             [['nood_envelop_name', 'coordinaat'], 'string', 'max' => 255],
             [['opmerkingen'], 'string', 'max' => 1050],
-            [
-                ['nood_envelop_name', 'event_ID'],
-                'unique', 'targetAttribute' => ['nood_envelop_name', 'event_ID'],
-                'message' => Yii::t('app', 'This hint name alrady exists for this Hike')]
+            [['nood_envelop_name', 'event_ID', 'route_ID'], 'unique', 'targetAttribute' => ['nood_envelop_name', 'event_ID', 'route_ID']],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
+            [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
+            [['route_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Route::className(), 'targetAttribute' => ['route_ID' => 'route_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
         ];
     }
 
@@ -69,6 +72,7 @@ class NoodEnvelop extends HikeActiveRecord
             'route_ID' => Yii::t('app', 'Route ID'),
             'nood_envelop_volgorde' => Yii::t('app', 'Hint Order'),
             'coordinaat' => Yii::t('app', 'Coordinate'),
+            'show_coordinates' => Yii::t('app', 'Display coordinates to player when the open this hint'),
             'opmerkingen' => Yii::t('app', 'Remarks'),
             'score' => Yii::t('app', 'Penalty points'),
             'create_time' => Yii::t('app', 'Create Time'),
@@ -81,7 +85,8 @@ class NoodEnvelop extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -134,24 +139,26 @@ class NoodEnvelop extends HikeActiveRecord
     */
     public function getNoodEnvelopScore($envelop_id)
     {
-    	$data = NoodEnvelop::model()->find('nood_envelop_ID =:envelop_id', array(':envelop_id' => $envelop_id));
+        $data = NoodEnvelop::model()->find('nood_envelop_ID =:envelop_id', array(':envelop_id' => $envelop_id));
         return isset($data->score) ?
             $data->score : 0;
     }
 
-	public function getRouteIdOfEnvelop($envelop_id)
-	{
-		$data = NoodEnvelop::model()->find('nood_envelop_ID =:envelop_id',
-						  array(':envelop_id' => $envelop_id));
-		if(isset($data->route_ID)){
-			return $data->route_ID;
-		} else {
-			return false;
-		}
-	}
+    public function getRouteIdOfEnvelop($envelop_id)
+    {
+        $data = NoodEnvelop::model()->find(
+            'nood_envelop_ID =:envelop_id',
+                          array(':envelop_id' => $envelop_id)
+        );
+        if (isset($data->route_ID)) {
+            return $data->route_ID;
+        } else {
+            return false;
+        }
+    }
 
-	public function setNewOrderForNoodEnvelop()
-	{
+    public function setNewOrderForNoodEnvelop()
+    {
         $max_order = NoodEnvelop::find()
             ->select('nood_envelop_volgorde')
             ->where('event_ID=:event_id')
@@ -160,14 +167,15 @@ class NoodEnvelop extends HikeActiveRecord
                 [
                     ':event_id' => $this->event_ID,
                     ':route_id' =>$this->route_ID,
-                ])
+                ]
+            )
             ->max('nood_envelop_volgorde');
         if (empty($max_order)) {
             $this->nood_envelop_volgorde = 1;
         } else {
             $this->nood_envelop_volgorde = $max_order+1;
         }
-	}
+    }
 
     /**
      * Score ophalen voor een group.
@@ -175,7 +183,7 @@ class NoodEnvelop extends HikeActiveRecord
     public function isHintOpenedByGroup()
     {
         $db = self::getDb();
-        $group_id = $db->cache(function ($db){
+        $group_id = $db->cache(function ($db) {
             return DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('event_ID =:event_id AND user_ID =:user_id')
@@ -183,7 +191,7 @@ class NoodEnvelop extends HikeActiveRecord
                 ->one();
         });
         
-        $data = $db->cache(function ($db) use ($group_id){
+        $data = $db->cache(function ($db) use ($group_id) {
             return OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
@@ -209,11 +217,10 @@ class NoodEnvelop extends HikeActiveRecord
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
             ->one();
 
-        if($data === NULL) {
+        if ($data === null) {
             $data = new OpenNoodEnvelop;
         }
 
         return $data;
     }
-
 }

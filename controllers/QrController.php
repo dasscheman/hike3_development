@@ -13,6 +13,7 @@ use app\models\QrCheck;
 use kartik\mpdf\Pdf;
 use dosamigos\qrcode\QrCode;
 use yii\helpers\Url;
+use yii\helpers\Json;
 
 /**
  * QrController implements the CRUD actions for Qr model.
@@ -146,7 +147,7 @@ class QrController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
             }
             if ($map === true) {
-                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
             return $this->redirect(['route/index']);
@@ -158,7 +159,7 @@ class QrController extends Controller
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
                 if ($map === true) {
-                    echo "<script>window.close();</script>";
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
                 return $this->redirect(['route/index']);
@@ -318,13 +319,16 @@ class QrController extends Controller
 
     public function actionAjaxupdate()
     {
-        $model = $this->findModel(Yii::$app->request->post('qr_id'));
+        $model = $this->findModel(Yii::$app->request->post('id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
+
         if ($model->save()) {
             return true;
         } else {
-            return $model->getErrors();
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 

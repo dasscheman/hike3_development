@@ -149,7 +149,7 @@ class PostenController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
             }
             if ($map === true) {
-                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
             return $this->redirect(['route/index']);
@@ -162,7 +162,7 @@ class PostenController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
 
                 if ($map === true) {
-                    echo "<script>window.close();</script>";
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
                 return $this->redirect(['route/index']);
@@ -347,13 +347,16 @@ class PostenController extends Controller
 
     public function actionAjaxupdate()
     {
-        $model = $this->findModel(Yii::$app->request->post('post_id'));
+        $model = $this->findModel(Yii::$app->request->post('id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
+
         if ($model->save()) {
             return true;
         } else {
-            return $model->getErrors();
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 }

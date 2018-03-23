@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
         'action' => $model->isNewRecord ? [
             'time-trail/create'
         ] : [
-            'time-trail/update',
+            'time-trail/' .  Yii::$app->controller->action->id,
             'time_trail_ID' => $model->time_trail_ID]]);
 
     echo $form->field($model, 'time_trail_name')->textInput(['maxlength' => true]);

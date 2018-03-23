@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\OpenVragenAntwoorden;
 use app\models\Route;
+use yii\helpers\Json;
 
 /**
  * OpenVragenController implements the CRUD actions for TblOpenVragen model.
@@ -150,7 +151,7 @@ class OpenVragenController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at least one group.'));
             }
             if ($map === true) {
-                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
             return $this->redirect(['route/index']);
@@ -162,7 +163,7 @@ class OpenVragenController extends Controller
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
                 if ($map === true) {
-                    echo "<script>window.close();</script>";
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
                 return $this->redirect(['route/index']);
@@ -179,47 +180,18 @@ class OpenVragenController extends Controller
         );
     }
 
-    /**
-     * Deletes an existing TblOpenVragen model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        dd('NIEET MEER NODIG?');
-        $model = $this->findModel($id);
-
-        $exist = OpenVragenAntwoorden::find()
-            ->where('event_ID=:event_id and open_vragen_ID=:open_vragen_id')
-            ->addParams(
-                [
-                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                    ':open_vragen_id' => $model->open_vragen_ID
-            ]
-            )
-            ->exists();
-
-        if (!$exist) {
-            $model->delete();
-        }
-
-        return $this->renderAjax('/route/index', [
-                'searchModel' => $searchModel,
-                'startDate' => $startDate,
-                'endDate' => $endDate
-        ]);
-    }
-
     public function actionAjaxupdate()
     {
-        $model = $this->findModel(Yii::$app->request->post('open_vragen_id'));
+        $model = $this->findModel(Yii::$app->request->post('id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
+
         if ($model->save()) {
             return true;
         } else {
-            return $model->getErrors();
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 

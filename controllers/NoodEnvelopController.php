@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\OpenNoodEnvelop;
+use yii\helpers\Json;
 
 /**
  * NoodEnvelopController implements the CRUD actions for TblNoodEnvelop model.
@@ -81,6 +82,7 @@ class NoodEnvelopController extends Controller
     {
         $model = new NoodEnvelop();
 
+        d(Yii::$app->request->post());
         if (Yii::$app->request->post('NoodEnvelop') &&
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForNoodEnvelop();
@@ -88,6 +90,10 @@ class NoodEnvelopController extends Controller
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
                 return $this->redirect(['map/index']);
+            } else {
+                foreach ($model->getErrors() as $error) {
+                    Yii::$app->session->setFlash('error', Json::encode($error));
+                }
             }
         } else {
             $model->route_ID = $route_ID;
@@ -98,10 +104,10 @@ class NoodEnvelopController extends Controller
             return $this->renderAjax('create', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/nood-envelop/create',
-                'model' => $model
-        ]);
+                ['model' => $model]
+            );
     }
 
     /**
@@ -143,7 +149,7 @@ class NoodEnvelopController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it is opened by at least one group.'));
             }
             if ($map === true) {
-                echo "<script>window.close() window.opener.location.reload(true);</script>";
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
             return $this->redirect(['route/index']);
@@ -155,7 +161,7 @@ class NoodEnvelopController extends Controller
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
                 if ($map === true) {
-                    echo "<script>window.close();</script>";
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
                 return $this->redirect(['route/index']);
@@ -217,13 +223,16 @@ class NoodEnvelopController extends Controller
 
     public function actionAjaxupdate()
     {
-        $model = $this->findModel(Yii::$app->request->post('nood_envelop_id'));
+        $model = $this->findModel(Yii::$app->request->post('id'));
         $model->latitude = Yii::$app->request->post('latitude');
         $model->longitude = Yii::$app->request->post('longitude');
+
         if ($model->save()) {
             return true;
         } else {
-            return $model->getErrors();
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 
