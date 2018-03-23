@@ -12,16 +12,19 @@ use yii\filters\VerbFilter;
 use app\models\DeelnemersEvent;
 use yii\filters\AccessControl;
 use yii\web\Cookie;
+use app\models\TimeTrailItem;
 
 /**
  * TimeTrailController implements the CRUD actions for TimeTrail model.
  */
-class TimeTrailController extends Controller {
+class TimeTrailController extends Controller
+{
 
     /**
      * @inheritdoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -33,7 +36,7 @@ class TimeTrailController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -52,7 +55,7 @@ class TimeTrailController extends Controller {
                         'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -64,7 +67,8 @@ class TimeTrailController extends Controller {
      * Lists all TimeTrail models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new TimeTrailItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $model = TimeTrail::find()
@@ -83,7 +87,8 @@ class TimeTrailController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -94,7 +99,8 @@ class TimeTrailController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionStatus() {
+    public function actionStatus()
+    {
         $event_id = Yii::$app->user->identity->selected_event_ID;
         $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
         $timeTrailChecks = TimeTrailCheck::find()
@@ -115,7 +121,8 @@ class TimeTrailController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new TimeTrail();
 
         if (Yii::$app->request->post('TimeTrail') &&
@@ -123,7 +130,7 @@ class TimeTrailController extends Controller {
             if ($model->save()) {
                 $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail.'));
-                return $this->redirect(['time-trail/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
@@ -133,10 +140,10 @@ class TimeTrailController extends Controller {
             return $this->renderAjax('create', ['model' => $model]);
         }
 
-        return $this->render([
-                '/time-trail/create',
-                'model' => $model
-        ]);
+        return $this->render(
+            '/time-trail/create',
+            ['model' => $model]
+        );
     }
 
     /**
@@ -145,7 +152,8 @@ class TimeTrailController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($time_trail_ID) {
+    public function actionUpdate($time_trail_ID)
+    {
         $model = $this->findModel($time_trail_ID);
 
         $this->setCookieIndexTab($time_trail_ID);
@@ -156,7 +164,8 @@ class TimeTrailController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':time_trail_ID' => $model->time_trail_ID
-                ])
+                ]
+                )
                 ->exists();
 
             if (!$exist) {
@@ -165,14 +174,16 @@ class TimeTrailController extends Controller {
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail, it contains items which should be removed first.'));
             }
-            return $this->redirect(['time-trail/index']);
+            echo "<script>window.close();</script>";
+            return $this->redirect(['map/index']);
         }
 
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail.'));
-                return $this->redirect(['time-trail/index']);
+                echo "<script>window.close();</script>";
+                return $this->redirect(['map/index']);
             }
         }
 
@@ -180,10 +191,10 @@ class TimeTrailController extends Controller {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/time-trail/update',
-                'model' => $model
-        ]);
+                ['model' => $model]
+        );
     }
 
     /**
@@ -192,7 +203,8 @@ class TimeTrailController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -205,7 +217,8 @@ class TimeTrailController extends Controller {
      * @return TimeTrail the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = TimeTrail::findOne([
                 'time_trail_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -218,7 +231,8 @@ class TimeTrailController extends Controller {
         }
     }
 
-    public function setCookieIndexTab($date) {
+    public function setCookieIndexTab($date)
+    {
         $cookies = Yii::$app->getResponse()->getCookies();
         $cookies->remove('time_trail_tab');
         $cookie = new Cookie([
@@ -228,5 +242,4 @@ class TimeTrailController extends Controller {
         ]);
         $cookies->add($cookie);
     }
-
 }

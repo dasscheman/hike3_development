@@ -168,21 +168,6 @@ class EventNamesController extends Controller {
 
                 for ($i = $begin; $i <= $end; $i->modify('+1 day')) {
                     $day = Yii::$app->setupdatetime->convert($i);
-                    // Wanneer er een hike aangemaakt wordt, dan moet er
-                    // gecheckt woren of er voor elke dag al een begin aangemaakt is.
-                    // Als dat niet het geval is dan moet die nog aangemaakt worden.
-                    if (!Posten::startPostExist($day)) {
-
-                        $modelStartPost = new Posten;
-                        $modelStartPost->setAttributes([
-                            'event_ID' => $model->event_ID,
-                            'post_name' => Yii::t('app', 'Start day'),
-                            'date' => $day,
-                            'post_volgorde' => 1,
-                            'score' => 0,
-                        ]);
-                        $modelStartPost->save();
-                    }
                     $dayname = Yii::$app->setupdatetime->getDay($i);
                     // Wanneer er een hike aangemaakt wordt, dan wordt er voor
                     // elke dag een route aangemaakt.
@@ -248,22 +233,6 @@ class EventNamesController extends Controller {
 
                     for ($i = $begin; $i <= $end; $i->modify('+1 day')) {
                         $day = Yii::$app->setupdatetime->convert($i);
-                        // Wanneer er een hike aangemaakt wordt, dan moet er
-                        // gecheckt woren of er voor elke dag al een begin aangemaakt is.
-                        // Als dat niet het geval is dan moet die nog aangemaakt worden.
-                        if (!Posten::startPostExist($day)) {
-
-                            $modelStartPost = new Posten;
-                            $modelStartPost->setAttributes([
-                                'event_ID' => $model->event_ID,
-                                'post_name' => Yii::t('app', 'Start day'),
-                                'date' => $day,
-                                'post_volgorde' => 1,
-                                'score' => 0,
-                            ]);
-                            $modelStartPost->save();
-                        }
-
                         $dayname = Yii::$app->setupdatetime->getDay($i);
                         // Wanneer er een hike aangemaakt wordt, dan wordt er voor
                         // elke dag een route aangemaakt.

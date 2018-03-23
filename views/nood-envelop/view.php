@@ -10,22 +10,6 @@ use prawee\widgets\ButtonAjax;
 <div class="tbl-nood-envelop-view">
 
     <h1><?= Html::encode(Yii::t('app', 'Hints for') . ' ' . $model->route_name) ?></h1>
-
-    <p>
-        <?php
-        echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Create new hint'),
-             'route'=>['nood-envelop/create', 'route_ID' => $model->route_ID],
-             'modalId'=>'#main-modal',
-             'modalContent'=>'#main-content-modal',
-             'options'=>[
-                 'class'=>'btn btn-success',
-                 'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->can('organisatieIntrodutie') && !Yii::$app->user->can('organisatieOpstart'),
-             ]
-         ]);
-        ?>
-    </p>
     <?php
 
     $dataProvider = new yii\data\ArrayDataProvider([

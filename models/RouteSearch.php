@@ -74,8 +74,14 @@ class RouteSearch extends Route
 
     public function searchRouteInEvent($params)
     {
+        $event = EventNames::findOne([
+            'event_ID' => Yii::$app->user->identity->selected_event_ID]);
         $query = Route::find()
-            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+            ->where('event_ID =:event_id AND (ISNULL(day_date) OR (day_date >=:start_date AND day_date <=:end_date))')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':start_date' => $event->start_date, 
+                ':end_date' => $event->end_date])
             ->orderBy('route_volgorde ASC');
 
         $dataProvider = new ActiveDataProvider([

@@ -15,21 +15,23 @@ use app\models\Route;
 /**
  * OpenVragenController implements the CRUD actions for TblOpenVragen model.
  */
-class OpenVragenController extends Controller {
-
-    public function behaviors() {
+class OpenVragenController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'ajaxupdate' => ['post'],
                 ],
             ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -39,11 +41,11 @@ class OpenVragenController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['update'],
+                        'actions' => ['update', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -55,7 +57,8 @@ class OpenVragenController extends Controller {
      * Lists all TblOpenVragen models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new OpenVragenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -70,7 +73,8 @@ class OpenVragenController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -81,7 +85,8 @@ class OpenVragenController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($route_ID) {
+    public function actionCreate($route_ID)
+    {
         $model = new OpenVragen();
         if (Yii::$app->request->post('OpenVragen') &&
             $model->load(Yii::$app->request->post())) {
@@ -100,10 +105,10 @@ class OpenVragenController extends Controller {
             return $this->renderAjax('create', ['model' => $model]);
         }
 
-        return $this->render([
-                '/open-vragen/create',
-                'model' => $model
-        ]);
+        return $this->render(
+            '/open-vragen/create',
+            ['model' => $model]
+        );
     }
 
     /**
@@ -112,7 +117,8 @@ class OpenVragenController extends Controller {
      * @param integer $open_vragen_ID
      * @return mixed
      */
-    public function actionUpdate($open_vragen_ID) {
+    public function actionUpdate($open_vragen_ID)
+    {
         $model = $this->findModel($open_vragen_ID);
 
         if (Yii::$app->request->post('update') == 'delete') {
@@ -122,7 +128,8 @@ class OpenVragenController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':open_vragen_id' => $model->open_vragen_ID
-                ])
+                ]
+                )
                 ->exists();
             if (!$exist) {
                 $model->delete();
@@ -131,7 +138,7 @@ class OpenVragenController extends Controller {
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at least one group.'));
             }
-            return $this->redirect(['route/index']);
+            echo "<script>window.close();</script>";
         }
 
         if (Yii::$app->request->post('OpenVragen') &&
@@ -139,7 +146,8 @@ class OpenVragenController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
-                return $this->redirect(['route/index']);
+                echo "<script>window.close();</script>";
+                return $this->redirect(['map/index']);
             }
         }
 
@@ -147,10 +155,10 @@ class OpenVragenController extends Controller {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/open-vragen/update',
-                'model' => $model
-        ]);
+                ['model' => $model]
+        );
     }
 
     /**
@@ -159,7 +167,8 @@ class OpenVragenController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         dd('NIEET MEER NODIG?');
         $model = $this->findModel($id);
 
@@ -169,7 +178,8 @@ class OpenVragenController extends Controller {
                 [
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':open_vragen_id' => $model->open_vragen_ID
-            ])
+            ]
+            )
             ->exists();
 
         if (!$exist) {
@@ -183,6 +193,18 @@ class OpenVragenController extends Controller {
         ]);
     }
 
+    public function actionAjaxupdate()
+    {
+        $model = $this->findModel(Yii::$app->request->post('open_vragen_id'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+        if ($model->save()) {
+            return true;
+        } else {
+            return $model->getErrors();
+        }
+    }
+
     /**
      * Finds the TblOpenVragen model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -190,7 +212,8 @@ class OpenVragenController extends Controller {
      * @return TblOpenVragen the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = OpenVragen::findOne([
                 'open_vragen_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -198,11 +221,12 @@ class OpenVragenController extends Controller {
         if ($model !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('LALALALThe requested page does not exist.');
         }
     }
 
-    public function actionViewPlayers() {
+    public function actionViewPlayers()
+    {
         $event_id = $_GET['event_id'];
         /**
          * Alleen de vragen van een active dag van een gestarte hike
@@ -211,47 +235,48 @@ class OpenVragenController extends Controller {
          */
         $searchModel = new OpenVragenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-//		if (EventNames::getStatusHike($event_id) == EventNames::STATUS_introductie) {
-//			$openVragenDataProvider=new CActiveDataProvider('OpenVragen',
-//				array(
-//					'criteria'=>array(
-//						 'join'=>'JOIN tbl_route route ON route.route_ID = t.route_ID',
-//						 'condition'=>'route.route_name =:name
-//										AND route.event_ID =:event_id',
-//						 'params'=>array(':name'=>'Introductie',
-//										  ':event_id'=>$event_id),
-//						 'order'=>'route_ID ASC, vraag_volgorde ASC'
-//						),
-//					'pagination'=>array(
-//						'pageSize'=>30,
-//					),
-//				)
-//			);
-//		} else {
-//			$active_day = EventNames::getActiveDayOfHike($event_id);
-//			$openVragenDataProvider=new CActiveDataProvider('OpenVragen',
-//				array(
-//					'criteria'=>array(
-//						 'join'=>'JOIN tbl_route route ON route.route_ID = t.route_ID',
-//						 'condition'=>'route.day_date =:active_day
-//										AND route.event_ID =:event_id',
-//						 'params'=>array(':active_day'=>$active_day,
-//										  ':event_id'=>$event_id),
-//						 'order'=>'route_ID ASC, vraag_volgorde ASC'
-//						),
-//					'pagination'=>array(
-//						'pageSize'=>30,
-//					),
-//				)
-//			);
-//		}
+        //		if (EventNames::getStatusHike($event_id) == EventNames::STATUS_introductie) {
+        //			$openVragenDataProvider=new CActiveDataProvider('OpenVragen',
+        //				array(
+        //					'criteria'=>array(
+        //						 'join'=>'JOIN tbl_route route ON route.route_ID = t.route_ID',
+        //						 'condition'=>'route.route_name =:name
+        //										AND route.event_ID =:event_id',
+        //						 'params'=>array(':name'=>'Introductie',
+        //										  ':event_id'=>$event_id),
+        //						 'order'=>'route_ID ASC, vraag_volgorde ASC'
+        //						),
+        //					'pagination'=>array(
+        //						'pageSize'=>30,
+        //					),
+        //				)
+        //			);
+        //		} else {
+        //			$active_day = EventNames::getActiveDayOfHike($event_id);
+        //			$openVragenDataProvider=new CActiveDataProvider('OpenVragen',
+        //				array(
+        //					'criteria'=>array(
+        //						 'join'=>'JOIN tbl_route route ON route.route_ID = t.route_ID',
+        //						 'condition'=>'route.day_date =:active_day
+        //										AND route.event_ID =:event_id',
+        //						 'params'=>array(':active_day'=>$active_day,
+        //										  ':event_id'=>$event_id),
+        //						 'order'=>'route_ID ASC, vraag_volgorde ASC'
+        //						),
+        //					'pagination'=>array(
+        //						'pageSize'=>30,
+        //					),
+        //				)
+        //			);
+        //		}
 
         $this->render('viewPlayers', array(
             'openVragenDataProvider' => $openVragenDataProvider,
         ));
     }
 
-    public function actionCreateIntroductie() {
+    public function actionCreateIntroductie()
+    {
         $model = new OpenVragen;
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
@@ -262,8 +287,9 @@ class OpenVragenController extends Controller {
             $model->route_ID = Route::model()->getIntroductieRouteId($_GET['event_id']);
             $model->vraag_volgorde = OpenVragen::model()->getNewOrderForIntroductieVragen($_GET['event_id']);
 
-            if ($model->save())
+            if ($model->save()) {
                 $this->redirect(array('/route/viewIntroductie', 'event_id' => $model->event_ID));
+            }
         }
         $this->layout = '/layouts/column1';
         $this->render('createIntroductie', array(
@@ -277,7 +303,8 @@ class OpenVragenController extends Controller {
      * Returns list with available techniek names, for a day and event.
      */
 
-    public function actionDynamicRouteOnderdeel() {
+    public function actionDynamicRouteOnderdeel()
+    {
         $day_id = $_POST['day_id'];
         $event_id = $_POST['event_id'];
         $data = Route::findAll('day_ID =:day_id AND event_ID =:event_id', array(':day_id' => $day_id,
@@ -294,7 +321,8 @@ class OpenVragenController extends Controller {
         }
     }
 
-    public function actionMoveUpDown() {
+    public function actionMoveUpDown()
+    {
         $event_id = $_GET['event_id'];
         $vraag_id = $_GET['vraag_id'];
         $vraag_volgorde = $_GET['volgorde'];
@@ -345,5 +373,4 @@ class OpenVragenController extends Controller {
                 "event_id" => $currentModel->event_ID,));
         }
     }
-
 }

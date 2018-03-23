@@ -22,6 +22,7 @@ class NoodEnvelopController extends Controller {
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'ajaxupdate' => ['post'],
                 ],
             ],
             'access' => [
@@ -43,7 +44,7 @@ class NoodEnvelopController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['update'],
+                        'actions' => ['update', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -132,6 +133,9 @@ class NoodEnvelopController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
+                if(Yii::$app->request->post('map')) {
+                    echo "<script>window.close();</script>";
+                }
                 return $this->redirect(['route/index']);
             }
         }
@@ -185,6 +189,17 @@ class NoodEnvelopController extends Controller {
                     'route/view',
                     "route_id" => $currentModel->route_ID,
                     "event_id" => $currentModel->event_ID,));
+        }
+    }
+
+    public function actionAjaxupdate(){
+        $model = $this->findModel(Yii::$app->request->post('nood_envelop_id'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+        if($model->save()){
+            return TRUE;
+        } else {
+            return $model->getErrors();
         }
     }
 

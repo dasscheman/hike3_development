@@ -32,7 +32,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['error'],
+                        'actions' => ['error', 'about'],
                         'allow' => true
                     ],
                     [

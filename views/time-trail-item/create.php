@@ -2,11 +2,10 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\TimeTrailItem */
 
-$this->title = Yii::t('app', 'Create Time Trail Item');
+//$this->title = Yii::t('app', 'Create Time Trail Item');
 ?>
 <div class="tbl-time-trail-item-create">
 

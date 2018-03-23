@@ -26,6 +26,8 @@ use yii\widgets\ActiveForm;
                 'Points for scanning. You can use positive and negative (penalty point) integers.'
             )
     ]);
+    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>

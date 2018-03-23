@@ -19,23 +19,26 @@ use yii\helpers\Url;
 /**
  * TimeTrailItemController implements the CRUD actions for TimeTrailItem model.
  */
-class TimeTrailItemController extends Controller {
+class TimeTrailItemController extends Controller
+{
 
     /**
      * @inheritdoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'ajaxupdate' => ['post'],
                 ],
             ], 'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -45,11 +48,11 @@ class TimeTrailItemController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['report', 'qrcode', 'delete', 'update', 'move-up-down'],
+                        'actions' => ['report', 'qrcode', 'delete', 'update', 'move-up-down', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ],
@@ -61,7 +64,8 @@ class TimeTrailItemController extends Controller {
      * Lists all TimeTrailItem models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new TimeTrailItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -76,7 +80,8 @@ class TimeTrailItemController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -87,7 +92,8 @@ class TimeTrailItemController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new TimeTrailItem();
         if (Yii::$app->request->post('TimeTrailItem') &&
             $model->load(Yii::$app->request->post())) {
@@ -96,7 +102,7 @@ class TimeTrailItemController extends Controller {
             if ($model->save()) {
                 $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail item.'));
-                return $this->redirect(['time-trail/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
@@ -108,10 +114,10 @@ class TimeTrailItemController extends Controller {
             return $this->renderAjax('create', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/time-trail-item/create',
-                'model' => $model
-        ]);
+                ['model' => $model]
+        );
     }
 
     /**
@@ -120,7 +126,8 @@ class TimeTrailItemController extends Controller {
      * @param integer $time_trail_item_ID
      * @return mixed
      */
-    public function actionUpdate($time_trail_item_ID) {
+    public function actionUpdate($time_trail_item_ID)
+    {
         $model = $this->findModel($time_trail_item_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = TimeTrailCheck::find()
@@ -129,7 +136,8 @@ class TimeTrailItemController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':time_trail_item_id' => $model->time_trail_item_ID
-                ])
+                ]
+                )
                 ->exists();
 
             if (!$exist) {
@@ -139,7 +147,8 @@ class TimeTrailItemController extends Controller {
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
             }
-            return $this->redirect(['time-trail/index']);
+            echo "<script>window.close();</script>";
+            return $this->redirect(['map/index']);
         }
 
         if (Yii::$app->request->post('TimeTrailItem') &&
@@ -147,7 +156,8 @@ class TimeTrailItemController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
-                return $this->redirect(['time-trail/index']);
+                echo "<script>window.close();</script>";
+                return $this->redirect(['map/index']);
             }
         }
 
@@ -155,10 +165,11 @@ class TimeTrailItemController extends Controller {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/time-trail-item/update',
-                'model' => $model
-        ]);
+
+             ['model' => $model]
+        );
     }
 
     /**
@@ -167,7 +178,8 @@ class TimeTrailItemController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($time_trail_item_ID) {
+    public function actionDelete($time_trail_item_ID)
+    {
         $model = $this->findModel($time_trail_item_ID);
 
         try {
@@ -187,16 +199,24 @@ class TimeTrailItemController extends Controller {
         ]);
     }
 
-    public function actionQrcode($code) {
+    public function actionQrcode($code)
+    {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
         $link = Url::to(['time-trail-check/create', 'event_id' => $event_id, 'code' => $code], true);
 //        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=time-trail-check/create&event_id=" . $event_id . "&code=" . $code;
         return QrCode::jpg(
-                $link, Yii::$app->params['timetrail_code_path'] . $code . '.jpg', 1, 3, 1, TRUE);
+                $link,
+            Yii::$app->params['timetrail_code_path'] . $code . '.jpg',
+            1,
+            3,
+            1,
+            true
+        );
     }
 
-    public function actionReport($time_trail_item_ID) {
+    public function actionReport($time_trail_item_ID)
+    {
         $model = $this->findModel($time_trail_item_ID);
         if (isset($model)) {
             $content = $this->renderPartial('reportview', ['model' => $model]);
@@ -247,7 +267,8 @@ class TimeTrailItemController extends Controller {
      * Deze actie wordt gebruikt voor de grid velden. 
      */
 
-    public function actionMoveUpDown($time_trail_item_ID, $up_down) {
+    public function actionMoveUpDown($time_trail_item_ID, $up_down)
+    {
         $modelItem = $this->findModel($time_trail_item_ID);
         if ($up_down === 'up') {
             $previousModel = TimeTrailItem::find()
@@ -266,7 +287,6 @@ class TimeTrailItemController extends Controller {
         // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
         // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
         if (isset($previousModel)) {
-
             $tempCurrentVolgorde = $modelItem->volgorde;
             $modelItem->volgorde = $previousModel->volgorde;
             $previousModel->volgorde = $tempCurrentVolgorde;
@@ -300,6 +320,18 @@ class TimeTrailItemController extends Controller {
         ]);
     }
 
+    public function actionAjaxupdate()
+    {
+        $model = $this->findModel(Yii::$app->request->post('time_trail_item_ID'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+        if ($model->save()) {
+            return true;
+        } else {
+            return $model->getErrors();
+        }
+    }
+
     /**
      * Finds the TimeTrailItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -307,7 +339,8 @@ class TimeTrailItemController extends Controller {
      * @return TimeTrailItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = TimeTrailItem::findOne([
                 'time_trail_item_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -320,7 +353,8 @@ class TimeTrailItemController extends Controller {
         }
     }
 
-    public function setCookieIndexTab($date) {
+    public function setCookieIndexTab($date)
+    {
         $cookies = Yii::$app->getResponse()->getCookies();
         $cookies->remove('time_trail_tab');
         $cookie = new Cookie([
@@ -330,5 +364,4 @@ class TimeTrailItemController extends Controller {
         ]);
         $cookies->add($cookie);
     }
-
 }

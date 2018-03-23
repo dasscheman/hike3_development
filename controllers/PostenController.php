@@ -25,6 +25,7 @@ class PostenController extends Controller {
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'ajaxupdate' => ['post'],
                 ],
             ],
             'access' => [
@@ -36,7 +37,7 @@ class PostenController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'move-up-down', 'lists-posts'],
+                        'actions' => ['index', 'update', 'move-up-down', 'lists-posts', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -77,18 +78,22 @@ class PostenController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date) {
+    public function actionCreate() {
         $model = new Posten();
-
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForPosten();
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
-                return $this->redirect(['posten/index']);
+                return $this->redirect(['map/index']);
+            } else {
+                foreach ($model->getErrors() as $error) {
+                    Yii::$app->session->setFlash('error', Json::encode($error));
+                }
             }
+
         } else {
-            $model->date = $date;
+            $model->date = Yii::$app->request->get(date);
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $this->setCookieIndexTab($model->date);
         }
@@ -127,24 +132,28 @@ class PostenController extends Controller {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
             }
-            return $this->redirect(['posten/index']);
+            echo "<script>window.close();</script>";
+            return $this->redirect(['map/index']);
         }
+
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
-                return $this->redirect(['posten/index']);
+                echo "<script>window.close();</script>";
+                return $this->redirect(['map/index']);
             }
         }
+
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
-                '/posten/update',
-                'model' => $model
-        ]);
+        return $this->render(
+                'update',
+                ['model' => $model]
+        );
     }
 
     /**
@@ -305,4 +314,14 @@ class PostenController extends Controller {
         $cookies->add($cookie);
     }
 
+    public function actionAjaxupdate(){
+        $model = $this->findModel(Yii::$app->request->post('post_id'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+        if($model->save()){
+            return TRUE;
+        } else {
+            return $model->getErrors();
+        }
+    }
 }
