@@ -35,6 +35,7 @@ $config = [
                 'security' => 'app\controllers\user\SecurityController',
             ],
             'mailer' => [
+                'sender' => ['kiwi@biologenkantoor.nl' => 'Kiwi.run'],
                 'viewPath' => '@app/mail/user',
             ],
             'admins' => ['dasman']
@@ -104,6 +105,17 @@ $config = [
         ],
         'setupdatetime' => [
             'class' => 'app\components\SetupDateTime',
+        ],
+        'assetManager' => [
+            'bundles' => [
+                'dosamigos\google\maps\MapAsset' => [
+                    'options' => [
+                        'key' => '',
+                        'language' => 'nl',
+                        'version' => '3.1.18'
+                    ]
+                ]
+            ]
         ],
         'db' => require(__DIR__ . '/db.php'),
     ],
