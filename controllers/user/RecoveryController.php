@@ -12,13 +12,14 @@
 namespace app\controllers\user;
 
 use Yii;
-use dektrium\user\controllers\RecoveryController as Controller;
+use yii\helpers\Json;
+use yii\web\NotFoundHttpException;
 use app\models\Users;
+use dektrium\user\controllers\RecoveryController as Controller;
 use dektrium\user\Finder;
+use dektrium\user\helpers\Password;
 use dektrium\user\Mailer;
 use dektrium\user\models\Token;
-use yii\web\NotFoundHttpException;
-use dektrium\user\helpers\Password;
 
 /**
  * RecoveryController manages password recovery process.
@@ -27,14 +28,16 @@ use dektrium\user\helpers\Password;
  *
  * @author Dmitry Erofeev <dmeroff@gmail.com>
  */
-class RecoveryController extends Controller {
+class RecoveryController extends Controller
+{
 
     /**
      * @param string           $id
      * @param \yii\base\Module $module
      * @param array            $config
      */
-    public function __construct($id, $module, $config = []) {
+    public function __construct($id, $module, $config = [])
+    {
         parent::__construct($id, $module, new Finder, $config);
     }
 
@@ -44,16 +47,16 @@ class RecoveryController extends Controller {
      * @return string
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionRequest() {
+    public function actionRequest()
+    {
         if (!$this->module->enablePasswordRecovery) {
             throw new NotFoundHttpException();
         }
 
         $model = new Users;
         if ($model->load(Yii::$app->request->post())) {
-
             $user = $model->findUserByEmail($model->email);
-            if ($user !== NULL) {
+            if ($user !== null) {
                 /** @var Token $token */
                 $token = \Yii::createObject([
                         'class' => Token::className(),
@@ -67,11 +70,13 @@ class RecoveryController extends Controller {
                 $mailer->sendRecoveryMessage($user, $token);
 
                 Yii::$app->session->setFlash('info', Yii::t(
-                        'user', 'An email has been sent with instructions for resetting your password'
+                        'user',
+                    'An email has been sent with instructions for resetting your password'
                 ));
             } else {
                 Yii::$app->session->setFlash('danger', Yii::t(
-                        'user', 'Unknown email'
+                        'user',
+                    'Unknown email'
                 ));
             }
         }
@@ -90,12 +95,13 @@ class RecoveryController extends Controller {
      * @return string
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionReset($id, $code) {
+    public function actionReset($id, $code)
+    {
         if (!$this->module->enablePasswordRecovery) {
             throw new NotFoundHttpException();
         }
 
-        $model = new Users;
+        $model = Users::findOne($id);
         /** @var Token $token */
         $finder = Yii::createObject(Finder::className());
 
@@ -108,11 +114,13 @@ class RecoveryController extends Controller {
         if ($token === null || $token->isExpired || $token->user === null) {
             $this->trigger(self::EVENT_AFTER_TOKEN_VALIDATE, $event);
             Yii::$app->session->setFlash(
-                'danger', Yii::t('user', 'Recovery link is invalid or expired. Please try requesting a new one.')
+                'danger',
+                Yii::t('user', 'Recovery link is invalid or expired. Please try requesting a new one.')
             );
 
             Yii::$app->session->setFlash('info', Yii::t(
-                    'user', 'Invalid or expired link'
+                    'user',
+                'Invalid or expired link'
             ));
             return $this->redirect(['/site/login']);
         }
@@ -120,15 +128,19 @@ class RecoveryController extends Controller {
         if (Yii::$app->getRequest()->post()) {
             $model->findIdentity($token->user_id);
             if ($model->load(Yii::$app->getRequest()->post())) {
-                $model->password = Password::hash($model->password);
+                $model->password_hash = Password::hash($model->password);
                 if ($model->save()) {
                     Yii::$app->session->setFlash('info', Yii::t(
-                            'user', 'Password has been changed'
+                        'user',
+                        'Password has been changed'
                     ));
                 } else {
-                    Yii::$app->session->setFlash('info', Yii::t(
-                            'user', 'Password has been changed'
+                    foreach ($model->getErrors() as $error) {
+                        Yii::$app->session->setFlash('warning', Yii::t(
+                        'user',
+                        'Password cannot be changed: ' . Json::encode($error)
                     ));
+                    }
                 }
                 return $this->redirect(['/user/security/login']);
             }
@@ -138,5 +150,4 @@ class RecoveryController extends Controller {
                 'model' => $model,
         ]);
     }
-
 }
