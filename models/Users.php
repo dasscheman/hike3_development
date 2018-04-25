@@ -105,7 +105,7 @@ class Users extends BaseUser
     public function rules()
     {
         return [
-            [['voornaam', 'achternaam', 'email'], 'required'],
+            [['voornaam', 'achternaam', 'email'], 'required', 'on' =>  ['connect', 'create', 'update'],],
             [['confirmed_at', 'blocked_at', 'created_at', 'updated_at', 'flags', 'last_login_at',
                 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['birthdate', 'organisatie', 'create_time', 'update_time', 'password_repeat','password', 'created_at', 'updated_at'], 'safe'],
@@ -119,7 +119,7 @@ class Users extends BaseUser
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This email address has already been taken.')],
-            [['password_repeat','password'], 'required', 'on' => self::SCENARIO_REGISTER],
+            [['password_repeat','password', 'email'], 'required', 'on' => self::SCENARIO_REGISTER],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match", 'on' => self::SCENARIO_REGISTER],
         ];
     }

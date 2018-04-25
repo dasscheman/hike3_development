@@ -75,7 +75,8 @@ class Route extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -88,7 +89,8 @@ class Route extends HikeActiveRecord
      */
     public function getNoodEnvelops()
     {
-        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(NoodEnvelop::className(), ['route_ID' => 'route_ID'])
+            ->orderBy(['nood_envelop_volgorde' => SORT_ASC]);
     }
 
     public function getNoodEnvelopCount()
@@ -102,7 +104,8 @@ class Route extends HikeActiveRecord
     public function getOpenVragens()
     {
         // EXAMPLE
-        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(OpenVragen::className(), ['route_ID' => 'route_ID'])
+            ->orderBy(['vraag_volgorde' => SORT_ASC]);
     }
 
     public function getOpenVragenCount()
@@ -115,7 +118,8 @@ class Route extends HikeActiveRecord
      */
     public function getQrs()
     {
-        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID']);
+        return $this->hasMany(Qr::className(), ['route_ID' => 'route_ID'])
+            ->orderBy(['qr_volgorde' => SORT_ASC]);
     }
 
     public function getQrCount()
@@ -153,12 +157,13 @@ class Route extends HikeActiveRecord
         $max_order = Route::find()
             ->select('route_volgorde')
             ->where('event_ID=:event_id')
-            ->andwhere('day_date=:day_date')
+            ->andwhere('ISNULL(day_date) OR day_date =:day_date')
             ->addParams(
                 [
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':day_date' => $this->day_date,
-                ])
+                ]
+            )
             ->max('route_volgorde');
         if (empty($max_order)) {
             $this->route_volgorde = 1;
@@ -167,95 +172,72 @@ class Route extends HikeActiveRecord
         }
     }
 
-	public function getDayOfRouteId($id)
-	{
-		$data = Route::find()
+    public function getDayOfRouteId($id)
+    {
+        $data = Route::find()
             ->where('route_ID =:route_id')
             ->params([':route_id' => $id])
             ->one();
-        if ($data)
-		{
+        if ($data) {
             return $data->day_date;
-		}
-		return FALSE;
-	}
+        }
+        return false;
+    }
 
-	public function getRouteName($id)
-	{
-		$data = Route::find()
+    public function getRouteName($id)
+    {
+        $data = Route::find()
             ->where('route_ID =:id')
             ->params([':id' => $id])
             ->one();
 
-		if ($data)
-		{
+        if ($data) {
             return "nvt";
-		} else {
-			return $data->route_name;
-        }
-	}
-
-	public function getIntroductieRouteId()
-	{
-        $data = Route::find()
-            ->where('event_ID =:event_id AND route_name =:route_name')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_name' =>'Introductie'])
-            ->order('route_volgorde DESC')
-            ->one();
-
-		if ($data) {
-			$introductie_id = 1;
         } else {
-			$data = Route::findAll($criteria);
-			$introductie_id = $data->route_ID;
-		}
+            return $data->route_name;
+        }
+    }
 
-		return $introductie_id;
-	}
+    public function routeIdIntroduction($route_id)
+    {
+        $data = Route::find($route_id);
+        if ($data->route_name == "Introductie") {
+            return true;
+        }
+        return false;
+    }
 
-	public function routeIdIntroduction($route_id)
-	{
-		$data = Route::find($route_id);
-		if ($data->route_name == "Introductie")
-		{
-			return true;
-		}
-		return false;
-	}
-
-	public function lowererOrderNumberExists($route_id)
-	{
+    public function lowererOrderNumberExists($route_id)
+    {
         $data = Route::findOne($route_id);
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde <:order')
+            ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde <:order')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde DESC')
             ->exists();
-
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function higherOrderNumberExists($route_id)
-	{
+    public function higherOrderNumberExists($route_id)
+    {
         $data = Route::findOne($route_id);
-
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+            ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde >:order')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde ASC')
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function routeExistForDay($date)
-	{
+    public function routeExistForDay($date)
+    {
         $exists = Route::find()
             ->where('event_ID=:event_id')
             ->andwhere('day_date=:day_date')
@@ -263,8 +245,9 @@ class Route extends HikeActiveRecord
                 [
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':day_date' => $date,
-                ])
+                ]
+            )
             ->exists();
         return $exists;
-	}
+    }
 }

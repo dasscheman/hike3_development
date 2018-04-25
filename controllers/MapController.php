@@ -23,8 +23,6 @@ use app\models\Route;
 use yii\web\NotFoundHttpException;
 use app\models\CustomMap;
 
-use yii\helpers\Console;
-
 class MapController extends Controller
 {
     public function behaviors()
@@ -45,7 +43,12 @@ class MapController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['edit', 'view'],
+                        'actions' => ['view'],
+                        'roles' => ['organisatie',  'deelnemerEnded'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['edit'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -268,7 +271,7 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, false, $group);
         $map->setQrMarkers($routeModel->route_ID, false, $group);
         $map->setHintMarkers($routeModel->route_ID, false, $group);
-//        $map->setvragenMarkers($routeModel->route_ID, false, $group);
+
         $map->setTimeTrailMarkers(false, $group);
 
         if ($map->getMarkersCenterCoordinates() !== null) {
@@ -306,7 +309,8 @@ class MapController extends Controller
         $map = new CustomMap([
             'center' => $coord,
             'zoom' => 14,
-            'width' => $screen,
+            'width' => '100%',
+            'height' => $screen,
         ]);
 
         $map->setPostMarkers($routeModel->day_date, false);

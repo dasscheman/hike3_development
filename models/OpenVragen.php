@@ -84,7 +84,8 @@ class OpenVragen extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -132,36 +133,37 @@ class OpenVragen extends HikeActiveRecord
         return $this->hasMany(OpenVragenAntwoorden::className(), ['open_vragen_ID' => 'open_vragen_ID']);
     }
 
-	/**
-	 * Returns list van alle beschikbare vragen.
-	 */
-	public function getOpenVragenIdOptions($event_Id)
-	{
-		$data = OpenVragen::findAll('event_ID =:event_Id', array(':event_Id' => $event_Id));
-			$list = CHtml::listData($data, 'open_vragen_ID', 'open_vragen_name');
-		return $list;
-	}
+    /**
+     * Returns list van alle beschikbare vragen.
+     */
+    public function getOpenVragenIdOptions($event_Id)
+    {
+        $data = OpenVragen::findAll('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $list = CHtml::listData($data, 'open_vragen_ID', 'open_vragen_name');
+        return $list;
+    }
 
-	/**
-	 *TODO: check of dit de manier en de plek is voor deze dataprovider.
-	 */
-	public function openVragenAllDataProvider($event_id)
-	{
-	     $where = "event_ID = $event_id";
+    /**
+     *TODO: check of dit de manier en de plek is voor deze dataprovider.
+     */
+    public function openVragenAllDataProvider($event_id)
+    {
+        $where = "event_ID = $event_id";
 
-	     $dataProvider=new CActiveDataProvider('OpenVragen',
-		 array(
-		     'criteria'=>array(
-			 'condition'=>$where,
-			 //'order'=>'binnenkomst DESC',
-			 ),
-		     'pagination'=>array(
-			 'pageSize'=>5,
-		     ),
-	     ));
-	     return $dataProvider;
-
-	 }
+        $dataProvider=new CActiveDataProvider(
+             'OpenVragen',
+         array(
+             'criteria'=>array(
+             'condition'=>$where,
+             //'order'=>'binnenkomst DESC',
+             ),
+             'pagination'=>array(
+             'pageSize'=>5,
+             ),
+         )
+         );
+        return $dataProvider;
+    }
 
     /**
      * Score ophalen voor een group.
@@ -201,18 +203,18 @@ class OpenVragen extends HikeActiveRecord
         return $data;
     }
 
-	/**
-	 * Returns lijst met beschikbare vragenen.
-	 */
-	public function getOpenAvailableVragen($event_id)
-	{
-		$data = OpenVragen::findAll('event_ID = $event_id');
-		$list = CHtml::listData($data, '$open_vragen_ID', '$open_vragen_name');
-		return $list;
-	}
+    /**
+     * Returns lijst met beschikbare vragenen.
+     */
+    public function getOpenAvailableVragen($event_id)
+    {
+        $data = OpenVragen::findAll('event_ID = $event_id');
+        $list = CHtml::listData($data, '$open_vragen_ID', '$open_vragen_name');
+        return $list;
+    }
 
-	public function setNewOrderForVragen()
-	{
+    public function setNewOrderForVragen()
+    {
         $max_order = OpenVragen::find()
             ->select('vraag_volgorde')
             ->where('event_ID=:event_id')
@@ -221,12 +223,49 @@ class OpenVragen extends HikeActiveRecord
                 [
                     ':event_id' => $this->event_ID,
                     ':route_id' =>$this->route_ID,
-                ])
+                ]
+            )
             ->max('vraag_volgorde');
         if (empty($max_order)) {
             $this->vraag_volgorde = 1;
         } else {
             $this->vraag_volgorde = $max_order+1;
         }
-	}
+    }
+
+    public function lowererOrderNumberExists($open_vragen_ID)
+    {
+        $data = OpenVragen::findOne($open_vragen_ID);
+        $dataNext = OpenVragen::find()
+            ->where('event_ID =:event_id AND open_vragen_ID !=:id AND route_ID=:route_id AND vraag_volgorde <=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->open_vragen_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->vraag_volgorde])
+            ->exists();
+
+        if ($dataNext) {
+            return true;
+        }
+        return false;
+    }
+
+    public function higherOrderNumberExists($open_vragen_ID)
+    {
+        $data = OpenVragen::findOne($open_vragen_ID);
+        $dataNext = OpenVragen::find()
+            ->where('event_ID =:event_id AND open_vragen_ID !=:id AND route_ID=:route_id AND vraag_volgorde >=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->open_vragen_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->vraag_volgorde])
+            ->exists();
+
+        if ($dataNext) {
+            return true;
+        }
+        return false;
+    }
 }

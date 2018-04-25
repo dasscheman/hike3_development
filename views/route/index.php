@@ -7,7 +7,6 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use app\components\CustomAlertBlock;
-use yii\web\Cookie;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RouteSearch */
@@ -200,7 +199,7 @@ $this->title = Yii::t('app', 'Routes');
                 ['content'=>
                     ButtonAjax::widget([
                         'name'=> Yii::t('app', 'Add route item'),
-                        'route'=>['route/create', 'date' => '0000-00-00'],
+                        'route'=>['route/create'],
                         'modalId'=>'#main-modal',
                         'modalContent'=>'#main-content-modal',
                         'options'=>[

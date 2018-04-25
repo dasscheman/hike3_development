@@ -21,15 +21,15 @@ $this->title = Yii::t('app', 'Time Trails');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
-    $responsiveWrap = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = true;
+    $responsiveWrap = false;
     $dataArray = [];
 
     Modal::begin(['id'=>'main-modal']);
@@ -85,7 +85,7 @@ $this->title = Yii::t('app', 'Time Trails');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
-            'allowBatchToggle' => FALSE,
+            'allowBatchToggle' => false,
             'expandTitle' => Yii::t('app', 'Open view time trail code'),
             'collapseTitle' => Yii::t('app', 'Close view time trail code'),
         ],
@@ -111,7 +111,7 @@ $this->title = Yii::t('app', 'Time Trails');
         'score',
         [
             'header' => Yii::t('app', '#groups passed'),
-            'value' => function($model, $key, $index, $column){
+            'value' => function ($model, $key, $index, $column) {
                 return TimeTrailItem::findOne($key)->getTimeTrailChecksCount();
             },
         ],
@@ -168,27 +168,27 @@ $this->title = Yii::t('app', 'Time Trails');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    if(Yii::$app->user->can('organisatie') &&
+                    if (Yii::$app->user->can('organisatie') &&
                         TimeTrailItem::lowererOrderNumberExists($model->time_trail_item_ID)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
-                 },
+                    return false;
+                },
                 'down' => function ($model, $key, $index) {
-                    if(Yii::$app->user->can('organisatie') &&
+                    if (Yii::$app->user->can('organisatie') &&
                         TimeTrailItem::higherOrderNumberExists($model->time_trail_item_ID)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
-                 }
+                    return false;
+                }
             ]
         ],
     ];
     foreach ($model as $key => $item) {
         $dataArray[$count]=array(
-		    'label' =>$item->time_trail_name,
-            'active' => $item->time_trail_ID == Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? TRUE: FALSE,
-		    'content' => GridView::widget([
+            'label' =>$item->time_trail_name,
+            'active' => $item->time_trail_ID == Yii::$app->getRequest()->getCookies()->getValue('time_trail_tab')? true: false,
+            'content' => GridView::widget([
                 'id' => 'kv-grid-' . $item->time_trail_ID, //'kv-grid-demo',
                 'dataProvider' => $searchModel->search(['TimeTrailItemSearch' => ['time_trail_ID' => $item->time_trail_ID]]),
                 'columns' => $gridColumns,
@@ -199,20 +199,6 @@ $this->title = Yii::t('app', 'Time Trails');
                 'pjax'=>true, // pjax is set to always true for this demo
                 // set your toolbar
                 'toolbar'=> [
-                [
-                    'content'=>
-                        ButtonAjax::widget([
-                            'name'=> Yii::t('app', 'Add time trail Item'),
-                            'route'=>['time-trail-item/create', 'time_trail_ID' => $item->time_trail_ID],
-                            'modalId'=>'#main-modal',
-                            'modalContent'=>'#main-content-modal',
-                            'options'=>[
-                                'class' => 'btn btn-success',
-                                'title' => Yii::t('app', 'Create new time trail item'),
-                                'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
-                            ]
-                        ]),
-                ],
                 [
                     'content'=>
                         ButtonAjax::widget([
@@ -243,7 +229,7 @@ $this->title = Yii::t('app', 'Time Trails');
             ])
         );
         $count++;
-	}
+    }
     echo Tabs::widget([
         'items' => $dataArray
     ]);

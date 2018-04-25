@@ -3,8 +3,10 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\EventNames;
 use app\models\Qr;
 use app\models\QrSearch;
+use app\models\RouteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -39,7 +41,7 @@ class QrController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'map-update', 'qrcode', 'report', 'ajaxupdate'],
+                        'actions' => ['index', 'update', 'map-update', 'qrcode', 'report', 'ajaxupdate', 'move-up-down'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -176,28 +178,6 @@ class QrController extends Controller
         );
     }
 
-    /*
-     * @Depricated maart 2018
-     */
-    public function actioncreateIntroductie()
-    {
-        $model = new Qr;
-        if (isset($_GET['event_id'])) {
-            $model->qr_name = "Introductie";
-            $model->qr_code = Qr::getUniqueQrCode();
-            $model->event_ID = $_GET['event_id'];
-            $model->route_ID = Route::getIntroductieRouteId($_GET['event_id']);
-            $model->qr_volgorde = Qr::getNewOrderForIntroductieQr($_GET['event_id']);
-            $model->score = 5;
-
-            if ($model->save())
-                ;
-            {
-                return $this->redirect(array('route/viewIntroductie', 'event_id' => $_GET['event_id']));
-            }
-        }
-    }
-
     public function actionQrcode($qr_code)
     {
         $event_id = Yii::$app->user->identity->selected_event_ID;
@@ -264,57 +244,55 @@ class QrController extends Controller
 
     public function actionMoveUpDown()
     {
-        $event_id = $_GET['event_id'];
-        $qr_id = $_GET['qr_id'];
-        $qr_volgorde = $_GET['volgorde'];
-        $up_down = $_GET['up_down'];
-        $route_id = Qr::getQrRouteID($qr_id);
+        $model = $this->findModel(Yii::$app->request->get('qr_id'));
+        $up_down = Yii::$app->request->get('up_down');
 
-        $currentModel = Qr::findByPk($qr_id);
-
-        $criteria = new CDbCriteria;
-
-        if ($up_down == 'up') {
-            $criteria->condition = 'event_ID =:event_id AND
-									qr_ID !=:id AND
-									route_ID=:route_id AND
-									qr_volgorde <=:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $qr_id,
-                ':route_id' => $route_id,
-                ':order' => $qr_volgorde);
-            $criteria->order = 'qr_volgorde DESC';
+        if ($up_down === 'up') {
+            $previousModel = Qr::find()
+                ->where('event_ID =:event_id and route_ID =:route_ID and qr_volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->qr_volgorde])
+                ->orderBy('qr_volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = Qr::find()
+                ->where('event_ID =:event_id AND route_ID =:route_ID AND qr_volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->qr_volgorde])
+                ->orderBy('qr_volgorde ASC')
+                ->one();
         }
-        if ($up_down == 'down') {
-            $criteria->condition = 'event_ID =:event_id AND
-									qr_ID !=:id AND
-								 	route_ID=:route_id AND
-									qr_volgorde >:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $qr_id,
-                ':route_id' => $route_id,
-                ':order' => $qr_volgorde);
-            $criteria->order = 'qr_volgorde ASC';
+
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if (isset($previousModel)) {
+            $tempCurrentVolgorde = $model->qr_volgorde;
+            $model->qr_volgorde = $previousModel->qr_volgorde;
+            $previousModel->qr_volgorde = $tempCurrentVolgorde;
+
+            if ($model->validate() &&
+                $previousModel->validate()) {
+                $model->save();
+                $previousModel->save();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
         }
-        $criteria->limit = 1;
-        $previousModel = Qr::find($criteria);
 
-        $tempCurrentVolgorde = $currentModel->qr_volgorde;
-        $currentModel->qr_volgorde = $previousModel->qr_volgorde;
-        $previousModel->qr_volgorde = $tempCurrentVolgorde;
+        $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
+        $searchModel = new RouteSearch();
 
-        $currentModel->save();
-        $previousModel->save();
-
-        if (Route::routeIdIntroduction($currentModel->route_ID)) {
-            return $this->redirect(array('route/viewIntroductie',
-                    "route_id" => $currentModel->route_ID,
-                    "event_id" => $currentModel->event_ID,));
-        } else {
-            return $this->redirect(array('route/view',
-                    "route_id" => $currentModel->route_ID,
-                    "event_id" => $currentModel->event_ID,));
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/route/index', [
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate]);
         }
+
+        return $this->render('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
+        ]);
     }
 
     public function actionAjaxupdate()

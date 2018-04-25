@@ -223,4 +223,40 @@ class NoodEnvelop extends HikeActiveRecord
 
         return $data;
     }
+
+    public function lowererOrderNumberExists($nood_envelop_ID)
+    {
+        $data = NoodEnvelop::findOne($nood_envelop_ID);
+        $dataNext = NoodEnvelop::find()
+            ->where('event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID=:route_id AND nood_envelop_volgorde <=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->nood_envelop_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->nood_envelop_volgorde])
+            ->exists();
+
+        if ($dataNext) {
+            return true;
+        }
+        return false;
+    }
+
+    public function higherOrderNumberExists($nood_envelop_ID)
+    {
+        $data = NoodEnvelop::findOne($nood_envelop_ID);
+        $dataNext = NoodEnvelop::find()
+            ->where('event_ID =:event_id AND nood_envelop_ID !=:id AND route_ID=:route_id AND nood_envelop_volgorde >=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->nood_envelop_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->nood_envelop_volgorde])
+            ->exists();
+
+        if ($dataNext) {
+            return true;
+        }
+        return false;
+    }
 }

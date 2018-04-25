@@ -12,6 +12,8 @@ use yii\filters\AccessControl;
 use app\models\OpenVragenAntwoorden;
 use app\models\Route;
 use yii\helpers\Json;
+use app\models\EventNames;
+use app\models\RouteSearch;
 
 /**
  * OpenVragenController implements the CRUD actions for TblOpenVragen model.
@@ -42,7 +44,7 @@ class OpenVragenController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['update', 'map-update','ajaxupdate'],
+                        'actions' => ['update', 'map-update','ajaxupdate', 'move-up-down'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -265,33 +267,11 @@ class OpenVragenController extends Controller
         ));
     }
 
-    public function actionCreateIntroductie()
-    {
-        $model = new OpenVragen;
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['OpenVragen'])) {
-            $model->attributes = $_POST['OpenVragen'];
-            $model->event_ID = $_GET['event_id'];
-            $model->route_ID = Route::model()->getIntroductieRouteId($_GET['event_id']);
-            $model->vraag_volgorde = OpenVragen::model()->getNewOrderForIntroductieVragen($_GET['event_id']);
-
-            if ($model->save()) {
-                $this->redirect(array('/route/viewIntroductie', 'event_id' => $model->event_ID));
-            }
-        }
-        $this->layout = '/layouts/column1';
-        $this->render('createIntroductie', array(
-            'model' => $model,
-        ));
-    }
-
     /*
-     * Deze actie wordt gebruikt voor de form velden. Op basis van een hike
-     * en een dag wordt bepaald welke route onderdelen er beschikbaar zijn.
-     * Returns list with available techniek names, for a day and event.
-     */
+    * Deze actie wordt gebruikt voor de form velden. Op basis van een hike
+    * en een dag wordt bepaald welke route onderdelen er beschikbaar zijn.
+    * Returns list with available techniek names, for a day and event.
+    */
 
     public function actionDynamicRouteOnderdeel()
     {
@@ -313,54 +293,54 @@ class OpenVragenController extends Controller
 
     public function actionMoveUpDown()
     {
-        $event_id = $_GET['event_id'];
-        $vraag_id = $_GET['vraag_id'];
-        $vraag_volgorde = $_GET['volgorde'];
-        $up_down = $_GET['up_down'];
-        $route_id = OpenVragen::getRouteIdVraag($vraag_id);
-        $currentModel = OpenVragen::findByPk($vraag_id);
-        $criteria = new CDbCriteria;
+        $model = $this->findModel(Yii::$app->request->get('vraag_id'));
+        $up_down = Yii::$app->request->get('up_down');
 
-        if ($up_down == 'up') {
-            $criteria->condition = 'event_ID =:event_id AND
-									open_vragen_ID !=:id AND
-									route_ID=:route_id AND
-									vraag_volgorde <=:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $vraag_id,
-                ':route_id' => $route_id,
-                ':order' => $vraag_volgorde);
-            $criteria->order = 'vraag_volgorde DESC';
+        if ($up_down === 'up') {
+            $previousModel = OpenVragen::find()
+                ->where('event_ID =:event_id and route_ID =:route_ID and vraag_volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->vraag_volgorde])
+                ->orderBy('vraag_volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = OpenVragen::find()
+                ->where('event_ID =:event_id AND route_ID =:route_ID AND vraag_volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->vraag_volgorde])
+                ->orderBy('vraag_volgorde ASC')
+                ->one();
         }
-        if ($up_down == 'down') {
-            $criteria->condition = 'event_ID =:event_id AND
-									open_vragen_ID !=:id AND
-									route_ID=:route_id AND
-									vraag_volgorde >=:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $vraag_id,
-                ':route_id' => $route_id,
-                ':order' => $vraag_volgorde);
-            $criteria->order = 'vraag_volgorde ASC';
+
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if (isset($previousModel)) {
+            $tempCurrentVolgorde = $model->vraag_volgorde;
+            $model->vraag_volgorde = $previousModel->vraag_volgorde;
+            $previousModel->vraag_volgorde = $tempCurrentVolgorde;
+
+            if ($model->validate() &&
+                $previousModel->validate()) {
+                $model->save();
+                $previousModel->save();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
         }
-        $criteria->limit = 1;
-        $previousModel = OpenVragen::find($criteria);
 
-        $tempCurrentVolgorde = $currentModel->vraag_volgorde;
-        $currentModel->vraag_volgorde = $previousModel->vraag_volgorde;
-        $previousModel->vraag_volgorde = $tempCurrentVolgorde;
+        $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
+        $searchModel = new RouteSearch();
 
-        $currentModel->save();
-        $previousModel->save();
-
-        if (Route::routeIdIntroduction($currentModel->route_ID)) {
-            $this->redirect(array('route/viewIntroductie',
-                "route_id" => $currentModel->route_ID,
-                "event_id" => $currentModel->event_ID));
-        } else {
-            $this->redirect(array('route/view',
-                "route_id" => $currentModel->route_ID,
-                "event_id" => $currentModel->event_ID,));
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/route/index', [
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate]);
         }
+
+        return $this->render('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
+        ]);
     }
 }

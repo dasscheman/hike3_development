@@ -131,7 +131,6 @@ class EventNamesController extends Controller
             $modelDeelnemersEvent->rol = 1;
             $modelDeelnemersEvent->group_ID = null;
 
-            //$modelRoute->day_date = '0000-00-00';
             $modelRoute->route_name = "Introductie";
             $modelRoute->event_ID = $event_id;
             $modelRoute->route_volgorde = 1;

@@ -3,17 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Route;
-use app\models\RouteSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use app\models\Qr;
 use app\models\EventNames;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
-use yii\web\Cookie;
+use app\models\Qr;
+use app\models\Route;
+use app\models\RouteSearch;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * RouteController implements the CRUD actions for Route model.
@@ -38,7 +37,7 @@ class RouteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'move-up-down', 'update', 'set-cookie-tab'],
+                        'actions' => ['index', 'move-up-down', 'update'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -130,7 +129,7 @@ class RouteController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date)
+    public function actionCreate($date = null)
     {
         $model = new Route;
 
@@ -138,35 +137,16 @@ class RouteController extends Controller
             $model->load(Yii::$app->request->post())) {
             $model->setRouteOrder();
             if ($model->save()) {
-
-                // QR record can only be set after the routemodel save.
-                // Because route_ID is not available before save.
-                // Furthermore it is not a problem when route record is saved and
-                // an error occured on qr save. Therefore this easy and fast solution is choosen.
-                if (!Qr::qrExistForRouteId($model->route_ID)) {
-                    $qrModel = new Qr;
-                    $qrModel->setAttributes([
-                        'qr_name' => $model->route_name,
-                        'qr_code' => Qr::getUniqueQrCode(),
-                        'event_ID' => $model->event_ID,
-                        'route_ID' => $model->route_ID,
-                        'score' => 5,
-                    ]);
-
-                    $qrModel->setNewOrderForQr();
-                    // use false parameter to disable validation
-                    $qrModel->save(false);
-                }
                 return $this->redirect(['/route/index']);
             }
         } else {
-            // This set the tab from which the call is started.
-            $date = $date;
-            $this->setCookieIndexTab($date);
             $model->setAttributes([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                'day_date' => $date
             ]);
+            // This set the tab from which the call is started.
+            if ($date != null) {
+                $model->setAttributes(['day_date' => $date]);
+            }
         }
 
         if (Yii::$app->request->isAjax) {
@@ -259,13 +239,13 @@ class RouteController extends Controller
         $model = $this->findModel($route_ID);
         if ($up_down === 'up') {
             $previousModel = Route::find()
-                ->where('event_ID =:event_id and day_date =:date and route_volgorde <:order')
+                ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) and route_volgorde <:order')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde DESC')
                 ->one();
         } elseif ($up_down === 'down') {
             $previousModel = Route::find()
-                ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+                ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde >:order')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde ASC')
                 ->one();

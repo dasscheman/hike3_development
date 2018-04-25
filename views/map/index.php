@@ -22,7 +22,7 @@ echo Dialog::widget();
             echo Html::a(
                 $routeItem->route_name,
                 [
-                'index',
+                'edit',
                 'route_ID' => $routeItem->route_ID,
                 ],
                 ['class' => 'btn-lg route-buttons']
@@ -32,7 +32,7 @@ echo Dialog::widget();
             echo Html::label(
                 $routeItem->route_name,
                 [
-                'index',
+                'edit',
                 'route_ID' => $routeItem->route_ID,
                 ],
                 ['class' => 'btn-lg route-buttons']

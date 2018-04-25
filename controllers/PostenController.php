@@ -12,7 +12,8 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use app\models\EventNames;
-use yii\web\Cookie;
+
+//use yii\web\Cookie;
 
 /**
  * PostenController implements the CRUD actions for Posten model.
@@ -95,9 +96,9 @@ class PostenController extends Controller
                 }
             }
         } else {
-            $model->date = Yii::$app->request->get(date);
+            $model->date = Yii::$app->request->get('date');
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-            $this->setCookieIndexTab($model->date);
+//            $this->setCookieIndexTab($model->date);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -193,7 +194,7 @@ class PostenController extends Controller
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-            $this->setCookieIndexTab($model->date);
+//            $this->setCookieIndexTab($model->date);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -333,17 +334,17 @@ class PostenController extends Controller
         }
     }
 
-    public function setCookieIndexTab($date)
-    {
-        $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('posten_day_tab');
-        $cookie = new Cookie([
-            'name' => 'posten_day_tab',
-            'value' => $date,
-            'expire' => time() + 86400 * 365,
-        ]);
-        $cookies->add($cookie);
-    }
+//    public function setCookieIndexTab($date)
+//    {
+//        $cookies = Yii::$app->getResponse()->getCookies();
+//        $cookies->remove('posten_day_tab');
+//        $cookie = new Cookie([
+//            'name' => 'posten_day_tab',
+//            'value' => $date,
+//            'expire' => time() + 86400 * 365,
+//        ]);
+//        $cookies->add($cookie);
+//    }
 
     public function actionAjaxupdate()
     {

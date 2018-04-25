@@ -106,8 +106,8 @@ AppAsset::register($this);
                         'label' => Yii::t('app', 'Map'),
                         'options' => [
                             'id' => 'map-click'],
-                        'url' => ['/map/index'],
-                        'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('Organisatie')
+                            'url' => ['/map/index'],
+                            'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('Organisatie') || Yii::$app->user->can('deelnemer')
                         ],
                     !Yii::$app->user->can('organisatie') ? '' :
                         [

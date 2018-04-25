@@ -101,14 +101,14 @@ class TimeTrailItemController extends Controller
             $model->setNewOrderForTimeTrailItem();
             $model->setUniqueCodeForTimeTrailItem();
             if ($model->save()) {
-                $this->setCookieIndexTab($model->time_trail_ID);
+//                $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail item.'));
                 return $this->redirect(['map/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->time_trail_ID = Yii::$app->request->get('time_trail_ID');
-            $this->setCookieIndexTab($model->time_trail_ID);
+//            $this->setCookieIndexTab($model->time_trail_ID);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -368,22 +368,22 @@ class TimeTrailItemController extends Controller
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-            $this->setCookieIndexTab($model->time_trail_ID);
+//            $this->setCookieIndexTab($model->time_trail_ID);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    public function setCookieIndexTab($date)
-    {
-        $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('time_trail_tab');
-        $cookie = new Cookie([
-            'name' => 'time_trail_tab',
-            'value' => $date,
-            'expire' => time() + 86400 * 365,
-        ]);
-        $cookies->add($cookie);
-    }
+//    public function setCookieIndexTab($date)
+//    {
+//        $cookies = Yii::$app->getResponse()->getCookies();
+//        $cookies->remove('time_trail_tab');
+//        $cookie = new Cookie([
+//            'name' => 'time_trail_tab',
+//            'value' => $date,
+//            'expire' => time() + 86400 * 365,
+//        ]);
+//        $cookies->add($cookie);
+//    }
 }
