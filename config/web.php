@@ -44,6 +44,11 @@ $config = [
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
         ],
+        'newsletter' => [
+            'class' => 'yiimodules\newsletter\Module',
+        ],
+        // Configure text editor module
+        'redactor' => 'yii\redactor\RedactorModule',
     ],
     'timeZone' => 'Europe/Amsterdam', // this is my default
     'components' => [
