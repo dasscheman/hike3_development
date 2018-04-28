@@ -116,16 +116,17 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-     // You can only add
-    public function beforeValidate() {
+    // You can only add
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
-            if (Yii::$app->controller->id !== 'event-names' AND
+            if (Yii::$app->controller->id !== 'event-names' and
                 Yii::$app->controller->action->id !== 'create') {
                 $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             }
-            return(TRUE);
+            return(true);
         }
-        return(FALSE);
+        return(false);
     }
 
     /**
@@ -188,11 +189,10 @@ class DeelnemersEvent extends HikeActiveRecord
         ]);
         });
 
-        if(isset($data->rol))
-        {
+        if (isset($data->rol)) {
             return $data->rol;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -205,11 +205,10 @@ class DeelnemersEvent extends HikeActiveRecord
             'user_ID' => Yii::$app->user->identity->id
         ]);
 
-        if(isset($data->rol))
-        {
+        if (isset($data->rol)) {
             return $data->getRolText($data->rol);
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -221,15 +220,13 @@ class DeelnemersEvent extends HikeActiveRecord
             ->where('event_ID = :event_Id AND user_ID=:user_Id')
             ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':user_Id' => Yii::$app->user->identity->id])
             ->one();
-        if(!isset($data->rol))
-        {
-            return FALSE;
+        if (!isset($data->rol)) {
+            return false;
         }
 
-        if($data->rol <> DeelnemersEvent::ROL_deelnemer ||
-           !isset($data->group_ID))
-        {
-            return FALSE;
+        if ($data->rol <> DeelnemersEvent::ROL_deelnemer ||
+           !isset($data->group_ID)) {
+            return false;
         }
 
         return $data->group_ID;
@@ -238,33 +235,39 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de rol van een speler tijdens een bepaalde hike
      */
-    public function userSignedinInHike($event_Id,
-                                        $user_Id)
-    {
-        $data = DeelnemersEvent::model()->exists('event_ID = :event_Id AND user_ID=:user_Id',
+    public function userSignedinInHike(
+        $event_Id,
+                                        $user_Id
+    ) {
+        $data = DeelnemersEvent::model()->exists(
+            'event_ID = :event_Id AND user_ID=:user_Id',
                                             array(':event_Id' => $event_Id,
-                                                  ':user_Id' => $user_Id));
+                                                  ':user_Id' => $user_Id)
+        );
         return $data;
     }
 
-    public function getId( $event_Id,
-                            $user_Id)
-    {
-        $data = DeelnemersEvent::model()->find('event_ID = :event_Id AND user_ID=:user_Id',
+    public function getId(
+        $event_Id,
+                            $user_Id
+    ) {
+        $data = DeelnemersEvent::model()->find(
+            'event_ID = :event_Id AND user_ID=:user_Id',
                                             array(':event_Id' => $event_Id,
-                                                  ':user_Id' => $user_Id));
-        if(isset($data->deelnemers_ID)) {
+                                                  ':user_Id' => $user_Id)
+        );
+        if (isset($data->deelnemers_ID)) {
             return $data->deelnemers_ID;
         }
         return;
     }
 
     /**
-	* Retrieves a list of users
-	* @return array an of available friendusers which are not subscribed to current event.'.
-	*/
-	public function getFriendsForEvent()
-	{
+    * Retrieves a list of users
+    * @return array an of available friendusers which are not subscribed to current event.'.
+    */
+    public function getFriendsForEvent()
+    {
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
                         ->where('user_ID=:user_id')
@@ -281,9 +284,10 @@ class DeelnemersEvent extends HikeActiveRecord
            // ->select('id,name')->asArray()
             ->where(['in', 'user.id', $queryFriendList])
             ->andwhere(['not in', 'user.id', $queryDeelnemersEvent])
+            ->andWhere('ISNULL(blocked_at)')
             ->all();
 
         $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');
         return $arrayRestuls;
-	}
+    }
 }

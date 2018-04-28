@@ -575,99 +575,10 @@ class Users extends BaseUser
     /**
      * @inheritdoc
      */
-//    public function getId() {
-//        return $this->id;
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    public function getAuthKey() {
-//        return $this->authKey;
-//    }
-
-    /**
-     * @inheritdoc
-     */
     public static function findIdentity($id)
     {
         return static::findOne($id);
     }
-
-    /**
-     * @inheritdoc
-     */
-    /* modified */
-//    public static function findIdentityByAccessToken($token, $type = null) {
-//        return static::findOne(['accessToken' => $token]);
-//    }
-
-    /**
-     * Finds user by password reset token
-     *
-     * @param  string      $token password reset token
-     * @return static|null
-     */
-//    public static function findByPasswordResetToken($token) {
-//        $expire = \Yii::$app->params['user.passwordResetTokenExpire'];
-//        $parts = explode('_', $token);
-//        $timestamp = (int) end($parts);
-//        if ($timestamp + $expire < time()) {
-//            // token expired
-//            return null;
-//        }
-//
-//        return static::findOne([
-//                'password_reset_token' => $token
-//        ]);
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    public function validateAuthKey($authKey) {
-//        return $this->getAuthKey() === $authKey;
-//    }
-
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
-//    public function hashPassword($password) {
-//        return md5($password);
-//    }
-
-    /**
-     * Validates password
-     *
-     * @param  string  $password password to validate
-     * @return boolean if password provided is valid for current user
-     */
-//    public function validatePassword($password) {
-//        return $this->password === $this->hashPassword($password);
-//    }
-
-    /**
-     * Generates "remember me" authentication key
-     */
-//    public function generateAuthKey() {
-//        $this->authKey = Security::generateRandomKey();
-//    }
-
-    /**
-     * Generates new password reset token
-     */
-//    public function generatePasswordResetToken() {
-//        $this->password_reset_token = Security::generateRandomKey() . '_' . time();
-//    }
-
-    /**
-     * Removes password reset token
-     */
-//    public function removePasswordResetToken() {
-//        $this->password_reset_token = null;
-//    }
 
     /**
      * Retrieves a list of users
@@ -675,7 +586,9 @@ class Users extends BaseUser
      */
     public function getUserNameOptions()
     {
-        $data = Users::find()->all();
+        $data = Users::find()
+            ->andWhere('ISNULL(blocked_at)')
+            ->all();
         $list = ArrayHelper::map($data, 'user_ID', 'username');
         return $list;
     }
@@ -697,46 +610,6 @@ class Users extends BaseUser
     {
         return $this->voornaam.' '.$this->achternaam;
     }
-
-//    public function sendEmailNewAccount() {
-//        $message = Yii::$app->mailer->compose('newAccount', [
-//                'newMailUsers' => $this->email,
-//                'newWachtwoord' => $this->password,
-//            ])
-//            ->setSubject('Wachtwoord Kiwi.run')
-//            ->setFrom(Yii::$app->params['noreply_email'])
-//            ->setTo($this->email);
-//
-//        if ($message->send()) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    public function sendEmailWithNewPassword($NewPassword) {
-//        $message = Yii::$app->mailer->compose('resendPassword', [
-//                'newMailUsers' => $this->email,
-//                'newWachtwoord' => $NewPassword,
-//            ])
-//            ->setSubject('Wachtwoord Kiwi.run')
-//            ->setFrom(Yii::$app->params['noreply_email'])
-//            ->setTo($this->email);
-//
-//        if ($message->send()) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-    /**
-     * apply a hash on the password before we store it in the database
-     */
-//    public function afterValidate() {
-//        parent::afterValidate();
-//        if (!$this->hasErrors() && Yii::$app->controller->action->id != 'update') {
-//            $this->password = $this->hashPassword($this->password);
-//        }
-//    }
 
     /**
      *
@@ -781,9 +654,4 @@ class Users extends BaseUser
             Yii::$app->user->identity->save();
         }
     }
-
-//    public function getIsAdmin()
-//    {
-//        return TRUE;
-//    }
 }
