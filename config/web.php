@@ -2,6 +2,7 @@
 
 require_once(__DIR__.'/debug.php');
 $params = require(__DIR__ . '/params.php');
+$keys = require(__DIR__ . '/keys.php');
 
 $config = [
 
@@ -44,9 +45,6 @@ $config = [
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
         ],
-        'newsletter' => [
-            'class' => 'yiimodules\newsletter\Module',
-        ],
         // Configure text editor module
         'redactor' => 'yii\redactor\RedactorModule',
     ],
@@ -75,7 +73,7 @@ $config = [
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'sdafwef23F@F#@#feoko',
+            'cookieValidationKey' => $keys['cookieValidationKey'],
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -96,7 +94,7 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => YII_ENV_DEV || YII_ENV_TEST ? true : false,
             'transport' => require(__DIR__ . '/email.php')
         ],
         'log' => [
@@ -115,7 +113,7 @@ $config = [
             'bundles' => [
                 'dosamigos\google\maps\MapAsset' => [
                     'options' => [
-                        'key' => '',
+                        'key' => $keys['google_key'],
                         'language' => 'nl',
                         'version' => '3.1.18'
                     ]

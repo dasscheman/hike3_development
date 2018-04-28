@@ -31,6 +31,18 @@ $config = [
         'authManager' => [
             'class' => 'dektrium\rbac\components\DbManager',
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' => YII_ENV_DEV || YII_ENV_TEST ? true : false,
+            'transport' => require(__DIR__ . '/email.php')
+        ],
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'scriptUrl' => YII_ENV_DEV ? 'http://localhost' : YII_ENV_TEST ? 'https://test.kiwi.run' : 'https://kiwi.run',
+        ]
     ],
     'modules' => [
         'user' => [
