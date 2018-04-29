@@ -17,4 +17,7 @@
 
 <?= $form->field($user, 'email')->textInput(['maxlength' => 255]) ?>
 <?= $form->field($user, 'username')->textInput(['maxlength' => 255]) ?>
+<?= $form->field($user, 'voornaam') ?>
+<?= $form->field($user, 'tussenvoegsel') ?>
+<?= $form->field($user, 'achternaam') ?>
 <?= $form->field($user, 'password')->passwordInput() ?>

@@ -15,7 +15,6 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\Pjax;
 
-
 /**
  * @var \yii\web\View $this
  * @var \yii\data\ActiveDataProvider $dataProvider
@@ -23,12 +22,10 @@ use yii\widgets\Pjax;
  */
 
 $this->title = Yii::t('user', 'Manage users');
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?= $this->render('/_alert', ['module' => Yii::$app->getModule('user')]) ?>
-
-<?= $this->render('/admin/_menu') ?>
+<?= $this->render('@app/views/_alert') ?>
+<?= $this->render('_menu') ?>
 
 <?php Pjax::begin() ?>
 
@@ -46,13 +43,13 @@ $this->params['breadcrumbs'][] = $this->title;
         [
           'attribute' => 'last_login_at',
           'value' => function ($model) {
-            if (!$model->last_login_at || $model->last_login_at == 0) {
-                return Yii::t('user', 'Never');
-            } else if (extension_loaded('intl')) {
-                return Yii::t('user', '{0, date, MMMM dd, YYYY HH:mm}', [$model->last_login_at]);
-            } else {
-                return date('Y-m-d G:i:s', $model->last_login_at);
-            }
+              if (!$model->last_login_at || $model->last_login_at == 0) {
+                  return Yii::t('user', 'Never');
+              } elseif (extension_loaded('intl')) {
+                  return Yii::t('user', '{0, date, MMMM dd, YYYY HH:mm}', [$model->last_login_at]);
+              } else {
+                  return date('Y-m-d G:i:s', $model->last_login_at);
+              }
           },
         ],
         [
@@ -105,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 },
                 'switch' => function ($url, $model) {
-                    if($model->id != Yii::$app->user->id && Yii::$app->getModule('user')->enableImpersonateUser) {
+                    if ($model->id != Yii::$app->user->id && Yii::$app->getModule('user')->enableImpersonateUser) {
                         return Html::a('<span class="glyphicon glyphicon-user"></span>', ['/user/admin/switch', 'id' => $model->id], [
                             'title' => Yii::t('user', 'Become this user'),
                             'data-confirm' => Yii::t('user', 'Are you sure you want to switch to this user for the rest of this Session?'),
