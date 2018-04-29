@@ -160,10 +160,6 @@ AppAsset::register($this);
                                 ]
                             ],
                         ],
-                    [
-                        'label' => 'Admin',
-                        'url' => ['/user/admin/index'],
-                    ],
                     // TODO:
                     // ['label' => Yii::t('app','Language'),
                     //     'items' => [
@@ -191,6 +187,24 @@ AppAsset::register($this);
                             [
                                 'label' => Yii::t('app', 'About'),
                                 'url' => ['/site/about'],
+                            ],
+                        ]
+                    ],
+                    !isset(Yii::$app->user->identity->isAdmin) || !Yii::$app->user->identity->isAdmin ? '' :
+                    [
+                        'label' => 'Admin',
+                        'items' => [
+                            [
+                                'label' => Yii::t('app', 'Users'),
+                                'url' => ['/user/admin/index'],
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Newsletters'),
+                                'url' => ['/newsletter/index'],
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Newsletters que'),
+                                'url' => ['/newsletter-mail-list/index'],
                             ],
                         ]
                     ],

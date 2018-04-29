@@ -41,7 +41,7 @@ $config = [
         ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
-            'scriptUrl' => YII_ENV_DEV ? 'http://localhost' : YII_ENV_TEST ? 'https://test.kiwi.run' : 'https://kiwi.run',
+            'scriptUrl' => $params['url']
         ]
     ],
     'modules' => [
