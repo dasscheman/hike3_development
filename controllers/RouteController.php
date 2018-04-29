@@ -317,7 +317,7 @@ class RouteController extends Controller
                 Yii::t(
                     'app',
                     'Here you can create route items for each day.
-                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with kiwi.run.
+                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with hike-app.nl.
                    For each route item you can create questions, hints or silent stations.'
                 )
             );

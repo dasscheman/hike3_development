@@ -4,7 +4,7 @@
 		Hallo <?php echo $newMailUsers; ?><br>
 		Je ontvangt deze mail omdat je je hebt ingeschreven op www.kiwi.run.
 
-		Je kunt nu inloggen op de site www.kiwi.run met <br>
+		Je kunt nu inloggen op de site hike-app.nl met <br>
         inlognaam: <?php echo $newMailUsers; ?> <br>
         en het zelf ingestelde wachtwoord.<br><br>
 
@@ -17,6 +17,6 @@
         <br>
 		Met vriendelijke groet,<br>
 		<br>
-		www.kiwi.run<br>
+		hike-app.nl<br>
  	</body>
 </html>

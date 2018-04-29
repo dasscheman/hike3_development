@@ -4,7 +4,7 @@
 		Hallo <?php echo $newMailUsers; ?><br>
 		Je ontvangt deze mail omdat je een nieuw wachtwoord opgevraagd hebt.
 
-		Je kunt nu inloggen op de site www.kiwi.run met <br>
+		Je kunt nu inloggen op de site hike-app.nl met <br>
         inlognaam: <?php echo $newMailUsers; ?> <br>
         wachtwoord: <?php echo $newWachtwoord ?> <br>
 		(let op! hoofdletter gevoelig)<br><br>
@@ -18,6 +18,6 @@
         <br>
 		Met vriendelijke groet,<br>
 		<br>
-		www.kiwi.run<br>
+		hike-app.nl<br>
  	</body>
 </html>
