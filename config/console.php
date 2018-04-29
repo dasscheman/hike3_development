@@ -5,13 +5,10 @@ $db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic-console',
-    'name' => 'kiwi.run',
+    'name' => 'hike-app.nl',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
-//    'modules' => [
-//        'gii' => 'yii\gii\Module',
-//    ],
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',

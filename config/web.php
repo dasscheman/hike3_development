@@ -10,7 +10,7 @@ $config = [
         '@kvgrid' => '/vendor/kartik-v',
     ],
     'id' => 'basic',
-    'name' => 'kiwi.run',
+    'name' => 'hike-app.nl',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
@@ -36,7 +36,7 @@ $config = [
                 'security' => 'app\controllers\user\SecurityController',
             ],
             'mailer' => [
-                'sender' => ['kiwi@biologenkantoor.nl' => 'Kiwi.run'],
+                'sender' => ['noreply@hike-app.nl' => 'hike-app.nl'],
                 'viewPath' => '@app/mail/user',
             ],
             'admins' => ['dasman']
