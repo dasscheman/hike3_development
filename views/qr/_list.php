@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use prawee\widgets\ButtonAjax;
 use yii\widgets\Pjax;
+use app\models\Qr;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
@@ -14,16 +15,16 @@ use yii\widgets\Pjax;
     <div class="row-1">
         <div class="view">
             <p>
-            <?php
-            Pjax::begin(['id' => 'qr-list-' . $model->qr_ID, 'enablePushState' => false]);
-            echo AlertBlock::widget([
-                'type' => AlertBlock::TYPE_ALERT,
-                'useSessionFlash' => true,
-                'delay' => 4000,
-            ]); ?>
-            <h3>
-                <?php echo Html::encode($model->qr_name); ?> </br>
-            </h3>
+                <?php
+                Pjax::begin(['id' => 'qr-list-' . $model->qr_ID, 'enablePushState' => false]);
+                echo AlertBlock::widget([
+                    'type' => AlertBlock::TYPE_ALERT,
+                    'useSessionFlash' => true,
+                    'delay' => 4000,
+                ]); ?>
+                <h3>
+                    <?php echo Html::encode($model->qr_name); ?> </br>
+                </h3>
                 <?php
                  echo ButtonAjax::widget([
                     'name'=> Yii::t('app', 'Modify silent station'),
@@ -35,7 +36,34 @@ use yii\widgets\Pjax;
                         'title'=> Yii::t('app', 'Modify silent station'),
                         'disabled' => !Yii::$app->user->can('organisatie'),
                     ]
-                ]);?>
+                ]);?></br> <?php
+
+                echo Html::Button(
+                    '<span class="glyphicon glyphicon-chevron-left"></span>',
+                    [
+                        'onclick'=>"window.location.href = '" . \Yii::$app->urlManager->createUrl([
+                            '/qr/move-up-down',
+                            'qr_id' => $model->qr_ID,
+                            'up_down' => 'up']) . "';",
+                        'title' => Yii::t('app', 'Move up'),
+
+                        'class'=>'btn btn-primary btn-xs',
+                        'disabled' => !Qr::lowererOrderNumberExists($model->qr_ID),
+                    ]
+                );
+
+                echo Html::Button(
+                    '<span class="glyphicon glyphicon-chevron-right"></span>',
+                    [
+                        'onclick'=>"window.location.href = '" . \Yii::$app->urlManager->createUrl([
+                            '/qr/move-up-down',
+                            'qr_id' => $model->qr_ID,
+                            'up_down' => 'down']) . "';",
+                        'title' => Yii::t('app', 'Move down'),
+                        'class'=>'btn btn-primary btn-xs',
+                        'disabled' => !Qr::higherOrderNumberExists($model->qr_ID),
+                    ]
+                ); ?>
             </p>
             <b>
             <?php echo Html::encode($model->getAttributeLabel('qr_code')); ?>
@@ -60,7 +88,7 @@ use yii\widgets\Pjax;
                     'data-pjax' => "0"
                 ]
             ); ?></br>
-            <?php echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code]));?>
+            <?php //echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code]));?>
 
 
         </div>

@@ -1,5 +1,5 @@
 <?php
- 
+
 namespace app\models;
 
 use yii\db\ActiveRecord;
@@ -25,7 +25,9 @@ abstract class HikeActiveRecord extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['create_time', 'update_time'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time'],
                 ],
-                'value' => function() { return \Yii::$app->setupdatetime->storeFormat(time(), 'datetime'); },
+                'value' => function () {
+                    return \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
+                },
             ],
         ];
     }

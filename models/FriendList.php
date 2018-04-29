@@ -23,11 +23,11 @@ use Yii;
  */
 class FriendList extends HikeActiveRecord
 {
-	const STATUS_pending=0;
-	const STATUS_waiting=1;
-	const STATUS_accepted=2;
-	const STATUS_declined=3;
-	const STATUS_canceled=4;
+    const STATUS_pending=0;
+    const STATUS_waiting=1;
+    const STATUS_accepted=2;
+    const STATUS_declined=3;
+    const STATUS_canceled=4;
     /**
      * @inheritdoc
      */
@@ -101,48 +101,48 @@ class FriendList extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'user_ID']);
     }
 
-	/**
-	* Retrieves a list of statussen
-	* @return array an array of available statussen.
-	*/
-	public function getStatusOptions()
-	{
-		return array(
-			self::STATUS_pending=>'Wachten op Reactie',
-			self::STATUS_waiting=>'Wachten op Acceptatie',
-			self::STATUS_accepted=>'Vrienden',
-			self::STATUS_declined=>'Afgewezen',
-			self::STATUS_canceled=>'Ontvriend',
-			);
-	}
+    /**
+    * Retrieves a list of statussen
+    * @return array an array of available statussen.
+    */
+    public function getStatusOptions()
+    {
+        return array(
+            self::STATUS_pending=>'Wachten op Reactie',
+            self::STATUS_waiting=>'Wachten op Acceptatie',
+            self::STATUS_accepted=>'Vrienden',
+            self::STATUS_declined=>'Afgewezen',
+            self::STATUS_canceled=>'Ontvriend',
+            );
+    }
 
-	/**
-	* @return string the status text display
-	*/
-	public function getStatusText()
-	{
-		$statusOptions=$this->statusOptions;
-		return isset($statusOptions[$this->status]) ?
-			$statusOptions[$this->status] : "unknown status ({$this->status})";
-	}
+    /**
+    * @return string the status text display
+    */
+    public function getStatusText()
+    {
+        $statusOptions=$this->statusOptions;
+        return isset($statusOptions[$this->status]) ?
+            $statusOptions[$this->status] : "unknown status ({$this->status})";
+    }
 
-       	/**
-	* @return string the status text display
-	*/
-	public function getStatusText2($status)
-	{
-		$statusOptions=$this->statusOptions;
-		return isset($statusOptions[$status]) ?
-			$statusOptions[$status] : "unknown status ({$status})";
-	}
+    /**
+    * @return string the status text display
+    */
+    public function getStatusText2($status)
+    {
+        $statusOptions=$this->statusOptions;
+        return isset($statusOptions[$status]) ?
+            $statusOptions[$status] : "unknown status ({$status})";
+    }
 
- 	/**
-	* Retrieves a list of users
-	* @return array an array of all available users'.
-	*/
+    /**
+    * Retrieves a list of users
+    * @return array an array of all available users'.
+    */
 
-	public function getFriendNames()
-	{
+    public function getFriendNames()
+    {
         $sql = 'SELECT user.id IN (SELECT friends_with_user_ID
                 FROM `tbl_friend_list`
                 WHERE tbl_friend_list.user_ID =' . Yii::$app->user->id . ' AND tbl_friend_list.status =2)
@@ -150,20 +150,19 @@ class FriendList extends HikeActiveRecord
                 WHERE user.id <>' . Yii::$app->user->id;
         $model = Users::findBySql($sql)->all();
 
-		foreach($model as $m)
-		{
-			$results[] = array("id"=>$m->user_ID, "label"=>$m->username);
-		}
-		return $results;
-	}
+        foreach ($model as $m) {
+            $results[] = array("id"=>$m->user_ID, "label"=>$m->username);
+        }
+        return $results;
+    }
 
     /**
-	* Retrieves a list of users
-	* @return array an of available friendusers which are not subscribed to current event.'.
+    * Retrieves a list of users
+    * @return array an of available friendusers which are not subscribed to current event.'.
     * When the group_id is set, the users in this group will be included.
-	*/
-	public function getFriendsForEvent($group_id = NULL)
-	{
+    */
+    public function getFriendsForEvent($group_id = null)
+    {
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
                         ->where('user_ID=:user_id')
@@ -180,7 +179,8 @@ class FriendList extends HikeActiveRecord
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':group_id' => $group_id,
                         ':rol' => DeelnemersEvent::ROL_deelnemer,
-                    ]);
+                    ]
+                );
         } else {
             $queryDeelnemersEvent->select('user_ID')
                 ->where('event_ID=:event_id')
@@ -190,9 +190,10 @@ class FriendList extends HikeActiveRecord
         $result = Users::find()
             ->where(['in', 'user.id', $queryFriendList])
             ->andwhere(['not in', 'user.id', $queryDeelnemersEvent])
+            ->andWhere('ISNULL(blocked_at)')
             ->all();
 
         $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'id', 'fullName');
         return $arrayRestuls;
-	}
+    }
 }

@@ -5,13 +5,10 @@ $db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'basic-console',
-    'name' => 'kiwi.run',
+    'name' => 'hike-app.nl',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
-//    'modules' => [
-//        'gii' => 'yii\gii\Module',
-//    ],
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -31,6 +28,18 @@ $config = [
         'authManager' => [
             'class' => 'dektrium\rbac\components\DbManager',
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' => YII_ENV_DEV || YII_ENV_TEST ? true : false,
+            'transport' => require(__DIR__ . '/email.php')
+        ],
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'scriptUrl' => $params['url']
+        ]
     ],
     'modules' => [
         'user' => [

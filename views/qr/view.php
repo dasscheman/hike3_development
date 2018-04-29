@@ -17,21 +17,6 @@ use yii\data\ArrayDataProvider;
 
     <h1><?= Html::encode(Yii::t('app', 'Silent stations for {routename}', ['routename' => $model->route_name])) ?></h1>
 
-    <p>
-        <?php
-        echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Create new silent station'),
-             'route'=>['qr/create', 'route_ID' => $model->route_ID],
-             'modalId'=>'#main-modal',
-             'modalContent'=>'#main-content-modal',
-             'options'=>[
-                 'class'=>'btn btn-success',
-                 'title'=>'Button for create silent station',
-                 'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
-             ]
-         ]);
-        ?>
-    </p>
     <?php
 
         // EXAMPLE

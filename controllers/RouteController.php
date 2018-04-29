@@ -3,24 +3,24 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Route;
-use app\models\RouteSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use app\models\Qr;
 use app\models\EventNames;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
-use yii\web\Cookie;
+use app\models\Qr;
+use app\models\Route;
+use app\models\RouteSearch;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * RouteController implements the CRUD actions for Route model.
  */
-class RouteController extends Controller {
-
-    public function behaviors() {
+class RouteController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -32,7 +32,7 @@ class RouteController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -46,7 +46,7 @@ class RouteController extends Controller {
                         'roles' => ['organisatieOpstart'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -58,7 +58,8 @@ class RouteController extends Controller {
      * Lists all Route models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $event_Id = Yii::$app->user->identity->selected_event_ID;
         $startDate = EventNames::getStartDate($event_Id);
         $endDate = EventNames::getEndDate($event_Id);
@@ -79,7 +80,8 @@ class RouteController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         $route_id = $_GET['route_id'];
         $event_id = $_GET['event_id'];
 
@@ -127,42 +129,24 @@ class RouteController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date) {
+    public function actionCreate($date = null)
+    {
         $model = new Route;
 
         if (Yii::$app->request->post('Route') &&
             $model->load(Yii::$app->request->post())) {
             $model->setRouteOrder();
             if ($model->save()) {
-
-                // QR record can only be set after the routemodel save.
-                // Because route_ID is not available before save.
-                // Furthermore it is not a problem when route record is saved and
-                // an error occured on qr save. Therefore this easy and fast solution is choosen.
-                if (!Qr::qrExistForRouteId($model->route_ID)) {
-                    $qrModel = new Qr;
-                    $qrModel->setAttributes([
-                        'qr_name' => $model->route_name,
-                        'qr_code' => Qr::getUniqueQrCode(),
-                        'event_ID' => $model->event_ID,
-                        'route_ID' => $model->route_ID,
-                        'score' => 5,
-                    ]);
-
-                    $qrModel->setNewOrderForQr();
-                    // use false parameter to disable validation
-                    $qrModel->save(false);
-                }
                 return $this->redirect(['/route/index']);
             }
         } else {
-            // This set the tab from which the call is started.
-            $date = $date;
-            $this->setCookieIndexTab($date);
             $model->setAttributes([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                'day_date' => $date
             ]);
+            // This set the tab from which the call is started.
+            if ($date != null) {
+                $model->setAttributes(['day_date' => $date]);
+            }
         }
 
         if (Yii::$app->request->isAjax) {
@@ -181,7 +165,8 @@ class RouteController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($route_ID) {
+    public function actionUpdate($route_ID)
+    {
         $model = $this->findModel($route_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = Qr::find()
@@ -190,7 +175,8 @@ class RouteController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':route_id' => $model->route_ID
-                ])
+                ]
+                )
                 ->exists();
 
             if (!$exist) {
@@ -200,7 +186,8 @@ class RouteController extends Controller {
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
-                    ])
+                    ]
+                    )
                     ->exists();
             }
 
@@ -211,7 +198,8 @@ class RouteController extends Controller {
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
-                    ])
+                    ]
+                    )
                     ->exists();
             }
 
@@ -246,17 +234,18 @@ class RouteController extends Controller {
      * Deze actie wordt gebruikt voor de grid velden. 
      */
 
-    public function actionMoveUpDown($route_ID, $up_down) {
+    public function actionMoveUpDown($route_ID, $up_down)
+    {
         $model = $this->findModel($route_ID);
         if ($up_down === 'up') {
             $previousModel = Route::find()
-                ->where('event_ID =:event_id and day_date =:date and route_volgorde <:order')
+                ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) and route_volgorde <:order')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde DESC')
                 ->one();
         } elseif ($up_down === 'down') {
             $previousModel = Route::find()
-                ->where('event_ID =:event_id AND day_date =:date AND route_volgorde >:order')
+                ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde >:order')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $model->day_date, ':order' => $model->route_volgorde])
                 ->orderBy('route_volgorde ASC')
                 ->one();
@@ -303,30 +292,34 @@ class RouteController extends Controller {
      * @return Route the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = Route::findOne([
                 'route_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-            $this->setCookieIndexTab($model->day_date);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    protected function setRouteIndexMessage($event_id) {
+    protected function setRouteIndexMessage($event_id)
+    {
         $route = Route::find()
             ->where('event_ID =:event_id')
             ->params([':event_id' => $event_id]);
 
         if ($route->count() < 3) {
             Yii::$app->session->setFlash(
-                'route', Yii::t(
-                    'app', 'Here you can create route items for each day.
-                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with kiwi.run.
-                   For each route item you can create questions, hints or silent stations.')
+                'route',
+                Yii::t(
+                    'app',
+                    'Here you can create route items for each day.
+                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with hike-app.nl.
+                   For each route item you can create questions, hints or silent stations.'
+                )
             );
         }
         $questionModel = new OpenVragen;
@@ -336,9 +329,13 @@ class RouteController extends Controller {
 
         if ($questions->count() < 3) {
             Yii::$app->session->setFlash(
-                'question', Yii::t(
-                    'app', 'Questions are visable by player only when the hike is started and the same day is selected.
-                   The field {awnser} is never visable by players.', ['awnser' => $questionModel->getAttributeLabel('goede_antwoord'),])
+                'question',
+                Yii::t(
+                    'app',
+                    'Questions are visable by player only when the hike is started and the same day is selected.
+                   The field {awnser} is never visable by players.',
+                    ['awnser' => $questionModel->getAttributeLabel('goede_antwoord'),]
+                )
             );
         }
 
@@ -349,15 +346,19 @@ class RouteController extends Controller {
 
         if ($hints->count() < 3) {
             Yii::$app->session->setFlash(
-                'hint', Yii::t(
-                    'app', 'Hints are visable by player only when the hike is started and the same day is selected.
+                'hint',
+                Yii::t(
+                    'app',
+                    'Hints are visable by player only when the hike is started and the same day is selected.
                    The field {remark} and {cordinate} are only visable by players when whey open a hint.
                    The score fields are penalty score, use positive interger numbers.
-                   Use the {name} to give a clear description what this hint is about', [
+                   Use the {name} to give a clear description what this hint is about',
+                    [
                     'remark' => $hintsModel->getAttributeLabel('opmerkingen'),
                     'cordinate' => $hintsModel->getAttributeLabel('coordinaat'),
                     'name' => $hintsModel->getAttributeLabel('nood_envelop_name'),
-                ])
+                ]
+                )
             );
         }
 
@@ -368,24 +369,14 @@ class RouteController extends Controller {
 
         if ($qr->count() <= $route->count()) {
             Yii::$app->session->setFlash(
-                'qr', Yii::t(
-                    'app', 'Silent station have to be printed and hanged along the hike route.
+                'qr',
+                Yii::t(
+                    'app',
+                    'Silent station have to be printed and hanged along the hike route.
                    Players get points when they scan the QR code.
                    A silent station is automaticly created for each route item'
                 )
             );
         }
     }
-
-    public function setCookieIndexTab($date) {
-        $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('route_day_tab');
-        $cookie = new Cookie([
-            'name' => 'route_day_tab',
-            'value' => $date,
-            'expire' => time() + 86400 * 365,
-        ]);
-        $cookies->add($cookie);
-    }
-
 }

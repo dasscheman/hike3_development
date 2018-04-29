@@ -2,6 +2,7 @@
 
 require_once(__DIR__.'/debug.php');
 $params = require(__DIR__ . '/params.php');
+$keys = require(__DIR__ . '/keys.php');
 
 $config = [
 
@@ -9,7 +10,7 @@ $config = [
         '@kvgrid' => '/vendor/kartik-v',
     ],
     'id' => 'basic',
-    'name' => 'kiwi.run',
+    'name' => 'hike-app.nl',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
@@ -35,6 +36,7 @@ $config = [
                 'security' => 'app\controllers\user\SecurityController',
             ],
             'mailer' => [
+                'sender' => ['noreply@hike-app.nl' => 'hike-app.nl'],
                 'viewPath' => '@app/mail/user',
             ],
             'admins' => ['dasman']
@@ -43,6 +45,8 @@ $config = [
         'gridview' =>  [
              'class' => '\kartik\grid\Module'
         ],
+        // Configure text editor module
+        'redactor' => 'yii\redactor\RedactorModule',
     ],
     'timeZone' => 'Europe/Amsterdam', // this is my default
     'components' => [
@@ -69,7 +73,7 @@ $config = [
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'sdafwef23F@F#@#feoko',
+            'cookieValidationKey' => $keys['cookieValidationKey'],
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -90,7 +94,7 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => true,
+            'useFileTransport' => YII_ENV_DEV || YII_ENV_TEST ? true : false,
             'transport' => require(__DIR__ . '/email.php')
         ],
         'log' => [
@@ -104,6 +108,17 @@ $config = [
         ],
         'setupdatetime' => [
             'class' => 'app\components\SetupDateTime',
+        ],
+        'assetManager' => [
+            'bundles' => [
+                'dosamigos\google\maps\MapAsset' => [
+                    'options' => [
+                        'key' => $keys['google_key'],
+                        'language' => 'nl',
+                        'version' => '3.1.18'
+                    ]
+                ]
+            ]
         ],
         'db' => require(__DIR__ . '/db.php'),
     ],

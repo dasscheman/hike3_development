@@ -16,7 +16,7 @@ use kartik\widgets\TimePicker;
             'time-trail-item/create',
             'time_trail_ID' => $model->time_trail_ID
         ] : [
-            'time-trail-item/update',
+            'time-trail-item/' .  Yii::$app->controller->action->id,
             'time_trail_item_ID' => $model->time_trail_item_ID
         ]]);
     
@@ -41,6 +41,8 @@ use kartik\widgets\TimePicker;
             'Instructions for the next point. They see this instruction when they scan this item.'
         )
     ]);
+    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'time_trail_ID')->hiddenInput(['value'=> $model->time_trail_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     echo $form->field($model, 'max_time')->widget(
@@ -48,8 +50,8 @@ use kartik\widgets\TimePicker;
         [
             'attribute' => 'max_time',
             'pluginOptions' => [
-                'showSeconds' => FALSE,
-                'showMeridian' => FALSE,
+                'showSeconds' => false,
+                'showMeridian' => false,
                 'minuteStep' => 1,
                 'defaultTime' => '10:00'
             ]

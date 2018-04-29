@@ -17,9 +17,10 @@ use yii\data\ActiveDataProvider;
 /**
  * UsersController implements the CRUD actions for TblUsers model.
  */
-class UsersController extends Controller {
-
-    public function behaviors() {
+class UsersController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -31,17 +32,17 @@ class UsersController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['resendPasswordUser', 'create'],
-                        'allow' => TRUE,
-//                        'roles' => ['*'],
+                        'actions' => ['resendPasswordUser', 'create', 'remove', 'unblock'],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                     [
                         'actions' => ['index', 'delete', 'search-friends', 'search-new-friends', 'search-friend-requests', 'update', 'view', 'change-password'],
-                        'allow' => TRUE,
+                        'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -53,7 +54,8 @@ class UsersController extends Controller {
      * Lists all Users models.
      * @return mixed
      */
-    public function actionSearchNewFriends() {
+    public function actionSearchNewFriends()
+    {
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->post());
 
@@ -73,7 +75,8 @@ class UsersController extends Controller {
     /**
      * Manages all models.
      */
-    public function actionSearchFriends() {
+    public function actionSearchFriends()
+    {
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchFriends(Yii::$app->request->queryParams);
 
@@ -86,7 +89,8 @@ class UsersController extends Controller {
     /**
      * Manages all models.
      */
-    public function actionSearchFriendRequests() {
+    public function actionSearchFriendRequests()
+    {
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchFriendRequests(Yii::$app->request->queryParams);
 
@@ -101,8 +105,8 @@ class UsersController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView() {
-
+    public function actionView()
+    {
         $feed = new ProfileActivityFeed;
         $feed->pageSize = 10;
 
@@ -119,10 +123,6 @@ class UsersController extends Controller {
 
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
-        // d(Yii::$app->request->get());
-        //
-        //         d(Yii::$app->request->post());
-        //  dd(Yii::$app->request->queryParams);
         return $this->render('view', [
                 'model' => $this->findModel(Yii::$app->user->id),
                 'activityFeed' => $feed->getData(),
@@ -137,7 +137,8 @@ class UsersController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $assignment = new Assignment;
@@ -163,7 +164,8 @@ class UsersController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate() {
+    public function actionUpdate()
+    {
         $model = $this->findModel(Yii::$app->user->id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view']);
@@ -182,7 +184,8 @@ class UsersController extends Controller {
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionChangePassword() {
+    public function actionChangePassword()
+    {
         $model = $this->findModel(Yii::$app->user->id);
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
@@ -192,7 +195,8 @@ class UsersController extends Controller {
         return $this->redirect(['view']);
     }
 
-    public function actionResendPasswordUser() {
+    public function actionResendPasswordUser()
+    {
         $model = Users::findByEmail(Yii::$app->request->post('Users')['email']);
 
         if (isset($model)) {
@@ -211,8 +215,8 @@ class UsersController extends Controller {
             }
         }
 
-        if (isset(Yii::$app->request->post('Users')['voornaam']) AND
-            isset(Yii::$app->request->post('Users')['email']) AND ! isset($model)) {
+        if (isset(Yii::$app->request->post('Users')['voornaam']) and
+            isset(Yii::$app->request->post('Users')['email']) and ! isset($model)) {
             Yii::$app->session->setFlash('warning', Yii::t('app', 'Unknown user and/or email.'));
         }
 
@@ -228,7 +232,8 @@ class UsersController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         try {
             $this->findModel($id)->delete();
         } catch (Exception $ex) {
@@ -239,6 +244,40 @@ class UsersController extends Controller {
         return $this->redirect(['index']);
     }
 
+    public function actionRemove($id, $email)
+    {
+        $user = $this->findModel($id);
+
+        if ($user->email === $email) {
+            $user->block();
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', 'Your accont is blocked and will be removed within a week.');
+            } else {
+                Yii::$app->session->setFlash('warning', 'Could not remove user.');
+            }
+        } else {
+            Yii::$app->session->setFlash('warning', 'Unknown user credentials');
+        }
+        return $this->render('remove');
+    }
+
+    public function actionUnblock($id, $email)
+    {
+        $user = $this->findModel($id);
+
+        if ($user->email === $email) {
+            $user->unblock();
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', 'Your accont is unblocked.');
+            } else {
+                Yii::$app->session->setFlash('warning', 'Could not remove user.');
+            }
+        } else {
+            Yii::$app->session->setFlash('warning', 'Unknown user credentials');
+        }
+        return $this->render('remove');
+    }
+
     /**
      * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -246,12 +285,12 @@ class UsersController extends Controller {
      * @return Users the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         if (($model = Users::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

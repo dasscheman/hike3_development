@@ -39,7 +39,7 @@ class TimeTrail extends HikeActiveRecord
             [['time_trail_name', 'event_ID'], 'required'],
             [['event_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
-            [['time_trail_name'], 'string', 'max' => 255],
+            [['time_trail_name'], 'string', 'max' => 15],
             [['time_trail_name', 'event_ID'], 'unique', 'targetAttribute' => ['time_trail_name', 'event_ID'], 'message' => 'The combination of Time Trail Name and Event  ID has already been taken.'],
             [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
             [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],

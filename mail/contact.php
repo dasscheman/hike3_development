@@ -3,7 +3,7 @@
 	<body>
 		Hallo,<br>
 
-		Dit is een copy van het bericht dat je achter hebt gelaten op www.kiwi.run
+		Dit is een copy van het bericht dat je achter hebt gelaten op hike-app.nl
  		<br>
 
 		bericht: <br>
@@ -13,6 +13,6 @@
         <br>
 		Met vriendelijke groet,<br>
 		<br>
-		www.kiwi.run<br>
+		hike-app.nl<br>
  	</body>
 </html>

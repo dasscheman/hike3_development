@@ -7,7 +7,6 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use app\components\CustomAlertBlock;
-use yii\web\Cookie;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RouteSearch */
@@ -21,16 +20,16 @@ $this->title = Yii::t('app', 'Routes');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
-    $resizableColumns = FALSE;
-    $responsiveWrap = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = true;
+    $resizableColumns = false;
+    $responsiveWrap = false;
 
     Modal::begin(['id'=>'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -73,13 +72,13 @@ $this->title = Yii::t('app', 'Routes');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
-            'allowBatchToggle' => FALSE,
+            'allowBatchToggle' => false,
             'expandTitle' => Yii::t('app', 'Open view questions'),
             'collapseTitle' => Yii::t('app', 'Close view questions'),
         ],
         [
             'header' => Yii::t('app', '#Questions'),
-            'value' => function($model, $key){
+            'value' => function ($model, $key) {
                 return Route::findOne($key)->getOpenVragenCount();
             },
         ],
@@ -93,7 +92,7 @@ $this->title = Yii::t('app', 'Routes');
             'detail'=>function ($model, $key, $index, $column) {
                 return Yii::$app->controller->renderPartial('/nood-envelop/view', ['model'=>$model]);
             },
-            'allowBatchToggle' => FALSE,
+            'allowBatchToggle' => false,
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
             'expandAllTitle' => Yii::t('app', 'Open all view hints'),
@@ -102,7 +101,7 @@ $this->title = Yii::t('app', 'Routes');
         ],
         [
             'header' => Yii::t('app', '#Hints'),
-            'value' => function($model, $key){
+            'value' => function ($model, $key) {
                 return Route::findOne($key)->getNoodEnvelopCount();
             },
         ],
@@ -118,13 +117,13 @@ $this->title = Yii::t('app', 'Routes');
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
-            'allowBatchToggle' => FALSE,
+            'allowBatchToggle' => false,
             'expandTitle' => Yii::t('app', 'Open view hints'),
             'collapseTitle' => Yii::t('app', 'Close view hints'),
         ],
         [
             'header' => Yii::t('app', '#Silent posts'),
-            'value' => function($model, $key){
+            'value' => function ($model, $key) {
                 return Route::findOne($key)->getQrCount();
             },
         ],
@@ -165,26 +164,26 @@ $this->title = Yii::t('app', 'Routes');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
-                    if(Yii::$app->user->can('organisatie') &&
+                    if (Yii::$app->user->can('organisatie') &&
                         Route::lowererOrderNumberExists($model->route_ID)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
-                 },
+                    return false;
+                },
                 'down' => function ($model, $key, $index) {
-                    if(Yii::$app->user->can('organisatie') &&
+                    if (Yii::$app->user->can('organisatie') &&
                         Route::higherOrderNumberExists($model->route_ID)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
-                 }
+                    return false;
+                }
             ]
         ],
     ];
 
     $dataArray[$count]=array(
         'label' => Yii::t('app', 'Introduction'),
-        'active' => '0000-00-00' === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? TRUE: FALSE,
+        'active' => true,
         'options' => ['id' => 'Introduction'],
         'content' => GridView::widget([
             'id' => 'kv-grid-0000-00-00',
@@ -200,7 +199,7 @@ $this->title = Yii::t('app', 'Routes');
                 ['content'=>
                     ButtonAjax::widget([
                         'name'=> Yii::t('app', 'Add route item'),
-                        'route'=>['route/create', 'date' => '0000-00-00'],
+                        'route'=>['route/create'],
                         'modalId'=>'#main-modal',
                         'modalContent'=>'#main-content-modal',
                         'options'=>[
@@ -228,12 +227,12 @@ $this->title = Yii::t('app', 'Routes');
     );
     $count++;
 
-    while(strtotime($startDate) <= strtotime($endDate)) {
+    while (strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count]=array(
-		    'label' =>$startDate,
-            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? TRUE: FALSE,
+            'label' =>$startDate,
+//            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? true: false,
             'options' => ['id' => $startDate],
-		    'content' => GridView::widget([
+            'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'responsiveWrap' => $responsiveWrap,
                 'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),
@@ -272,13 +271,13 @@ $this->title = Yii::t('app', 'Routes');
                 'persistResize'=>false,
             ])
         );
-		$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));
-	    $count++;
-		// more then 10 days is unlikly, therefore break.
-		if ($count == 10) {
-			break;
-		}
-	}
+        $startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));
+        $count++;
+        // more then 10 days is unlikly, therefore break.
+        if ($count == 10) {
+            break;
+        }
+    }
     echo Tabs::widget([
         'items' => $dataArray
     ]);

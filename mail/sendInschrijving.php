@@ -14,20 +14,20 @@ use app\models\DeelnemersEvent;
 		Hallo <?php echo $mailUsersName; ?>,<br>
 
 		Je ontvangt deze mail omdat <?php echo $mailUsersNameSender ?> je heeft ingeschreven
-		op www.kiwi.run voor de hike <?php echo $mailEventName ?>.
+		op hike-app.nl voor de hike <?php echo $mailEventName ?>.
 
 		Je bent ingeschreven als <?php echo $mailRolText;
-		if ($mailRol == DeelnemersEvent::ROL_deelnemer){
-			echo ", voor de groep " . $mailGroupName . ".";
-		} else {
-			".";
-		}?>
+        if ($mailRol == DeelnemersEvent::ROL_deelnemer) {
+            echo ", voor de groep " . $mailGroupName . ".";
+        } else {
+            ".";
+        }?>
 
 		Als je vragen hebt kun je mailen naar de organisatie van de hike <?php echo $mailUsersEmailSender?>.
         <br>
         <br>
 		Met vriendelijke groet,<br>
 		<br>
-		www.kiwi.run<br>
+		hike-app.nl<br>
  	</body>
 </html>

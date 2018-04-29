@@ -74,9 +74,18 @@ class RouteSearch extends Route
 
     public function searchRouteInEvent($params)
     {
+        $event = EventNames::findOne([
+            'event_ID' => Yii::$app->user->identity->selected_event_ID]);
         $query = Route::find()
-            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
-            ->orderBy('route_volgorde ASC');
+            ->where('event_ID =:event_id AND (ISNULL(day_date) OR (day_date >=:start_date AND day_date <=:end_date))')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':start_date' => $event->start_date,
+                ':end_date' => $event->end_date])
+            ->orderBy([
+                'day_date'=>SORT_ASC,
+                'route_volgorde' => SORT_ASC,
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -88,7 +97,7 @@ class RouteSearch extends Route
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-           return $dataProvider;
+            return $dataProvider;
         }
 
         $query->andFilterWhere([
@@ -123,7 +132,7 @@ class RouteSearch extends Route
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
-           return $dataProvider;
+            return $dataProvider;
         }
 
         $query->andFilterWhere([

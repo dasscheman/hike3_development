@@ -12,31 +12,34 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use app\models\EventNames;
-use yii\web\Cookie;
+
+//use yii\web\Cookie;
 
 /**
  * PostenController implements the CRUD actions for Posten model.
  */
-class PostenController extends Controller {
-
-    public function behaviors() {
+class PostenController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'ajaxupdate' => ['post'],
                 ],
             ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'move-up-down', 'lists-posts'],
+                        'actions' => ['index', 'update', 'map-update', 'move-up-down', 'lists-posts', 'ajaxupdate'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -45,7 +48,7 @@ class PostenController extends Controller {
                         'roles' => ['organisatieOpstart', 'organisatieIntroductie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -57,7 +60,8 @@ class PostenController extends Controller {
      * Lists all Posten models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $event_Id = Yii::$app->user->identity->selected_event_ID;
         $startDate = EventNames::getStartDate($event_Id);
         $endDate = EventNames::getEndDate($event_Id);
@@ -77,20 +81,24 @@ class PostenController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date) {
+    public function actionCreate()
+    {
         $model = new Posten();
-
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForPosten();
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
-                return $this->redirect(['posten/index']);
+                return $this->redirect(['map/index']);
+            } else {
+                foreach ($model->getErrors() as $error) {
+                    Yii::$app->session->setFlash('error', Json::encode($error));
+                }
             }
         } else {
-            $model->date = $date;
+            $model->date = Yii::$app->request->get('date');
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
-            $this->setCookieIndexTab($model->date);
+//            $this->setCookieIndexTab($model->date);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -104,12 +112,25 @@ class PostenController extends Controller {
     }
 
     /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $post_ID
+     * @return type
+     */
+    public function actionMapUpdate($post_ID)
+    {
+        return $this->actionUpdate($post_ID, true);
+    }
+
+    /**
      * Updates an existing Posten model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($post_ID) {
+    public function actionUpdate($post_ID, $map = null)
+    {
         $model = $this->findModel($post_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = PostPassage::find()
@@ -118,7 +139,8 @@ class PostenController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':post_ID' => $model->post_ID
-                ])
+                ]
+                )
                 ->exists();
             if (!$exist) {
                 $model->delete();
@@ -127,24 +149,35 @@ class PostenController extends Controller {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
             }
-            return $this->redirect(['posten/index']);
+            if ($map === true) {
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
+                return;
+            }
+            return $this->redirect(['route/index']);
         }
+
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
-                return $this->redirect(['posten/index']);
+
+                if ($map === true) {
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
+                    return;
+                }
+                return $this->redirect(['route/index']);
             }
         }
+
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
-                '/posten/update',
-                'model' => $model
-        ]);
+        return $this->render(
+                'update',
+                ['model' => $model]
+        );
     }
 
     /**
@@ -154,20 +187,22 @@ class PostenController extends Controller {
      * @return Posten the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = Posten::findOne([
                 'post_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-            $this->setCookieIndexTab($model->date);
+//            $this->setCookieIndexTab($model->date);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 
-    public function actionMoveUpDown($post_ID, $up_down) {
+    public function actionMoveUpDown($post_ID, $up_down)
+    {
         $model = $this->findModel($post_ID);
         if ($up_down === 'up') {
             $previousModel = Posten::find()
@@ -258,11 +293,12 @@ class PostenController extends Controller {
             'date' => $date));
     }
 
-    public function actionListsPosts() {
+    public function actionListsPosts()
+    {
         $out = [];
-        if (NULL !== Yii::$app->request->post('depdrop_parents')) {
+        if (null !== Yii::$app->request->post('depdrop_parents')) {
             $parents = Yii::$app->request->post('depdrop_parents');
-            if ($parents != NULL) {
+            if ($parents != null) {
                 $date = $parents[0];
                 $data = Posten::getPostNameOptionsToday($date);
                 foreach ($data as $key => $item) {
@@ -275,7 +311,8 @@ class PostenController extends Controller {
         echo Json::encode(['output' => '', 'selected' => '']);
     }
 
-    protected function setPostenIndexMessage($event_id) {
+    protected function setPostenIndexMessage($event_id)
+    {
         $posten = Posten::find()
             ->where('event_ID =:event_id')
             ->params([':event_id' => $event_id]);
@@ -286,23 +323,41 @@ class PostenController extends Controller {
         $tresholt = $days + 4;
         if ($posten->count() <= $tresholt) {
             Yii::$app->session->setFlash(
-                'post', Yii::t(
-                    'app', 'Here you can create stations for each day.
+                'post',
+                Yii::t(
+                    'app',
+                    'Here you can create stations for each day.
                   For each day an start station is made, you have to use this when you want a group to start.
-                  The start station should have a score of 0, unless you think starting your hike is a challange on it self and deserves points.')
+                  The start station should have a score of 0, unless you think starting your hike is a challange on it self and deserves points.'
+                )
             );
         }
     }
 
-    public function setCookieIndexTab($date) {
-        $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('posten_day_tab');
-        $cookie = new Cookie([
-            'name' => 'posten_day_tab',
-            'value' => $date,
-            'expire' => time() + 86400 * 365,
-        ]);
-        $cookies->add($cookie);
-    }
+//    public function setCookieIndexTab($date)
+//    {
+//        $cookies = Yii::$app->getResponse()->getCookies();
+//        $cookies->remove('posten_day_tab');
+//        $cookie = new Cookie([
+//            'name' => 'posten_day_tab',
+//            'value' => $date,
+//            'expire' => time() + 86400 * 365,
+//        ]);
+//        $cookies->add($cookie);
+//    }
 
+    public function actionAjaxupdate()
+    {
+        $model = $this->findModel(Yii::$app->request->post('id'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+
+        if ($model->save()) {
+            return true;
+        } else {
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
+        }
+    }
 }

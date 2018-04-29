@@ -18,6 +18,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Bonuspunten[] $Bonuspuntens
  * @property PostPassage[] $PostPassages
@@ -44,13 +46,13 @@ class Posten extends HikeActiveRecord
         return [
             [['post_name', 'event_ID', 'score'], 'required'],
             [['event_ID', 'score', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['date', 'create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude', 'date', 'create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['post_name'], 'string', 'max' => 255],
-            [
-                ['post_name', 'event_ID', 'date'],
-                'unique',
-                'targetAttribute' => ['post_name', 'event_ID', 'date'],
-                'message' => Yii::t('app', 'This station name exist for this day.')]
+            [['post_name', 'event_ID', 'date'], 'unique', 'targetAttribute' => ['post_name', 'event_ID', 'date'], 'message' => Yii::t('app', 'This station name exist for this day.')],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
+            [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
         ];
     }
 
@@ -76,7 +78,8 @@ class Posten extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -130,13 +133,14 @@ class Posten extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
-	/**
+    /**
     * Retrieves a list of post namen
+  *
     * @return array an array of all available posten'.
     */
     public function getPostNameOptions($event_Id)
     {
-    	$data = Posten::findAll('event_ID =:event_Id', array(':event_Id' => $event_Id));
+        $data = Posten::findAll('event_ID =:event_Id', array(':event_Id' => $event_Id));
         $list = CHtml::listData($data, 'post_ID', 'post_name');
         return $list;
     }
@@ -144,17 +148,19 @@ class Posten extends HikeActiveRecord
     public function getPostNameOptionsToday($date)
     {
         $event_id = Yii::$app->user->identity->selected_event_ID;
-		// $active_day = EventNames::getActiveDayOfHike($event_id);
+        // $active_day = EventNames::getActiveDayOfHike($event_id);
         $date = Yii::$app->setupdatetime->convert($date);
-    	$data = Posten::find()
+        $data = Posten::find()
             ->where('event_ID =:event_id AND date =:date')
-            ->addParams([
+            ->addParams(
+                [
                 ':event_id' => $event_id,
-			    ':date' => $date
-            ])
+                ':date' => $date
+                ]
+            )
             ->asArray()
            ->all();
-        $listData = ArrayHelper::map($data,'post_ID','post_name');
+        $listData = ArrayHelper::map($data, 'post_ID', 'post_name');
         return $listData;
     }
 
@@ -163,7 +169,7 @@ class Posten extends HikeActiveRecord
     */
     public function getPostScore($post_Id)
     {
-    	$data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
+        $data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
         return isset($data->score) ?
             $data->score : 0;
     }
@@ -173,20 +179,20 @@ class Posten extends HikeActiveRecord
     */
     public function getPostName($post_Id)
     {
-    	$data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
+        $data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
         return isset($data->post_name) ?
             $data->post_name : "nvt";
     }
 
     public function getDatePost($post_Id)
     {
-    	$data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
+        $data = Posten::find('post_ID =:post_Id', array(':post_Id' => $post_Id));
         return isset($data->date) ?
             $data->date : "nvt";
     }
 
-	public function setNewOrderForPosten()
-	{
+    public function setNewOrderForPosten()
+    {
         $max_order = Posten::find()
             ->select('post_volgorde')
             ->where('event_ID=:event_id')
@@ -195,7 +201,8 @@ class Posten extends HikeActiveRecord
                 [
                     ':event_id' => $this->event_ID,
                     ':date' =>$this->date,
-                ])
+                ]
+            )
             ->max('post_volgorde');
         if (empty($max_order)) {
             // dd(empty($max_order));
@@ -203,10 +210,10 @@ class Posten extends HikeActiveRecord
         } else {
             $this->post_volgorde = $max_order+1;
         }
-	}
+    }
 
-	public function lowererOrderNumberExists($date, $post_volgorde)
-	{
+    public function lowererOrderNumberExists($date, $post_volgorde)
+    {
         // Kan deze niet cachen, geeft problemen bij omhoog en omlaag vinkje bij post/index
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
@@ -214,14 +221,14 @@ class Posten extends HikeActiveRecord
             ->orderBy('post_volgorde DESC')
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function higherOrderNumberExists($date, $post_volgorde)
-	{
+    public function higherOrderNumberExists($date, $post_volgorde)
+    {
         // Kan deze niet cachen, geeft problemen bij omhoog en omlaag vinkje bij post/index
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
@@ -229,14 +236,14 @@ class Posten extends HikeActiveRecord
             ->orderBy(['post_volgorde' => SORT_ASC])
             ->exists();
         
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function lowerOrderNumberExists($post_id)
-	{
+    public function lowerOrderNumberExists($post_id)
+    {
         $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde <:order')
@@ -244,49 +251,50 @@ class Posten extends HikeActiveRecord
             ->orderBy(['post_volgorde' => SORT_ASC])
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
     /**
     * Return the first station of the date
     */
-	public function getStartPost($date)
-	{
+    public function getStartPost($date)
+    {
         $event_id = Yii::$app->user->identity->selected_event_ID;
         $db = self::getDb();
-        $data = $db->cache(function ($db) use($date, $event_id){
-            return Posten::find()
+        $data = $db->cache(
+            function ($db) use ($date, $event_id) {
+                return Posten::find()
                 ->where('event_ID =:event_id AND date =:date')
                 ->params([':event_id' => $event_id, ':date' => $date])
                 ->orderBy(['post_volgorde' => SORT_ASC])
                 ->one();
-        });
+            }
+        );
 
-		if (isset($data->post_ID))
-		{
-			return $data->post_ID;
-		} else {
-			return false;
-		}
-	}
+        if (isset($data->post_ID)) {
+            return $data->post_ID;
+        } else {
+            return false;
+        }
+    }
 
     /**
     * Checks if the post is a start post of a day.
     */
-	public function isStartPost($post_id)
-	{
-		if (Posten::lowerOrderNumberExists($post_id)) {
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	}
+    public function isStartPost($post_id)
+    {
+        if (Posten::lowerOrderNumberExists($post_id)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-	public function startPostExist($date)
-	{
+    public function startPostExist($date)
+    {
         $exists = Posten::find()
             ->where('event_ID=:event_id')
             ->andwhere('date=:date')
@@ -294,8 +302,9 @@ class Posten extends HikeActiveRecord
                 [
                     ':event_id' => Yii::$app->user->identity->selected_event_ID,
                     ':date' => $date,
-                ])
+                ]
+            )
             ->exists();
         return $exists;
-	}
+    }
 }

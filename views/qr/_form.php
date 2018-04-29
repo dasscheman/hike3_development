@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-qr-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['qr/create', 'route_ID' => $model->route_ID] : ['qr/update', 'qr_ID' => $model->qr_ID]]);
+        'action' => $model->isNewRecord ? ['qr/create', 'route_ID' => $model->route_ID] : ['qr/' .  Yii::$app->controller->action->id, 'qr_ID' => $model->qr_ID]]);
 
     echo $form->field($model, 'qr_name')->textInput([
             'maxlength' => true,
@@ -26,6 +26,8 @@ use yii\widgets\ActiveForm;
                 'Points for scanning. You can use positive and negative (penalty point) integers.'
             )
     ]);
+    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>

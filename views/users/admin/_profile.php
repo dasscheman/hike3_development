@@ -33,9 +33,6 @@ use yii\helpers\Html;
 ]); ?>
 
 <?= $form->field($profile, 'name') ?>
-<?= $form->field($profile, 'voornaam') ?>
-<?= $form->field($profile, 'tussenvoegsel') ?>
-<?= $form->field($profile, 'achternaam') ?>
 <?= $form->field($profile, 'public_email') ?>
 <?= $form->field($profile, 'website') ?>
 <?= $form->field($profile, 'location') ?>

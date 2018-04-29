@@ -3,6 +3,7 @@ use prawee\widgets\ButtonAjax;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use kartik\widgets\AlertBlock;
+use app\models\OpenVragen;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
@@ -19,6 +20,7 @@ use kartik\widgets\AlertBlock;
                     'delay' => 4000,
                 ]);
             ?>
+
             <p>
                 <h3>
                     <?php echo Html::encode($model->open_vragen_name); ?> </br>
@@ -35,6 +37,34 @@ use kartik\widgets\AlertBlock;
                             'disabled' => !Yii::$app->user->can('organisatie'),
                         ]
                     ]);
+                    ?> </br> <?php
+
+                    echo Html::Button(
+                        '<span class="glyphicon glyphicon-chevron-left"></span>',
+                        [
+                            'onclick'=>"window.location.href = '" . \Yii::$app->urlManager->createUrl([
+                                '/open-vragen/move-up-down',
+                                'vraag_id' => $model->open_vragen_ID,
+                                'up_down' => 'up']) . "';",
+                            'title' => Yii::t('app', 'Move up'),
+
+                            'class'=>'btn btn-primary btn-xs',
+                            'disabled' => !OpenVragen::lowererOrderNumberExists($model->open_vragen_ID),
+                        ]
+                    );
+
+                    echo Html::Button(
+                        '<span class="glyphicon glyphicon-chevron-right"></span>',
+                        [
+                            'onclick'=>"window.location.href = '" . \Yii::$app->urlManager->createUrl([
+                                '/open-vragen/move-up-down',
+                                'vraag_id' => $model->open_vragen_ID,
+                                'up_down' => 'down']) . "';",
+                            'title' => Yii::t('app', 'Move down'),
+                            'class'=>'btn btn-primary btn-xs',
+                            'disabled' => !OpenVragen::higherOrderNumberExists($model->open_vragen_ID),
+                        ]
+                    );
                 ?>
             </p>
             <b>

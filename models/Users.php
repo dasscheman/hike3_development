@@ -78,7 +78,8 @@ use dektrium\user\models\User as BaseUser;
  * @property Token[] $tokens
  */
 
-class Users extends BaseUser {
+class Users extends BaseUser
+{
     public $search_friends;
     public $password_repeat;
     const SCENARIO_REGISTER = 'register';
@@ -93,16 +94,18 @@ class Users extends BaseUser {
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'user';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-            [['voornaam', 'achternaam', 'email'], 'required'],
+            [['voornaam', 'achternaam', 'email'], 'required', 'on' =>  ['connect', 'create', 'update'],],
             [['confirmed_at', 'blocked_at', 'created_at', 'updated_at', 'flags', 'last_login_at',
                 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
             [['birthdate', 'organisatie', 'create_time', 'update_time', 'password_repeat','password', 'created_at', 'updated_at'], 'safe'],
@@ -116,7 +119,7 @@ class Users extends BaseUser {
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This email address has already been taken.')],
-            [['password_repeat','password'], 'required', 'on' => self::SCENARIO_REGISTER],
+            [['password_repeat','password', 'email'], 'required', 'on' => self::SCENARIO_REGISTER],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match", 'on' => self::SCENARIO_REGISTER],
         ];
     }
@@ -124,7 +127,8 @@ class Users extends BaseUser {
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => Yii::t('app', 'ID'),
             'username' => Yii::t('app', 'Username'),
@@ -165,7 +169,9 @@ class Users extends BaseUser {
                     ActiveRecord::EVENT_BEFORE_INSERT => ['create_time', 'update_time', 'created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['update_time', 'updated_at'],
                 ],
-                'value' => function() { return \Yii::$app->setupdatetime->storeFormat(time(), 'datetime'); },
+                'value' => function () {
+                    return \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
+                },
             ],
         ];
     }
@@ -205,28 +211,32 @@ class Users extends BaseUser {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeelnemersEvents() {
+    public function getDeelnemersEvents()
+    {
         return $this->hasMany(DeelnemersEvent::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeelnemersEvents0() {
+    public function getDeelnemersEvents0()
+    {
         return $this->hasMany(DeelnemersEvent::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeelnemersEventsByUserID() {
+    public function getDeelnemersEventsByUserID()
+    {
         return $this->hasMany(DeelnemersEvent::className(), ['user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRolUserForEvent() {
+    public function getRolUserForEvent()
+    {
         return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
             ->where('event_ID =:event_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -237,7 +247,8 @@ class Users extends BaseUser {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGroupUserForEvent() {
+    public function getGroupUserForEvent()
+    {
         return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
             ->where('event_ID =:event_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -248,7 +259,8 @@ class Users extends BaseUser {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStatusForEvent() {
+    public function getStatusForEvent()
+    {
         return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
             ->where('event_ID =:event_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -284,21 +296,24 @@ class Users extends BaseUser {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFriendLists0() {
+    public function getFriendLists0()
+    {
         return $this->hasMany(FriendList::className(), ['friends_with_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFriendLists1() {
+    public function getFriendLists1()
+    {
         return $this->hasMany(FriendList::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFriendListsByUserId() {
+    public function getFriendListsByUserId()
+    {
         return $this->hasMany(FriendList::className(), ['user_ID' => 'id']);
     }
 
@@ -321,140 +336,160 @@ class Users extends BaseUser {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGroups() {
+    public function getGroups()
+    {
         return $this->hasMany(Groups::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGroups0() {
+    public function getGroups0()
+    {
         return $this->hasMany(Groups::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNoodEnvelops() {
+    public function getNoodEnvelops()
+    {
         return $this->hasMany(NoodEnvelop::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNoodEnvelops0() {
+    public function getNoodEnvelops0()
+    {
         return $this->hasMany(NoodEnvelop::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenNoodEnvelops() {
+    public function getOpenNoodEnvelops()
+    {
         return $this->hasMany(OpenNoodEnvelop::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenNoodEnvelops0() {
+    public function getOpenNoodEnvelops0()
+    {
         return $this->hasMany(OpenNoodEnvelop::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenVragens() {
+    public function getOpenVragens()
+    {
         return $this->hasMany(OpenVragen::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenVragens0() {
+    public function getOpenVragens0()
+    {
         return $this->hasMany(OpenVragen::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenVragenAntwoordens() {
+    public function getOpenVragenAntwoordens()
+    {
         return $this->hasMany(OpenVragenAntwoorden::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOpenVragenAntwoordens0() {
+    public function getOpenVragenAntwoordens0()
+    {
         return $this->hasMany(OpenVragenAntwoorden::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPostPassages() {
+    public function getPostPassages()
+    {
         return $this->hasMany(PostPassage::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPostPassages0() {
+    public function getPostPassages0()
+    {
         return $this->hasMany(PostPassage::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPostens() {
+    public function getPostens()
+    {
         return $this->hasMany(Posten::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPostens0() {
+    public function getPostens0()
+    {
         return $this->hasMany(Posten::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getQrs() {
+    public function getQrs()
+    {
         return $this->hasMany(Qr::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getQrs0() {
+    public function getQrs0()
+    {
         return $this->hasMany(Qr::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getQrChecks() {
+    public function getQrChecks()
+    {
         return $this->hasMany(QrCheck::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getQrChecks0() {
+    public function getQrChecks0()
+    {
         return $this->hasMany(QrCheck::className(), ['update_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoutes() {
+    public function getRoutes()
+    {
         return $this->hasMany(Route::className(), ['create_user_ID' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRoutes0() {
+    public function getRoutes0()
+    {
         return $this->hasMany(Route::className(), ['update_user_ID' => 'id']);
     }
 
@@ -521,7 +556,8 @@ class Users extends BaseUser {
      * @param  string      $username
      * @return static|null
      */
-    public static function findByUsername($username) {
+    public static function findByUsername($username)
+    {
         return static::findOne(['username' => $username]);
     }
 
@@ -531,112 +567,28 @@ class Users extends BaseUser {
      * @param  string      $email
      * @return static|null
      */
-    public static function findUserByEmail($email) {
+    public static function findUserByEmail($email)
+    {
         return static::findOne(['email' => $email]);
     }
 
     /**
      * @inheritdoc
      */
-//    public function getId() {
-//        return $this->id;
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    public function getAuthKey() {
-//        return $this->authKey;
-//    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function findIdentity($id) {
+    public static function findIdentity($id)
+    {
         return static::findOne($id);
     }
-
-    /**
-     * @inheritdoc
-     */
-    /* modified */
-//    public static function findIdentityByAccessToken($token, $type = null) {
-//        return static::findOne(['accessToken' => $token]);
-//    }
-
-    /**
-     * Finds user by password reset token
-     *
-     * @param  string      $token password reset token
-     * @return static|null
-     */
-//    public static function findByPasswordResetToken($token) {
-//        $expire = \Yii::$app->params['user.passwordResetTokenExpire'];
-//        $parts = explode('_', $token);
-//        $timestamp = (int) end($parts);
-//        if ($timestamp + $expire < time()) {
-//            // token expired
-//            return null;
-//        }
-//
-//        return static::findOne([
-//                'password_reset_token' => $token
-//        ]);
-//    }
-
-    /**
-     * @inheritdoc
-     */
-//    public function validateAuthKey($authKey) {
-//        return $this->getAuthKey() === $authKey;
-//    }
-
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
-//    public function hashPassword($password) {
-//        return md5($password);
-//    }
-
-    /**
-     * Validates password
-     *
-     * @param  string  $password password to validate
-     * @return boolean if password provided is valid for current user
-     */
-//    public function validatePassword($password) {
-//        return $this->password === $this->hashPassword($password);
-//    }
-
-    /**
-     * Generates "remember me" authentication key
-     */
-//    public function generateAuthKey() {
-//        $this->authKey = Security::generateRandomKey();
-//    }
-
-    /**
-     * Generates new password reset token
-     */
-//    public function generatePasswordResetToken() {
-//        $this->password_reset_token = Security::generateRandomKey() . '_' . time();
-//    }
-
-    /**
-     * Removes password reset token
-     */
-//    public function removePasswordResetToken() {
-//        $this->password_reset_token = null;
-//    }
 
     /**
      * Retrieves a list of users
      * @return array an array of all available users'.
      */
-    public function getUserNameOptions() {
-        $data = Users::find()->all();
+    public function getUserNameOptions()
+    {
+        $data = Users::find()
+            ->andWhere('ISNULL(blocked_at)')
+            ->all();
         $list = ArrayHelper::map($data, 'user_ID', 'username');
         return $list;
     }
@@ -644,7 +596,8 @@ class Users extends BaseUser {
     /**
      * Retrieves username
      */
-    public function getUserName($user_id) {
+    public function getUserName($user_id)
+    {
         $data = Users::find('user_ID =:user_id', array(':user_id' => $user_id));
         if (isset($data->event_name)) {
             return $data->username;
@@ -658,52 +611,12 @@ class Users extends BaseUser {
         return $this->voornaam.' '.$this->achternaam;
     }
 
-//    public function sendEmailNewAccount() {
-//        $message = Yii::$app->mailer->compose('newAccount', [
-//                'newMailUsers' => $this->email,
-//                'newWachtwoord' => $this->password,
-//            ])
-//            ->setSubject('Wachtwoord Kiwi.run')
-//            ->setFrom(Yii::$app->params['noreply_email'])
-//            ->setTo($this->email);
-//
-//        if ($message->send()) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    public function sendEmailWithNewPassword($NewPassword) {
-//        $message = Yii::$app->mailer->compose('resendPassword', [
-//                'newMailUsers' => $this->email,
-//                'newWachtwoord' => $NewPassword,
-//            ])
-//            ->setSubject('Wachtwoord Kiwi.run')
-//            ->setFrom(Yii::$app->params['noreply_email'])
-//            ->setTo($this->email);
-//
-//        if ($message->send()) {
-//            return true;
-//        }
-//        return false;
-//    }
-
     /**
-     * apply a hash on the password before we store it in the database
-     */
-//    public function afterValidate() {
-//        parent::afterValidate();
-//        if (!$this->hasErrors() && Yii::$app->controller->action->id != 'update') {
-//            $this->password = $this->hashPassword($this->password);
-//        }
-//    }
-
-        /**
      *
      */
-    public function setSelectedEventID() {
-
-        if (NULL !== Yii::$app->request->get('event_id') AND
+    public function setSelectedEventID()
+    {
+        if (null !== Yii::$app->request->get('event_id') and
             Yii::$app->request->get('event_id') !== Yii::$app->user->identity->selected_event_ID) {
             // When a qr code is scanned the, event_ID is passed in the GET.
             // Because all checks are based on the selected_event_ID we must
@@ -723,7 +636,7 @@ class Users extends BaseUser {
                 Yii::$app->user->identity->save();
             } else {
                 // This user is not added to the event_id in the GET.
-                return FALSE;
+                return false;
             }
         }
 
@@ -735,18 +648,10 @@ class Users extends BaseUser {
                 ->orderBy(['update_time' => SORT_DESC]);
 
             if (!$selected->exists()) {
-                return FALSE;
+                return false;
             }
             Yii::$app->user->identity->selected_event_ID = (int) $selected->one()->event_ID;
             Yii::$app->user->identity->save();
         }
     }
-
-//    public function getIsAdmin()
-//    {
-//        return TRUE;
-//    }
-
-
-
 }

@@ -148,10 +148,127 @@ Hiermee wordt het modal naar voren gehaald.*/
     margin-top: -8px;
 }
 .navbar-inverse {
-  background-color: #002039;
+    background-color: #002039;
 }
 
 /* Set the header text */
 .kartik-sheet-style {
     text-align-last: center;
+}
+
+.route-buttons{
+    margin-right: 10px;
+    margin-top: 10px;
+    font-size: 20px;
+    display: inline-block;
+} 
+
+.container > .container-map {
+    width: 98%;
+    height: auto;
+}
+
+.footer-map {
+    display: none;
+}
+
+.map-index {
+    padding-top: 50px;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.map{
+    margin-bottom: 15px;
+}
+
+.legenda .kwart {
+    float: left;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    /*width: 19.96%;*/ 
+    width: 15.46%; 
+
+}
+.kwart{    
+    padding-top: 15px;
+    padding-left: 25px;
+    min-width: 300px;
+    box-shadow: 10px 10px 5px grey;
+}
+
+.legenda {
+    float: left;
+    width: 100%;
+    margin: 0 0 15px;
+}
+
+@media (max-width: 958px) {
+    .legenda .kwart{
+        width:50% !important;
+    }
+}
+
+.map-right{    
+    padding-right: 8px;
+    float: right!important;
+}  
+
+.map-left{   
+    padding-top: 13px;
+    padding-left: 15px;
+    white-space: nowrap
+}
+
+.time-trail-images{
+    margin-right: -18px;
+    vertical-align: top;
+}
+
+h4.left{
+    padding-left: 15px;
+    margin: 10px 0;
+    white-space: nowrap
+}
+
+.padding-right{
+    margin-right: 6px;
+}
+
+.map-button{
+    padding-bottom: 18px;
+    background-color: rgba(51, 122, 183, 0.6); 
+    margin-left: -13px;
+    margin-top: -4px;     
+}
+
+.map-popover{
+    border: none;
+    background-color: rgba(51, 122, 183, 0.0); 
+    margin-bottom: -2px;
+
+}
+
+.time-trial-popover{
+    margin-left: -7px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+#longitude,
+#latitude {
+    font-size: 24px;
+}
+
+.map-alert
+.alert{
+    padding-top: 16px;
+    position: fixed;
+    z-index: 20;
+    width: 96%;
+
+    /*adding-top: 9px;*/
 }

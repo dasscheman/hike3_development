@@ -7,10 +7,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
     'modelClass' => 'Time Trail Item',
-]) . $model->time_trail_item_ID;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Time Trail Items'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->time_trail_item_ID, 'url' => ['view', 'id' => $model->time_trail_item_ID]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+]) . $model->time_trail_item_name;
 ?>
 <div class="time-trail-item-update">
 

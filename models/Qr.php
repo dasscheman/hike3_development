@@ -19,6 +19,8 @@ use app\components\GeneralFunctions;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $latitude
+ * @property string $longitude
  *
  * @property Users $createUser
  * @property EventNames $event
@@ -45,6 +47,7 @@ class Qr extends HikeActiveRecord
             [['qr_name', 'qr_code', 'event_ID', 'route_ID', 'score'], 'required'],
             [['event_ID', 'route_ID', 'qr_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
+            [['latitude', 'longitude'], 'number'],
             [['qr_name', 'qr_code'], 'string', 'max' => 255],
             [
                 ['qr_code', 'event_ID'],
@@ -77,7 +80,8 @@ class Qr extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -125,28 +129,26 @@ class Qr extends HikeActiveRecord
         return $this->hasMany(QrCheck::className(), ['qr_ID' => 'qr_ID']);
     }
 
-	public function getUniqueQrCode()
-	{
-		$UniqueQrCode = 99;
+    public function getUniqueQrCode()
+    {
+        $UniqueQrCode = 99;
 
-		while($UniqueQrCode == 99)
-		{
-			$newqrcode = GeneralFunctions::randomString(22);
-			$data = Qr::find()
+        while ($UniqueQrCode == 99) {
+            $newqrcode = GeneralFunctions::randomString(22);
+            $data = Qr::find()
                 ->where('qr_code = :qr_code')
-			    ->params([':qr_code' => $newqrcode])
+                ->params([':qr_code' => $newqrcode])
                 ->exists();
-			// if QR code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
-			if(!$data)
-			{
-				$UniqueQrCode = $newqrcode;
-			}
-		}
-		return($UniqueQrCode);
-	}
+            // if QR code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
+            if (!$data) {
+                $UniqueQrCode = $newqrcode;
+            }
+        }
+        return($UniqueQrCode);
+    }
 
-	public function setNewOrderForQr()
-	{
+    public function setNewOrderForQr()
+    {
         $max_order = Qr::find()
             ->select('qr_volgorde')
             ->where('event_ID=:event_id')
@@ -155,7 +157,8 @@ class Qr extends HikeActiveRecord
                 [
                     ':event_id' => $this->event_ID,
                     ':route_id' =>$this->route_ID,
-                ])
+                ]
+            )
             ->max('qr_volgorde');
 
         if (empty($max_order)) {
@@ -163,55 +166,66 @@ class Qr extends HikeActiveRecord
         } else {
             $this->qr_volgorde = $max_order+1;
         }
-	}
+    }
 
-	public function lowererOrderNumberExists($qr_id)
-	{
-        $data = Qr::find($qr_id);
+    public function lowererOrderNumberExists($qr_id)
+    {
+        $data = Qr::findOne($qr_id);
+
         $dataNext = Qr::find()
-            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
-            ->exist();
-
-		if ($dataNext) {
-			return TRUE;
-        }
-        return FALSE;
-	}
-
-	public function higherOrderNumberExists($event_id, $id, $qr_order, $route_id)
-	{
-        $data = Qr::find($qr_id);
-        $dataNext = Qr::find()
-            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $data->qr_ID, ':route_id' => $$data->route_ID, ':order' => $data->qr_order])
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde <=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->qr_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->qr_volgorde
+            ])
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function qrExistForRouteId($route_id)
-	{
+    public function higherOrderNumberExists($qr_id)
+    {
+        $data = Qr::findOne($qr_id);
+        $dataNext = Qr::find()
+            ->where('event_ID =:event_id AND qr_ID !=:id AND route_ID=:route_id AND qr_volgorde >=:order')
+            ->params([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':id' => $data->qr_ID,
+                ':route_id' => $data->route_ID,
+                ':order' => $data->qr_volgorde
+            ])
+            ->exists();
+
+        if ($dataNext) {
+            return true;
+        }
+        return false;
+    }
+
+    public function qrExistForRouteId($route_id)
+    {
         $data = Qr::find()
             ->where('route_ID =:event_id AND route_ID =:route_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_id' => $route_id])
             ->exists();
 
-		if ($data) {
-			return TRUE;
+        if ($data) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
     /**
     * Retrieves the score of an post.
     */
     public function getQrScore($qr_Id)
     {
-    	$data = Qr::find('qr_ID =:qr_Id', array(':qr_Id' => $qr_Id));
+        $data = Qr::find('qr_ID =:qr_Id', array(':qr_Id' => $qr_Id));
         return isset($data->score) ?
             $data->score : 0;
     }
@@ -254,7 +268,4 @@ class Qr extends HikeActiveRecord
 
         return $data;
     }
-
-
-
 }

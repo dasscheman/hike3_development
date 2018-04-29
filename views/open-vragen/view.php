@@ -12,21 +12,6 @@ use yii\widgets\ListView;
 
     <h1><?= Html::encode(Yii::t('app', 'Questions for {routename}', ['routename' => $model->route_name])) ?></h1>
 
-    <p>
-        <?php
-        echo ButtonAjax::widget([
-            'name'=>Yii::t('app', 'Create new question'),
-             'route'=>['open-vragen/create', 'route_ID' => $model->route_ID],
-             'modalId'=>'#main-modal',
-             'modalContent'=>'#main-content-modal',
-             'options'=>[
-                 'class'=>'btn btn-success',
-                 'title'=>'Button for create application',
-                 'disabled' => !Yii::$app->user->can('organisatieIntroductie') && !Yii::$app->user->can('organisatieOpstart'),
-             ]
-         ]);
-        ?>
-    </p>
     <?php
         $dataProvider = new yii\data\ArrayDataProvider([
             'allModels' => $model->openVragens,

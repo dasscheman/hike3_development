@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <div class="tbl-nood-envelop-form">
 
     <?php $form = ActiveForm::begin([
-        'action' => $model->isNewRecord ? ['nood-envelop/create', 'route_ID' => $model->route_ID] : ['nood-envelop/update', 'nood_envelop_ID' => $model->nood_envelop_ID]]);
+        'action' => $model->isNewRecord ? ['nood-envelop/create', 'route_ID' => $model->route_ID] : ['nood-envelop/' .  Yii::$app->controller->action->id, 'nood_envelop_ID' => $model->nood_envelop_ID]]);
 
     echo $form->field($model, 'nood_envelop_name')->textInput([
             'maxlength' => true,
@@ -20,13 +20,8 @@ use yii\widgets\ActiveForm;
                 'Recognizable name for this hint, visable by players.'
             )
         ]);
-    echo $form->field($model, 'coordinaat')->textInput([
-            'maxlength' => true,
-            'placeholder' => Yii::t(
-                'app',
-                'Optional field for the coordinaat, only visable by players when they open the hint.'
-            )
-        ]);
+    echo $form->field($model, 'show_coordinates')->checkbox();
+    
     echo $form->field($model, 'opmerkingen')->textInput([
             'maxlength' => true,
             'placeholder' => Yii::t(
@@ -40,6 +35,8 @@ use yii\widgets\ActiveForm;
                 'Penalty points for opening. Use positive integers.'
             )
         ]);
+    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>

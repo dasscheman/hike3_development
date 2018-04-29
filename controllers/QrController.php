@@ -3,8 +3,10 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\EventNames;
 use app\models\Qr;
 use app\models\QrSearch;
+use app\models\RouteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -13,30 +15,33 @@ use app\models\QrCheck;
 use kartik\mpdf\Pdf;
 use dosamigos\qrcode\QrCode;
 use yii\helpers\Url;
+use yii\helpers\Json;
 
 /**
  * QrController implements the CRUD actions for Qr model.
  */
-class QrController extends Controller {
-
-    public function behaviors() {
+class QrController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'ajaxupdate' => ['post'],
                 ],
             ],
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'qrcode', 'report'],
+                        'actions' => ['index', 'update', 'map-update', 'qrcode', 'report', 'ajaxupdate', 'move-up-down'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -45,7 +50,7 @@ class QrController extends Controller {
                         'roles' => ['organisatieOpstart', 'organisatieIntroductie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ],
@@ -57,7 +62,8 @@ class QrController extends Controller {
      * Lists all Qr models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $event_id = $_GET['event_id'];
         $where = "event_ID = $event_id";
 
@@ -75,7 +81,8 @@ class QrController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($route_ID) {
+    public function actionCreate($route_ID)
+    {
         $model = new Qr();
 
         if (Yii::$app->request->post('Qr') &&
@@ -85,7 +92,7 @@ class QrController extends Controller {
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
-                return $this->redirect(['route/index']);
+                return $this->redirect(['map/index']);
             }
         } else {
             $model->route_ID = $route_ID;
@@ -96,10 +103,22 @@ class QrController extends Controller {
             return $this->renderAjax('create', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/qr/create',
-                'model' => $model
-        ]);
+             ['model' => $model]
+        );
+    }
+
+    /**
+     * Without passing parameters this is used to determine what to do after a save.
+     * When updating on the map page, the browser tab must be closed.
+     *
+     * @param type $qr_ID
+     * @return type
+     */
+    public function actionMapUpdate($qr_ID)
+    {
+        return $this->actionUpdate($qr_ID, true);
     }
 
     /**
@@ -108,7 +127,8 @@ class QrController extends Controller {
      * @param integer $qr_ID
      * @return mixed
      */
-    public function actionUpdate($qr_ID) {
+    public function actionUpdate($qr_ID, $map = null)
+    {
         $model = $this->findModel($qr_ID);
 
         if (Yii::$app->request->post('update') == 'delete') {
@@ -118,7 +138,8 @@ class QrController extends Controller {
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':qr_id' => $model->qr_ID
-                ])
+                ]
+                )
                 ->exists();
             if (!$exist) {
                 $model->delete();
@@ -126,6 +147,10 @@ class QrController extends Controller {
             } else {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
+            }
+            if ($map === true) {
+                echo "<script>window.close(); window.opener.location.reload(true);</script>";
+                return;
             }
             return $this->redirect(['route/index']);
         }
@@ -135,6 +160,10 @@ class QrController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
+                if ($map === true) {
+                    echo "<script>window.close(); window.opener.location.reload(true);</script>";
+                    return;
+                }
                 return $this->redirect(['route/index']);
             }
         }
@@ -143,43 +172,30 @@ class QrController extends Controller {
             return $this->renderAjax('update', ['model' => $model]);
         }
 
-        return $this->render([
+        return $this->render(
                 '/qr/update',
-                'model' => $model
-        ]);
+                ['model' => $model]
+        );
     }
 
-    /*
-     * @Depricated maart 2018
-     */
-    public function actioncreateIntroductie() {
-        $model = new Qr;
-        if (isset($_GET['event_id'])) {
-            $model->qr_name = "Introductie";
-            $model->qr_code = Qr::getUniqueQrCode();
-            $model->event_ID = $_GET['event_id'];
-            $model->route_ID = Route::getIntroductieRouteId($_GET['event_id']);
-            $model->qr_volgorde = Qr::getNewOrderForIntroductieQr($_GET['event_id']);
-            $model->score = 5;
-
-            if ($model->save())
-                ;
-            {
-                return $this->redirect(array('route/viewIntroductie', 'event_id' => $_GET['event_id']));
-            }
-        }
-    }
-
-    public function actionQrcode($qr_code) {
+    public function actionQrcode($qr_code)
+    {
         $event_id = Yii::$app->user->identity->selected_event_ID;
 
         $link = Url::to(['qr-check/create', 'event_id' => $event_id, 'qr_code' => $qr_code], true);
 //        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=qr-check/create&event_id=" . $event_id . "&qr_code=" . $qr_code;
         return QrCode::jpg(
-                $link, Yii::$app->params['qr_code_path'] . $qr_code . '.jpg', 1, 3, 1, TRUE);
+                $link,
+            Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',
+            1,
+            3,
+            1,
+            true
+        );
     }
 
-    public function actionReport($qr_ID) {
+    public function actionReport($qr_ID)
+    {
         $model = $this->findModel($qr_ID);
         if (isset($model)) {
             $content = $this->renderPartial('reportview', ['model' => $model]);
@@ -226,57 +242,71 @@ class QrController extends Controller {
         }
     }
 
-    public function actionMoveUpDown() {
-        $event_id = $_GET['event_id'];
-        $qr_id = $_GET['qr_id'];
-        $qr_volgorde = $_GET['volgorde'];
-        $up_down = $_GET['up_down'];
-        $route_id = Qr::getQrRouteID($qr_id);
+    public function actionMoveUpDown()
+    {
+        $model = $this->findModel(Yii::$app->request->get('qr_id'));
+        $up_down = Yii::$app->request->get('up_down');
 
-        $currentModel = Qr::findByPk($qr_id);
-
-        $criteria = new CDbCriteria;
-
-        if ($up_down == 'up') {
-            $criteria->condition = 'event_ID =:event_id AND
-									qr_ID !=:id AND
-									route_ID=:route_id AND
-									qr_volgorde <=:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $qr_id,
-                ':route_id' => $route_id,
-                ':order' => $qr_volgorde);
-            $criteria->order = 'qr_volgorde DESC';
+        if ($up_down === 'up') {
+            $previousModel = Qr::find()
+                ->where('event_ID =:event_id and route_ID =:route_ID and qr_volgorde <:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->qr_volgorde])
+                ->orderBy('qr_volgorde DESC')
+                ->one();
+        } elseif ($up_down === 'down') {
+            $previousModel = Qr::find()
+                ->where('event_ID =:event_id AND route_ID =:route_ID AND qr_volgorde >:order')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':route_ID' => $model->route_ID, ':order' => $model->qr_volgorde])
+                ->orderBy('qr_volgorde ASC')
+                ->one();
         }
-        if ($up_down == 'down') {
-            $criteria->condition = 'event_ID =:event_id AND
-									qr_ID !=:id AND
-								 	route_ID=:route_id AND
-									qr_volgorde >:order';
-            $criteria->params = array(':event_id' => $event_id,
-                ':id' => $qr_id,
-                ':route_id' => $route_id,
-                ':order' => $qr_volgorde);
-            $criteria->order = 'qr_volgorde ASC';
+
+        // Dit is voor als er een reload wordt gedaan en er is geen previousModel.
+        // Opdeze manier wordt er dan voorkomen dat er een fatal error komt.
+        if (isset($previousModel)) {
+            $tempCurrentVolgorde = $model->qr_volgorde;
+            $model->qr_volgorde = $previousModel->qr_volgorde;
+            $previousModel->qr_volgorde = $tempCurrentVolgorde;
+
+            if ($model->validate() &&
+                $previousModel->validate()) {
+                $model->save();
+                $previousModel->save();
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+            }
         }
-        $criteria->limit = 1;
-        $previousModel = Qr::find($criteria);
 
-        $tempCurrentVolgorde = $currentModel->qr_volgorde;
-        $currentModel->qr_volgorde = $previousModel->qr_volgorde;
-        $previousModel->qr_volgorde = $tempCurrentVolgorde;
+        $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
+        $searchModel = new RouteSearch();
 
-        $currentModel->save();
-        $previousModel->save();
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('/route/index', [
+                    'searchModel' => $searchModel,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate]);
+        }
 
-        if (Route::routeIdIntroduction($currentModel->route_ID)) {
-            return $this->redirect(array('route/viewIntroductie',
-                    "route_id" => $currentModel->route_ID,
-                    "event_id" => $currentModel->event_ID,));
+        return $this->render('/route/index', [
+                'searchModel' => $searchModel,
+                'startDate' => $startDate,
+                'endDate' => $endDate
+        ]);
+    }
+
+    public function actionAjaxupdate()
+    {
+        $model = $this->findModel(Yii::$app->request->post('id'));
+        $model->latitude = Yii::$app->request->post('latitude');
+        $model->longitude = Yii::$app->request->post('longitude');
+
+        if ($model->save()) {
+            return true;
         } else {
-            return $this->redirect(array('route/view',
-                    "route_id" => $currentModel->route_ID,
-                    "event_id" => $currentModel->event_ID,));
+            foreach ($model->getErrors() as $error) {
+                return Json::encode($error);
+            }
         }
     }
 
@@ -287,7 +317,8 @@ class QrController extends Controller {
      * @return Qr the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = Qr::findOne([
                 'qr_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -298,5 +329,4 @@ class QrController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

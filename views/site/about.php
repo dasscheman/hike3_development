@@ -19,8 +19,14 @@ $this->title = 'About';
     <p>
         Illustrations by <a align="center" href="https://vecteezy.com">Vecteezy!</a>
     </p>
-
+    <p>
+        Icons by <a align="center" href="https://mapicons.mapsmarker.com/">Maps Icons Collection</a>
+    </p>
     <h2><?= Html::encode('change log') ?></h2>
+    <h3><?= Html::encode('3.2') ?></h3>
+    <p>
+        Added new user dektrium yii2-user and dektrium yii2-rbac.
+    </p>
     <h3><?= Html::encode('3.1') ?></h3>
     <p>
         Added overview of activity per group.

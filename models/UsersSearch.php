@@ -69,20 +69,21 @@ class UsersSearch extends Users
     {
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
-                        ->where('user_ID=:user_id')
-                        ->addParams([':user_id' => Yii::$app->user->id]);
+            ->where('user_ID=:user_id')
+            ->addParams([':user_id' => Yii::$app->user->id]);
 
         $query = Users::find();
         $query->where(['not in', 'user.id', $queryFriendList])
-              ->andwhere('user.id<>:user_id')
-              ->addParams([':user_id' => Yii::$app->user->id]);
+            ->andwhere('user.id<>:user_id')
+            ->andWhere('ISNULL(blocked_at)')
+            ->addParams([':user_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         $this->load($params);
 
-        if(!isset($this->search_friends) ||
+        if (!isset($this->search_friends) ||
             strlen($this->search_friends) < 3) {
             $query->where('0=1');
         }
@@ -99,7 +100,8 @@ class UsersSearch extends Users
                 ['like','achternaam',$this->search_friends],
                 ['like','organisatie',$this->search_friends],
                 ['like','email',$this->search_friends]
-            ]);
+            ]
+        );
 
         return $dataProvider;
     }
@@ -113,6 +115,7 @@ class UsersSearch extends Users
                         ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
                         ->addParams([':user_id' => Yii::$app->user->id]);
         $query->where(['in', 'user.id', $queryFriendList])
+              ->andWhere('ISNULL(blocked_at)')
               ->addParams([':user_id' => Yii::$app->user->id]);
 
         $dataProvider = new ActiveDataProvider([
@@ -151,6 +154,7 @@ class UsersSearch extends Users
                         ->addParams([':user_id' => Yii::$app->user->id])
                         ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_pending]);
         $query->where(['in', 'user.id', $queryFriendList])
+              ->andWhere('ISNULL(blocked_at)')
               ->andwhere('usser.id<>:user_id')
               ->addParams([':user_id' => Yii::$app->user->id]);
 
