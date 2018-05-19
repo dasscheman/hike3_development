@@ -322,9 +322,11 @@ class TimeTrailItemController extends Controller
      * Deze actie wordt gebruikt voor de grid velden. 
      */
 
-    public function actionMoveUpDown($time_trail_item_ID, $up_down)
+    public function actionMoveUpDown()
     {
-        $modelItem = $this->findModel($time_trail_item_ID);
+        $modelItem = $this->findModel(Yii::$app->request->get('time_trail_item_ID'));
+        $up_down = Yii::$app->request->get('up_down');
+
         if ($up_down === 'up') {
             $previousModel = TimeTrailItem::find()
                 ->where('event_ID =:event_id and time_trail_ID =:time_trail_ID and volgorde <:order')
@@ -345,6 +347,7 @@ class TimeTrailItemController extends Controller
             $tempCurrentVolgorde = $modelItem->volgorde;
             $modelItem->volgorde = $previousModel->volgorde;
             $previousModel->volgorde = $tempCurrentVolgorde;
+
             if ($modelItem->validate() &&
                 $previousModel->validate()) {
                 $modelItem->save();
@@ -360,13 +363,13 @@ class TimeTrailItemController extends Controller
             ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
             ->all();
 
-        if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('time-trail/index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-                    'model' => $model,
-            ]);
-        }
+//        if (Yii::$app->request->isAjax) {
+//            return $this->renderAjax('time-trail/index', [
+//                    'searchModel' => $searchModel,
+//                    'dataProvider' => $dataProvider,
+//                    'model' => $model,
+//            ]);
+//        }
 
         return $this->render('/time-trail/index', [
                 'searchModel' => $searchModel,

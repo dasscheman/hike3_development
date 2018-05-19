@@ -8,7 +8,6 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use prawee\widgets\ButtonAjax;
 use app\components\CustomAlertBlock;
-use yii\web\Cookie;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PostenSearch */
@@ -22,15 +21,15 @@ $this->title = Yii::t('app', 'Posten');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;
-    $responsiveWrap = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = true;
+    $responsiveWrap = false;
 
     Modal::begin(['id' => 'main-modal']);
     echo '<div id="main-content-modal"></div>';
@@ -71,11 +70,11 @@ $this->title = Yii::t('app', 'Posten');
             'detail' => function ($model, $key, $index, $column) {
                 $db = $model::getDb();
                 $groups = $db->cache(function ($db) {
-                        return Groups::find()
+                    return Groups::find()
                                 ->where('event_ID =:event_id')
                                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
                                 ->all();
-                    });
+                });
                 return Yii::$app->controller->renderPartial('/post-passage/view-groups', ['post_id' => $key, 'groups' => $groups]);
             },
             'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -86,11 +85,11 @@ $this->title = Yii::t('app', 'Posten');
         'score',
         [
             'header' => Yii::t('app', '#groups passed'),
-            'value' => function($model, $key, $index, $column) {
+            'value' => function ($model, $key, $index, $column) {
                 $db = $model::getDb();
-                return $db->cache(function ($db) use($key) {
-                            return Posten::findOne($key)->getPostPassagesCount();
-                        });
+                return $db->cache(function ($db) use ($key) {
+                    return Posten::findOne($key)->getPostPassagesCount();
+                });
             },
         ],
         'post_volgorde',
@@ -101,11 +100,13 @@ $this->title = Yii::t('app', 'Posten');
             'buttons' => [
                 'up' => function ($url, $model) {
                     return Html::a(
-                            '<span class="glyphicon glyphicon-chevron-up"></span>', [
+                            '<span class="glyphicon glyphicon-chevron-up"></span>',
+                        [
                             'posten/move-up-down',
                             'post_ID' => $model->post_ID,
                             'up_down' => 'up',
-                            ], [
+                            ],
+                        [
                             'title' => Yii::t('app', 'Move up'),
                             'class' => 'btn btn-primary btn-xs',
                             ]
@@ -113,11 +114,13 @@ $this->title = Yii::t('app', 'Posten');
                 },
                 'down' => function ($url, $model) {
                     return Html::a(
-                            '<span class="glyphicon glyphicon-chevron-down"></span>', [
+                            '<span class="glyphicon glyphicon-chevron-down"></span>',
+                        [
                             'posten/move-up-down',
                             'post_ID' => $model->post_ID,
                             'up_down' => 'down',
-                            ], [
+                            ],
+                        [
                             'title' => Yii::t('app', 'Mode down'),
                             'class' => 'btn btn-primary btn-xs',
                             ]
@@ -128,16 +131,16 @@ $this->title = Yii::t('app', 'Posten');
                 'up' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
                         Posten::lowererOrderNumberExists($model->date, $model->post_volgorde)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
+                    return false;
                 },
                 'down' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
                         Posten::higherOrderNumberExists($model->date, $model->post_volgorde)) {
-                        return TRUE;
+                        return true;
                     }
-                    return FALSE;
+                    return false;
                 }
             ]
         ],
@@ -146,7 +149,7 @@ $this->title = Yii::t('app', 'Posten');
     while (strtotime($startDate) <= strtotime($endDate)) {
         $dataArray[$count] = array(
             'label' => $startDate,
-            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('posten_day_tab') ? TRUE : FALSE,
+            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('posten_day_tab') ? true : false,
             'content' => GridView::widget([
                 'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
                 'dataProvider' => $searchModel->searchPostenInEvent(['PostenSearch' => ['date' => $startDate]]),
