@@ -15,7 +15,8 @@ use app\models\FriendList;
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['groups/create'] : ['groups/update', 'group_ID' => $model->group_ID]]); ?>
 
-    <?= $form->field($model, 'group_name')->textInput(['maxlength' => true]);
+    <?php
+    echo $form->field($model, 'group_name')->textInput(['maxlength' => true]);
 
     echo $form->field($model, 'users_temp')->widget(Select2::classname(), [
         'value' => $model->users_temp,
@@ -25,12 +26,22 @@ use app\models\FriendList;
             'placeholder' => 'Filter as you type ...',
             'id' => $model->group_ID,
             'class' => "form-control",
-            'multiple' => TRUE,
+            'multiple' => true,
         ],
         'pluginOptions' => [
               'tags' => true,
         ]
     ]);
+
+    echo $form->field($model, 'users_email_temp')->textarea([
+            'rows' => 6,
+            'placeholder' => Yii::t(
+                'app',
+                'Use users emails to add multiple players at once to this group. '
+                . 'Email must be known in the hike-app. In case you not jet friends, a friendship request is send aswell. '
+                . 'Forexample: tets@test.nl, user@test.nl, player@test.nl'
+            )
+        ]);
     ?>
     <div class="form-group">
         <?= Html::submitButton(
@@ -42,7 +53,8 @@ use app\models\FriendList;
                     'groups-update-' . $model->group_ID,
                 'value'=> $model->isNewRecord ? 'create' : 'update',
                 'name'=>'action'
-            ]) ?>
+            ]
+    ) ?>
 
         <?php
         if (!$model->isNewRecord) {

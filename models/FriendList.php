@@ -166,7 +166,7 @@ class FriendList extends HikeActiveRecord
         $queryFriendList = FriendList::find();
         $queryFriendList->select('friends_with_user_ID')
                         ->where('user_ID=:user_id')
-                        ->andWhere(['tbl_friend_list.status' => FriendList::STATUS_accepted])
+                        ->andWhere('tbl_friend_list.status = '. FriendList::STATUS_accepted . ' OR tbl_friend_list.status = ' . FriendList::STATUS_waiting)
                         ->addParams([':user_id' => Yii::$app->user->id]);
 
         $queryDeelnemersEvent = DeelnemersEvent::find();
@@ -195,5 +195,46 @@ class FriendList extends HikeActiveRecord
 
         $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'id', 'fullName');
         return $arrayRestuls;
+    }
+
+    public function sendRequest($friendsWithUser)
+    {
+        $modelCurrentUser = new FriendList;
+        $modelCurrentUser->user_ID = Yii::$app->user->id;
+        $modelCurrentUser->friends_with_user_ID = $friendsWithUser;
+        $modelCurrentUser->status = FriendList::STATUS_waiting;
+
+        $modelNewFriendUser = new FriendList;
+        $modelNewFriendUser->user_ID = $friendsWithUser;
+        $modelNewFriendUser->friends_with_user_ID = Yii::$app->user->id;
+        $modelNewFriendUser->status = FriendList::STATUS_pending;
+
+        $valid = $modelCurrentUser->validate();
+        $valid = $modelNewFriendUser->validate() && $valid;
+
+        if (!$valid) {
+            return false;
+        } else {
+            $modelCurrentUser->save(false);
+            $modelNewFriendUser->save(false);
+            // verstuur een mail.
+            $modelCurrentUser->sendMailRequest();
+            return true;
+        }
+    }
+
+    public function sendMailRequest()
+    {
+        Yii::$app->mailer->compose('sendrequest', [
+                'mailUsersNameSender' => $this->user->username,
+                'mailUsersEmailSender' => $this->user->email,
+                'mailUsersNameReceiver' => $this->friendsWithUser->username,
+                'mailUsersEmailReceiver' => $this->friendsWithUser->email,
+            ])
+            ->setFrom('noreply@biologenkantoor.nl')
+            ->setTo($this->user->email)
+            ->setCc($this->user->email)
+            ->setSubject('Friend request on hike-app')
+            ->send();
     }
 }

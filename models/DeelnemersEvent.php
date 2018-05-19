@@ -290,4 +290,21 @@ class DeelnemersEvent extends HikeActiveRecord
         $arrayRestuls = \yii\helpers\ArrayHelper::map($result, 'user_ID', 'username');
         return $arrayRestuls;
     }
+
+    public function sendMailInschrijving()
+    {
+        Yii::$app->mailer->compose('sendInschrijving', [
+                'mailEventName' => $this->event->event_name,
+                'mailUsersName' => $this->user->username,
+                'mailUsersNameSender' => $this->createUser->username,
+                'mailUsersEmailSender' => $this->createUser->email,
+                'mailRol' => $this->rol,
+                'mailRolText' => DeelnemersEvent::getRolText($this->rol),
+                'mailGroupName' => $this->group->group_name,
+            ])
+            ->setFrom('noreply@biologenkantoor.nl')
+            ->setTo($this->user->email)
+            ->setSubject('Inschrijving Hike')
+            ->send();
+    }
 }

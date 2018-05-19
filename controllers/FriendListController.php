@@ -14,9 +14,10 @@ use app\models\UsersSearch;
 /**
  * FriendListController implements the CRUD actions for FriendList model.
  */
-class FriendListController extends Controller {
-
-    public function behaviors() {
+class FriendListController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -28,12 +29,12 @@ class FriendListController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => TRUE,
+                        'allow' => true,
                         'actions' => array('connect', 'accept', 'decline'),
                         'roles' => array('@'),
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ],
@@ -46,7 +47,8 @@ class FriendListController extends Controller {
      * Lists all FriendList models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new FriendListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -62,7 +64,8 @@ class FriendListController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -73,7 +76,8 @@ class FriendListController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new FriendList();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -91,7 +95,8 @@ class FriendListController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($friend_list_ID) {
+    public function actionUpdate($friend_list_ID)
+    {
         $model = $this->findModel($friend_list_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -109,7 +114,8 @@ class FriendListController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -122,7 +128,8 @@ class FriendListController extends Controller {
      * @return FriendList the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         if (($model = FriendList::findOne($id)) !== null) {
             return $model;
         } else {
@@ -134,45 +141,18 @@ class FriendListController extends Controller {
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
-    public function actionConnect() {
-        $friendsWithUser = Yii::$app->request->get('user_id');
-
-        $modelCurrentUser = new FriendList;
-        $modelCurrentUser->user_ID = Yii::$app->user->id;
-        $modelCurrentUser->friends_with_user_ID = $friendsWithUser;
-        $modelCurrentUser->status = FriendList::STATUS_waiting;
-
-        $modelNewFriendUser = new FriendList;
-        $modelNewFriendUser->user_ID = $friendsWithUser;
-        $modelNewFriendUser->friends_with_user_ID = Yii::$app->user->id;
-        $modelNewFriendUser->status = FriendList::STATUS_pending;
-
-        $valid = $modelCurrentUser->validate();
-        $valid = $modelNewFriendUser->validate() && $valid;
-
-        if (!$valid) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'));
+    public function actionConnect()
+    {
+        if (FriendList::sendRequest(Yii::$app->request->get('user_id'))) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Send invitation.'));
         } else {
-            $modelCurrentUser->save(false);
-            $modelNewFriendUser->save(false);
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'));
         }
-        $searchModel = new UsersSearch();
-        $dataProvider = $searchModel->searchNewFriends(Yii::$app->request->queryParams);
-
-        if (Yii::$app->getRequest()->isAjax) {
-            return $this->renderPartial('/users/search-new-friends', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-            ]);
-        }
-
-        return $this->render('/users/search-new-friends', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-        ]);
+        $this->redirect(Yii::$app->request->referrer);
     }
 
-    public function actionAccept() {
+    public function actionAccept()
+    {
         $modelRequester = $this->findModel(Yii::$app->request->get('friend_list_ID'));
 
         $modelAccepter = FriendList::find()
@@ -200,7 +180,8 @@ class FriendListController extends Controller {
         return $this->redirect(['users/view']);
     }
 
-    public function actionDecline() {
+    public function actionDecline()
+    {
         $modelAccepter = $this->findModel(Yii::$app->request->get('friend_list_ID'));
 
         $modelAccepter->status = FriendList::STATUS_declined;
@@ -209,10 +190,9 @@ class FriendListController extends Controller {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
         } else {
             // use false parameter to disable validation
-            $modelAccepter->save(FALSE);
+            $modelAccepter->save(false);
         }
 
         return $this->redirect(['users/view']);
     }
-
 }

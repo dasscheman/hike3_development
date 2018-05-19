@@ -32,12 +32,13 @@ use yii\helpers\Json;
  */
 class Groups extends HikeActiveRecord
 {
-	public $group_members;
-	private $_rank;
+    public $group_members;
+    private $_rank;
     private $_time_walking;
-	private $_time_left;
-	public $last_post_time;
+    private $_time_left;
+    public $last_post_time;
     public $users_temp;
+    public $users_email_temp;
 
     /**
      * @inheritdoc
@@ -77,7 +78,9 @@ class Groups extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
             'bonus_score' => Yii::t('app', 'Bonus Score'),
-            'hint_score' => Yii::t('app', 'Hint Penalty')
+            'hint_score' => Yii::t('app', 'Hint Penalty'),
+            'users_temp' => Yii::t('app', 'Players'),
+            'users_email_temp' => Yii::t('app', 'Players email'),
         ];
     }
 
@@ -85,7 +88,8 @@ class Groups extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -107,7 +111,7 @@ class Groups extends HikeActiveRecord
     public function getBonus_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasMany(Bonuspunten::className(), ['group_ID' => 'group_ID'])
                 ->sum('score');
         });
@@ -157,7 +161,7 @@ class Groups extends HikeActiveRecord
     public function getHint_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasOne(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
                 ->via('openNoodEnvelops')
                 ->sum('score');
@@ -173,14 +177,14 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID']);
     }
 
-	public function getCorrectOpenVragenAntwoordens()
-	{
-	   return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID'])
-		   ->where([
-			   'tbl_open_vragen_antwoorden.correct' => TRUE,
-			   'tbl_open_vragen_antwoorden.checked' => TRUE
-		   ]);
-	}
+    public function getCorrectOpenVragenAntwoordens()
+    {
+        return $this->hasMany(OpenVragenAntwoorden::className(), ['group_ID' => 'group_ID'])
+           ->where([
+               'tbl_open_vragen_antwoorden.correct' => true,
+               'tbl_open_vragen_antwoorden.checked' => true
+           ]);
+    }
 
     public function getVraag()
     {
@@ -191,7 +195,7 @@ class Groups extends HikeActiveRecord
     public function getVragen_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
                 ->via('correctOpenVragenAntwoordens')
                 ->sum('score');
@@ -210,7 +214,7 @@ class Groups extends HikeActiveRecord
     public function getPost_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID'])
                 ->via('postPassages')
                 ->sum('score');
@@ -229,7 +233,7 @@ class Groups extends HikeActiveRecord
     public function getQr_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasOne(Qr::className(), ['qr_ID' => 'qr_ID'])
                 ->via('qrChecks')
                 ->sum('score');
@@ -245,12 +249,11 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(TimeTrailCheck::className(), ['group_ID' => 'group_ID']);
     }
 
-	public function getSuccededTimeTrailChecks()
-	{
-
+    public function getSuccededTimeTrailChecks()
+    {
         return $this->hasMany(TimeTrailCheck::className(), ['group_ID' => 'group_ID'])
-            ->where(['tbl_time_trail_check.succeded' => TRUE]);
-	}
+            ->where(['tbl_time_trail_check.succeded' => true]);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -267,7 +270,7 @@ class Groups extends HikeActiveRecord
     public function getTrail_score()
     {
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
                 ->via('succededTimeTrailChecks')
                 ->sum('score');
@@ -281,117 +284,112 @@ class Groups extends HikeActiveRecord
     {
         return $this->bonus_score + $this->post_score + $this->trail_score +
             $this->qr_score + $this->vragen_score - $this->hint_score;
-
     }
 
-	/**
-	 * Get al available group name options
-	 */
-	 // Dit slaat nergens op om een lijst met alle groepen te maken.
-	 // Voot alle hikes.
-	// public function getGroupOptions()
-	// {
-	// 	$data = Groups::findAll();
-	// 	$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
-	// 	return $groupsArray;
-	// }
+    /**
+     * Get al available group name options
+     */
+    // Dit slaat nergens op om een lijst met alle groepen te maken.
+    // Voot alle hikes.
+    // public function getGroupOptions()
+    // {
+    // 	$data = Groups::findAll();
+    // 	$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
+    // 	return $groupsArray;
+    // }
 
-	/**
-	 * Get al available group name options for a particular event.
-	 */
-	public function getGroupOptionsForEvent()
-	{
-		$event_id = Yii::$app->user->identity->selected_event_ID;
-		$data = Groups::find()
-			->where('event_ID =:event_ID')
-			->addParams([':event_ID' => $event_id])
-			->all();
+    /**
+     * Get al available group name options for a particular event.
+     */
+    public function getGroupOptionsForEvent()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $data = Groups::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id])
+            ->all();
 
-		$listData=ArrayHelper::map($data,'group_ID','group_name');
+        $listData=ArrayHelper::map($data, 'group_ID', 'group_name');
 
-		return $listData;
-	}
+        return $listData;
+    }
 
-	/**
-	* Get group name.
-	*/
-	public function getGroupName($group_Id)
-	{
+    /**
+    * Get group name.
+    */
+    public function getGroupName($group_Id)
+    {
         dd('NOG NODIG ?');
-	    $data = Groups::find('group_ID =:group_Id', array(':group_Id' => $group_Id));
+        $data = Groups::find('group_ID =:group_Id', array(':group_Id' => $group_Id));
 
-	    return isset($data->group_name) ?
-		$data->group_name : "";
-	}
+        return isset($data->group_name) ?
+        $data->group_name : "";
+    }
 
     /**
-	 * set scores van een group.
-	 */
+     * set scores van een group.
+     */
     public function getLast_post_time()
-	{
-		$this->_last_post_time = PostPassage::getTimeLastPostPassage($this->group_ID);
+    {
+        $this->_last_post_time = PostPassage::getTimeLastPostPassage($this->group_ID);
         return $this->_last_post_time;
-	}
+    }
 
     /**
-	 * set scores van een group.
-	 */
+     * set scores van een group.
+     */
     public function getTime_left()
-	{
-		$this->_time_left = PostPassage::getTimeLeftToday($this->group_ID);
+    {
+        $this->_time_left = PostPassage::getTimeLeftToday($this->group_ID);
         return $this->_time_left;
-	}
+    }
 
     /**
-	 * set scores van een group.
-	 */
+     * set scores van een group.
+     */
     public function getTime_walking()
-	{
-		$this->_time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
+    {
+        $this->_time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
         return $this->_time_walking;
-	}
+    }
 
-	public function getRank()
-	{
-		$counter = 0;
-		$temp_score = 0;
+    public function getRank()
+    {
+        $counter = 0;
+        $temp_score = 0;
         $db = self::getDb();
-        $data = $db->cache(function ($db){
+        $data = $db->cache(function ($db) {
             return Groups::find()
                 ->where('event_ID =:event_ID')
                 ->params([':event_ID' => Yii::$app->user->identity->selected_event_ID])
                 ->all();
         });
         
-		foreach($data as $item)
-		{
-			$groupsArray[$item->group_ID] = $item->total_score;
-		}
+        foreach ($data as $item) {
+            $groupsArray[$item->group_ID] = $item->total_score;
+        }
 
-		arsort($groupsArray);
-		foreach($groupsArray as $key=>$key_value)
-		{
-			if($key == $this->group_ID)
-			{
-				if($temp_score == $key_value)
-				{
+        arsort($groupsArray);
+        foreach ($groupsArray as $key=>$key_value) {
+            if ($key == $this->group_ID) {
+                if ($temp_score == $key_value) {
                     $this->_rank = $counter;
                     return $this->_rank;
-				}
-				$temp_score = $key_value;
-				$counter++;
+                }
+                $temp_score = $key_value;
+                $counter++;
                 $this->_rank = $counter;
                 return $this->_rank;
-			}
-			if($temp_score != $key_value)
-			{
-				$counter++;
-			}
-			$temp_score = $key_value;
-		}
-	}
+            }
+            if ($temp_score != $key_value) {
+                $counter++;
+            }
+            $temp_score = $key_value;
+        }
+    }
 
-    public function setGroupMembers(){
+    public function setGroupMembers()
+    {
         foreach ($this->deelnemersEvents as $item) {
             if (!isset($this->group_members)) {
                 $this->group_members =  $item->user->username;
@@ -404,51 +402,47 @@ class Groups extends HikeActiveRecord
     public function addMembersToGroup($group, $members = [])
     {
         if (!$members) {
-            return TRUE;
+            return true;
         }
         foreach ($members as $player) {
-			$sendmail = FALSE;
-            // First check if we can find this user in
-            $inschrijving = DeelnemersEvent::find()
-                ->where(['user_ID' => $player])
-                ->andWhere(['event_ID' => Yii::$app->user->identity->selected_event_ID])
+            $user = Users::find()
+                ->where('id =:player')
+                ->params([':player' => $player])
                 ->one();
 
-            if (!$inschrijving) {
-                //inschrijving bestaat niet dus we maken een nieuwe aan:
-                $inschrijving = new DeelnemersEvent;
-				$inschrijving->event_ID = Yii::$app->user->identity->selected_event_ID;
-				// Deze gebruiker was nog niet toegevoegd aandeze groep,
-				// daarom zenden we deze mensen een mail.
-				$sendmail = TRUE;
+            if (!$user || !$user->addUserToEvent($group, $user->id)) {
+                return false;
             }
-            // Voor nu schrijven we alles over. De aanname is dat in de
-            // selectie alleen de juiste namen zichtbaar zijn.
-            $inschrijving->group_ID = $group;
-            $inschrijving->user_ID = $player;
-            $inschrijving->rol = DeelnemersEvent::ROL_deelnemer;
-            if (!$inschrijving->save()) {
-				foreach ($inschrijving->getErrors() as $error) {
-					Yii::$app->session->setFlash('error', Json::encode($error));
-				}
-                return FALSE;
+        }
+        return true;
+    }
+
+    public function addEmailsToGroup($group, $emails)
+    {
+        if (!$emails) {
+            return true;
+        }
+        $members  = preg_split("/[\s,]+/", $emails);
+        foreach ($members as $player) {
+            $user = Users::find()
+                ->where('email =:player')
+                ->params([':player' => $player])
+                ->one();
+            $friends = FriendList::find()
+                ->where('user_ID =:user_id AND friends_with_user_ID =:friends_with_user_id')
+                ->params([
+                    ':user_id' => Yii::$app->user->id,
+                    ':friends_with_user_id' => $user->id
+                    ]);
+            if (!$friends->exists()) {
+                $model = new FriendList;
+                $model->sendRequest($user->id);
             }
-			if($sendmail) {
-				Yii::$app->mailer->compose('sendInschrijving', [
-					'mailEventName' => $inschrijving->event->event_name,
-					'mailUsersName' => $inschrijving->user->username,
-					'mailUsersNameSender' => $inschrijving->createUser->username,
-					'mailUsersEmailSender' => $inschrijving->createUser->email,
-					'mailRol' => $inschrijving->rol,
-					'mailRolText' => DeelnemersEvent::getRolText($inschrijving->rol),
-					'mailGroupName' => $inschrijving->group->group_name,
-				])
-				->setFrom('noreply@biologenkantoor.nl')
-				->setTo($inschrijving->user->email)
-				->setSubject('Inschrijving Hike')
-				->send();
-			}
-		}
-        return TRUE;
+
+            if (!$user || !$user->addUserToEvent($group, $user->id)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

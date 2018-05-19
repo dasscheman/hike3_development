@@ -1,14 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\detail\DetailView;
-use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use app\models\EventNames;
 use kartik\widgets\AlertBlock;
 use yii\widgets\ListView;
-use geertw\Yii2\Adsense;
 use yii\widgets\Pjax;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
@@ -32,11 +30,12 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
                       'class' => 'btn btn-danger btn-sm pull-right',
                   ],
                   'size' => Modal::SIZE_LARGE,
-              ]);
+              ]
+);
 
               Pjax::begin([
                   'id' => 'users-update-form',
-                  'enablePushState' => FALSE,
+                  'enablePushState' => false,
               ]);
               echo Yii::$app->controller->renderPartial('/users/update', ['model' => $model]);
               Pjax::end();
@@ -68,7 +67,8 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
                       'class' => 'btn btn-danger btn-sm pull-right',
                   ],
                   'size' => Modal::SIZE_LARGE,
-                ]);
+                ]
+              );
                 echo $this->render('_change-password', ['model' => $model]);
                 Modal::end();
           ?>
@@ -87,7 +87,8 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
             'class' => 'btn btn-danger btn-sm pull-right',
         ],
         'size' => Modal::SIZE_LARGE,
-      ]);
+      ]
+          );
       echo $this->render('search-new-friends', ['searchModel' => $searchModel, 'dataProvider'=>$dataProvider]);
       Modal::end();
 
@@ -102,11 +103,11 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
                 echo AlertBlock::widget([
                     'type' => AlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
-                    'delay' => FALSE,
+                    'delay' => false,
 
                 ]);
                 echo ListView::widget([
-                  'summary' => FALSE,
+                  'summary' => false,
                   'pager' => [
                       'prevPageLabel' => Yii::t('app', 'previous'),
                       'nextPageLabel' => Yii::t('app', 'next'),
@@ -139,15 +140,16 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
                     'class' => 'btn btn-danger btn-sm pull-right',
                 ],
                 'size' => Modal::SIZE_LARGE,
-            ]);
+            ]
+            );
             Pjax::begin([
                 'id' => 'event-names-create-form',
-                'enablePushState' => FALSE,
+                'enablePushState' => false,
             ]);
             echo $this->render('/event-names/create', [
                 'model' => new EventNames([
                     'start_date' => date('d-m-Y'),
-                    'end_date' => date('d-m-Y')] ),
+                    'end_date' => date('d-m-Y')]),
                 'action' => 'create'
             ]);
             Pjax::end();

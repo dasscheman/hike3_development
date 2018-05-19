@@ -6,7 +6,6 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\UsersSearch */
 /* @var $form yii\widgets\ActiveForm */
@@ -17,7 +16,7 @@ use yii\widgets\Pjax;
     $form = ActiveForm::begin([
         'action' => ['/users/search-new-friends'],
             'options'=>[
-                'data-pjax'=>TRUE,
+                'data-pjax'=>true,
             ],
     ]);
     echo $form->field($model, 'search_friends')

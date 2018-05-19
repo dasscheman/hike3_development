@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
 use yii\helpers\ArrayHelper;
 use app\models\Profile;
+use yii\helpers\Json;
 use dektrium\user\models\User as BaseUser;
 
 /**
@@ -211,7 +212,7 @@ class Users extends BaseUser
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeelnemersEvents()
+    public function getDeelnemersEventsCreateUser()
     {
         return $this->hasMany(DeelnemersEvent::className(), ['create_user_ID' => 'id']);
     }
@@ -230,6 +231,16 @@ class Users extends BaseUser
     public function getDeelnemersEventsByUserID()
     {
         return $this->hasMany(DeelnemersEvent::className(), ['user_ID' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDeelnemersEvents()
+    {
+        return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
     }
 
     /**
@@ -653,5 +664,34 @@ class Users extends BaseUser
             Yii::$app->user->identity->selected_event_ID = (int) $selected->one()->event_ID;
             Yii::$app->user->identity->save();
         }
+    }
+
+    public function addUserToEvent($group, $player)
+    {
+        $inschrijving = $this->getDeelnemersEvents()->one();
+        $sendmail = false;
+        if (!$inschrijving) {
+            //inschrijving bestaat niet dus we maken een nieuwe aan:
+            $inschrijving = new DeelnemersEvent;
+            $inschrijving->event_ID = Yii::$app->user->identity->selected_event_ID;
+            // Deze gebruiker was nog niet toegevoegd aandeze groep,
+            // daarom zenden we deze mensen een mail.
+            $sendmail = true;
+        }
+        // Voor nu schrijven we alles over. De aanname is dat in de
+        // selectie alleen de juiste namen zichtbaar zijn.
+        $inschrijving->group_ID = $group;
+        $inschrijving->user_ID = $player;
+        $inschrijving->rol = DeelnemersEvent::ROL_deelnemer;
+        if (!$inschrijving->save()) {
+            foreach ($inschrijving->getErrors() as $error) {
+                Yii::$app->session->setFlash('error', Json::encode($error));
+            }
+            return false;
+        }
+        if ($sendmail) {
+            $inschrijving->sendMailInschrijving();
+        }
+        return true;
     }
 }

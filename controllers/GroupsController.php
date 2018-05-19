@@ -15,9 +15,10 @@ use app\models\HikeActivityFeed;
 /**
  * GroupsController implements the CRUD actions for Groups model.
  */
-class GroupsController extends Controller {
-
-    public function behaviors() {
+class GroupsController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -39,7 +40,7 @@ class GroupsController extends Controller {
                         'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ],
@@ -51,7 +52,8 @@ class GroupsController extends Controller {
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new GroupsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -65,7 +67,8 @@ class GroupsController extends Controller {
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndexActivity() {
+    public function actionIndexActivity()
+    {
         $feed = new HikeActivityFeed;
         return $this->render('index-activity', [
                 'activityFeed' => $feed->getLastGroupsActivity(),
@@ -76,7 +79,8 @@ class GroupsController extends Controller {
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndexPosten() {
+    public function actionIndexPosten()
+    {
         $searchModel = new GroupsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -91,7 +95,8 @@ class GroupsController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new Groups();
 
         if (!$model->load(Yii::$app->request->post())) {
@@ -102,14 +107,21 @@ class GroupsController extends Controller {
 
         if (!$model->save()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+            return $this->redirect(['site/overview-organisation']);
         }
 
         // Group should be saved first to get a group_ID.
         // It is not a problem when group is saved and the save of the group members fail.
-        // Because it is very easy to at them
+        // Because it is very easy to add them
+        $errors = false;
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
-        } else {
+            $errors = true;
+        }
+        
+        if (!Groups::addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
+            $errors = true;
+        }
+        if (!$errors) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Created group {groupname}.', ['groupname' => $model->group_name]));
         }
         return $this->redirect(['site/overview-organisation']);
@@ -121,7 +133,8 @@ class GroupsController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($group_ID) {
+    public function actionUpdate($group_ID)
+    {
         $model = $this->findModel($group_ID);
         if (!$model->load(Yii::$app->request->post())) {
             foreach ($model->deelnemersEvents as $item) {
@@ -142,6 +155,9 @@ class GroupsController extends Controller {
                 ->all();
             if ($groups_leden) {
                 foreach ($groups_leden as $player) {
+                    if (array_search($player->user_ID, Yii::$app->request->post('Groups')['users_temp']) !== false) {
+                        continue;
+                    }
                     try {
                         $player->delete();
                     } catch (\yii\db\IntegrityException $e) {
@@ -161,11 +177,16 @@ class GroupsController extends Controller {
             return $this->redirect(['site/overview-organisation']);
         }
 
+        $errors = false;
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save group members.'));
+            $errors = true;
         }
-        if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+
+        if (!Groups::addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
+            $errors = true;
+        }
+        if (!$errors) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Updated group {groupname}.', ['groupname' => $model->group_name]));
         }
         return $this->redirect(['site/overview-organisation']);
     }
@@ -177,7 +198,8 @@ class GroupsController extends Controller {
      * @return Groups the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = Groups::findOne([
                 'group_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -188,5 +210,4 @@ class GroupsController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

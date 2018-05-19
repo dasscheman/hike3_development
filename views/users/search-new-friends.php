@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use     yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UsersSearch */
@@ -13,20 +14,20 @@ $this->title = Yii::t('app', 'Search for new friends');
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
-    yii\widgets\Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
+    Pjax::begin(['id' => 'searchfriends', 'enablePushState' => false]);
 
     echo $this->render('_search', ['model' => $searchModel]);
 
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = TRUE;;
-    $resizableColumns = FALSE;
-    $responsiveWrap = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = true;;
+    $resizableColumns = false;
+    $responsiveWrap = false;
 
     $gridColumns = [
         'voornaam',
@@ -62,9 +63,9 @@ $this->title = Yii::t('app', 'Search for new friends');
         'headerRowOptions'=>['class'=>'kartik-sheet-style'],
         'filterRowOptions'=>['class'=>'kartik-sheet-style'],
         'resizableColumns' => $resizableColumns,
-        'pjax'=>TRUE, // FALSE, anders wordt de header niet opnieuw geladen.
+        'pjax'=>true, // FALSE, anders wordt de header niet opnieuw geladen.
         // set your toolbar
-        'toolbar'=> FALSE,
+        'toolbar'=> false,
         // parameters from the demo form
         'bordered'=>$bordered,
         'striped'=>$striped,
@@ -81,5 +82,5 @@ $this->title = Yii::t('app', 'Search for new friends');
         //'exportConfig'=>$exportConfig,
     ]);
 
-    yii\widgets\Pjax::end(); ?>
+    Pjax::end(); ?>
 </div>
