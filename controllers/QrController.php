@@ -13,8 +13,6 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\QrCheck;
 use kartik\mpdf\Pdf;
-use dosamigos\qrcode\QrCode;
-use yii\helpers\Url;
 use yii\helpers\Json;
 
 /**
@@ -41,7 +39,7 @@ class QrController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'map-update', 'qrcode', 'report', 'ajaxupdate', 'move-up-down'],
+                        'actions' => ['index', 'update', 'map-update', 'print-pdf', 'print-all-pdf', 'ajaxupdate', 'move-up-down'],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -178,68 +176,100 @@ class QrController extends Controller
         );
     }
 
-    public function actionQrcode($qr_code)
-    {
-        $event_id = Yii::$app->user->identity->selected_event_ID;
-
-        $link = Url::to(['qr-check/create', 'event_id' => $event_id, 'qr_code' => $qr_code], true);
-//        $link = Yii::$app->request->hostInfo . Yii::$app->homeUrl . "?r=qr-check/create&event_id=" . $event_id . "&qr_code=" . $qr_code;
-        return QrCode::jpg(
-                $link,
-            Yii::$app->params['qr_code_path'] . $qr_code . '.jpg',
-            1,
-            3,
-            1,
-            true
-        );
-    }
-
-    public function actionReport($qr_ID)
+    public function actionPrintPdf($qr_ID)
     {
         $model = $this->findModel($qr_ID);
-        if (isset($model)) {
-            $content = $this->renderPartial('reportview', ['model' => $model]);
-            // setup kartik\mpdf\Pdf component
-            $pdf = new Pdf([
-                // set to use core fonts only
-                'mode' => Pdf::MODE_CORE,
-                // A5 paper format
-                'format' => [100, 200],
-                'marginLeft' => 0,
-                'marginRight' => 0,
-                'marginTop' => 0,
-                'marginBottom' => 0,
-                'defaultFont' => 'arial',
-                'filename' => $model->qr_name,
-                // portrait orientation
-                'orientation' => Pdf::ORIENT_LANDSCAPE,
-                // stream to browser inline
-                'destination' => Pdf::DEST_BROWSER,
-                // your html content input
-                'content' => $content,
-                // format content from your own css file if needed or use the
-                // enhanced bootstrap css built by Krajee for mPDF formatting
-                'cssFile' => 'css/qrreport.css',
-                //'@web/css/qrreport.css',
-                //   'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
-                // any css to be embedded if required
-                //    'cssInline' => '.kv-heading-1{font-size:18px}',
-                // set mPDF properties on the fly
-                'options' => [
-                    'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
-                    'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
-                //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
-                ],
-                // call mPDF methods on the fly
-                //    'methods' => [
-                //        'SetHeader'=>[$model->qr_name],
-                //        'SetFooter'=>[$model->qr_code],
-                //    ]
-            ]);
 
-            // return the pdf output as per the destination setting
-            return $pdf->render();
+        $model->qrcode();
+        $content = $this->renderPartial('reportview', ['model' => $model]);
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A5 paper format
+            'format' => [100, 200],
+            'marginLeft' => 0,
+            'marginRight' => 0,
+            'marginTop' => 0,
+            'marginBottom' => 0,
+            'defaultFont' => 'arial',
+            'filename' => $model->qr_name,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => 'css/qrreport.css',
+            //'@web/css/qrreport.css',
+            //   'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            //    'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => [
+                'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+            //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
+            ],
+            // call mPDF methods on the fly
+            //    'methods' => [
+            //        'SetHeader'=>[$model->qr_name],
+            //        'SetFooter'=>[$model->qr_code],
+            //    ]
+        ]);
+        // return the pdf output as per the destination setting
+        return $pdf->render();
+    }
+
+    public function actionPrintAllPdf()
+    {
+        $models = Qr::findAll(['event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        $content = "";
+        foreach ($models as $model) {
+            $model->qrcode();
+            $content .= $this->renderPartial('reportview', ['model' => $model]);
         }
+
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A5 paper format
+            'format' => [100, 200],
+            'marginLeft' => 0,
+            'marginRight' => 0,
+            'marginTop' => 0,
+            'marginBottom' => 0,
+            'defaultFont' => 'arial',
+            'filename' => 'Silent_stations.pdf',
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => 'css/qrreport.css',
+            //'@web/css/qrreport.css',
+            //   'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            //    'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => [
+                'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+            //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
+            ],
+            // call mPDF methods on the fly
+            //    'methods' => [
+            //        'SetHeader'=>[$model->qr_name],
+            //        'SetFooter'=>[$model->qr_code],
+            //    ]
+        ]);
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 
     public function actionMoveUpDown()

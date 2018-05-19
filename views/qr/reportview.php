@@ -19,7 +19,7 @@
     $start_date = $modelEvent->start_date;
     $end_date = $modelEvent->end_date;
     $organisatie = $modelEvent->organisatie;
-    if (isset($modelEvent->website)) {
+    if (!empty($modelEvent->website)) {
         $organisatie .= ' (' . $modelEvent->website . ')';
     }
     $site = $modelEvent->website;
@@ -68,3 +68,4 @@
 	<div class="rounded tekst right">
 		<?php echo Html::img($image, ['class' => 'image']);?>
 	</div>
+</div>

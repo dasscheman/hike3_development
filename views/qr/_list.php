@@ -81,14 +81,13 @@ use app\models\Qr;
 
             echo Html::a(
                 Yii::t('app', 'Create pdf file'),
-                ['/qr/report', 'qr_ID' => $model->qr_ID],
+                ['/qr/print-pdf', 'qr_ID' => $model->qr_ID],
                 [
                     'class' => 'btn btn-xs btn-primary',
                     'target'=>'_blank',
                     'data-pjax' => "0"
                 ]
             ); ?></br>
-            <?php //echo Html::img(Url::to(['qr/qrcode', 'qr_code' => $model->qr_code]));?>
 
 
         </div>

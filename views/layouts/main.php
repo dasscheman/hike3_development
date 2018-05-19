@@ -157,6 +157,27 @@ AppAsset::register($this);
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
                                     ]
+                                ],
+                                [
+                                    'label' => Yii::t('app', 'Print'),
+                                    'items' => [
+                                        [
+                                            'label' => Yii::t('app', 'Print all silent stations'),
+                                            'url' => ['/qr/print-all-pdf'],
+                                            'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
+                                            'linkOptions' => [
+                                                'target'=>'_blank'
+                                            ]
+                                        ],
+                                        [
+                                            'label' => Yii::t('app', 'Print all time trails'),
+                                            'url' => ['/time-trail-item/print-all-pdf'],
+                                            'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
+                                            'linkOptions' => [
+                                                'target'=>'_blank'
+                                            ]
+                                        ],
+                                    ]
                                 ]
                             ],
                         ],

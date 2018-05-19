@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use app\components\GeneralFunctions;
+use Da\QrCode\QrCode;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "tbl_time_trail_item".
@@ -142,7 +144,7 @@ class TimeTrailItem extends HikeActiveRecord
      */
     public function getPreviousItem()
     {
-       return  TimeTrailItem::find()
+        return  TimeTrailItem::find()
            ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde <:volgorde')
             ->params([
                 ':event_id' => $this->event_ID,
@@ -159,7 +161,7 @@ class TimeTrailItem extends HikeActiveRecord
      */
     public function getNextItem()
     {
-       return  TimeTrailItem::find()
+        return  TimeTrailItem::find()
            ->where('event_ID =:event_id AND time_trail_ID =:time_trail_ID AND volgorde >:volgorde')
             ->params([
                 ':event_id' => $this->event_ID,
@@ -172,10 +174,9 @@ class TimeTrailItem extends HikeActiveRecord
 
     /**
      * Get the checked item for current user. Returns NULL when not exist.
-     */   
+     */
     public function getTimeTrailItemCheckedByGroupCurrentUser()
     {
-
         $data = DeelnemersEvent::find()
             ->where('event_ID = :event_Id AND user_ID=:user_Id')
             ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':user_Id' => Yii::$app->user->identity->id])
@@ -187,7 +188,7 @@ class TimeTrailItem extends HikeActiveRecord
     }
 
     public function setNewOrderForTimeTrailItem()
-	{
+    {
         $max_order = TimeTrailItem::find()
             ->select('volgorde')
             ->where('event_ID=:event_id')
@@ -196,7 +197,8 @@ class TimeTrailItem extends HikeActiveRecord
                 [
                     ':event_id' => $this->event_ID,
                     ':time_trail_id' =>$this->time_trail_ID,
-                ])
+                ]
+            )
             ->max('volgorde');
         if (empty($max_order)) {
             // dd(empty($max_order));
@@ -204,31 +206,29 @@ class TimeTrailItem extends HikeActiveRecord
         } else {
             $this->volgorde = $max_order+1;
         }
-	}
+    }
 
 
-	public function setUniqueCodeForTimeTrailItem()
-	{
-		$uniqueCode = 99;
+    public function setUniqueCodeForTimeTrailItem()
+    {
+        $uniqueCode = 99;
 
-		while($uniqueCode == 99)
-		{
-			$newcode = GeneralFunctions::randomString(22);
-			$data = TimeTrailItem::find()
+        while ($uniqueCode == 99) {
+            $newcode = GeneralFunctions::randomString(22);
+            $data = TimeTrailItem::find()
                 ->where('code = :code')
-			    ->params([':code' => $newcode])
+                ->params([':code' => $newcode])
                 ->exists();
-			// if code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
-			if(!$data)
-			{
-				$uniqueCode = $newcode;
-			}
-		}
-		$this->code = $uniqueCode;
-	}
+            // if code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
+            if (!$data) {
+                $uniqueCode = $newcode;
+            }
+        }
+        $this->code = $uniqueCode;
+    }
 
-	public function lowererOrderNumberExists($time_trail_item_id)
-	{
+    public function lowererOrderNumberExists($time_trail_item_id)
+    {
         $data = TimeTrailItem::findOne($time_trail_item_id);
         $dataNext = TimeTrailItem::find()
             ->where('event_ID =:event_id AND volgorde <:order AND time_trail_ID =:time_trail_id')
@@ -239,14 +239,14 @@ class TimeTrailItem extends HikeActiveRecord
             ->orderBy('volgorde DESC')
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
-	public function higherOrderNumberExists($time_trail_item_id)
-	{
+    public function higherOrderNumberExists($time_trail_item_id)
+    {
         $data = TimeTrailItem::findOne($time_trail_item_id);
         $dataNext = TimeTrailItem::find()
             ->where('event_ID =:event_id AND volgorde >:order AND time_trail_ID =:time_trail_id')
@@ -257,10 +257,20 @@ class TimeTrailItem extends HikeActiveRecord
             ->orderBy(['volgorde' => SORT_ASC])
             ->exists();
 
-		if ($dataNext) {
-			return TRUE;
+        if ($dataNext) {
+            return true;
         }
-        return FALSE;
-	}
+        return false;
+    }
 
+    public function qrcode()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+
+        $link = Url::to(['time-trail-check/create', 'event_id' => $event_id, 'code' => $this->code], true);
+
+        $qrCode = new QrCode($link);
+
+        $qrCode->writeFile(Yii::$app->params['timetrail_code_path'] . $this->code . '.jpg');
+    }
 }

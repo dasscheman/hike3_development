@@ -32,7 +32,7 @@
         "kartik-v/yii2-mpdf": "@dev",
         "kartik-v/yii2-nav-x": "*",
         "prawee/yii2-widgets": "dev-master",
-        "2amigos/yii2-qrcode-helper" : "~1.0",
+        "2amigos/qrcode-library" : "*",
         "2amigos/yii2-google-maps-library" : "*",
         "codemix/yii2-excelexport" : "*",
         "phpoffice/phpexcel": "*",

@@ -120,7 +120,7 @@ $this->title = Yii::t('app', 'Time Trails');
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',
-            'template' => '{up} {down} {report}',
+            'template' => '{up} {down} {pdf}',
             'buttons' => [
                 'up' => function ($url, $model) {
                     return Html::a(
@@ -150,11 +150,11 @@ $this->title = Yii::t('app', 'Time Trails');
                         ]
                     );
                 },
-                'report' => function ($url, $model) {
+                'pdf' => function ($url, $model) {
                     return Html::a(
                         '<span class="glyphicon glyphicon-print"></span>',
                         [
-                            'time-trail-item/report',
+                            'time-trail-item/print-pdf',
                             'time_trail_item_ID' => $model->time_trail_item_ID,
                         ],
                         [

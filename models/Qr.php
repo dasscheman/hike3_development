@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use app\components\GeneralFunctions;
+use Da\QrCode\QrCode;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "tbl_qr".
@@ -267,5 +269,16 @@ class Qr extends HikeActiveRecord
             ->one();
 
         return $data;
+    }
+
+    public function qrcode()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+
+        $link = Url::to(['qr-check/create', 'event_id' => $event_id, 'qr_code' => $this->qr_code], true);
+
+        $qrCode = new QrCode($link);
+
+        $qrCode->writeFile(Yii::$app->params['qr_code_path'] . $this->qr_code . '.jpg');
     }
 }
