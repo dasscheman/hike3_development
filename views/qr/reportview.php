@@ -1,41 +1,38 @@
 <?php
-	/**
-	 * HTML2PDF Librairy - example
-	 *
-	 * HTML => PDF convertor
-	 * distributed under the LGPL License
-	 *
-	 * @author      Laurent MINGUET <webmaster@html2pdf.fr>
-	 *
-	 * isset($_GET['vuehtml']) is not mandatory
-	 * it allow to display the result in the HTML format
-	 */
-	// get the HTML
+    /**
+     * HTML2PDF Librairy - example
+     *
+     * HTML => PDF convertor
+     * distributed under the LGPL License
+     *
+     * @author      Laurent MINGUET <webmaster@html2pdf.fr>
+     *
+     * isset($_GET['vuehtml']) is not mandatory
+     * it allow to display the result in the HTML format
+     */
+    // get the HTML
+    use yii\helpers\Html;
+    use yii\helpers\Url;
 
-	//ob_start();
+    $modelEvent = $model->event;
+    $event_name = $modelEvent->event_name;
+    $start_date = $modelEvent->start_date;
+    $end_date = $modelEvent->end_date;
+    $organisatie = $modelEvent->organisatie;
+    if (isset($modelEvent->website)) {
+        $organisatie .= ' (' . $modelEvent->website . ')';
+    }
+    $site = $modelEvent->website;
+    if ($modelEvent->image !== null && file_exists(Yii::$app->params['event_images_path'] . $modelEvent->image)) {
+        $image = Url::to(Yii::$app->params['event_images_path'] . $modelEvent->image);
+    } else {
+        $image = Url::to(Yii::$app->params['kiwilogo']);
+    }
 
-	use yii\helpers\Html;
-	use dosamigos\qrcode\QrCode;
-	use yii\helpers\Url;
-	$modelEvent = $model->event;
-	$event_name = $modelEvent->event_name;
-	$start_date = $modelEvent->start_date;
-	$end_date = $modelEvent->end_date;
-	$organisatie = $modelEvent->organisatie;
-	if (isset($modelEvent->website)) {
-		$organisatie .= ' (' . $modelEvent->website . ')';
-	}
-	$site = $modelEvent->website;
-	if (file_exists(Yii::$app->params['event_images_path'] . $modelEvent->image)) {
-		$image = Url::to(Yii::$app->params['event_images_path'] . $modelEvent->image);
-	} else {
-		$image = Url::to(Yii::$app->params['kiwilogo']);
-	}
-
-	$event_id = $model->event_ID;
-	$qr_code = $model->qr_code;
-	$qr_name = $model->qr_name;
-	$score = $model->score;?>
+    $event_id = $model->event_ID;
+    $qr_code = $model->qr_code;
+    $qr_name = $model->qr_name;
+    $score = $model->score;?>
 
 <div style="border: none; background-color: #21C5CE; ">
 	<div class="rounded title">
