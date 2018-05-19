@@ -1,11 +1,6 @@
 <?php
-use yii\helpers\Html;
-use prawee\widgets\ButtonAjax;
-use yii\bootstrap\Modal;
-
-use app\models\Users;
 use app\models\Groups;
-use kartik\widgets\Select2;
+
 /* @var $this GroupsController */
 /* @var $data Groups */
 

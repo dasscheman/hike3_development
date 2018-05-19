@@ -2,10 +2,11 @@
 
 namespace app\models;
 
-    use Yii;
-    use yii\base\Model;
-    use yii\data\ArrayDataProvider;
-    use app\components\CustomPagination;
+use Yii;
+use yii\base\Model;
+use yii\data\ArrayDataProvider;
+use app\components\CustomPagination;
+
 // use app\models\Bonuspunten;
 
 /**
@@ -16,12 +17,13 @@ class HikeActivityFeed extends Model
     public $pageSize;
     public $pageCount;
 
-    public function getData() {
+    public function getData()
+    {
         $data = [];
         $models = [];
 
         $db = Yii::$app->db;
-        $bonuspunten = $db->cache(function ($db){
+        $bonuspunten = $db->cache(function ($db) {
             return Bonuspunten::find()
                 ->where('event_ID =:event_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -31,11 +33,11 @@ class HikeActivityFeed extends Model
         });
 
         foreach ($bonuspunten as $bonuspunt) {
-            $user = $db->cache(function ($db) use ($bonuspunt){
+            $user = $db->cache(function ($db) use ($bonuspunt) {
                 return Users::findOne($bonuspunt['create_user_ID']);
             });
 
-            $group = $db->cache(function ($db) use ($bonuspunt){
+            $group = $db->cache(function ($db) use ($bonuspunt) {
                 return Groups::findOne($bonuspunt['group_ID']);
             });
 
@@ -51,7 +53,7 @@ class HikeActivityFeed extends Model
             ];
         }
 
-        $qrchecks = $db->cache(function ($db){
+        $qrchecks = $db->cache(function ($db) {
             return QrCheck::find()
                 ->where('event_ID =:event_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -61,15 +63,15 @@ class HikeActivityFeed extends Model
         });
 
         foreach ($qrchecks as $qrcheck) {
-            $qr = $db->cache(function ($db) use ($qrcheck){
+            $qr = $db->cache(function ($db) use ($qrcheck) {
                 return Qr::findOne($qrcheck['qr_ID']);
             });
 
-            $user = $db->cache(function ($db) use ($qrcheck){
+            $user = $db->cache(function ($db) use ($qrcheck) {
                 return Users::findOne($qrcheck['create_user_ID']);
             });
 
-            $group = $db->cache(function ($db) use ($qrcheck){
+            $group = $db->cache(function ($db) use ($qrcheck) {
                 return Groups::findOne($qrcheck['group_ID']);
             });
 
@@ -85,7 +87,42 @@ class HikeActivityFeed extends Model
             ];
         }
 
-        $answers = $db->cache(function ($db){
+
+        $timetrailchecks = $db->cache(function ($db) {
+            return TimeTrailCheck::find()
+                ->where('event_ID =:event_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+                ->asArray()
+                ->orderBy(['create_time'=>SORT_DESC])
+                ->all();
+        });
+
+        foreach ($timetrailchecks as $timetrailcheck) {
+            $timetrailItem = $db->cache(function ($db) use ($timetrailcheck) {
+                return TimeTrailItem::findOne($timetrailcheck['time_trail_item_ID']);
+            });
+
+            $user = $db->cache(function ($db) use ($timetrailcheck) {
+                return Users::findOne($timetrailcheck['create_user_ID']);
+            });
+
+            $group = $db->cache(function ($db) use ($timetrailcheck) {
+                return Groups::findOne($timetrailcheck['group_ID']);
+            });
+
+            $data[] = [
+                'id' => $timetrailcheck['time_trail_check_ID'],
+                'source' => 'qrcheck',
+                'timestamp' => $timetrailcheck['create_time'],
+                'title' => Yii::t('app', 'Check time trail'),
+                'description' => $timetrailItem->time_trail_item_name,
+                'score' => $timetrailItem->score,
+                'username' => $user->voornaam . ' ' . $user->achternaam,
+                'groupname' => $group->group_name
+            ];
+        }
+
+        $answers = $db->cache(function ($db) {
             return OpenVragenAntwoorden::find()
                 ->where('event_ID =:event_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -95,15 +132,15 @@ class HikeActivityFeed extends Model
         });
 
         foreach ($answers as $answer) {
-            $question = $db->cache(function ($db) use ($answer){
+            $question = $db->cache(function ($db) use ($answer) {
                 return OpenVragen::findOne($answer['open_vragen_ID']);
             });
 
-            $user = $db->cache(function ($db) use ($answer){
+            $user = $db->cache(function ($db) use ($answer) {
                 return Users::findOne($answer['create_user_ID']);
             });
 
-            $group = $db->cache(function ($db) use ($answer){
+            $group = $db->cache(function ($db) use ($answer) {
                 return Groups::findOne($answer['group_ID']);
             });
 
@@ -119,7 +156,7 @@ class HikeActivityFeed extends Model
             ];
         }
 
-        $posts = $db->cache(function ($db){
+        $posts = $db->cache(function ($db) {
             return PostPassage::find()
                 ->where('event_ID =:event_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -129,15 +166,15 @@ class HikeActivityFeed extends Model
         });
 
         foreach ($posts as $post) {
-            $postData = $db->cache(function ($db) use ($post){
+            $postData = $db->cache(function ($db) use ($post) {
                 return Posten::findOne($post['post_ID']);
             });
 
-            $user = $db->cache(function ($db) use ($post){
+            $user = $db->cache(function ($db) use ($post) {
                 return Users::findOne($post['create_user_ID']);
             });
 
-            $group = $db->cache(function ($db) use ($post){
+            $group = $db->cache(function ($db) use ($post) {
                 return Groups::findOne($post['group_ID']);
             });
 
@@ -161,14 +198,14 @@ class HikeActivityFeed extends Model
             ->all();
 
         foreach ($hints as $hint) {
-            $hintData = $db->cache(function ($db) use ($hint){
+            $hintData = $db->cache(function ($db) use ($hint) {
                 return NoodEnvelop::findOne($hint['nood_envelop_ID']);
             });
 
-            $user = $db->cache(function ($db) use ($hint){
+            $user = $db->cache(function ($db) use ($hint) {
                 return Users::findOne($hint['create_user_ID']);
             });
-            $group = $db->cache(function ($db) use ($hint){
+            $group = $db->cache(function ($db) use ($hint) {
                 return Groups::findOne($hint['group_ID']);
             });
 
@@ -198,7 +235,8 @@ class HikeActivityFeed extends Model
 
 
 
-    public function getLastGroupsActivity() {
+    public function getLastGroupsActivity()
+    {
         $data = [];
 
         $groups = Groups::find()
@@ -206,10 +244,10 @@ class HikeActivityFeed extends Model
             ->params(['event_id' => Yii::$app->user->identity->selected_event_ID])
             ->all();
 
-        foreach($groups as $group) {
+        foreach ($groups as $group) {
             $db = Yii::$app->db;
 
-            $qrchecks = $db->cache(function ($db) use ($group){
+            $qrchecks = $db->cache(function ($db) use ($group) {
                 return QrCheck::find()
                     ->where('event_ID =:event_id AND group_ID =:group_id')
                     ->params([
@@ -219,7 +257,7 @@ class HikeActivityFeed extends Model
                     ->one();
             });
 
-            if( isset($qrchecks)) {
+            if (isset($qrchecks)) {
                 $data[] = [
                     'id' => $qrchecks['qr_check_ID'],
                     'source' => 'qrcheck',
@@ -232,7 +270,7 @@ class HikeActivityFeed extends Model
                 ];
             }
 
-            $answers = $db->cache(function ($db) use ($group){
+            $answers = $db->cache(function ($db) use ($group) {
                 return OpenVragenAntwoorden::find()
                     ->where('event_ID =:event_id AND group_ID =:group_id')
                     ->params([
@@ -242,7 +280,7 @@ class HikeActivityFeed extends Model
                     ->one();
             });
 
-            if( isset($answers)) {
+            if (isset($answers)) {
                 $data[] = [
                     'id' => $answers['open_vragen_antwoorden_ID'],
                     'source' => 'openvragenantwoorden',
@@ -255,7 +293,7 @@ class HikeActivityFeed extends Model
                 ];
             }
 
-            $posts = $db->cache(function ($db) use ($group){
+            $posts = $db->cache(function ($db) use ($group) {
                 return PostPassage::find()
                     ->where('event_ID =:event_id AND group_ID =:group_id')
                     ->params([
@@ -265,7 +303,7 @@ class HikeActivityFeed extends Model
                     ->one();
             });
 
-            if( isset($posts)) {
+            if (isset($posts)) {
                 $data[] = [
                     'id' => $posts['posten_passage_ID'],
                     'source' => 'postenpassage',
@@ -286,7 +324,7 @@ class HikeActivityFeed extends Model
                 ->orderBy(['create_time'=>SORT_DESC])
                 ->one();
 
-            if( isset($hints)) {
+            if (isset($hints)) {
                 $data[] = [
                     'id' => $hints['open_nood_envelop_ID'],
                     'source' => 'openhints',
