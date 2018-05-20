@@ -20,7 +20,7 @@ use yii\widgets\Pjax;
     <?php
     Pjax::begin([
         'id' => 'bonuspunten-form-' . $model->bouspunten_ID,
-        'enablePushState' => FALSE,
+        'enablePushState' => false,
     ]);
 
     echo AlertBlock::widget([
@@ -35,34 +35,37 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
     <?php
-    if($model->isNewRecord) {
-        echo $form->field($model, 'group_ID',
-        [
+    if ($model->isNewRecord) {
+        echo $form->field($model, 'group_ID', [
             'options' => [
                 'id' => 'bonuspunten-group-field-create',
             ],
-        ]
-        )->dropDownList(
+        ])->dropDownList(
             Groups::getGroupOptionsForEvent(),
             [
                 'prompt'=>'Select...',
                 'id' => 'bonuspunten-group-dropdown-create'
-            ]);
+            ]
+        );
     }
     echo $form->field($model, 'date')->dropDownList(
         EventNames::getDatesAvailable(),
         [
             'prompt'=>'Select...',
-            'id' => 'date-' . $model->bouspunten_ID
-        ]);
+            'id' => 'date-' . $model->bouspunten_ID,
+            'select2Options'=>['pluginOptions'=>['allowClear'=>true]],
+        ]
+    );
 
     // EXAMPLE Dependent Dropdown
     echo $form->field($model, 'post_ID')->widget(DepDrop::classname(), [
         'options' => ['id' => 'post_ID-' . $model->bouspunten_ID],
         'pluginOptions' => [
+            'value' => [$model->post_ID => $model->post_name],
             'depends' => ['date-' . $model->bouspunten_ID],
             'placeholder' => 'Select...',
-            'url' => Url::to(['/posten/lists-posts'])
+            'initialize' => true,
+            'url' => Url::to(['/posten/lists-posts', 'post_id' => $model->post_ID])
         ]
     ]);
 
@@ -71,8 +74,7 @@ use yii\widgets\Pjax;
     ?>
     <div class="form-group">
         <?php
-        if(!$model->isNewRecord) {
-
+        if (!$model->isNewRecord) {
             echo Html::a(
                 Yii::t('app', 'Save'),
                 [
@@ -97,7 +99,7 @@ use yii\widgets\Pjax;
                 ]
             );
         }
-        if($model->isNewRecord) {
+        if ($model->isNewRecord) {
             echo Html::a(
                 Yii::t('app', 'Save'),
                 [

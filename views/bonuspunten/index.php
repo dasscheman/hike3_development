@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\bootstrap\Modal;
+use app\components\CustomAlertBlock;
+use prawee\widgets\ButtonAjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\BonuspuntenSearch */
@@ -14,6 +17,17 @@ $this->title = Yii::t('app', 'Overview bonuspoints');
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
+
+    Modal::begin(['id' => 'main-modal']);
+    echo '<div id="main-content-modal"></div>';
+    Modal::end();
+
+    echo CustomAlertBlock::widget([
+        'type' => CustomAlertBlock::TYPE_ALERT,
+        'useSessionFlash' => true,
+        'delay' => 20000,
+    ]);
+
     $gridColumns = [
         [
             'attribute' => 'group_name',
@@ -27,44 +41,54 @@ $this->title = Yii::t('app', 'Overview bonuspoints');
         'omschrijving',
         'score',
         [
-            'header' => Yii::t('app', 'View details'),
-            'class'=>'kartik\grid\ExpandRowColumn',
-            'contentOptions' => function ($model, $key, $index, $column) {
-                return ['id' => 'bonus-expand-' . $key];
-            },
-            'width'=>'50px',
-            'value'=> function ($model, $key, $index, $column) {
-                return GridView::ROW_COLLAPSED;
-            },
-            'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/bonuspunten/_form', ['model'=>$model]);
-            },
-            'headerOptions'=>['class'=>'kartik-sheet-style'],
-            'expandOneOnly'=>true,
-            'expandTitle' => Yii::t('app', 'Open detail view'),
-            'collapseTitle' => Yii::t('app', 'Close detail view'),
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Actions',
+            'template' => '{update}',
+            'buttons' => [
+                'update' => function ($url, $model) {
+                    return ButtonAjax::widget([
+                        'name' => '<span class="glyphicon glyphicon-pencil"></span>',
+                        'route' => ['bonuspunten/update', 'bonuspunten_ID' => $model->bouspunten_ID],
+                        'modalId' => '#main-modal',
+                        'modalContent' => '#main-content-modal',
+                        'options' => [
+                            'class' => 'btn btn-xs btn-primary',
+                            'title' => 'Edit',
+                            'disabled' => !Yii::$app->user->can('organisatie'),
+                        ]
+                    ]);
+                },
+            ],
+            'visibleButtons' => [
+                'edit' => function ($model, $key, $index) {
+                    if (Yii::$app->user->can('organisatie')) {
+                        return true;
+                    }
+                    return false;
+                },
+            ]
         ],
     ];
 
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = false;
 
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'summary' => FALSE,
+        'summary' => false,
         'columns' => $gridColumns,
         'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
         'headerRowOptions'=>['class'=>'kartik-sheet-style'],
         'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-        'pjax' => TRUE, // pjax is set to always true for this demo
-        'toolbar' => FALSE,
+        'pjax' => true, // pjax is set to always true for this demo
+        'toolbar' => false,
         // parameters from the demo form
         'bordered'=>$bordered,
         'striped'=>$striped,

@@ -13,9 +13,10 @@ use yii\web\NotFoundHttpException;
 /**
  * BonuspuntenController implements the CRUD actions for Bonuspunten model.
  */
-class BonuspuntenController extends Controller {
-
-    public function behaviors() {
+class BonuspuntenController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -32,7 +33,7 @@ class BonuspuntenController extends Controller {
                         'roles' => ['organisatie'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ],
@@ -44,7 +45,8 @@ class BonuspuntenController extends Controller {
      * Lists all Bonuspunten models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new BonuspuntenSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -60,7 +62,8 @@ class BonuspuntenController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         return $this->render('view', [
                 'model' => $this->findModel($id),
         ]);
@@ -71,7 +74,8 @@ class BonuspuntenController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $model = new Bonuspunten();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -90,7 +94,8 @@ class BonuspuntenController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($bonuspunten_ID) {
+    public function actionDelete($bonuspunten_ID)
+    {
         if ($this->findModel($bonuspunten_ID)->delete()) {
             Yii::$app->cache->flush();
             Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspoints are deleted'));
@@ -111,25 +116,41 @@ class BonuspuntenController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($bonuspunten_ID) {
+    public function actionUpdate($bonuspunten_ID)
+    {
         $model = $this->findModel($bonuspunten_ID);
+        $action = 'update';
 
-        if ($model->load(Yii::$app->request->post())) {
-            if (isset(Yii::$app->request->post('Bonuspunten')['date'])) {
-                $model->date = Yii::$app->setupdatetime->convert(Yii::$app->request->post('Bonuspunten')['date']);
-            }
-
-            if (!$model->save()) {
-                foreach ($model->getErrors() as $error) {
-                    Yii::$app->session->setFlash('error', Json::encode($error));
-                }
+        if (Yii::$app->request->post('update') == 'delete') {
+            if ($model->delete()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted bonus points.'));
             } else {
-                Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete bonus points.'));
             }
+            return $this->redirect(Yii::$app->request->referrer);
         }
 
-        return $this->redirect(['bonuspunten/index']);
+        if (Yii::$app->request->post('Bonuspunten') &&
+            $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                Yii::$app->cache->flush();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes.'));
+//                if (Yii::$app->request->isAjax) {
+//                    return $this->renderAjax('_list', ['model' => $model]);
+//                }
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        }
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('_form', [
+                    'model' => $model,
+                    'action' => $action,
+            ]);
+        }
+        return $this->render('update', [
+                'model' => $model,
+                'action' => $action,
+        ]);
     }
 
     /**
@@ -139,7 +160,8 @@ class BonuspuntenController extends Controller {
      * @return Bonuspunten the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = Bonuspunten::findOne([
                 'bouspunten_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -150,5 +172,4 @@ class BonuspuntenController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }
