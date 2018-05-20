@@ -16,7 +16,7 @@ use yii\widgets\Pjax;
     </p>
     <?php
         echo ListView::widget([
-            'summary' => FALSE,
+            'summary' => false,
             'pager' => [
                 'prevPageLabel' => Yii::t('app', 'previous'),
                 'nextPageLabel' => Yii::t('app', 'next'),
@@ -27,7 +27,7 @@ use yii\widgets\Pjax;
             ],
             'dataProvider' => $model,
             'itemView' => '/open-nood-envelop/_list-dashboard',
-            'emptyText' => Yii::t('app', 'No hints that can be opened.'),
+            'emptyText' => Yii::t('app', 'No hints that are opened.'),
         ]);
     ?>
     <?php Pjax::end(); ?>

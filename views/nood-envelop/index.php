@@ -19,7 +19,6 @@ $this->title = Yii::t('app', 'Search hints');
     Modal::begin(['id' => 'main-modal']);
     echo '<div id="main-content-modal"></div>';
     Modal::end();
-
     $gridColumns = [
         [
             'attribute' => 'nood_envelop_name',
@@ -54,37 +53,28 @@ $this->title = Yii::t('app', 'Search hints');
                     ]);
                 },
             ],
-            'visibleButtons' => [
-                'open' => function ($model, $key, $index) {
-                    if (Yii::$app->user->can('deelnemerGestartTime') || Yii::$app->user->can('deelnemerIntroductie')) {
-
-                        return TRUE;
-                    }
-                    return FALSE;
-                }
-            ]
         ],
     ];
 
-    $bordered = FALSE;
-    $striped = TRUE;
-    $condensed = TRUE;
-    $responsive = FALSE;
-    $hover = TRUE;
-    $pageSummary = FALSE;
-    $heading = FALSE;
-    $exportConfig = FALSE;
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = false;
 
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'summary' => FALSE,
+        'summary' => false,
         'columns' => $gridColumns,
         'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
         'headerRowOptions' => ['class' => 'kartik-sheet-style'],
         'filterRowOptions' => ['class' => 'kartik-sheet-style'],
-        'pjax' => TRUE, // pjax is set to always true for this demo
-        'toolbar' => FALSE,
+        'pjax' => true, // pjax is set to always true for this demo
+        'toolbar' => false,
         // parameters from the demo form
         'bordered' => $bordered,
         'striped' => $striped,

@@ -38,29 +38,33 @@ use app\models\DeelnemersEvent;
         ]);
     }
     ?>
-    </br>
     <b>
     <?php echo Html::encode($model->getAttributeLabel('score')); ?>:
     </b>
     <?php echo Html::encode($model->score); ?></br>
 
     <?php
-    if ($model->isHintOpenedByGroup()) { ?>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('coordinaat')); ?>:
-        </b>
-        <?php echo Html::encode($model->coordinaat); ?> </br>
+    if ($model->isHintOpenedByGroup()) {
+        if ($model->show_coordinates) {
+            ?>
+            <b>
+            <?php
+            echo Html::encode($model->getAttributeLabel('coordinaat')); ?>:
+            </b>
+            <?php echo Html::encode($model->coordinaat); ?> </br>
+        <?php
+        } ?>
         <b>
         <?php echo Html::encode($model->getAttributeLabel('opmerkingen')); ?>:
         </b>
         <?php echo Html::encode($model->opmerkingen); ?></br>
         <b>
-        <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_user_ID')); ?>:
+        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_user_ID')); ?>:
         </b>
-        <?php echo Html::encode($model->getHintOpenedByGroup()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam); ?></br>
+        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam); ?></br>
         <b>
-        <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_time')); ?>:
+        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_time')); ?>:
         </b>
-        <?php echo Html::encode($model->getHintOpenedByGroup()->create_time);
+        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->create_time);
     }?>
     </div>

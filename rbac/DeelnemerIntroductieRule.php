@@ -21,9 +21,9 @@ class DeelnemerIntroductieRule extends Rule
     public function execute($user, $item, $params)
     {
         if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_introductie &&
-            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_organisatie) {
-            return TRUE;
+            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer) {
+            return true;
         }
-        return FALSE;
+        return false;
     }
 }
