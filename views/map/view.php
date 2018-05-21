@@ -5,6 +5,7 @@ use yii\bootstrap\Modal;
 use app\components\CustomAlertBlock;
 use kartik\dialog\Dialog;
 use app\models\CustomMap;
+use app\models\DeelnemersEvent;
 use kartik\popover\PopoverX;
 
 /* @var $this yii\web\View */
@@ -16,8 +17,11 @@ echo Dialog::widget();
 ?>
 <div class="map-index">
     <?php
-
     foreach ($routeDataProvider->getModels() as $routeItem) {
+        if (Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            ?> <br><br> <?php
+            break;
+        }
         if ($routeItem->route_ID !== $routeModel->route_ID) {
             echo Html::a(
                 $routeItem->route_name,

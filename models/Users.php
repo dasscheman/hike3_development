@@ -8,6 +8,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
 use yii\helpers\ArrayHelper;
+use app\models\DeelnemersEvent;
 use app\models\Profile;
 use yii\helpers\Json;
 use dektrium\user\models\User as BaseUser;
@@ -248,11 +249,14 @@ class Users extends BaseUser
      */
     public function getRolUserForEvent()
     {
-        return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+        $deelnemer = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
             ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
-            ->one()
-            ->rol;
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
+            
+        if ($deelnemer->exists()) {
+            return $deelnemer->one()->rol;
+        }
+        return false;
     }
 
     /**
@@ -272,12 +276,13 @@ class Users extends BaseUser
      */
     public function getStatusForEvent()
     {
-        return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+        $status = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
             ->where('event_ID =:event_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one()
             ->event
             ->status;
+        return $status;
     }
 
     /**

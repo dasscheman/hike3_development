@@ -144,28 +144,6 @@ class OpenVragen extends HikeActiveRecord
     }
 
     /**
-     *TODO: check of dit de manier en de plek is voor deze dataprovider.
-     */
-    public function openVragenAllDataProvider($event_id)
-    {
-        $where = "event_ID = $event_id";
-
-        $dataProvider=new CActiveDataProvider(
-             'OpenVragen',
-         array(
-             'criteria'=>array(
-             'condition'=>$where,
-             //'order'=>'binnenkomst DESC',
-             ),
-             'pagination'=>array(
-             'pageSize'=>5,
-             ),
-         )
-         );
-        return $dataProvider;
-    }
-
-    /**
      * Score ophalen voor een group.
      */
     public function isQuestionAwnseredByGroup()

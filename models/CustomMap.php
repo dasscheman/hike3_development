@@ -37,9 +37,9 @@ class CustomMap extends Map
     public function setCookieIndexRoute($route_id)
     {
         $cookies = Yii::$app->getResponse()->getCookies();
-        $cookies->remove('route_map_tab');
+        $cookies->remove('route_map_tab' . Yii::$app->user->id);
         $cookie = new Cookie([
-            'name' => 'route_map_tab',
+            'name' => 'route_map_tab' . Yii::$app->user->id,
             'value' => $route_id,
             'expire' => time() + 86400 * 365,
         ]);
@@ -48,12 +48,17 @@ class CustomMap extends Map
 
     public function setPostMarkers($date, $edit = false, $group = false)
     {
-        $model = Posten::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'date' => $date
-        ]);
-
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getPosten();
+        } else {
+            $model = Posten::find()
+                ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'date' => $date
+            ]);
+        }
+        
         if (!$model->exists()) {
             return;
         }
@@ -95,10 +100,10 @@ class CustomMap extends Map
                 $count = 0;
                 foreach ($passages->all() as $passage) {
                     if ($count === 0) {
-                        $content = '';
+                        $content = 'Post Passages ' . $passage->getPost()->one()->post_name . '<br>';
                     }
-                    $binnenkomst = \Yii::$app->formatter->asDate($passage->binnenkomst, 'php:H:i');
-                    $vertrek = \Yii::$app->formatter->asDate($passage->vertrek, 'php:H:i');
+                    $binnenkomst = \Yii::$app->formatter->asDate($passage->binnenkomst, 'php:d-M H:i');
+                    $vertrek = \Yii::$app->formatter->asDate($passage->vertrek, 'php:d-M H:i');
                     $content .= $passage->getGroup()->one()->group_name . ' <i>' . $binnenkomst . ' - ' . $vertrek . '</i></br>';
                     $count++;
                 }
@@ -123,12 +128,17 @@ class CustomMap extends Map
 
     public function setQrMarkers($route_id, $edit = false, $group = false)
     {
-        $model = Qr::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getQr();
+        } else {
+            $model = Qr::find()
+                ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'route_ID' => $route_id
+            ]);
+        }
+        
         if (!$model->exists()) {
             return;
         }
@@ -169,9 +179,9 @@ class CustomMap extends Map
                 $count = 0;
                 foreach ($checks->all() as $check) {
                     if ($count === 0) {
-                        $content = '';
+                        $content = 'Silent station ' . $check->getQr()->one()->qr_name . '<br>';
                     }
-                    $binnenkomst = \Yii::$app->formatter->asDate($check->create_time, 'php:H:i');
+                    $binnenkomst = \Yii::$app->formatter->asDate($check->create_time, 'php:d-M H:i');
                     $content .= $check->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
@@ -187,7 +197,7 @@ class CustomMap extends Map
             $link = Url::to(['qr/ajaxupdate'], true);
 
             $event = $this->getEvent($link, $post->qr_ID);
-           
+
             $marker->addEvent($event);
             // Add marker to the map
             $this->addOverlay($marker);
@@ -196,12 +206,16 @@ class CustomMap extends Map
 
     public function setHintMarkers($route_id, $edit = false, $group = false)
     {
-        $model = NoodEnvelop::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getNoodEnvelop();
+        } else {
+            $model = NoodEnvelop::find()
+                ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'route_ID' => $route_id
+            ]);
+        }
         // When in group overview, display hint on map only when this attribute is set.
         if ($group) {
             $model->andWhere(['show_coordinates' => true]);
@@ -246,9 +260,9 @@ class CustomMap extends Map
                 $count = 0;
                 foreach ($hints->all() as $hint) {
                     if ($count === 0) {
-                        $content = '';
+                        $content = 'Hints ' . $hint->getNoodEnvelop()->one()->nood_envelop_name . '<br>';
                     }
-                    $binnenkomst = \Yii::$app->formatter->asDate($hint->create_time, 'php:H:i');
+                    $binnenkomst = \Yii::$app->formatter->asDate($hint->create_time, 'php:d-M H:i');
                     $content .= $hint->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
@@ -273,12 +287,17 @@ class CustomMap extends Map
 
     public function setvragenMarkers($route_id, $edit = false, $group = false)
     {
-        $model = OpenVragen::find()
-            ->where([
-            'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            'route_ID' => $route_id
-        ]);
-
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getOpenVragen();
+        } else {
+            $model = OpenVragen::find()
+                ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'route_ID' => $route_id
+            ]);
+        }
+        
         if (!$model->exists()) {
             return;
         }
@@ -319,9 +338,9 @@ class CustomMap extends Map
                 $count = 0;
                 foreach ($vragen->all() as $vraag) {
                     if ($count === 0) {
-                        $content = '';
+                        $content = 'Questions ' . $vraag->getOpenVragen()->one()->open_vragen_name . '<br>';
                     }
-                    $binnenkomst = \Yii::$app->formatter->asDate($vraag->create_time, 'php:H:i');
+                    $binnenkomst = \Yii::$app->formatter->asDate($vraag->create_time, 'php:d-M H:i');
                     if ($vraag->checked) {
                         if ($vraag->correct) {
                             $icon = 'glyphicon glyphicon-ok-sign';
@@ -353,14 +372,18 @@ class CustomMap extends Map
 
     public function setTimeTrailMarkers($edit = false, $group = false)
     {
-        $model = TimeTrail::find()
-            ->where([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID,
-            ])
-            ->orderBy([
-                'time_trail_ID' => SORT_ASC
-            ]);
-
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getTimeTrail();
+        } else {
+            $model = TimeTrail::find()
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                ])
+                ->orderBy([
+                    'time_trail_ID' => SORT_ASC
+                ]);
+        }
         if (!$model->exists()) {
             return;
         }
@@ -413,10 +436,10 @@ class CustomMap extends Map
                     $countgroups = 0;
                     foreach ($checks->all() as $check) {
                         if ($countgroups === 0) {
-                            $content = '';
+                            $content = 'Time trail ' . $check->getTimeTrailItem()->one()->getTimeTrail()->one()->time_trail_name . ' ' . $check->getTimeTrailItem()->one()->time_trail_item_name . '<br>';
                         }
-                        $start = \Yii::$app->formatter->asDate($check->start_time, 'php:H:i');
-                        $eind = \Yii::$app->formatter->asDate($check->end_time, 'php:H:i');
+                        $start = \Yii::$app->formatter->asDate($check->start_time, 'php:d-M H:i');
+                        $eind = \Yii::$app->formatter->asDate($check->end_time, 'php:d-M H:i');
                         if (isset($check->end_time)) {
                             if ($check->succeded) {
                                 $icon = 'glyphicon glyphicon-ok-sign';
@@ -489,5 +512,25 @@ class CustomMap extends Map
             "
         ]);
         return $event;
+    }
+
+    /**
+     * Finds the Groups model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Groups the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findGroupModel($id)
+    {
+        $model = Groups::findOne([
+                'group_ID' => $id,
+                'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        if ($model !== null) {
+            return $model;
+        } else {
+            return false;
+        }
     }
 }

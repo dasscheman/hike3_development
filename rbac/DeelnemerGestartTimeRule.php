@@ -23,10 +23,11 @@ class DeelnemerGestartTimeRule extends Rule
     {
         if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
             Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer &&
+            PostPassage::isGroupStarted(Yii::$app->user->identity->getGroupUserForEvent()) &&
             PostPassage::istimeLeftToday(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->identity->getGroupUserForEvent())) {
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
 }

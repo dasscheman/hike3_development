@@ -153,6 +153,15 @@ class Groups extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getNoodEnvelop()
+    {
+        return $this->hasMany(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
+            ->viaTable('tbl_open_nood_envelop', ['group_ID' => 'group_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getOpenNoodEnvelops()
     {
         return $this->hasMany(OpenNoodEnvelop::className(), ['group_ID' => 'group_ID']);
@@ -211,6 +220,15 @@ class Groups extends HikeActiveRecord
         return $this->hasMany(PostPassage::className(), ['group_ID' => 'group_ID']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPosten()
+    {
+        return $this->hasMany(Posten::className(), ['post_ID' => 'post_ID'])
+            ->viaTable('tbl_post_passage', ['group_ID' => 'group_ID']);
+    }
+
     public function getPost_score()
     {
         $db = self::getDb();
@@ -228,6 +246,15 @@ class Groups extends HikeActiveRecord
     public function getQrChecks()
     {
         return $this->hasMany(QrCheck::className(), ['group_ID' => 'group_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQr()
+    {
+        return $this->hasMany(Qr::className(), ['qr_ID' => 'qr_ID'])
+            ->viaTable('tbl_qr_check', ['group_ID' => 'group_ID']);
     }
 
     public function getQr_score()
@@ -262,6 +289,15 @@ class Groups extends HikeActiveRecord
     {
         return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
             ->viaTable('tbl_time_trail_check', ['group_ID' => 'group_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimeTrail()
+    {
+        return $this->hasMany(TimeTrail::className(), ['time_trail_ID' => 'time_trail_ID'])
+            ->via('timeTrailItems');
     }
 
     /**

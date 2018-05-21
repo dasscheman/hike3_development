@@ -295,6 +295,11 @@ class PostenController extends Controller
 
     public function actionListsPosts()
     {
+        $post_id = '';
+        if (null !== Yii::$app->request->get('post_id')) {
+            $post_id = Yii::$app->request->get('post_id');
+        }
+        
         $out = [];
         if (null !== Yii::$app->request->post('depdrop_parents')) {
             $parents = Yii::$app->request->post('depdrop_parents');
@@ -304,7 +309,7 @@ class PostenController extends Controller
                 foreach ($data as $key => $item) {
                     $out[] = ['id' => $key, 'name' => $item];
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                echo Json::encode(['output' => $out, 'selected' => $post_id]);
                 return;
             }
         }
@@ -333,18 +338,6 @@ class PostenController extends Controller
             );
         }
     }
-
-//    public function setCookieIndexTab($date)
-//    {
-//        $cookies = Yii::$app->getResponse()->getCookies();
-//        $cookies->remove('posten_day_tab');
-//        $cookie = new Cookie([
-//            'name' => 'posten_day_tab',
-//            'value' => $date,
-//            'expire' => time() + 86400 * 365,
-//        ]);
-//        $cookies->add($cookie);
-//    }
 
     public function actionAjaxupdate()
     {

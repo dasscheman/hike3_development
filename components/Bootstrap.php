@@ -14,6 +14,5 @@ class Bootstrap implements BootstrapInterface
         $app->params['qr_code_path'] = $app->basePath . '/web/qr/';
         $app->params['timetrail_code_path'] = $app->basePath . '/web/timetrail/';
         $app->params['kiwilogo'] = $app->basePath . '/web/images/kiwilogo.jpg';
-        // $app->params['qr_code_path'] = $app->basePath . '/web/qr/';
     }
 }

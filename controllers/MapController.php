@@ -14,6 +14,7 @@ use app\models\Posten;
 use app\models\OpenVragen;
 use app\models\NoodEnvelop;
 use app\models\TimeTrail;
+use app\models\TimeTrailCheck;
 use app\models\TimeTrailItem;
 use dosamigos\google\maps\LatLng;
 use dosamigos\google\maps\overlays\Marker;
@@ -82,7 +83,7 @@ class MapController extends Controller
             );
             return $this->redirect(['/users/view']);
         }
-
+        
         switch (Yii::$app->user->identity->getStatusForEvent()) {
             case EventNames::STATUS_opstart:
                 if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie) {
@@ -247,10 +248,6 @@ class MapController extends Controller
         $group = Yii::$app->user->identity->getGroupUserForEvent();
         $routeModel = $this->findRouteModel(Yii::$app->request->get('route_ID'));
 
-        $timeTrailData = TimeTrail::find()
-            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
-            ->all();
-
         $routeSearchModel = new RouteSearch();
         $routeDataProvider = $routeSearchModel->searchRouteInEvent(Yii::$app->request->queryParams);
 
@@ -271,7 +268,6 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, false, $group);
         $map->setQrMarkers($routeModel->route_ID, false, $group);
         $map->setHintMarkers($routeModel->route_ID, false, $group);
-
         $map->setTimeTrailMarkers(false, $group);
 
         if ($map->getMarkersCenterCoordinates() !== null) {
@@ -280,7 +276,6 @@ class MapController extends Controller
         $map->zoom = 2 + $map->getMarkersFittingZoom();
         return $this->render('view', [
                 'routeModel' => $routeModel,
-                'timeTrailData' => $timeTrailData,
                 'routeSearchModel' => $routeSearchModel,
                 'routeDataProvider' => $routeDataProvider,
                 'map' => $map
@@ -344,8 +339,8 @@ class MapController extends Controller
         $route_id = null;
         if ($id !== null) {
             $route_id = $id;
-        } elseif (Yii::$app->getRequest()->getCookies()->getValue('route_map_tab') !== null) {
-            $route_id = Yii::$app->getRequest()->getCookies()->getValue('route_map_tab');
+        } elseif (Yii::$app->getRequest()->getCookies()->getValue('route_map_tab' . Yii::$app->user->id) !== null) {
+            $route_id = Yii::$app->getRequest()->getCookies()->getValue('route_map_tab' . Yii::$app->user->id);
         }
 
         if ($route_id === null) {
