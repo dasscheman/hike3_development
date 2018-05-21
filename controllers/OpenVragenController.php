@@ -145,7 +145,7 @@ class OpenVragenController extends Controller
                 ]
                 )
                 ->exists();
-            if (!$exist) {
+            if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted question.'));

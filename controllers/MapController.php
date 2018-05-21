@@ -268,6 +268,7 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, false, $group);
         $map->setQrMarkers($routeModel->route_ID, false, $group);
         $map->setHintMarkers($routeModel->route_ID, false, $group);
+        $map->setvragenMarkers($routeModel->route_ID, false, $group);
         $map->setTimeTrailMarkers(false, $group);
 
         if ($map->getMarkersCenterCoordinates() !== null) {

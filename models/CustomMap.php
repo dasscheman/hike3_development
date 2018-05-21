@@ -93,10 +93,6 @@ class CustomMap extends Map
             } else {
                 $passages = $post->getPostPassages()->orderBy(['binnenkomst' => SORT_DESC]);
 
-                if ($group) {
-                    $passages->andWhere(['group_ID' => $group]);
-                }
-
                 $count = 0;
                 foreach ($passages->all() as $passage) {
                     if ($count === 0) {
@@ -289,7 +285,7 @@ class CustomMap extends Map
     {
         if ($group) {
             $groupModel = $this->findGroupModel($group);
-            $model = $groupModel->getOpenVragen();
+            $model = $groupModel->getVraagAwnseredCorrecly();
         } else {
             $model = OpenVragen::find()
                 ->where([
@@ -338,19 +334,19 @@ class CustomMap extends Map
                 $count = 0;
                 foreach ($vragen->all() as $vraag) {
                     if ($count === 0) {
-                        $content = 'Questions ' . $vraag->getOpenVragen()->one()->open_vragen_name . '<br>';
+                        $content = 'Question: ' . $vraag->getOpenVragen()->one()->open_vragen_name . '<br>';
                     }
                     $binnenkomst = \Yii::$app->formatter->asDate($vraag->create_time, 'php:d-M H:i');
                     if ($vraag->checked) {
                         if ($vraag->correct) {
-                            $icon = 'glyphicon glyphicon-ok-sign';
+                            $icon2 = 'glyphicon glyphicon-ok-sign';
                         } else {
-                            $icon = 'glyphicon glyphicon-remove-sign';
+                            $icon2 = 'glyphicon glyphicon-remove-sign';
                         }
                     } else {
-                        $icon = 'glyphicon glyphicon-question-sign';
+                        $icon2 = 'glyphicon glyphicon-question-sign';
                     }
-                    $content .= '<span class="' . $icon . '"></span> ' . $vraag->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
+                    $content .= '<span class="' . $icon2 . '"></span> ' . $vraag->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
             }
@@ -442,14 +438,14 @@ class CustomMap extends Map
                         $eind = \Yii::$app->formatter->asDate($check->end_time, 'php:d-M H:i');
                         if (isset($check->end_time)) {
                             if ($check->succeded) {
-                                $icon = 'glyphicon glyphicon-ok-sign';
+                                $icon2 = 'glyphicon glyphicon-ok-sign';
                             } else {
-                                $icon = 'glyphicon glyphicon-remove-sign';
+                                $icon2 = 'glyphicon glyphicon-remove-sign';
                             }
                         } else {
-                            $icon = 'glyphicon glyphicon-question-sign';
+                            $icon2 = 'glyphicon glyphicon-question-sign';
                         }
-                        $content .= '<span class="' . $icon . '"></span> ' . $check->getGroup()->one()->group_name . ' <i>' . $start . ' - ' . $eind . '</i></br>';
+                        $content .= '<span class="' . $icon2 . '"></span> ' . $check->getGroup()->one()->group_name . ' <i>' . $start . ' - ' . $eind . '</i></br>';
                         $countgroups++;
                     }
                 }

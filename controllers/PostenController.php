@@ -142,7 +142,7 @@ class PostenController extends Controller
                 ]
                 )
                 ->exists();
-            if (!$exist) {
+            if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted station.'));
             } else {
@@ -153,7 +153,7 @@ class PostenController extends Controller
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
                 return;
             }
-            return $this->redirect(['route/index']);
+            return $this->redirect(['posten/index']);
         }
 
         if (Yii::$app->request->post('Posten') &&
@@ -166,7 +166,7 @@ class PostenController extends Controller
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
                 }
-                return $this->redirect(['route/index']);
+                return $this->redirect(['posten/index']);
             }
         }
 

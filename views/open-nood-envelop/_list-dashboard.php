@@ -61,7 +61,7 @@ use app\models\DeelnemersEvent;
         <b>
         <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_user_ID')); ?>:
         </b>
-        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam); ?></br>
+        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->createUser->voornaam . ' ' . $model->getOpenNoodEnvelops()->one()->createUser->achternaam); ?></br>
         <b>
         <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_time')); ?>:
         </b>

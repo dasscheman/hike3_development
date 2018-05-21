@@ -8,7 +8,6 @@ use yii\widgets\Pjax;
 use kartik\widgets\AlertBlock;
 use kartik\widgets\Alert;
 
-
 /* @var $this GroupsController */
 /* @var $data Groups */
 
@@ -47,7 +46,8 @@ use kartik\widgets\Alert;
         <?php echo Html::encode($model->score); ?></br>
 
         <?php
-        if ($model->isHintOpenedByGroup()) { ?>
+        if ($model->isHintOpenedByGroup()) {
+            ?>
             <b>
             <?php echo Html::encode($model->getAttributeLabel('coordinaat')); ?>:
             </b>

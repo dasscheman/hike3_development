@@ -180,7 +180,7 @@ class TimeTrailController extends Controller
                 )
                 ->exists();
 
-            if (!$exist) {
+            if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail.'));
             } else {

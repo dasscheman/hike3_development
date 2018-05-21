@@ -195,12 +195,27 @@ class Groups extends HikeActiveRecord
            ]);
     }
 
-    public function getVraag()
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOpenVragen()
     {
-        return $this->hasOne(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
+        return $this->hasMany(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
             ->via('openVragenAntwoordens');
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVraagAwnseredCorrecly()
+    {
+        return $this->hasMany(OpenVragen::className(), ['open_vragen_ID' => 'open_vragen_ID'])
+            ->via('correctOpenVragenAntwoordens');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getVragen_score()
     {
         $db = self::getDb();
