@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 ?>
 
 <!-- <div class="col-sm-4"> -->
-        <div class="view">
+        <div class="well">
 
         <p>
         <?php
@@ -25,6 +25,11 @@ use yii\widgets\Pjax;
         <h3>
         <?php echo Html::encode($model->openVragen->open_vragen_name); ?>
         </h3>
+        <i>
+        <?php echo Html::encode($model->getGroup()->one()->group_name); ?>
+        </i>
+        <br>
+
         <?php
         if (!$model->checked) {
             echo Html::a(
