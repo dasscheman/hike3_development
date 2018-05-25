@@ -14,7 +14,6 @@ use app\models\Posten;
 use app\models\OpenVragen;
 use app\models\NoodEnvelop;
 use app\models\TimeTrail;
-use app\models\TimeTrailCheck;
 use app\models\TimeTrailItem;
 use dosamigos\google\maps\LatLng;
 use dosamigos\google\maps\overlays\Marker;
@@ -165,7 +164,7 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, true);
         $map->setQrMarkers($routeModel->route_ID, true);
         $map->setHintMarkers($routeModel->route_ID, true);
-        $map->setvragenMarkers($routeModel->route_ID, true);
+        $map->setVragenMarkers($routeModel->route_ID, true);
         $map->setTimeTrailMarkers(true);
 
         // Lets add a marker now
@@ -225,7 +224,6 @@ class MapController extends Controller
         // Add marker to the map
         $map->addOverlay($marker);
         $map->center = $map->getMarkersCenterCoordinates();
-//        dd($map->getMarkersFittingZoom());
         $map->zoom = 2 + $map->getMarkersFittingZoom();
         return $this->render('index', [
                 'routeModel' => $routeModel,
@@ -268,12 +266,14 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, false, $group);
         $map->setQrMarkers($routeModel->route_ID, false, $group);
         $map->setHintMarkers($routeModel->route_ID, false, $group);
-        $map->setvragenMarkers($routeModel->route_ID, false, $group);
+        $map->setVragenMarkers($routeModel->route_ID, false, $group);
         $map->setTimeTrailMarkers(false, $group);
+        $map->setTrackPolygon($group);
 
         if ($map->getMarkersCenterCoordinates() !== null) {
             $map->center = $map->getMarkersCenterCoordinates();
         }
+
         $map->zoom = 2 + $map->getMarkersFittingZoom();
         return $this->render('view', [
                 'routeModel' => $routeModel,
@@ -312,8 +312,9 @@ class MapController extends Controller
         $map->setPostMarkers($routeModel->day_date, false);
         $map->setQrMarkers($routeModel->route_ID, false);
         $map->setHintMarkers($routeModel->route_ID, false);
-        $map->setvragenMarkers($routeModel->route_ID, false);
+        $map->setVragenMarkers($routeModel->route_ID, false);
         $map->setTimeTrailMarkers(false);
+        $map->setTrackPolygon();
 
         if ($map->getMarkersCenterCoordinates() !== null) {
             $map->center = $map->getMarkersCenterCoordinates();

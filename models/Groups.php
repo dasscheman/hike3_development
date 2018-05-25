@@ -9,13 +9,13 @@ use yii\helpers\Json;
 /**
  * This is the model class for table "tbl_groups".
  *
- * @property integer $group_ID
+ * @property int $group_ID
  * @property string $group_name
- * @property integer $event_ID
+ * @property int $event_ID
  * @property string $create_time
- * @property integer $create_user_ID
+ * @property int $create_user_ID
  * @property string $update_time
- * @property integer $update_user_ID
+ * @property int $update_user_ID
  *
  * @property Bonuspunten[] $Bonuspuntens
  * @property DeelnemersEvent[] $DeelnemersEvents
@@ -23,12 +23,15 @@ use yii\helpers\Json;
  * @property EventNames $event
  * @property Users $updateUser
  * @property OpenNoodEnvelop[] $OpenNoodEnvelops
+ * @property NoodEnvelop[] $noodEnvelops
  * @property OpenVragenAntwoorden[] $OpenVragenAntwoordens
+ * @property NoodEnvelop[] $noodEnvelops
  * @property PostPassage[] $PostPassages
  * @property QrCheck[] $QrChecks
  * @property Qr[] $qrs
  * @property TimeTrailCheck[] $TimeTrailChecks
  * @property TimeTrailItem[] $timeTrailItem
+ * @property Track[] $Tracks
  */
 class Groups extends HikeActiveRecord
 {
@@ -58,9 +61,10 @@ class Groups extends HikeActiveRecord
             [['event_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['group_name'], 'string', 'max' => 255],
-            [   ['event_ID', 'group_name'],
-                'unique', 'targetAttribute' => ['event_ID', 'group_name'],
-                'message' => Yii::t('app', 'This group is already assigned to this hike')]
+            [['event_ID', 'group_name'], 'unique', 'targetAttribute' => ['event_ID', 'group_name']],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
+            [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
         ];
     }
 
@@ -165,6 +169,12 @@ class Groups extends HikeActiveRecord
     public function getOpenNoodEnvelops()
     {
         return $this->hasMany(OpenNoodEnvelop::className(), ['group_ID' => 'group_ID']);
+    }
+      
+    public function getNoodEnvelops()
+    {
+        return $this->hasMany(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
+            ->viaTable('tbl_open_nood_envelop', ['group_ID' => 'group_ID']);
     }
 
     public function getHint_score()
@@ -329,7 +339,13 @@ class Groups extends HikeActiveRecord
         return $data;
     }
 
-
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTracks()
+    {
+        return $this->hasMany(Track::className(), ['group_ID' => 'group_ID']);
+    }
 
     public function getTotal_score()
     {

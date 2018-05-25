@@ -6,16 +6,19 @@ use Yii;
 use yii\helpers\Url;
 use yii\web\Cookie;
 use yii\helpers\ArrayHelper;
+use app\models\Groups;
 use dosamigos\google\maps\Map;
 use dosamigos\google\maps\overlays\Icon;
 use dosamigos\google\maps\LatLng;
 use dosamigos\google\maps\overlays\Marker;
 use dosamigos\google\maps\overlays\InfoWindow;
+use dosamigos\google\maps\overlays\Polyline;
 use dosamigos\google\maps\Event;
 
 class CustomMap extends Map
 {
     public $kleuren = ['rood', 'geel', 'blauw', 'oranje', 'paars', 'groen'];
+    public $kleurenTrack = ['red', 'yellow', 'blue', 'orange', 'purple', 'green'];
     public $counts = [];
 
     /**
@@ -281,7 +284,7 @@ class CustomMap extends Map
         }
     }
 
-    public function setvragenMarkers($route_id, $edit = false, $group = false)
+    public function setVragenMarkers($route_id, $edit = false, $group = false)
     {
         if ($group) {
             $groupModel = $this->findGroupModel($group);
@@ -469,6 +472,53 @@ class CustomMap extends Map
         }
     }
 
+    public function setTrackPolygon($group = null)
+    {
+        if ($group) {
+            $groupModel = $this->findGroupModel($group);
+            $model = $groupModel->getTracks();
+        } else {
+            $model = Track::find()
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                ])
+                ->orderBy([
+                    'timestamp' => SORT_ASC,
+                    'create_time' => SORT_ASC
+                ]);
+        }
+        if (!$model->exists()) {
+            return;
+        }
+        $groups = Groups::getGroupOptionsForEvent();
+
+        $kleur = 0;
+        foreach ($groups as $group_ID => $group_name) {
+            $coords = [];
+            $modelGroup = $model;
+            $modelGroup->where(['group_ID' => $group_ID]);
+//            d($modelGroup);
+            foreach ($modelGroup->all() as $item) {
+                $coords[] = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
+            }
+//            dd($this->kleuren[$kleur]);
+            $polyline = new Polyline([
+                'path' => $coords,
+
+                'map' => 'test',
+                'strokeColor' => $this->kleurenTrack[$kleur],
+            ]);
+            //        dd($coords);
+            // Add a shared info window
+//            $polyline->attachInfoWindow(new InfoWindow([
+//                'content' => '<p>This is my super cool Polygon</p>'
+//            ]));
+
+            // Add it now to the map
+            $this->addOverlay($polyline);
+        }
+    }
+    
     public function getEvent($link, $id)
     {
         $event = new Event([

@@ -64,6 +64,11 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest ? false : true,
                             ],
                             [
+                                'label' => Yii::t('app', 'Tracks'),
+                                'url' => ['/track/index'],
+                                'visible' => Yii::$app->user->isGuest ? false : true,
+                            ],
+                            [
                                 'label' => Yii::t('app', 'Create Account'),
                                 'url' => ['/users/create', 'language' => 'nl'],
                                 'visible' => Yii::$app->user->isGuest,
