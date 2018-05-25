@@ -396,7 +396,7 @@ class CustomMap extends Map
             }
             $countitems = 1;
             $kleuren = new CustomMap();
-            if ($items->count() <= 0) {
+            if (isset($items->all())) {
                 continue;
             }
             foreach ($items->all() as $item) {
