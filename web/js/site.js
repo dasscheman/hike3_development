@@ -47,17 +47,18 @@ window.onload = function() {
         maximumAge: 0
     });
 
-//    tracker.onChange(ChangePosition);
+    tracker.onChange(ChangePosition);
     tracker.run();
 };
 
 
-//function ChangePosition(pos) {
-//    var crd = pos.coords;
-//    var path = [];
-//    console.log('Latitude : ' + crd.latitude);
-//    console.log('Longitude: ' + crd.longitude);
-//    console.log('More or less ' + crd.accuracy + ' meters.');
+function ChangePosition(pos) {
+    var crd = pos.coords;
+    var path = [];
+    console.log('Latitude : ' + crd.latitude);
+    console.log('Longitude: ' + crd.longitude);
+    console.log('More or less ' + crd.accuracy + ' meters.');
+}
 //    lastll = crd.latitude;
 //    lastlo = crd.longitude;
 //    var temp = new Array();
