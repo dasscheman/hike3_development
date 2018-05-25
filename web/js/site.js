@@ -44,7 +44,7 @@ window.onload = function() {
     tracker.setGPSConfiguration({
         enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge: 0
+        maximumAge: 18000000
     });
 
     tracker.onChange(ChangePosition);
