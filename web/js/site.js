@@ -47,7 +47,7 @@ window.onload = function() {
         maximumAge: 0
     });
 
-    tracker.onChange(ChangePosition);
+//    tracker.onChange(ChangePosition);
     tracker.run();
 };
 
