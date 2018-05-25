@@ -396,6 +396,9 @@ class CustomMap extends Map
             }
             $countitems = 1;
             $kleuren = new CustomMap();
+            if ($items->count() <= 0) {
+                continue;
+            }
             foreach ($items->all() as $item) {
                 $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_' . $countitems . '.png')]);
                 if ($item->latitude === null) {
