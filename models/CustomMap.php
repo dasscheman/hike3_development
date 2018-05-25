@@ -389,17 +389,14 @@ class CustomMap extends Map
 
         $kleur = 0;
         foreach ($model->all() as $timeTrail) {
-            $items = TimeTrailItem::find()
-                ->where([
-                    'time_trail_ID' => $timeTrail->time_trail_ID,
-                ])
-                ->orderBy([
-                    'volgorde' => SORT_ASC
-                ])
-                ->all();
+            if ($group) {
+                $items = $timeTrail->getTimeTrailItemsCheckedByGroup($group);
+            } else {
+                $items = $timeTrail->getTimeTrailItems();
+            }
             $countitems = 1;
             $kleuren = new CustomMap();
-            foreach ($items as $item) {
+            foreach ($items->all() as $item) {
                 $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_' . $countitems . '.png')]);
                 if ($item->latitude === null) {
                     $latitude = 0.0000;
@@ -497,22 +494,19 @@ class CustomMap extends Map
             $coords = [];
             $modelGroup = $model;
             $modelGroup->where(['group_ID' => $group_ID]);
-//            d($modelGroup);
             foreach ($modelGroup->all() as $item) {
                 $coords[] = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
             }
-//            dd($this->kleuren[$kleur]);
             $polyline = new Polyline([
                 'path' => $coords,
-
                 'map' => 'test',
                 'strokeColor' => $this->kleurenTrack[$kleur],
             ]);
-            //        dd($coords);
+
             // Add a shared info window
-//            $polyline->attachInfoWindow(new InfoWindow([
-//                'content' => '<p>This is my super cool Polygon</p>'
-//            ]));
+            $polyline->attachInfoWindow(new InfoWindow([
+                'content' => '<p>' . $group_name . '</p>'
+            ]));
 
             // Add it now to the map
             $this->addOverlay($polyline);

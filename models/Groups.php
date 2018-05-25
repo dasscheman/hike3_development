@@ -344,7 +344,11 @@ class Groups extends HikeActiveRecord
      */
     public function getTracks()
     {
-        return $this->hasMany(Track::className(), ['group_ID' => 'group_ID']);
+        return $this->hasMany(Track::className(), ['group_ID' => 'group_ID'])
+            ->orderBy([
+                'timestamp' => SORT_ASC,
+                'create_time' => SORT_ASC
+            ]);
     }
 
     public function getTotal_score()

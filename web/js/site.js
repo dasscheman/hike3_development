@@ -43,7 +43,7 @@ window.onload = function() {
     tracker.setSavingInterval(5000);
     tracker.setGPSConfiguration({
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 10000,
         maximumAge: 18000000
     });
 

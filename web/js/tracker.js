@@ -97,7 +97,7 @@ function Tracker() {
 
                 },
                 error: function(jqXHR, errMsg, data) {
-                    alert(errMsg + data);
+                    console.log(errMsg + data);
                 }
             });
         };
