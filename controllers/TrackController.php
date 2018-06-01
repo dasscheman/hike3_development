@@ -120,9 +120,6 @@ class TrackController extends Controller
                 ':user_id' => Yii::$app->user->id
             ]
         );
-//            ->all();
-//        $models->delete();
-
         return $this->redirect(['index']);
     }
 
@@ -133,6 +130,10 @@ class TrackController extends Controller
         }
 
         if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart) {
+            return Json::encode(false);
+        }
+        $track = new Track;
+        if (!$track->checkInterval()) {
             return Json::encode(false);
         }
         return Json::encode(true);
