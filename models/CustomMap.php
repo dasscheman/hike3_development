@@ -14,11 +14,13 @@ use dosamigos\google\maps\overlays\Marker;
 use dosamigos\google\maps\overlays\InfoWindow;
 use dosamigos\google\maps\overlays\Polyline;
 use dosamigos\google\maps\Event;
+use dosamigos\google\maps\overlays\SymbolPath;
+use dosamigos\google\maps\overlays\Symbol;
 
 class CustomMap extends Map
 {
     public $kleuren = ['rood', 'geel', 'blauw', 'oranje', 'paars', 'groen'];
-    public $kleurenTrack = ['red', 'yellow', 'blue', 'orange', 'purple', 'green'];
+    public $kleurenTrack = ['red', 'yellow', 'blue', 'orange', 'purple', 'green', 'red', 'yellow', 'blue', 'orange', 'purple', 'green'];
     public $counts = [];
 
     /**
@@ -61,7 +63,7 @@ class CustomMap extends Map
                 'date' => $date
             ]);
         }
-        
+
         if (!$model->exists()) {
             return;
         }
@@ -103,7 +105,7 @@ class CustomMap extends Map
                     }
                     $binnenkomst = \Yii::$app->formatter->asDate($passage->binnenkomst, 'php:d-M H:i');
                     $vertrek = \Yii::$app->formatter->asDate($passage->vertrek, 'php:d-M H:i');
-                    $content .= $passage->getGroup()->one()->group_name . ' <i>' . $binnenkomst . ' - ' . $vertrek . '</i></br>';
+                    $content .= $passage->getGroupName() . ' <i>' . $binnenkomst . ' - ' . $vertrek . '</i></br>';
                     $count++;
                 }
             }
@@ -137,7 +139,7 @@ class CustomMap extends Map
                 'route_ID' => $route_id
             ]);
         }
-        
+
         if (!$model->exists()) {
             return;
         }
@@ -181,7 +183,7 @@ class CustomMap extends Map
                         $content = 'Silent station ' . $check->getQr()->one()->qr_name . '<br>';
                     }
                     $binnenkomst = \Yii::$app->formatter->asDate($check->create_time, 'php:d-M H:i');
-                    $content .= $check->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
+                    $content .= $check->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
             }
@@ -262,7 +264,7 @@ class CustomMap extends Map
                         $content = 'Hints ' . $hint->getNoodEnvelop()->one()->nood_envelop_name . '<br>';
                     }
                     $binnenkomst = \Yii::$app->formatter->asDate($hint->create_time, 'php:d-M H:i');
-                    $content .= $hint->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
+                    $content .= $hint->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
             }
@@ -296,7 +298,7 @@ class CustomMap extends Map
                 'route_ID' => $route_id
             ]);
         }
-        
+
         if (!$model->exists()) {
             return;
         }
@@ -349,7 +351,7 @@ class CustomMap extends Map
                     } else {
                         $icon2 = 'glyphicon glyphicon-question-sign';
                     }
-                    $content .= '<span class="' . $icon2 . '"></span> ' . $vraag->getGroup()->one()->group_name . ' <i>' . $binnenkomst .'</i></br>';
+                    $content .= '<span class="' . $icon2 . '"></span> ' . $vraag->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
             }
@@ -386,7 +388,7 @@ class CustomMap extends Map
         if (!$model->exists()) {
             return;
         }
-
+//        return;
         $kleur = 0;
         foreach ($model->all() as $timeTrail) {
             if ($group) {
@@ -399,6 +401,7 @@ class CustomMap extends Map
             if ($items->all() == null) {
                 continue;
             }
+
             foreach ($items->all() as $item) {
                 $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_' . $countitems . '.png')]);
                 if ($item->latitude === null) {
@@ -448,7 +451,7 @@ class CustomMap extends Map
                         } else {
                             $icon2 = 'glyphicon glyphicon-question-sign';
                         }
-                        $content .= '<span class="' . $icon2 . '"></span> ' . $check->getGroup()->one()->group_name . ' <i>' . $start . ' - ' . $eind . '</i></br>';
+                        $content .= '<span class="' . $icon2 . '"></span> ' . $check->getGroupName() . ' <i>' . $start . ' - ' . $eind . '</i></br>';
                         $countgroups++;
                     }
                 }
@@ -491,31 +494,41 @@ class CustomMap extends Map
             return;
         }
         $groups = Groups::getGroupOptionsForEvent();
-
-        $kleur = 0;
+        
+        $color_count = 0;
         foreach ($groups as $group_ID => $group_name) {
-            $coords = [];
+            $coord = null;
             $modelGroup = $model;
             $modelGroup->where(['group_ID' => $group_ID]);
-            foreach ($modelGroup->all() as $item) {
-                $coords[] = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
+            $icon = new Symbol([
+                'path' => SymbolPath::CIRCLE,
+                'strokeColor' => $this->kleurenTrack[$color_count],
+                'scale' => 5]);
+
+            $db = \yii\db\ActiveRecord::getDb();
+            $models = $db->cache(function ($db) use ($modelGroup) {
+                return $modelGroup->all();
+            });
+
+            foreach ($models as $item) {
+                $coord = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
+                // Lets add a marker now
+                $marker = new Marker([
+                    'position' => $coord,
+                    'title' => $group_name,
+                    'icon' => $icon,
+                ]);
+                // Add a shared info window
+                $marker->attachInfoWindow(new InfoWindow([
+                    'content' => '<p>' . $item->getUserName() . ' (' . $group_name . '): ' . \Yii::$app->formatter->asDate($item->timestamp, 'php:d-M H:i') . '</p>'
+                ]));
+
+                $this->addOverlay($marker);
             }
-            $polyline = new Polyline([
-                'path' => $coords,
-                'map' => 'test',
-                'strokeColor' => $this->kleurenTrack[$kleur],
-            ]);
-
-            // Add a shared info window
-            $polyline->attachInfoWindow(new InfoWindow([
-                'content' => '<p>' . $group_name . '</p>'
-            ]));
-
-            // Add it now to the map
-            $this->addOverlay($polyline);
+            $color_count++;
         }
     }
-    
+
     public function getEvent($link, $id)
     {
         $event = new Event([

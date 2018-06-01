@@ -74,7 +74,8 @@ class OpenNoodEnvelop extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -131,10 +132,23 @@ class OpenNoodEnvelop extends HikeActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+
+    /**
      * Retrieves a list of statussen
      * @return array an array of available statussen.
      */
-    public function getStatusOptions() {
+    public function getStatusOptions()
+    {
         return [
             self::STATUS_closed => Yii::t('app', 'Closed'),
             self::STATUS_open => Yii::t('app', 'Opened'),
@@ -142,48 +156,51 @@ class OpenNoodEnvelop extends HikeActiveRecord
     }
 
 
-	public function envelopIsOpenedByAnyGroup($nood_envelop_id,
-					     $event_id)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $nood_envelop_id AND
+    public function envelopIsOpenedByAnyGroup(
+        $nood_envelop_id,
+                         $event_id
+    ) {
+        $criteria = new CDbCriteria;
+        $criteria->condition="nood_envelop_ID = $nood_envelop_id AND
 				      event_ID = $event_id AND
 				      opened = 1";
-		$data = OpenNoodEnvelop::find($criteria);
-		if(isset($data->open_nood_envelop_ID))
-			{return(true);}
-		else
-			{return(false);}
-	}
+        $data = OpenNoodEnvelop::find($criteria);
+        if (isset($data->open_nood_envelop_ID)) {
+            return(true);
+        } else {
+            return(false);
+        }
+    }
 
-	public function isEnvelopOpenByGroup($nood_envelop_id,
-					     $event_id,
-					     $group_id)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="nood_envelop_ID = $nood_envelop_id AND
+    public function isEnvelopOpenByGroup(
+        $nood_envelop_id,
+                         $event_id,
+                         $group_id
+    ) {
+        $criteria = new CDbCriteria;
+        $criteria->condition="nood_envelop_ID = $nood_envelop_id AND
 				      event_ID = $event_id AND
 				      group_ID = $group_id AND
 				      opened = 1";
-		$data = OpenNoodEnvelop::find($criteria);
-		if(isset($data->open_nood_envelop_ID))
-			{return(true);}
-		else
-			{return(false);}
-	}
+        $data = OpenNoodEnvelop::find($criteria);
+        if (isset($data->open_nood_envelop_ID)) {
+            return(true);
+        } else {
+            return(false);
+        }
+    }
 
-	public function getOpenEnvelopScore($group_id)
-	{
-		$data = OpenNoodEnvelop::find()
+    public function getOpenEnvelopScore($group_id)
+    {
+        $data = OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND opened =:status')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':status' => self::STATUS_open])
             ->all();
 
         $score = 0;
-    	foreach($data as $item)
-        {
+        foreach ($data as $item) {
             $score = $score + $item->noodEnvelop->score;
         }
         return $score;
-	}
+    }
 }

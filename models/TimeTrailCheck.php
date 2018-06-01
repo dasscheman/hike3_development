@@ -100,6 +100,18 @@ class TimeTrailCheck extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTimeTrailItem()
     {
         return $this->hasOne(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID']);

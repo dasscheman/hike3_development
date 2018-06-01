@@ -69,7 +69,8 @@ class QrCheck extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -104,6 +105,18 @@ class QrCheck extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getQr()
     {
         return $this->hasOne(Qr::className(), ['qr_ID' => 'qr_ID']);
@@ -121,42 +134,42 @@ class QrCheck extends HikeActiveRecord
      * Checks if qr id is used by any group.
      */
     public function isQrUsed($qr_id)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->condition="qr_ID =$qr_id";
-		return QrCheck::exists($criteria);
-	}
+    {
+        $criteria = new CDbCriteria;
+        $criteria->condition="qr_ID =$qr_id";
+        return QrCheck::exists($criteria);
+    }
 
-	public function existQrCodeForGroup($event_id, $qr_id, $groupPlayer)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->select='qr_check_ID as qr_check_ID';
-		//$criteria->select='score as score';                           //Aangepast voor hike
-		$criteria->condition="event_ID = $event_id AND
+    public function existQrCodeForGroup($event_id, $qr_id, $groupPlayer)
+    {
+        $criteria = new CDbCriteria;
+        $criteria->select='qr_check_ID as qr_check_ID';
+        //$criteria->select='score as score';                           //Aangepast voor hike
+        $criteria->condition="event_ID = $event_id AND
                               qr_ID =$qr_id AND
                               group_ID = $groupPlayer";
-		$data = QrCheck::find($criteria);
-		if(isset($data->qr_check_ID))
-			{ return(true);}
-		else
-			{ return(false);}
-	}
+        $data = QrCheck::find($criteria);
+        if (isset($data->qr_check_ID)) {
+            return(true);
+        } else {
+            return(false);
+        }
+    }
 
-	/**
-	 * Returns de score voor het checken van de stillen posten voor een groep
-	 */
-	public function getQrScore($group_id)
-	{
+    /**
+     * Returns de score voor het checken van de stillen posten voor een groep
+     */
+    public function getQrScore($group_id)
+    {
         $data = QrCheck::find()
             ->where('event_ID =:event_id AND group_ID =:group_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id])
             ->all();
 
         $score = 0;
-    	foreach($data as $item)
-        {
+        foreach ($data as $item) {
             $score = $score + $item->qr->score;
         }
         return $score;
-	}
+    }
 }

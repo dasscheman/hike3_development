@@ -77,7 +77,8 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     /**
      * De het veld event_ID wordt altijd gezet.
      */
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
         if (parent::beforeValidate()) {
             $this->event_ID = Yii::$app->user->identity->selected_event_ID;
             return(true);
@@ -112,6 +113,18 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getUpdateUser()
     {
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
@@ -132,13 +145,11 @@ class OpenVragenAntwoorden extends HikeActiveRecord
      */
     public function beforeSave($insert)
     {
-        if(!parent::beforeSave($insert))
-        {
+        if (!parent::beforeSave($insert)) {
             return false;
         }
 
-        if($this->isNewRecord)
-        {
+        if ($this->isNewRecord) {
             $this->correct = 0;
             $this->checked = 0;
         }
@@ -152,12 +163,11 @@ class OpenVragenAntwoorden extends HikeActiveRecord
     {
         $data = OpenVragenAntwoorden::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND checked =:checked AND correct =:correct')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':checked' => TRUE, ':correct' => TRUE])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id, ':checked' => true, ':correct' => true])
             ->all();
 
         $score = 0;
-    	foreach($data as $item)
-        {
+        foreach ($data as $item) {
             $score = $score + $item->openVragen->score;
         }
         return $score;
@@ -174,9 +184,10 @@ class OpenVragenAntwoorden extends HikeActiveRecord
             ->where('event_ID =:event_id AND open_vragen_antwoorden_ID =:id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':id' => $id])
             ->all();
-        if(isset($data->checked) AND $data->checked == 1)
+        if (isset($data->checked) and $data->checked == 1) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 }

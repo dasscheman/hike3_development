@@ -121,6 +121,18 @@ class PostPassage extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPost()
     {
         return $this->hasOne(Posten::className(), ['post_ID' => 'post_ID']);

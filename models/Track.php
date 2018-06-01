@@ -102,6 +102,18 @@ class Track extends HikeActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getGroupName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Groups::className(), ['group_ID' => 'group_ID'])->one()->group_name;
+        });
+        return $data;
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getUpdateUser()
     {
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
@@ -113,5 +125,35 @@ class Track extends HikeActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::className(), ['id' => 'user_ID']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserName()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            return $this->hasOne(Users::className(), ['id' => 'user_ID'])->one()->voornaam;
+        });
+        return $data;
+    }
+
+    public function checkInterval()
+    {
+        $model = Track::find()
+            ->select('timestamp')
+            ->where('event_ID =:event_id AND user_ID =:user_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
+            ->orderBy(['timestamp' => SORT_DESC])
+            ->one();
+        
+        $time_diff = time() - $model->timestamp;
+        
+        
+        if ($time_diff > 60 * 5) {
+            return true;
+        }
+        return false;
     }
 }

@@ -249,14 +249,18 @@ class Users extends BaseUser
      */
     public function getRolUserForEvent()
     {
-        $deelnemer = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
-            ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
-            
-        if ($deelnemer->exists()) {
-            return $deelnemer->one()->rol;
-        }
-        return false;
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            $deelnemer = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+                ->where('event_ID =:event_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
+
+            if ($deelnemer->exists()) {
+                return $deelnemer->one()->rol;
+            }
+            return false;
+        });
+        return $data;
     }
 
     /**
