@@ -12,15 +12,16 @@ use dosamigos\google\maps\overlays\Icon;
 use dosamigos\google\maps\LatLng;
 use dosamigos\google\maps\overlays\Marker;
 use dosamigos\google\maps\overlays\InfoWindow;
-use dosamigos\google\maps\overlays\Polyline;
 use dosamigos\google\maps\Event;
 use dosamigos\google\maps\overlays\SymbolPath;
 use dosamigos\google\maps\overlays\Symbol;
+use app\components\GeneralFunctions;
+use yii\db\ActiveQuery;
+use yii\caching\TagDependency;
 
 class CustomMap extends Map
 {
     public $kleuren = ['rood', 'geel', 'blauw', 'oranje', 'paars', 'groen'];
-    public $kleurenTrack = ['red', 'yellow', 'blue', 'orange', 'purple', 'green', 'red', 'yellow', 'blue', 'orange', 'purple', 'green'];
     public $counts = [];
 
     /**
@@ -343,15 +344,11 @@ class CustomMap extends Map
                     }
                     $binnenkomst = \Yii::$app->formatter->asDate($vraag->create_time, 'php:d-M H:i');
                     if ($vraag->checked) {
-                        if ($vraag->correct) {
-                            $icon2 = 'glyphicon glyphicon-ok-sign';
-                        } else {
-                            $icon2 = 'glyphicon glyphicon-remove-sign';
-                        }
+                        $icon2 = GeneralFunctions::printGlyphiconCheck($vraag->correct);
                     } else {
-                        $icon2 = 'glyphicon glyphicon-question-sign';
+                        $icon2 = '<span class="glyphicon glyphicon-question-sign"></span> ';
                     }
-                    $content .= '<span class="' . $icon2 . '"></span> ' . $vraag->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
+                    $content .= $icon2 . ' ' . $vraag->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
                 }
             }
@@ -388,7 +385,7 @@ class CustomMap extends Map
         if (!$model->exists()) {
             return;
         }
-//        return;
+
         $kleur = 0;
         foreach ($model->all() as $timeTrail) {
             if ($group) {
@@ -443,15 +440,11 @@ class CustomMap extends Map
                         $start = \Yii::$app->formatter->asDate($check->start_time, 'php:d-M H:i');
                         $eind = \Yii::$app->formatter->asDate($check->end_time, 'php:d-M H:i');
                         if (isset($check->end_time)) {
-                            if ($check->succeded) {
-                                $icon2 = 'glyphicon glyphicon-ok-sign';
-                            } else {
-                                $icon2 = 'glyphicon glyphicon-remove-sign';
-                            }
+                            $icon2 = GeneralFunctions::printGlyphiconCheck($check->succeded);
                         } else {
-                            $icon2 = 'glyphicon glyphicon-question-sign';
+                            $icon2 = '<span class="glyphicon glyphicon-question-sign"></span> ';
                         }
-                        $content .= '<span class="' . $icon2 . '"></span> ' . $check->getGroupName() . ' <i>' . $start . ' - ' . $eind . '</i></br>';
+                        $content .= $icon2 . ' ' . $check->getGroupName() . ' <i>' . $start . ' - ' . $eind . '</i></br>';
                         $countgroups++;
                     }
                 }
@@ -495,37 +488,11 @@ class CustomMap extends Map
         }
         $groups = Groups::getGroupOptionsForEvent();
         
-        $color_count = 0;
         foreach ($groups as $group_ID => $group_name) {
-            $coord = null;
-            $modelGroup = $model;
-            $modelGroup->where(['group_ID' => $group_ID]);
-            $icon = new Symbol([
-                'path' => SymbolPath::CIRCLE,
-                'strokeColor' => $this->kleurenTrack[$color_count],
-                'scale' => 5]);
-
-            $db = \yii\db\ActiveRecord::getDb();
-            $models = $db->cache(function ($db) use ($modelGroup) {
-                return $modelGroup->all();
-            });
-
-            foreach ($models as $item) {
-                $coord = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
-                // Lets add a marker now
-                $marker = new Marker([
-                    'position' => $coord,
-                    'title' => $group_name,
-                    'icon' => $icon,
-                ]);
-                // Add a shared info window
-                $marker->attachInfoWindow(new InfoWindow([
-                    'content' => '<p>' . $item->getUserName() . ' (' . $group_name . '): ' . \Yii::$app->formatter->asDate($item->timestamp, 'php:d-M H:i') . '</p>'
-                ]));
-
-                $this->addOverlay($marker);
-            }
-            $color_count++;
+            $this->addGroupTracks($model, $group_ID, $group_name);
+        }
+        if ($group === null) {
+            $this->addOrganisationTracks($model);
         }
     }
 
@@ -570,6 +537,79 @@ class CustomMap extends Map
         return $event;
     }
 
+    public function addGroupTracks(ActiveQuery $model, $group_ID, $group_name)
+    {
+        $coord = null;
+        $modelGroup = $model;
+        $modelGroup->where(['group_ID' => $group_ID]);
+
+        $db = \yii\db\ActiveRecord::getDb();
+        $models = $db->cache(function ($db) use ($modelGroup) {
+            return $modelGroup->all();
+        }, 3600, new TagDependency(['tags'=>['tracks_group_' . $group_ID]]));
+
+        foreach ($models as $item) {
+            if (!$item->getColorUserForEvent()) {
+                continue;
+            }
+            $icon = new Symbol([
+                'path' => SymbolPath::CIRCLE,
+                'strokeColor' => $item->getColorUserForEvent(),
+                'scale' => 4]);
+            $coord = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
+            // Lets add a marker now
+            $marker = new Marker([
+                'position' => $coord,
+                'title' => $group_name,
+                'icon' => $icon,
+            ]);
+            // Add a shared info window
+            $marker->attachInfoWindow(new InfoWindow([
+                'content' => $item->getUserName() . ' (' . $group_name . '): ' . \Yii::$app->formatter->asDate($item->timestamp, 'php:d-M H:i')
+            ]));
+
+            $this->addOverlay($marker);
+        }
+    }
+    
+    public function addOrganisationTracks($model)
+    {
+        $organisations = DeelnemersEvent::getOrganisationCurrentGame();
+        foreach ($organisations as $organisation) {
+            $modelUser = $model;
+            $modelUser->where(['user_ID' => $organisation->user_ID]);
+            $modelUser->orderBy(['timestamp' => SORT_DESC]);
+            $modelUser->limit(10);
+            $db = \yii\db\ActiveRecord::getDb();
+            $models = $db->cache(function ($db) use ($modelUser) {
+                return $modelUser->all();
+            }, 3600, new TagDependency(['tags'=>['tracks_user_' . $organisation->user_ID]]));
+
+            foreach ($models as $item) {
+                if (!$item->getColorUserForEvent()) {
+                    continue;
+                }
+                $icon = new Symbol([
+                    'path' => SymbolPath::CIRCLE,
+                    'strokeColor' => $item->getColorUserForEvent(),
+                    'scale' => 4]);
+                $coord = new LatLng(['lat' => $item->latitude, 'lng' => $item->longitude]);
+                // Lets add a marker now
+                $marker = new Marker([
+                    'position' => $coord,
+                    'title' => $item->getUserName(),
+                    'icon' => $icon,
+                ]);
+                // Add a shared info window
+                $marker->attachInfoWindow(new InfoWindow([
+                    'content' => $item->getUserName() . ': ' . \Yii::$app->formatter->asDate($item->timestamp, 'php:d-M H:i')
+                ]));
+
+                $this->addOverlay($marker);
+            }
+        }
+    }
+    
     /**
      * Finds the Groups model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

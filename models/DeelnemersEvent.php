@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\components\GeneralFunctions;
 
 /**
  * This is the model class for table "tbl_deelnemers_event".
@@ -16,6 +17,7 @@ use Yii;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property string $color
  *
  * @property Users $createUser
  * @property EventNames $event
@@ -46,7 +48,8 @@ class DeelnemersEvent extends HikeActiveRecord
         return [
             [['event_ID', 'user_ID'], 'required'],
             [['event_ID', 'user_ID', 'rol', 'group_ID', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['event_ID','create_time', 'update_time'], 'safe'],
+            [['event_ID','create_time', 'update_time','color'], 'safe'],
+            [['color'], 'string', 'max' => 255],
             [
                 ['event_ID', 'user_ID'],
                 'unique',
@@ -71,6 +74,48 @@ class DeelnemersEvent extends HikeActiveRecord
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
+    }
+
+    /**
+     * De het veld active day wordt gezet afhankelijk van de status.
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->color === null) {
+                // Als er nog geen kleur is toegevoegd, dan moet deze bepaald en gezet worden.
+                $generalfucntions = new GeneralFunctions;
+                $colors = $generalfucntions->colors;
+                foreach ($colors as $color) {
+                    $data = DeelnemersEvent::find()
+                        ->where('event_ID = :event_Id AND color=:color')
+                        ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':color' => $color]);
+
+                    if ($data->exists()) {
+                        continue;
+                    }
+                    $this->color = $color;
+                    return true;
+                }
+                
+                $search_color = true;
+                while ($search_color) {
+                    $hexcolor = $generalfucntions->random_color();
+                    $data = DeelnemersEvent::find()
+                        ->where('event_ID = :event_Id AND color=:color')
+                        ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':color' => $color]);
+                    if ($data->exists()) {
+                        continue;
+                    }
+                    $this->color = $color;
+                    $search_color = false;
+                    return true;
+                }
+            }
+
+            return(true);
+        }
+        return(false);
     }
 
     /**
@@ -193,6 +238,29 @@ class DeelnemersEvent extends HikeActiveRecord
             return $data->rol;
         }
         return false;
+    }
+
+    /**
+     * @return all players which are organisation, post or toeschouwer.
+     */
+    public function getOrganisationCurrentGame()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            $model = DeelnemersEvent::find()
+                ->where('event_ID =:event_id AND (rol =:organisatie OR rol =:post OR rol =:toeschouwer)')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':organisatie' => DeelnemersEvent::ROL_organisatie,
+                    ':post' => DeelnemersEvent::ROL_post,
+                    ':toeschouwer' => DeelnemersEvent::ROL_toeschouwer
+                ]);
+            if ($model->exists()) {
+                return $model->all();
+            }
+            return false;
+        });
+        return $data;
     }
 
     /**

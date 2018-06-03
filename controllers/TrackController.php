@@ -6,6 +6,7 @@ use Yii;
 use app\models\Track;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -100,6 +101,11 @@ class TrackController extends Controller
             if (!$model->save()) {
                 return Json::encode($model->getErrors());
             }
+        }
+        if ($model->group_ID === null) {
+            TagDependency::invalidate(Yii::$app->cache, 'tracks_user_' . $model->user_ID);
+        } else {
+            TagDependency::invalidate(Yii::$app->cache, 'tracks_group_' . $model->group_ID);
         }
         return;
     }

@@ -266,6 +266,25 @@ class Users extends BaseUser
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getColorUserForEvent()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            $deelnemer = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+                ->where('event_ID =:event_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
+
+            if ($deelnemer->exists()) {
+                return $deelnemer->one()->color;
+            }
+            return false;
+        });
+        return $data;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getGroupUserForEvent()
     {
         return $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])

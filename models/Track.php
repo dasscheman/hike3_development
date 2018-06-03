@@ -156,4 +156,26 @@ class Track extends HikeActiveRecord
         }
         return false;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getColorUserForEvent()
+    {
+        $db = self::getDb();
+        $data = $db->cache(function ($db) {
+            $deelnemer = DeelnemersEvent::find()
+                ->where('event_ID =:event_id AND user_ID =:user_id')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':user_id' => $this->user_ID
+                ]);
+
+            if ($deelnemer->exists() && $deelnemer->one()->color !== null) {
+                return $deelnemer->one()->color;
+            }
+            return false;
+        });
+        return $data;
+    }
 }
