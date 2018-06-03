@@ -33,7 +33,7 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => YII_ENV_DEV || YII_ENV_TEST ? true : false,
+            'useFileTransport' => YII_ENV == 'dev' || YII_ENV == 'test' ? true : false,
             'transport' => require(__DIR__ . '/email.php')
         ],
         'urlManager' => [
