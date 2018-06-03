@@ -125,7 +125,7 @@ $config = [
     'params' => $params,
 ];
 
-if (YII_ENV_DEV || YII_ENV_TEST) {
+if (YII_ENV == 'dev' || YII_ENV == 'test') {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
