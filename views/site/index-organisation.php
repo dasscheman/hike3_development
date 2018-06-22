@@ -198,6 +198,7 @@ $this->title = Yii::t('app', 'Hike overview');
                             'browseClass' => 'btn btn-primary btn-block',
                             'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
                             'browseLabel' => '',
+                            'showPreview' => false
                         ]
                     ]);
                     ActiveForm::end();
