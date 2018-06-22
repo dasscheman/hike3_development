@@ -100,7 +100,17 @@ class TimeTrail extends HikeActiveRecord
      */
     public function getTimeTrailItemsCheckedByGroup($group_id)
     {
-        return $this->hasMany(TimeTrailItem::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
-            ->viaTable('tbl_time_trail_check', ['group_ID' => $group_id]);
+        $group = Groups::findOne($group_id);
+        return $group->getTimeTrailItems();
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTimeTrailCheckedByGroup($group_id)
+    {
+        return $this->hasMany(TimeTrailCheck::className(), ['time_trail_item_ID' => 'time_trail_item_ID'])
+            ->where('group_ID='.$group_id)
+            ->via('timeTrailItems');
     }
 }
