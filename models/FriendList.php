@@ -232,7 +232,7 @@ class FriendList extends HikeActiveRecord
                 'mailUsersEmailReceiver' => $this->friendsWithUser->email,
             ])
             ->setFrom('noreply@biologenkantoor.nl')
-            ->setTo($this->user->email)
+            ->setTo($this->friendsWithUser->email)
             ->setCc($this->user->email)
             ->setSubject('Friend request on hike-app')
             ->send();
