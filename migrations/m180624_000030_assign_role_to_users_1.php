@@ -6,7 +6,7 @@ use yii\db\Migration;
 /**
  * Class m171104_143306_update_rbac_data
  */
-class m180624_000030_assign_role_to_users extends Migration
+class m180624_000030_assign_role_to_users_1 extends Migration
 {
 
     /**
