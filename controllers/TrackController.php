@@ -81,7 +81,8 @@ class TrackController extends Controller
             return Json::encode(false);
         }
 
-        if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart) {
+        if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart && 
+            Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_introductie) {
             return Json::encode(false);
         }
 
