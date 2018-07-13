@@ -21,6 +21,7 @@ $config = [
             //'supportedLanguages' => ['en_US', 'nl_NL'],
         ],
         'app\components\Bootstrap',
+        'devicedetect'
     ],
     'modules' => [
         'user' => [
@@ -121,6 +122,9 @@ $config = [
             ]
         ],
         'db' => require(__DIR__ . '/db.php'),
+        'devicedetect' => [
+		'class' => 'alexandernst\devicedetect\DeviceDetect'
+	],
     ],
     'params' => $params,
 ];

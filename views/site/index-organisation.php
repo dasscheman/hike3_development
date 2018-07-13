@@ -20,12 +20,15 @@ $this->title = Yii::t('app', 'Hike overview');
         <h1><?= Html::encode($this->title) ?></h1>
         <div class="row">
             <div class="col-sm-3 well">
-                <?php
+                <?php                
                 echo CustomAlertBlock::widget([
                     'type' => CustomAlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
                     'delay' => FALSE,
                 ]);
+                Modal::begin(['id'=>'main-modal']);
+                echo '<div id="main-content-modal"></div>';
+                Modal::end();
                 ?>
                 <div class="well">
                     <h3><?php echo $eventModel->event_name ?></h3>
@@ -149,35 +152,27 @@ $this->title = Yii::t('app', 'Hike overview');
                 ]);
                 ?>
             </div>
-
-            <div class="col-sm-6">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <?php
-                        Modal::begin(['id'=>'main-modal']);
-                        echo '<div id="main-content-modal"></div>';
-                        Modal::end();
-                        ?>
-                    </div>
-                </div>
-                <?php
-                echo ListView::widget([
-                    'summary' => FALSE,
-                    'pager' => [
-                        'prevPageLabel' => Yii::t('app', 'previous'),
-                        'nextPageLabel' => Yii::t('app', 'next'),
-                        'maxButtonCount' => 5,
-                        'options' => [
-                           'class' => 'pagination pagination-sm',
+            <?php
+            if(!Yii::$app->devicedetect->isMobile()) { ?>
+                <div class="col-sm-6">
+                    <?php
+                    echo ListView::widget([
+                        'summary' => FALSE,
+                        'pager' => [
+                            'prevPageLabel' => Yii::t('app', 'previous'),
+                            'nextPageLabel' => Yii::t('app', 'next'),
+                            'maxButtonCount' => 5,
+                            'options' => [
+                               'class' => 'pagination pagination-sm',
+                            ],
                         ],
-                    ],
-                    'dataProvider' => $activityFeed,
-                    'itemView' => '/groups/_list-feed',
-                    'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
-                ]);
-                ?>
-            </div>
-
+                        'dataProvider' => $activityFeed,
+                        'itemView' => '/groups/_list-feed',
+                        'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
+                    ]);
+                    ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-3 well">
                 <div class="thumbnail">
                     <?php
@@ -379,9 +374,27 @@ $this->title = Yii::t('app', 'Hike overview');
                     'itemView' => '/deelnemers-event/_list',
                     'emptyText' => Yii::t('app', 'No organisation.'),
                 ]); ?>
-        
-
             </div>
+            <?php
+            if(Yii::$app->devicedetect->isMobile()) {?>
+                <div class="col-sm-3 well">
+                    <?php
+                    echo ListView::widget([
+                        'summary' => FALSE,
+                        'pager' => [
+                            'prevPageLabel' => Yii::t('app', 'previous'),
+                            'nextPageLabel' => Yii::t('app', 'next'),
+                            'maxButtonCount' => 5,
+                            'options' => [
+                               'class' => 'pagination pagination-sm',
+                            ],
+                        ],
+                        'dataProvider' => $activityFeed,
+                        'itemView' => '/groups/_list-feed',
+                        'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
+                    ]); ?>
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>

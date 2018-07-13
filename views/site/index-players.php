@@ -20,6 +20,10 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     'useSessionFlash' => true,
                     'delay' => FALSE,
                 ]);
+                
+                Modal::begin(['id'=>'main-modal']);
+                echo '<div id="main-content-modal"></div>';
+                Modal::end();
                 ?>
 
                 <div class="row">
@@ -88,33 +92,27 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <?php
-                        Modal::begin(['id'=>'main-modal']);
-                        echo '<div id="main-content-modal"></div>';
-                        Modal::end();
-                        ?>
-                    </div>
-                </div>
-                <?php
-                echo ListView::widget([
-                  'summary' => FALSE,
-                  'pager' => [
-                      'prevPageLabel' => Yii::t('app', 'previous'),
-                      'nextPageLabel' => Yii::t('app', 'next'),
-                      'maxButtonCount' => 3,
-                      'options' => [
-                         'class' => 'pagination pagination-sm',
+            <?php
+            if(!Yii::$app->devicedetect->isMobile()) { ?>
+                <div class="col-sm-6">
+                    <?php
+                    echo ListView::widget([
+                      'summary' => FALSE,
+                      'pager' => [
+                          'prevPageLabel' => Yii::t('app', 'previous'),
+                          'nextPageLabel' => Yii::t('app', 'next'),
+                          'maxButtonCount' => 3,
+                          'options' => [
+                             'class' => 'pagination pagination-sm',
+                          ],
                       ],
-                  ],
-                  'dataProvider' => $activityFeed,
-                  'itemView' => '/groups/_list-feed',
-                  'emptyText' => 'Er is nog geen activiteit bij dit profiel.',
-                ]);
-                ?>
-            </div>
+                      'dataProvider' => $activityFeed,
+                      'itemView' => '/groups/_list-feed',
+                      'emptyText' => 'Er is nog geen activiteit bij dit profiel.',
+                    ]);
+                    ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-3 well">
                 <div class="well">
                     <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
@@ -132,6 +130,20 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <?php echo Yii::$app->controller->renderPartial('/bonuspunten/view-dashboard', ['model' => $bonusData]); ?>
                 </div>
             </div>
+            <?php
+            if(Yii::$app->devicedetect->isMobile()) {?>
+                <div class="col-sm-3 well">
+                    <?php
+                        echo ListView::widget([
+                                'summary' => FALSE,
+                            'pager' => FALSE,
+                            'dataProvider' => $timeTrailCheckDataLastItem,
+                            'itemView' => '/time-trail/_list',
+                            'emptyText' => FALSE,
+                        ]);
+                    ?>
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>

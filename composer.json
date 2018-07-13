@@ -39,7 +39,8 @@
         "russ666/yii2-countdown": "*",
         "dektrium/yii2-user": "dev-master",
         "dektrium/yii2-rbac": "@dev",
-        "yiidoc/yii2-redactor": "@dev"
+        "yiidoc/yii2-redactor": "@dev",
+        "alexandernst/yii2-device-detect": "0.0.12"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
