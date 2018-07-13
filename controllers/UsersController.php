@@ -133,32 +133,6 @@ class UsersController extends Controller
     }
 
     /**
-     * Creates a new TblUsers model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Users();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $assignment = new Assignment;
-            $assignment->item_name = 'gebruiker';
-            $assignment->user_id = $model->user_ID;
-            $assignment->save();
-            $emailSend = $model->sendEmailNewAccount();
-            if ($emailSend) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'You created an account and you can logon.'));
-                return $this->redirect(['/site/login']);
-            } else {
-                throw new \yii\web\HttpException(400, Yii::t('app', 'Your account is created, but unfortunately we could not send an email with details. Contact hike-app@biologenkantoor.nl'));
-            }
-        }
-        return $this->render('create', [
-                'model' => $model,
-        ]);
-    }
-
-    /**
      * Updates an existing TblUsers model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
