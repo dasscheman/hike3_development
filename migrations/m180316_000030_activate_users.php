@@ -29,7 +29,6 @@ class m180316_000030_activate_users extends Migration {
      * @inheritdoc
      */
     public function safeDown() {
-        $this->truncateTable('auth_assignment');
     }
 
 }
