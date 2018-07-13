@@ -110,7 +110,7 @@ class Users extends BaseUser
             [['voornaam', 'achternaam', 'email'], 'required', 'on' =>  ['connect', 'create', 'update'],],
             [['confirmed_at', 'blocked_at', 'created_at', 'updated_at', 'flags', 'last_login_at',
                 'create_user_ID', 'update_user_ID', 'selected_event_ID'], 'integer'],
-            [['birthdate', 'organisatie', 'create_time', 'update_time', 'password_repeat','password', 'created_at', 'updated_at'], 'safe'],
+            [['birthdate', 'organisatie', 'voornaam', 'achternaam', 'email', 'create_time', 'update_time', 'password_repeat','password', 'created_at', 'updated_at'], 'safe'],
             [['search_friends'], 'string', 'min'=>3],
             [['username', 'email', 'unconfirmed_email'], 'string', 'max' => 255],
             ['password_hash', 'string', 'max' => 60],
