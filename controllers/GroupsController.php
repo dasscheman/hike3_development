@@ -31,7 +31,7 @@ class GroupsController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'index-posten'],
+                        'actions' => ['index', 'index-posten', 'index-bonus'],
                         'roles' => ['deelnemer', 'organisatie'],
                     ],
                     [
@@ -85,6 +85,21 @@ class GroupsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index-posten', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    /**
+     * Lists all Groups models.
+     * @return mixed
+     */
+    public function actionIndexBonus()
+    {
+        $searchModel = new GroupsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index-bonus', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
         ]);

@@ -48,18 +48,18 @@ AppAsset::register($this);
                         'label' => Yii::t('app', 'Profiel'),
                         'items' => [
                             [
-                                'label' => Yii::t('app', 'Overview'),
+                                'label' => Yii::t('app', 'Overzicht'),
                                 'url' => ['/users/view'],
                                 'visible' => Yii::$app->user->isGuest ? false : true,
                             ],
                             [
-                                'label' => Yii::t('app', 'Friends'),
+                                'label' => Yii::t('app', 'Vrienden'),
                                 'url' => [
                                     '/users/search-friends'],
                                 'visible' => Yii::$app->user->isGuest ? false : true,
                             ],
                             [
-                                'label' => Yii::t('app', 'Select Hike'),
+                                'label' => Yii::t('app', 'Selecteer Hike'),
                                 'url' => ['/event-names/select-hike'],
                                 'visible' => Yii::$app->user->isGuest ? false : true,
                             ],
@@ -69,17 +69,17 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest ? false : true,
                             ],
                             [
-                                'label' => Yii::t('app', 'Create Account'),
+                                'label' => Yii::t('app', 'Maak Account'),
                                 'url' => ['/users/create', 'language' => 'nl'],
                                 'visible' => Yii::$app->user->isGuest,
                             ],
                             [
-                                'label' => Yii::t('app', 'Forgot Password'),
+                                'label' => Yii::t('app', 'Wachtwoord vergeten'),
                                 'url' => ['/users/resend-password-user', 'language' => 'nl'],
                                 'visible' => Yii::$app->user->isGuest,
                             ],
                             [
-                                'label' => isset(Yii::$app->user->identity->voornaam) ? 'Logout ' . Yii::$app->user->identity->voornaam : '',
+                                'label' => isset(Yii::$app->user->identity->voornaam) ? Yii::t('app', 'Uitloggen') . Yii::$app->user->identity->voornaam : '',
                                 'url' => ['/user/security/logout'],
                                 'linkOptions' => ['data-method' => 'post'],
                                 'visible' => !Yii::$app->user->isGuest,
@@ -90,17 +90,22 @@ AppAsset::register($this);
                         ['label' => Yii::t('app', 'Game'),
                         'items' => [
                             [
-                                'label' => Yii::t('app', 'Overview groups scores'),
+                                'label' => Yii::t('app', 'Overzicht groeps scores'),
                                 'url' => ['/groups/index'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                             [
-                                'label' => Yii::t('app', 'Passed Stations & bonuspoints'),
+                                'label' => Yii::t('app', 'Passed posten'),
                                 'url' => ['/groups/index-posten'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                             [
-                                'label' => Yii::t('app', 'Search hints'),
+                                'label' => Yii::t('app', 'Bonuspunten'),
+                                'url' => ['/groups/index-bonus'],
+                                'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Hints zoeken'),
                                 'url' => ['/nood-envelop/index'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
@@ -108,7 +113,7 @@ AppAsset::register($this);
                         ],
                     !Yii::$app->user->can('organisatie') && !Yii::$app->user->can('deelnemer')? '' :
                         [
-                        'label' => Yii::t('app', 'Map'),
+                        'label' => Yii::t('app', 'Kaart'),
                         'options' => [
                             'id' => 'map-click'],
                             'url' => ['/map/index'],
@@ -119,45 +124,45 @@ AppAsset::register($this);
                             'label' => Yii::t('app', 'Organisatie'),
                             'items' => [
                                 [
-                                    'label' => Yii::t('app', 'Route Overview'),
+                                    'label' => Yii::t('app', 'Route Overzicht'),
                                     'url' => ['/route/index'],
                                     'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('Organisatie')
                                 ],
                                 [
-                                    'label' => Yii::t('app', 'Stations'),
+                                    'label' => Yii::t('app', 'Posten'),
                                     'url' => ['/posten/index'],
                                     'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                 ],
                                 [
-                                    'label' => Yii::t('app', 'Time Trails'),
+                                    'label' => Yii::t('app', 'Tijdritten'),
                                     'url' => ['/time-trail/index'],
                                     'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                 ],
                                 [
-                                    'label' => Yii::t('app', 'Overviews'),
+                                    'label' => Yii::t('app', 'Overzichten'),
                                     'items' => [
                                         [
-                                            'label' => Yii::t('app', 'Activity groups'),
+                                            'label' => Yii::t('app', 'Groepsactiviteit'),
                                             'url' => ['/groups/index-activity'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Opened hints'),
+                                            'label' => Yii::t('app', 'Geopende hints'),
                                             'url' => ['/open-nood-envelop/index'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Silent stations'),
+                                            'label' => Yii::t('app', 'Stille posten'),
                                             'url' => ['/qr-check/index'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Answers'),
+                                            'label' => Yii::t('app', 'Antwoorden'),
                                             'url' => ['/open-vragen-antwoorden/index'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Bonus Points'),
+                                            'label' => Yii::t('app', 'Bonuspunten'),
                                             'url' => ['/bonuspunten/index'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie')
                                         ],
@@ -167,7 +172,7 @@ AppAsset::register($this);
                                     'label' => Yii::t('app', 'Print'),
                                     'items' => [
                                         [
-                                            'label' => Yii::t('app', 'Print all silent stations'),
+                                            'label' => Yii::t('app', 'Print alle stillen posten'),
                                             'url' => ['/qr/print-all-pdf'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
                                             'linkOptions' => [
@@ -175,7 +180,7 @@ AppAsset::register($this);
                                             ]
                                         ],
                                         [
-                                            'label' => Yii::t('app', 'Print all time trails'),
+                                            'label' => Yii::t('app', 'Print alle tijdritten'),
                                             'url' => ['/time-trail-item/print-all-pdf'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
                                             'linkOptions' => [
@@ -221,15 +226,15 @@ AppAsset::register($this);
                         'label' => 'Admin',
                         'items' => [
                             [
-                                'label' => Yii::t('app', 'Users'),
+                                'label' => Yii::t('app', 'Gebruikers'),
                                 'url' => ['/user/admin/index'],
                             ],
                             [
-                                'label' => Yii::t('app', 'Newsletters'),
+                                'label' => Yii::t('app', 'Nieuwsbrief'),
                                 'url' => ['/newsletter/index'],
                             ],
                             [
-                                'label' => Yii::t('app', 'Newsletters que'),
+                                'label' => Yii::t('app', 'Nieuwsbrief verzendrij'),
                                 'url' => ['/newsletter-mail-list/index'],
                             ],
                         ]

@@ -9,7 +9,7 @@ use app\components\CustomAlertBlock;
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
+$this->title = Yii::t('app', 'Overzicht van bonuspunten');
 ?>
 <div class="groups-index-posten">
 
@@ -62,19 +62,7 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
             'contentOptions' => ['class' => 'kv-align-center'],
         ],
         [
-            'attribute' => 'time_walking',
-            'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->displayFormat($model->time_walking, 'time', TRUE);
-            },
-            'visible'=> TRUE,
-            'filter' => FALSE,
-            'contentOptions' => ['class' => 'kv-align-center'],
-        ],
-        [
-            'attribute' => 'time_left',
-            'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->displayFormat($model->time_left, 'time', TRUE);
-            },
+            'attribute' => 'bonus_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
@@ -87,14 +75,13 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
                 return GridView::ROW_COLLAPSED;
             },
             'detail'=>function ($model, $key, $index, $column) {
-                return Yii::$app->controller->renderPartial('/post-passage/view-group', ['model'=>$model]);
+                return Yii::$app->controller->renderPartial('/bonuspunten/view', ['model'=>$model]);
             },
-            'allowBatchToggle' => FALSE,
             'headerOptions'=>['class'=>'kartik-sheet-style'],
             'expandOneOnly'=>true,
-            'expandAllTitle' => Yii::t('app', 'Open posten overzicht'),
-            'expandTitle' => Yii::t('app', 'Open posten overzicht'),
-            'collapseTitle' => Yii::t('app', 'Sluit posten overzicht'),
+            'allowBatchToggle' => FALSE,
+            'expandTitle' => Yii::t('app', 'Open overzicht bonuspunten'),
+            'collapseTitle' => Yii::t('app', 'Sluit overzicht bonuspunten'),
         ],
     ];
 
