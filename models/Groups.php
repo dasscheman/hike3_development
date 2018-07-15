@@ -81,13 +81,20 @@ class Groups extends HikeActiveRecord
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
-            'bonus_score' => Yii::t('app', 'Bonus Score'),
-            'hint_score' => Yii::t('app', 'Hint Penalty'),
+            'bonus_score' => Yii::t('app', 'Bonus'),
+            'hint_score' => Yii::t('app', 'Hints'),
+            'post_score' => Yii::t('app', 'Posten'),
+            'qr_score' => Yii::t('app', 'Stille posten'),
+            'vragen_score' => Yii::t('app', 'Vragen'),
+            'trail_score' => Yii::t('app', 'Tijdritten'),
+            'rank' => Yii::t('app', 'Positie'),
+            'total_score' => Yii::t('app', 'Totaal'),
+            'time_walking' => Yii::t('app', 'Looptijd'),
+            'time_left' => Yii::t('app', 'Te gaan'),
             'users_temp' => Yii::t('app', 'Players'),
             'users_email_temp' => Yii::t('app', 'Players email'),
         ];
     }
-
 
     /**
      * De het veld event_ID wordt altijd gezet.
@@ -122,6 +129,7 @@ class Groups extends HikeActiveRecord
         return $data;
     }
 
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -383,18 +391,6 @@ class Groups extends HikeActiveRecord
         $listData=ArrayHelper::map($data, 'group_ID', 'group_name');
 
         return $listData;
-    }
-
-    /**
-    * Get group name.
-    */
-    public function getGroupName($group_Id)
-    {
-        dd('NOG NODIG ?');
-        $data = Groups::find('group_ID =:group_Id', array(':group_Id' => $group_Id));
-
-        return isset($data->group_name) ?
-        $data->group_name : "";
     }
 
     /**

@@ -9,21 +9,22 @@ use app\components\CustomAlertBlock;
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
+$this->title = Yii::t('app', 'Overzicht van gepasserde posten');
 ?>
 <div class="groups-index-posten">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php
-    $bordered = FALSE;
+    $bordered = TRUE;
     $striped = TRUE;
     $condensed = TRUE;
     $responsive = FALSE;
     $hover = TRUE;
     $pageSummary = FALSE;
     $heading = FALSE;
-    $exportConfig = TRUE;
+    $footer = FALSE;
+    $exportConfig = FALSE;
     $resizableColumns = FALSE;
     $responsiveWrap = FALSE;
 
@@ -57,6 +58,12 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
         ],
         [
             'attribute' => 'rank',
+            'visible'=> TRUE,
+            'filter' => FALSE,
+            'contentOptions' => ['class' => 'kv-align-center'],
+        ],
+        [
+            'attribute' => 'total_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
@@ -113,8 +120,8 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
         'pjax' => TRUE, // pjax is set to always true for this demo
         // set your toolbar
         'toolbar'=> [
-            '{export}',
-            '{toggleData}',
+//            '{export}',
+//            '{toggleData}',
         ],
         // set export properties
         'export' => [
@@ -125,14 +132,17 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde popsten');
         'striped' => $striped,
         'condensed' => $condensed,
         'responsive' => $responsive,
+        'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+        'responsiveWrap' => $responsiveWrap,
         'hover' => $hover,
         'showPageSummary' => $pageSummary,
         'panel' => [
             'type' => GridView::TYPE_INFO,
             'heading' => $heading,
+            'footer' => $footer
         ],
-        'persistResize' => false,
-        //'exportConfig' => $exportConfig,
+        'persistResize' => false,   
+        'exportConfig' => $exportConfig,
     ]); ?>
 
 </div>

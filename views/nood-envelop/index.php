@@ -10,12 +10,22 @@ use yii\bootstrap\Modal;
 /* @var $searchModel app\models\NoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Search hints');
+$this->title = Yii::t('app', 'Hints zoeken');
 ?>
 <div class="nood-envelop-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
+    $bordered = false;
+    $striped = true;
+    $condensed = true;
+    $responsive = false;
+    $hover = true;
+    $pageSummary = false;
+    $heading = false;
+    $exportConfig = true;
+    $responsiveWrap = false;
+    
     Modal::begin(['id' => 'main-modal']);
     echo '<div id="main-content-modal"></div>';
     Modal::end();
@@ -56,15 +66,6 @@ $this->title = Yii::t('app', 'Search hints');
         ],
     ];
 
-    $bordered = false;
-    $striped = true;
-    $condensed = true;
-    $responsive = false;
-    $hover = true;
-    $pageSummary = false;
-    $heading = false;
-    $exportConfig = false;
-
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -72,7 +73,8 @@ $this->title = Yii::t('app', 'Search hints');
         'columns' => $gridColumns,
         'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
         'headerRowOptions' => ['class' => 'kartik-sheet-style'],
-        'filterRowOptions' => ['class' => 'kartik-sheet-style'],
+        'filterRowOptions' => ['class' => 'kartik-sheet-style'],        
+        'responsiveWrap' => $responsiveWrap,
         'pjax' => true, // pjax is set to always true for this demo
         'toolbar' => false,
         // parameters from the demo form

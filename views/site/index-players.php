@@ -56,41 +56,67 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     </b>
                     <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_left, 'time', TRUE)); ?></br>
                     <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('qr_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->qr_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->bonus_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('post_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->post_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('vragen_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->vragen_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('hint_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->hint_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('trail_score')); ?>:
-                    </b>
-                    <?php echo Html::encode($groupModel->trail_score); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('total_score')); ?>:
+                    <?php 
+                    if($groupModel->qr_score > 0) {    
+                        echo Html::encode($groupModel->getAttributeLabel('qr_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->qr_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    if($groupModel->bonus_score > 0) {
+                        echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->bonus_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    if($groupModel->post_score > 0) {
+                        echo Html::encode($groupModel->getAttributeLabel('post_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->post_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    if($groupModel->vragen_score > 0) {
+                        echo Html::encode($groupModel->getAttributeLabel('vragen_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->vragen_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    if($groupModel->hint_score > 0) {
+                        echo Html::encode($groupModel->getAttributeLabel('hint_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->hint_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    if($groupModel->trail_score > 0) {
+                        echo Html::encode($groupModel->getAttributeLabel('trail_score')); ?>:
+                        </b>
+                        <?php echo Html::encode($groupModel->trail_score); ?></br>
+                        <b>
+                    <?php 
+                    }
+                    echo Html::encode($groupModel->getAttributeLabel('total_score')); ?>:
                     </b>
                     <?php echo Html::encode($groupModel->total_score); ?></br>
 
                 </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-vraag', ['model'=>$questionsData]); ?>
-                </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
-                </div>
+                <?php
+                if ($questionsData->totalCount > 0) { ?>
+                    <div class="well">
+                        <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-vraag', ['model'=>$questionsData]); ?>
+                    </div>
+                <?php 
+                }
+                if ($openHintsData->totalCount > 0) { ?>
+                    <div class="well">
+                        <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
+                    </div>
+                <?php 
+                } ?>
             </div>
             <?php
             if(!Yii::$app->devicedetect->isMobile()) { ?>
@@ -112,26 +138,41 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     ]);
                     ?>
                 </div>
-            <?php } ?>
-            <div class="col-sm-3 well">
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
+            <?php } 
+            if($timeTrailCheckData->totalCount > 0 ||
+                $answerData->totalCount > 0 ||
+                $qrCheckData->totalCount > 0 ||
+                $bonusData->totalCount > 0) { ?>
+            
+                <div class="col-sm-3 well">
+                    <?php 
+                    if ($timeTrailCheckData->totalCount > 0) { ?>
+                        <div class="well">
+                            <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
+                        </div>
+                    <?php 
+                    } 
+                    if ($answerData->totalCount > 0) { ?>
+                        <div class="well">
+                            <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
+                        </div>
+                    <?php 
+                    }
+                    if ($qrCheckData->totalCount > 0) { ?>
+                        <div class="well">
+                            <?php echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', ['model' => $qrCheckData]); ?>
+                        </div>
+                    <?php 
+                    }
+                    if ($bonusData->totalCount > 0) { ?>
+                        <div class="well">
+                            <?php echo Yii::$app->controller->renderPartial('/bonuspunten/view-dashboard', ['model' => $bonusData]); ?>
+                        </div>
+                    <?php } ?>
                 </div>
-<!--                <div class="well">
-                    <?php //echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
-                </div>-->
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
-                </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', ['model' => $qrCheckData]); ?>
-                </div>
-                <div class="well">
-                    <?php echo Yii::$app->controller->renderPartial('/bonuspunten/view-dashboard', ['model' => $bonusData]); ?>
-                </div>
-            </div>
             <?php
-            if(Yii::$app->devicedetect->isMobile()) {?>
+            }
+            if(Yii::$app->devicedetect->isMobile() && $timeTrailCheckDataLastItem->totalCount > 0) {?>
                 <div class="col-sm-3 well">
                     <?php
                         echo ListView::widget([

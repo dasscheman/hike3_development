@@ -190,4 +190,11 @@ class OpenVragenAntwoorden extends HikeActiveRecord
             return false;
         }
     }
+    
+    public function anyGroupScoredQuestions() {
+        return OpenVragenAntwoorden::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->exists();
+    }
 }

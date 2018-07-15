@@ -124,4 +124,11 @@ class TimeTrailCheck extends HikeActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
+        
+    public function anyGroupScoredTimeTrail() {
+        return TimeTrailCheck::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->exists();
+    }
 }

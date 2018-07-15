@@ -391,4 +391,11 @@ class PostPassage extends HikeActiveRecord
 
         return false;
     }
+    
+    public function anyGroupScoredStation() {
+        return PostPassage::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->exists();
+    }
 }

@@ -203,4 +203,11 @@ class OpenNoodEnvelop extends HikeActiveRecord
         }
         return $score;
     }
+       
+    public function anyGroupScoredOpenedHints() {
+        return OpenNoodEnvelop::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->exists();
+    }
 }

@@ -136,11 +136,11 @@ class Bonuspunten extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
-	/**
-	 * Returns de totale score die een groep heeft gehaald met bnuspunten.
-	 */
-	public function getBonuspuntenScore($group_id)
-	{
+    /**
+     * Returns de totale score die een groep heeft gehaald met bnuspunten.
+     */
+    public function getBonuspuntenScore($group_id)
+    {
         $data = Bonuspunten::find()
             ->select('SUM(score) as score')
             ->where('event_ID =:event_id AND group_ID =:group_id')
@@ -153,5 +153,12 @@ class Bonuspunten extends HikeActiveRecord
         } else {
             return 0;
         }
-	}
+    }
+    
+    public function anyGroupScoredBonuspunten() {
+        return Bonuspunten::find()
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->exists();
+    }
 }

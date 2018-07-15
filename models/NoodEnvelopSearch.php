@@ -55,24 +55,6 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
-        // Get route id's for current day.
-//        $queryRoute = Route::find()
-//            ->select('*')
-//            ->orderBy('route_volgorde');
-//
-//        if($event->active_day == NULL ||
-//           $event->active_day == '0000-00-00') {
-//            $queryRoute->where('event_ID =:event_id and (day_date =:day_date OR day_date =:introductie)')
-//                ->params([
-//                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
-//                    ':day_date' => $event->active_day,
-//                    ':introductie' => '0000-00-00'
-//                ]);
-//        } else {
-//            $queryRoute->where('event_ID =:event_id and day_date =:day_date')
-//                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
-//        }
-
         // Find all open hints for founr group id
         $queryOpenHints = OpenNoodEnvelop::find()
             ->select('nood_envelop_ID')
@@ -86,8 +68,6 @@ class NoodEnvelopSearch extends NoodEnvelop
 
         // Find all hinits NOT opened by found group id.
         $query = NoodEnvelop::find()
-//            ->where(['not in', 'tbl_nood_envelop.nood_envelop_ID', $queryOpenHints])
-           // ->andwhere(['in', 'tbl_nood_envelop.route_ID', $queryRoute])
             ->andWhere('event_ID=:event_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID

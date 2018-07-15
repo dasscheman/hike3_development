@@ -55,12 +55,15 @@ $this->title = Yii::t('app', 'Select hike');
 
     $gridColumns = [
         'event_name',
-        'start_date',
+        'start_date' => [
+            'attribute' => 'start_date',
+            'visible' => !Yii::$app->devicedetect->isMobile()
+        ],
         'status' => [
             'attribute' => 'status',
             'value' => function($model){
                 return $model->getStatusText();
-            },
+            }, 
         ],
         [
             'header' => 'Rol',
@@ -68,8 +71,14 @@ $this->title = Yii::t('app', 'Select hike');
                 return DeelnemersEvent::getRolOfCurrentPlayer($key);
             },
         ],
-        'organisatie',
-        'website',
+        'organisatie' => [
+            'attribute' => 'organisatie',
+            'visible' => !Yii::$app->devicedetect->isMobile()
+        ],
+        'website' => [
+            'attribute' => 'website',
+            'visible' => !Yii::$app->devicedetect->isMobile()
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',

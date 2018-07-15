@@ -90,18 +90,13 @@ AppAsset::register($this);
                         ['label' => Yii::t('app', 'Game'),
                         'items' => [
                             [
-                                'label' => Yii::t('app', 'Overzicht groeps scores'),
+                                'label' => Yii::t('app', 'Scores'),
                                 'url' => ['/groups/index'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                             [
-                                'label' => Yii::t('app', 'Passed posten'),
+                                'label' => Yii::t('app', 'Gepasseerde posten'),
                                 'url' => ['/groups/index-posten'],
-                                'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
-                            ],
-                            [
-                                'label' => Yii::t('app', 'Bonuspunten'),
-                                'url' => ['/groups/index-bonus'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                             [

@@ -2,11 +2,18 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\models\Bonuspunten;
+use app\models\TimeTrailCheck;
+use app\models\PostPassage;
+use app\models\OpenNoodEnvelop;
+use app\models\OpenVragenAntwoorden;
+use app\models\QrCheck;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Overview groups scores');
+$this->title = Yii::t('app', 'Overzicht groepsscores');
 ?>
 <div class="tbl-groups-index">
 
@@ -14,14 +21,15 @@ $this->title = Yii::t('app', 'Overview groups scores');
 
     <?php
 
-    $bordered = FALSE;
+    $bordered = TRUE;
     $striped = TRUE;
     $condensed = TRUE;
     $responsive = FALSE;
     $hover = TRUE;
     $pageSummary = FALSE;
     $heading = FALSE;
-    $exportConfig = TRUE;
+    $footer = FALSE;
+    $exportConfig = FALSE;
     $resizableColumns = FALSE;
     $responsiveWrap = FALSE;
 
@@ -34,7 +42,7 @@ $this->title = Yii::t('app', 'Overview groups scores');
             'value'=> function ($model, $key, $index, $column) {
                 return GridView::ROW_COLLAPSED;
             },
-            'detail'=>function ($model, $key, $index, $column) {
+            'detail' => function ($model, $key, $index, $column) {
                 return Yii::$app->controller->renderPartial('/users/view_groups', ['model'=>$model]);
             },
             'headerOptions'=>['class'=>'kartik-sheet-style'],
@@ -55,36 +63,42 @@ $this->title = Yii::t('app', 'Overview groups scores');
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => Bonuspunten::anyGroupScoredBonuspunten(),
         ],
         [
             'attribute' => 'post_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => PostPassage::anyGroupScoredStation()
         ],
         [
             'attribute' => 'qr_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => QrCheck::anyGroupScoredQr()
         ],
         [
             'attribute' => 'vragen_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => OpenVragenAntwoorden::anyGroupScoredQuestions()
         ],
         [
             'attribute' => 'trail_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => TimeTrailCheck::anyGroupScoredTimeTrail()
         ],
         [
             'attribute' => 'hint_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
+            'visible' => OpenNoodEnvelop::anyGroupScoredOpenedHints()
         ],
         [
             'attribute' => 'total_score',
@@ -105,8 +119,8 @@ $this->title = Yii::t('app', 'Overview groups scores');
         'pjax' => true, // pjax is set to always true for this demo
         // set your toolbar
         'toolbar'=> [
-            '{export}',
-            '{toggleData}',
+//            '{export}',
+//            '{toggleData}',
         ],
         // set export properties
         'export' => [
@@ -124,9 +138,9 @@ $this->title = Yii::t('app', 'Overview groups scores');
         'panel' => [
             'type' => GridView::TYPE_INFO,
             'heading' => $heading,
+            'footer' => $footer
         ],
-        'persistResize' => false,
-        //'exportConfig' => $exportConfig,
+        'persistResize' => false,   
+        'exportConfig' => $exportConfig,
     ]); ?>
-
 </div>

@@ -15,14 +15,14 @@ class GroupsSearch extends Groups
     public $bonus_score;
     public $hint_score;
     public $post_score;
-	public $qr_score;
-	public $vragen_score;
-	public $trail_score;
-	public $total_score;
-	public $rank;
-	public $time_walking;
-	public $time_left;
-	public $last_post;
+    public $qr_score;
+    public $vragen_score;
+    public $trail_score;
+    public $total_score;
+    public $rank;
+    public $time_walking;
+    public $time_left;
+    public $last_post;
 
     /**
      * @inheritdoc
@@ -132,7 +132,6 @@ class GroupsSearch extends Groups
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['rank'=>SORT_DESC]]
         ]);
 
         /**
@@ -140,51 +139,52 @@ class GroupsSearch extends Groups
           * Note: This is setup before the $this->load($params)
           * statement below
           */
-          $dataProvider->setSort([
-             'attributes' => [
-                 'group_name',
-                 'bonus_score' => [
-                     'asc' => ['bonus_score' => SORT_ASC],
-                     'desc' => ['bonus_score' => SORT_DESC],
-                     'label' => 'Order Bonus Score'
-                 ],
-                 'hint_score' => [
-                     'asc' => ['hint_score' => SORT_ASC],
-                     'desc' => ['hint_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ],
-                 'post_score' => [
-                     'asc' => ['post_score' => SORT_ASC],
-                     'desc' => ['post_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ],
-                 'qr_score' => [
-                     'asc' => ['qr_score' => SORT_ASC],
-                     'desc' => ['qr_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ],
-                 'trail_score' => [
-                     'asc' => ['trail_score' => SORT_ASC],
-                     'desc' => ['trail_score' => SORT_DESC],
-                     'label' => 'Order Trail Score'
-                 ],
-                 'vragen_score' => [
-                     'asc' => ['vragen_score' => SORT_ASC],
-                     'desc' => ['vragen_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ],
-                 'total_score' => [
-                     'asc' => ['total_score' => SORT_ASC],
-                     'desc' => ['total_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ],
-                 'rank' => [
-                     'asc' => ['total_score' => SORT_ASC],
-                     'desc' => ['total_score' => SORT_DESC],
-                     'label' => 'Order Hint Score'
-                 ]
-             ]
-         ]);
+        $dataProvider->setSort([
+            'defaultOrder' => ['total_score'=>SORT_DESC],
+            'attributes' => [
+                'group_name',
+                'bonus_score' => [
+                    'asc' => ['bonus_score' => SORT_ASC],
+                    'desc' => ['bonus_score' => SORT_DESC],
+                    'label' => 'Order Bonus Score'
+                ],
+                'hint_score' => [
+                    'asc' => ['hint_score' => SORT_ASC],
+                    'desc' => ['hint_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ],
+                'post_score' => [
+                    'asc' => ['post_score' => SORT_ASC],
+                    'desc' => ['post_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ],
+                'qr_score' => [
+                    'asc' => ['qr_score' => SORT_ASC],
+                    'desc' => ['qr_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ],
+                'trail_score' => [
+                    'asc' => ['trail_score' => SORT_ASC],
+                    'desc' => ['trail_score' => SORT_DESC],
+                    'label' => 'Order Trail Score'
+                ],
+                'vragen_score' => [
+                    'asc' => ['vragen_score' => SORT_ASC],
+                    'desc' => ['vragen_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ],
+                'total_score' => [
+                    'asc' => ['total_score' => SORT_ASC],
+                    'desc' => ['total_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ],
+                'rank' => [
+                    'asc' => ['total_score' => SORT_ASC],
+                    'desc' => ['total_score' => SORT_DESC],
+                    'label' => 'Order Hint Score'
+                ]
+            ]
+        ]);
 
         $this->load($params);
 
