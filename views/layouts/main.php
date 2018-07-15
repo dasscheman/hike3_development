@@ -100,6 +100,11 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                             [
+                                'label' => Yii::t('app', 'Tijdritten'),
+                                'url' => ['/time-trail/status'],
+                                'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
+                            ],
+                            [
                                 'label' => Yii::t('app', 'Hints zoeken'),
                                 'url' => ['/nood-envelop/index'],
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
