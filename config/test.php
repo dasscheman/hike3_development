@@ -41,8 +41,7 @@ $config = [
                 'sender' => ['noreply@hike-app.nl' => 'hike-app.nl'],
                 'viewPath' => '@app/mail/user',
             ],
-            'admins' => ['dasman'],
-            'debug' => YII_ENV == 'dev' || YII_ENV == 'test' ? true : false,
+            'admins' => ['dasman']
         ],
         'rbac' => 'dektrium\rbac\RbacWebModule',
         'gridview' =>  [
@@ -123,27 +122,12 @@ $config = [
                 ]
             ]
         ],
-        'db' => require(__DIR__ . '/db.php'),
+        'db' => require(__DIR__ . '/test_db.php'),
         'devicedetect' => [
 		'class' => 'alexandernst\devicedetect\DeviceDetect'
 	],
     ],
     'params' => $params,
 ];
-
-if (YII_ENV == 'dev' || YII_ENV == 'test') {
-    // configuration adjustments for 'dev' environment
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = [
-        'class' => 'yii\debug\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '145.133.104.158'],
-    ];
-
-    $config['bootstrap'][] = 'gii';
-    $config['modules']['gii'] = [
-        'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '145.133.104.158'],
-    ];
-}
 
 return $config;

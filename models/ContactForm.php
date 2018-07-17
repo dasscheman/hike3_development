@@ -38,10 +38,10 @@ class ContactForm extends Model
     {
         return [
             'verifyCode' => 'Verification Code',
-			'name' => 'Naam',
-			'email' => 'Email',
-			'subject' => 'Onderwerp',
-			'body' => 'Tekst',
+            'name' => 'Naam',
+            'email' => 'Email',
+            'subject' => 'Onderwerp',
+            'body' => 'Tekst',
         ];
     }
 

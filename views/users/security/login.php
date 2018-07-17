@@ -40,7 +40,9 @@ echo $this->render('/_alert', ['module' => Yii::$app->getModule('user')]); ?>
                     'validateOnChange' => false,
                 ]) ?>
 
-                <?php if ($module->debug): ?>
+                <?php 
+                
+                if ($module->debug): ?>
                     <?= $form->field($model, 'login', [
                         'inputOptions' => [
                             'autofocus' => 'autofocus',

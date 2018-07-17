@@ -27,7 +27,15 @@ $this->title = 'Contact';
         <div class="row">
             <div class="col-lg-5">
 
-                <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
+                <?php $form = ActiveForm::begin([
+                    'id' => 'contact-form',
+                    'enableAjaxValidation' => FALSE,
+                    'enableClientValidation' => false,
+                    'validateOnBlur' => false,
+                    'validateOnType' => false,
+                    'validateOnChange' => false,
+                    ]); 
+                ?>
 
                     <?= $form->field($model, 'name') ?>
 
@@ -40,7 +48,7 @@ $this->title = 'Contact';
                     <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
                         'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>',
                     ]) ?>
-
+                
                     <div class="form-group">
                         <?= Html::submitButton('Submit', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
                     </div>
