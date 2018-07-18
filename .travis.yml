@@ -35,8 +35,9 @@ install:
 #  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
   - composer global require "fxp/composer-asset-plugin"
   - composer install
-  - php yii migrate/up --migrationPath=@yii/rbac/migrations
-  - php yii migrate/up --migrationPath=@vendor/dektrium/yii2-user/migrations
+  - php yii migrate/up --migrationPath=@yii/rbac/migrations --interactive=0
+  - php yii migrate/up --migrationPath=@vendor/dektrium/yii2-user/migrations --interactive=0
+  - php yii migrate/up --interactive=0
   - travis_retry composer update --no-interaction
   # install php extensions
   - |
