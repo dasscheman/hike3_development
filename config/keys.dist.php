@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'cookieValidationKey' => '',
-    'google_key' => '',
+    'cookieValidationKey' => 'cookieValidationKey',
+    'google_key' => 'google_key',
 ];

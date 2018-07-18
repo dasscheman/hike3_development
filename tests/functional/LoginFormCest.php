@@ -1,7 +1,7 @@
 <?php
 
 use app\tests\fixtures;
-use FunctionalTester;
+use \FunctionalTester;
 
 class LoginFormCest
 {
