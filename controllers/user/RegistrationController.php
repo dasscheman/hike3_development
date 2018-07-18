@@ -38,15 +38,11 @@ class RegistrationController extends Controller {
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->register()) {          
             Yii::$app->db->createCommand()->insert('auth_assignment',
-                    [
-                        'user_id' =>  $model->id,
-                        'item_name' => 'gebruiker'
-                    ])
-                    ->execute();	
-        
-            if ( !$assignment->updateAssignments()) {
-                throw new \yii\web\HttpException(400, Yii::t('app', 'Your account is created, but unfortunately we could not send an email with details. Contact hike-app@biologenkantoor.nl'));
-            }            
+                [
+                    'user_id' =>  $model->id,
+                    'item_name' => 'gebruiker'
+                ])
+                ->execute();
             
             return $this->redirect(['/user/security/login']);
         }
