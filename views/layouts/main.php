@@ -79,7 +79,7 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest,
                             ],
                             [
-                                'label' => isset(Yii::$app->user->identity->voornaam) ? Yii::t('app', 'Uitloggen') . Yii::$app->user->identity->voornaam : '',
+                                'label' => isset(Yii::$app->user->identity->voornaam) ? Yii::t('app', 'Uitloggen') . ' ' . Yii::$app->user->identity->voornaam : '',
                                 'url' => ['/user/security/logout'],
                                 'linkOptions' => ['data-method' => 'post'],
                                 'visible' => !Yii::$app->user->isGuest,

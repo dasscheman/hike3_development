@@ -1,55 +1,58 @@
 language: php
+
 php:
-  # aliased to a recent 5.6.x version
-  - 5.6
   # aliased to a recent 7.x version
   - 7.0
+  - 7.1
+#  - hhvm
 
-sudo: required
+# faster builds on new travis setup not using sudo
+sudo: false
 
 addons:
   hosts:
-    - hike.dev
-
+    - hike.devel
+notifications:
+  email: false
 cache:
   directories:
     - $HOME/.composer/cache
 
 before_install:
-  - mysql -e "create database IF NOT EXISTS hike_v3_01_test;" -u root
-  - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';" -u root
+  - mysql -e "create database IF NOT EXISTS hikeapptest;" -u root
+  - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'secret';" -u root
   - mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';" -u root
   - mysql -e "FLUSH PRIVILEGES;"
   - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n" -u root
 
 install:
+  - cp config/db.dist.php config/db.php
+  - cp config/email.dist.php config/email.php
+  - cp config/keys.dist.php config/keys.php
+  - sed -i "s/$db = require(__DIR__ . '\/db.php');/$db = require(__DIR__ . '\/test_db.php');/" config/console.php
   - travis_retry composer self-update && composer --version
-  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
-  - travis_retry composer update --dev --prefer-dist --no-interaction
-
-before_script:
-  # - chmod +x ./tests/travis/setup/before_script.sh
-  # - chmod +x ./tests/travis/setup/setup_apache.sh
-  # - chmod +x ./tests/travis/setup/setup_selenium_server.sh
-  # - ./tests/travis/setup/before_script.sh
-  # - ./tests/travis/setup/setup_apache.sh
-  # - ./tests/travis/setup/setup_selenium_server.sh
-  - chmod +x ./tests/codeception/bin/yii
-  - ./tests/codeception/bin/yii migrate --interactive=0
+#  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
+  - composer global require "fxp/composer-asset-plugin"
+  - composer install
+  - php yii migrate/up --migrationPath=@yii/rbac/migrations --interactive=0
+  - php yii migrate/up --migrationPath=@vendor/dektrium/yii2-user/migrations --interactive=0
+  - php yii migrate/up --interactive=0
+  - travis_retry composer update --no-interaction
+  # install php extensions
+  - |
+    if (php --version | grep -i HipHop > /dev/null); then
+      echo "Skipping imagick and gmagick tests on HHVM"
+    else
+      pear config-set preferred_state beta
+      printf "\n" | pecl install imagick
+      # gmagick is not installed on travis currently
+      #printf "\n" | pecl install gmagick
+    fi
+# setup application:
+  - |
+    sed -i "s/'cookieValidationKey' => ''/'cookieValidationKey' => 'testkey'/" config/test.php
 
 script:
-  # - ls -la
-  - cd tests
-  # - ls -la
-  - ../vendor/bin/codecept build
-
-  - java -jar -Dwebdriver.gecko.driver=geckodriver selenium-server-standalone-3.0.1.jar > /dev/null &
-  - sleep 3
-  - ./codeception/bin/yii serve &
-  - sleep 3
-  - ../vendor/bin/codecept -vvv run
-  # - ../vendor/bin/codecept -vvv run unit
-  # - ../vendor/bin/codecept -vvv run functional
-##notifications:
-##  email:
-##    - dasscheman@hotmail.com
+  - |
+    php -S localhost:8080 -t web > /dev/null 2>&1 &
+    vendor/bin/codecept run functional

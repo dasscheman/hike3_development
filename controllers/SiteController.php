@@ -39,7 +39,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['error', 'about'],
+                        'actions' => ['error', 'about', 'contact', 'captcha'],
                         'allow' => true
                     ],
                     [
@@ -80,7 +80,7 @@ class SiteController extends Controller
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'fixedVerifyCode' => YII_ENV_TEST || YII_ENV_DEV ? 'testme' : null,
             ],
         ];
     }
@@ -250,11 +250,11 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->contact()) {
                 Yii::$app->session->setFlash('contactFormSubmitted');
+                return $this->refresh();
             }
-            return $this->refresh();
         }
         return $this->render('contact', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
