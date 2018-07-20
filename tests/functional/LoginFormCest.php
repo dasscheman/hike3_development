@@ -1,7 +1,7 @@
 <?php
 
 use app\tests\fixtures;
-use \FunctionalTester;
+// use \FunctionalTester;
 
 class LoginFormCest
 {
@@ -15,7 +15,7 @@ class LoginFormCest
         ]);
         $I->amOnRoute('user/security/login');
     }
-    
+
     public function openLoginPage(\FunctionalTester $I)
     {
         $I->see('Log in', 'h3');
@@ -37,7 +37,7 @@ class LoginFormCest
         $I->amOnPage('/');
         $I->see('Uitloggen organisatie');
     }
-    
+
     public function loginWithEmptyCredentials(\FunctionalTester $I)
     {
         $I->see('Log in');
@@ -66,7 +66,7 @@ class LoginFormCest
             'login-form[password]' => 'test',
         ]);
         $I->see('Uitloggen organisatie');
-        $I->dontSeeElement('form#login-form');              
+        $I->dontSeeElement('form#login-form');
     }
 }
 
