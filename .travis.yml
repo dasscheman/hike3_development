@@ -1,9 +1,6 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
-  - 5.6
   # aliased to a recent 7.x version
   - 7.0
   - 7.1
@@ -15,7 +12,8 @@ sudo: false
 addons:
   hosts:
     - hike.devel
-
+notifications:
+  email: false
 cache:
   directories:
     - $HOME/.composer/cache

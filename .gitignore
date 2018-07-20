@@ -32,3 +32,7 @@ config/db.php
 config/email.php
 certificaten/*
 /config/keys.php
+
+# ignore alle gegenereerde files, behalve de appasset.php
+assets
+!assets/AppAsset.php
