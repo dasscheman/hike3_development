@@ -9,7 +9,7 @@ use yii\helpers\Html;
 ?>
 <div class="tbl-bonuspunten-create">
 
-    <h1><?= Html::encode(Yii::t('app', 'Assign Bonuspoints')) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Bonuspunten toevoegen')) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="tbl-bonuspunten-form">
+<div class="bonuspunten-form">
 
     <?php
     Pjax::begin([
@@ -31,6 +31,7 @@ use yii\widgets\Pjax;
 
     $form = ActiveForm::begin([
         'options'=>[
+          'id' => 'bonuspunten-form'
 //            'data-pjax'=>TRUE,
         ],
     ]); ?>

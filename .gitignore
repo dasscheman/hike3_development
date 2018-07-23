@@ -34,5 +34,5 @@ certificaten/*
 /config/keys.php
 
 # ignore alle gegenereerde files, behalve de appasset.php
-assets
+assets/
 !assets/AppAsset.php

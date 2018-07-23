@@ -10,7 +10,7 @@ class LoginFormCest
         $I->haveFixtures([
            'user' => [
                'class' => fixtures\UsersFixture::className(),
-               'dataFile' => 'tests/fixtures/data/Users.php',
+               'dataFile' => 'tests/fixtures/data/users.php',
             ],
         ]);
         $I->amOnRoute('user/security/login');

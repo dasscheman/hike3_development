@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Hike overview');
         <h1><?= Html::encode($this->title) ?></h1>
         <div class="row">
             <div class="col-sm-3 well">
-                <?php                
+                <?php
                 echo CustomAlertBlock::widget([
                     'type' => CustomAlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
@@ -232,7 +232,7 @@ $this->title = Yii::t('app', 'Hike overview');
 //                        'options'=>['enctype'=>'multipart/form-data'],
 //                        'action' => ['export-import/import-route'],// important
 //                    ]);
-           
+
 //                    // your fileinput widget for single file upload
 //                    echo $form->field($importModel, 'importFile')->widget(FileInput::classname(), [
 //                        'options'=>[
@@ -325,7 +325,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'label' => Yii::t('app', 'bonus'),
                                 'id' => 'modalAddBonusButton',
                                 'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatie'),
+                                // 'disabled' => !Yii::$app->user->can('organisatie') || Yii::$app->user->can('organisatieOpstart'),
                             ],
                         ]);
                         echo $this->render('/bonuspunten/create', [

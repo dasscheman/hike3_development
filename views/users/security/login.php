@@ -40,8 +40,8 @@ echo $this->render('/_alert', ['module' => Yii::$app->getModule('user')]); ?>
                     'validateOnChange' => false,
                 ]) ?>
 
-                <?php 
-                
+                <?php
+
                 if ($module->debug): ?>
                     <?= $form->field($model, 'login', [
                         'inputOptions' => [

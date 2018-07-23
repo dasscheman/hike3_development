@@ -10,7 +10,7 @@ use prawee\widgets\ButtonAjax;
 /* @var $searchModel app\models\BonuspuntenSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Overview bonuspoints');
+$this->title = Yii::t('app', 'Overzicht bonuspunten');
 ?>
 <div class="bonuspunten-index">
 

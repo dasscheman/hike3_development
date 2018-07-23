@@ -4,9 +4,13 @@ namespace app\tests\fixtures;
 
 use yii\test\ActiveFixture;
 
-class UsersFixture extends ActiveFixture
+class RouteFixture extends ActiveFixture
 {
-    public $modelClass = 'app\models\Users';
+    public $modelClass = 'app\models\Route';
+    public $depends = [
+      'app\tests\fixtures\DeelnemersEventFixture',
+      'app\tests\fixtures\EventNamesFixture'
+    ];
 
     public function beforeLoad() {
         parent::beforeLoad();

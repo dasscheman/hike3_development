@@ -29,6 +29,11 @@ class BonuspuntenController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['post'],
+                    ],
+                    [
+                        'allow' => true,
                         'actions' => ['index', 'create', 'update', 'delete'],
                         'roles' => ['organisatie'],
                     ],
@@ -78,14 +83,24 @@ class BonuspuntenController extends Controller
     {
         $model = new Bonuspunten();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->cache->flush();
-            return $this->redirect(['site/index']);
-        } else {
-            return $this->renderPartial('create', [
+        if (!$model->load(Yii::$app->request->post())) {
+            if(Yii::$app->request->isAjax) {
+                return $this->renderPartial('create', [
+                    'model' => $model,
+                ]);
+            }
+            return $this->render('create', [
                     'model' => $model,
             ]);
         }
+
+        if($model->save()) {
+            Yii::$app->cache->flush();
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+        }
+
+        return $this->redirect(['site/index']);
     }
 
     /**

@@ -42,7 +42,7 @@ $config = [
                 'viewPath' => '@app/mail/user',
             ],
             'admins' => ['dasman'],
-            'debug' => YII_ENV == 'dev' || YII_ENV == 'test' ? true : false,
+            'debug' => YII_ENV == 'dev' || YII_ENV == 'test' ? false : false,
         ],
         'rbac' => 'dektrium\rbac\RbacWebModule',
         'gridview' =>  [
@@ -125,8 +125,8 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
         'devicedetect' => [
-		'class' => 'alexandernst\devicedetect\DeviceDetect'
-	],
+      		  'class' => 'alexandernst\devicedetect\DeviceDetect'
+      	],
     ],
     'params' => $params,
 ];

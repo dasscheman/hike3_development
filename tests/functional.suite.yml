@@ -11,3 +11,9 @@ modules:
     enabled:
       - Filesystem
       - Yii2
+      - Db:
+         dsn: 'mysql:host=localhost;dbname=hike-app-test'
+         user: 'root'
+         password: 'secret'
+         populate: true # load dump before all tests
+         dump: 'tests/_data/auth_assignment.sql'
