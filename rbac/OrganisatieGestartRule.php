@@ -6,6 +6,7 @@ use Yii;
 use yii\rbac\Rule;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
+use app\models\PostPassage;
 
 /**
  * Checks if authorID matches user passed via params
@@ -20,8 +21,8 @@ class OrganisatieGestartRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
-            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_organisatie) {
+      if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
+          Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_organisatie) {
             return TRUE;
         }
         return FALSE;

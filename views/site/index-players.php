@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     'useSessionFlash' => true,
                     'delay' => FALSE,
                 ]);
-                
+
                 Modal::begin(['id'=>'main-modal']);
                 echo '<div id="main-content-modal"></div>';
                 Modal::end();
@@ -56,48 +56,48 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     </b>
                     <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_left, 'time', TRUE)); ?></br>
                     <b>
-                    <?php 
-                    if($groupModel->qr_score > 0) {    
+                    <?php
+                    if($groupModel->qr_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('qr_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->qr_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
                     if($groupModel->bonus_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('bonus_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->bonus_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
                     if($groupModel->post_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('post_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->post_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
                     if($groupModel->vragen_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('vragen_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->vragen_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
-                    if($groupModel->hint_score > 0) {
+                    if($groupModel->hint_score != 0) {
                         echo Html::encode($groupModel->getAttributeLabel('hint_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->hint_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
                     if($groupModel->trail_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('trail_score')); ?>:
                         </b>
                         <?php echo Html::encode($groupModel->trail_score); ?></br>
                         <b>
-                    <?php 
+                    <?php
                     }
                     echo Html::encode($groupModel->getAttributeLabel('total_score')); ?>:
                     </b>
@@ -109,13 +109,13 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <div class="well">
                         <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-vraag', ['model'=>$questionsData]); ?>
                     </div>
-                <?php 
+                <?php
                 }
                 if ($openHintsData->totalCount > 0) { ?>
                     <div class="well">
                         <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
                     </div>
-                <?php 
+                <?php
                 } ?>
             </div>
             <?php
@@ -138,31 +138,31 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     ]);
                     ?>
                 </div>
-            <?php } 
+            <?php }
             if($timeTrailCheckData->totalCount > 0 ||
                 $answerData->totalCount > 0 ||
                 $qrCheckData->totalCount > 0 ||
                 $bonusData->totalCount > 0) { ?>
-            
+
                 <div class="col-sm-3 well">
-                    <?php 
+                    <?php
                     if ($timeTrailCheckData->totalCount > 0) { ?>
                         <div class="well">
                             <?php echo Yii::$app->controller->renderPartial('/time-trail/view-dashboard', ['model' => $timeTrailCheckData]); ?>
                         </div>
-                    <?php 
-                    } 
+                    <?php
+                    }
                     if ($answerData->totalCount > 0) { ?>
                         <div class="well">
                             <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
                         </div>
-                    <?php 
+                    <?php
                     }
                     if ($qrCheckData->totalCount > 0) { ?>
                         <div class="well">
                             <?php echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', ['model' => $qrCheckData]); ?>
                         </div>
-                    <?php 
+                    <?php
                     }
                     if ($bonusData->totalCount > 0) { ?>
                         <div class="well">

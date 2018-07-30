@@ -47,10 +47,14 @@ use prawee\widgets\ButtonAjax;
                      ],
                      'modalId' => '#main-modal',
                      'modalContent' => '#main-content-modal',
+                     'id' => 'check-post-' . $post_id .'-'. $model->group_ID,
                      'options' => [
                         'class' => 'btn btn-success',
                         'title' => $title,
-                        'disabled' => !Yii::$app->user->can('organisatieGestartTime'),
+                        'disabled' =>  !Yii::$app->user->can('organisatiePostCheck', [
+                            'group_id' => $model->group_ID,
+                            'post_id' => $post_id,
+                            'action' => $action]),
                      ]
                  ]);
             }

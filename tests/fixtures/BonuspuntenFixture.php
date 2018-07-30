@@ -7,7 +7,9 @@ use yii\test\ActiveFixture;
 class BonuspuntenFixture extends ActiveFixture
 {
     public $modelClass = 'app\models\Bonuspunten';
-    public $depends = ['app\tests\fixtures\GroupsFixture'];
+    public $depends = [
+      'app\tests\fixtures\GroupsFixture',
+      'app\tests\fixtures\UsersFixture'];
 
     public function beforeLoad() {
         parent::beforeLoad();

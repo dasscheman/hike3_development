@@ -25,7 +25,7 @@ $this->title = Yii::t('app', 'Hints zoeken');
     $heading = false;
     $exportConfig = true;
     $responsiveWrap = false;
-    
+
     Modal::begin(['id' => 'main-modal']);
     echo '<div id="main-content-modal"></div>';
     Modal::end();
@@ -51,7 +51,7 @@ $this->title = Yii::t('app', 'Hints zoeken');
                             'route' => [
                                 '/open-nood-envelop/open',
                                 'nood_envelop_ID' => $model->nood_envelop_ID,
-                                'group_ID' => DeelnemersEvent::getGroupOfPlayer()
+                                'group_ID' => DeelnemersEvent::getGroupOfPlayer($model->nood_envelop_ID)
                             ],
                             'modalId' => '#main-modal',
                             'modalContent' => '#main-content-modal',
@@ -73,7 +73,7 @@ $this->title = Yii::t('app', 'Hints zoeken');
         'columns' => $gridColumns,
         'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
         'headerRowOptions' => ['class' => 'kartik-sheet-style'],
-        'filterRowOptions' => ['class' => 'kartik-sheet-style'],        
+        'filterRowOptions' => ['class' => 'kartik-sheet-style'],
         'responsiveWrap' => $responsiveWrap,
         'pjax' => true, // pjax is set to always true for this demo
         'toolbar' => false,

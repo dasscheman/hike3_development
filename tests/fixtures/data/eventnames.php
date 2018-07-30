@@ -34,7 +34,7 @@ return [
         'start_date' => '2015-02-25',
         'end_date' => '2015-03-01',
         'status' => 3,
-        'active_day' => '2015-02-27',
+        'active_day' => '2015-02-26',
         'max_time' => '24:00:00',
         'organisatie' => 'de Bison',
         'create_time' => '2015-02-23 19:46:08',
