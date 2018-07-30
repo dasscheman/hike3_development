@@ -24,7 +24,7 @@ use yii\widgets\Pjax;
     <b>
     <?php
     if ($model->isNewRecord) {
-        echo Html::encode(Yii::t('app', 'Are you sure you want to open this hint?'));
+        echo Html::encode(Yii::t('app', 'Weet je zeker dat je deze hint wilt openen?'));
         echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $modelEnvelop->event_ID])->label(false);
         echo $form->field($model, 'nood_envelop_ID')->hiddenInput(['value'=> $modelEnvelop->nood_envelop_ID])->label(false);
     } else {

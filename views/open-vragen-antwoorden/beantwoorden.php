@@ -9,7 +9,7 @@ use yii\helpers\Html;
 ?>
 <div class="tbl-open-vragen-antwoorden-beantwoorden">
 
-    <h1><?= Html::encode(Yii::t('app', 'Awnser for {question}', ['question' => $modelVraag->open_vragen_name])) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Geef je antwoord voor: {question}', ['question' => $modelVraag->open_vragen_name])) ?></h1>
 
     <?= $this->render('_form-beantwoorden', [
         'model' => $model,

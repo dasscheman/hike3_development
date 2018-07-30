@@ -11,7 +11,7 @@ use app\components\GeneralFunctions;
     <h4>
         <?php echo Html::encode($model->timeTrailItem->time_trail_item_name); ?>
     </h4>
-    
+
     <?php echo Html::encode($model->timeTrailItem->instruction); ?></br>
     <?php
     $end_date = strtotime($model->start_time) + (strtotime($model->timeTrailItem->max_time)  - strtotime('TODAY'));
@@ -33,7 +33,7 @@ use app\components\GeneralFunctions;
             ?>
         </h1> <?php
         } else {
-            echo Html::encode(Yii::t('app', 'You are to late! But you still have to scan the next item to get instructions for the next item.'));
+            echo Html::encode(Yii::t('app', 'Je bent te laat. Maar je moet nog steeds de QR scannen voor intructies naar het volgende item.'));
         }
     } else {
         ?> <b> <?php
@@ -41,4 +41,3 @@ use app\components\GeneralFunctions;
         <?php echo GeneralFunctions::printGlyphiconCheck($model->succeded);
     }?>
 </div>
-

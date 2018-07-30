@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblPostPassage */
 
-$this->title = Yii::t('app', 'Update');
+$this->title = Yii::t('app', 'In/Uit checken van post');
 ?>
 <div class="tbl-post-passage-update">
 
