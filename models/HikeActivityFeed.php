@@ -66,7 +66,9 @@ class HikeActivityFeed extends Model
             $qr = $db->cache(function ($db) use ($qrcheck) {
                 return Qr::findOne($qrcheck['qr_ID']);
             });
-
+            if($qr == null) {
+                continue;
+            }
             $user = $db->cache(function ($db) use ($qrcheck) {
                 return Users::findOne($qrcheck['create_user_ID']);
             });
@@ -102,6 +104,9 @@ class HikeActivityFeed extends Model
                 return TimeTrailItem::findOne($timetrailcheck['time_trail_item_ID']);
             });
 
+            if($timetrailItem == null) {
+                continue;
+            }
             $user = $db->cache(function ($db) use ($timetrailcheck) {
                 return Users::findOne($timetrailcheck['create_user_ID']);
             });
@@ -135,7 +140,9 @@ class HikeActivityFeed extends Model
             $question = $db->cache(function ($db) use ($answer) {
                 return OpenVragen::findOne($answer['open_vragen_ID']);
             });
-
+            if($question == null) {
+                continue;
+            }
             $user = $db->cache(function ($db) use ($answer) {
                 return Users::findOne($answer['create_user_ID']);
             });
@@ -169,7 +176,9 @@ class HikeActivityFeed extends Model
             $postData = $db->cache(function ($db) use ($post) {
                 return Posten::findOne($post['post_ID']);
             });
-
+            if($postData == null) {
+                continue;
+            }
             $user = $db->cache(function ($db) use ($post) {
                 return Users::findOne($post['create_user_ID']);
             });
@@ -190,18 +199,22 @@ class HikeActivityFeed extends Model
             ];
         }
 
-        $hints = OpenNoodEnvelop::find()
-            ->where('event_ID =:event_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
-            ->asArray()
-            ->orderBy(['create_time'=>SORT_DESC])
-            ->all();
+        $hints =  $db->cache(function ($db) {
+            return OpenNoodEnvelop::find()
+                ->where('event_ID =:event_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+                ->asArray()
+                ->orderBy(['create_time'=>SORT_DESC])
+                ->all();
+        });
 
         foreach ($hints as $hint) {
             $hintData = $db->cache(function ($db) use ($hint) {
                 return NoodEnvelop::findOne($hint['nood_envelop_ID']);
             });
-
+            if($hintData == null ){
+                continue;
+            }
             $user = $db->cache(function ($db) use ($hint) {
                 return Users::findOne($hint['create_user_ID']);
             });

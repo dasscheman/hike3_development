@@ -102,7 +102,7 @@ class TimeTrailController extends Controller
     public function actionStatus()
     {
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
+        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($event_id);
         $timeTrailChecks = TimeTrailCheck::find()
             ->where('event_ID =:event_id AND group_ID =:group_id')
             ->andWhere(['is', 'end_time', null])

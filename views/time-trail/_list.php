@@ -15,8 +15,8 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
             </h3>
 
             <div class="well">
-                
-                <?php 
+
+                <?php
                 // The Regular Expression filter
                 $reg_exUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
                 $text = $model->timeTrailItem->instruction;
@@ -26,7 +26,7 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
                     echo preg_replace($reg_exUrl, "<a href=" . $url[0] . ">" . Yii::t('app', 'link') . "</a> ", $text);
                 } else {
                     // if no urls in the text just return the text
-                    echo Html::encode($model->timeTrailItem->instruction); 
+                    echo Html::encode($model->timeTrailItem->instruction);
                 }?>
             </div>
             <?php
@@ -48,7 +48,7 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
                     ?>
                 </h1> <?php
             } else {
-                echo Html::encode(Yii::t('app', 'You are to late! But you still have to scan the next item to get instructions for the next item.'));
+                echo Html::encode(Yii::t('app', 'Je bent te laat. Maar je moet nog steeds de QR scannen voor intructies naar het volgende item.'));
             }
             ?>
         </p>

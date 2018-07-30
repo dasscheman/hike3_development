@@ -16,6 +16,9 @@ use app\models\Groups;
 
     <?php
     $form = ActiveForm::begin([
+        'options'=>[
+          'id' => 'post-passage-form'
+        ],
         'action' => $action === 'update' ?
             ['post-passage/update', 'posten_passage_ID' => $model->posten_passage_ID] :
             [

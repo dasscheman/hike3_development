@@ -27,7 +27,12 @@ class BonuspuntenCest
                   'dataFile' => 'tests/fixtures/data/groups.php',
               ],
          ]);
-        $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
+        // $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
+    }
+
+    public function _failed(\FunctionalTester $I)
+    {
+        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testBonuspuntenViewOpstartOrganisatie(\FunctionalTester $I)
@@ -77,9 +82,9 @@ class BonuspuntenCest
         $I->amLoggedInAs(\app\models\Users::findByUsername('deelnemera'));
         Yii::$app->user->identity->selected_event_ID = 1;
         Yii::$app->user->identity->save();
-        $I->amOnPage(['bonuspunten/index']);
-        $I->dontsee('Overview bonuspoints');
-        $I->see('Forbidden (#403)');
+        // $I->amOnPage(['bonuspunten/index']);
+        // $I->dontsee('Overview bonuspoints');
+        // $I->see('Forbidden (#403)');
     }
 
     public function testBonuspuntenIndexIntroductionOrganisation(\FunctionalTester $I)
@@ -235,6 +240,8 @@ class BonuspuntenCest
         $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         Yii::$app->user->identity->selected_event_ID = 1;
         Yii::$app->user->identity->save();
+        $I->amOnPage(['/site/overview-players', 'group_ID' => '1']);
+        $I->dontSee('Bonus:');
         $I->amOnPage(['bonuspunten/create']);
         $I->see('Bonuspunten toevoegen');
         $I->selectOption('form select[id=bonuspunten-group-dropdown-create]', 'groep A opstart');
@@ -254,8 +261,13 @@ class BonuspuntenCest
         $I->see('Bonuspunten vfrvfr event 1');
         $I->see('10');
 
+        $I->amOnPage(['site/overview-players', 'group_ID' => '1']);
+        $I->see('Bonus: 10');
+
         Yii::$app->user->identity->selected_event_ID = 2;
         Yii::$app->user->identity->save();
+        $I->amOnPage(['site/overview-players', 'group_ID' => '3']);
+        $I->see('Bonus: 6');
         $I->amOnPage(['bonuspunten/create']);
         $I->see('Bonuspunten toevoegen');
         $I->selectOption('form select[id=bonuspunten-group-dropdown-create]', 'groep A introductie');
@@ -279,9 +291,13 @@ class BonuspuntenCest
         $I->dontSee('groep A beindigd');
         $I->dontSee('Bonuspunten poi event 4');
         $I->dontSee('7');
+        $I->amOnPage(['site/overview-players', 'group_ID' => '3']);
+        $I->see('Bonus: 15');
 
         Yii::$app->user->identity->selected_event_ID = 3;
         Yii::$app->user->identity->save();
+        $I->amOnPage(['site/overview-players', 'group_ID' => '5']);
+        $I->see('Bonus: 6');
         $I->amOnPage(['bonuspunten/create']);
         $I->see('Bonuspunten toevoegen');
 
@@ -308,9 +324,14 @@ class BonuspuntenCest
         $I->dontSee('Bonuspunten poi event 4');
         $I->dontSee('7');
 
+        $I->amOnPage(['site/overview-players', 'group_ID' => '5']);
+        $I->see('Bonus: 14');
+
         Yii::$app->user->identity->selected_event_ID = 4;
         Yii::$app->user->identity->save();
 
+        $I->amOnPage(['site/overview-players', 'group_ID' => '7']);
+        $I->see('Bonus: 3');
         $I->amOnPage(['bonuspunten/create']);
         $I->see('Bonuspunten toevoegen');
 
@@ -335,6 +356,8 @@ class BonuspuntenCest
         $I->see('groep A beindigd');
         $I->see('Bonuspunten poi event 4');
         $I->see('7');
+        $I->amOnPage(['site/overview-players', 'group_ID' => '7']);
+        $I->see('Bonus: 10');
     }
 
     public function testBonuspuntenCreatePost(\FunctionalTester $I)
@@ -368,6 +391,7 @@ class BonuspuntenCest
         $I->amLoggedInAs(\app\models\Users::findByUsername('deelnemera'));
         Yii::$app->user->identity->selected_event_ID = 1;
         Yii::$app->user->identity->save();
+        $I->amOnPage('/');
         $I->amOnPage(['bonuspunten/create']);
         $I->see('Forbidden (#403)');
 

@@ -1,0 +1,48 @@
+<?php
+return [
+    'time1' => [
+        'time_trail_ID' => 1,
+        'event_ID' => 1,
+        'time_trail_name' => 'opstart time trail',
+        'create_time' => '2015-07-07 07:25:46',
+        'create_user_ID' => 1,
+        'update_time' => '2015-07-07 07:25:46',
+        'update_user_ID' => 1,
+    ],
+    'time2' => [
+        'time_trail_ID' => 2,
+        'event_ID' => 2,
+        'time_trail_name' => 'intro time trail',
+        'create_time' => '2015-07-07 07:25:46',
+        'create_user_ID' => 1,
+        'update_time' => '2015-07-07 07:25:46',
+        'update_user_ID' => 1,
+    ],
+    'time3' => [
+        'time_trail_ID' => 3,
+        'event_ID' => 3,
+        'time_trail_name' => 'gestart time trail',
+        'create_time' => '2015-07-07 07:25:46',
+        'create_user_ID' => 1,
+        'update_time' => '2015-07-07 07:25:46',
+        'update_user_ID' => 1,
+    ],
+    'time4' => [
+        'time_trail_ID' => 4,
+        'event_ID' => 4,
+        'time_trail_name' => 'beindigd time trail',
+        'create_time' => '2015-07-07 07:25:46',
+        'create_user_ID' => 1,
+        'update_time' => '2015-07-07 07:25:46',
+        'update_user_ID' => 1,
+    ],
+    'time5' => [
+        'time_trail_ID' => 5,
+        'event_ID' => 3,
+        'time_trail_name' => 'gestart time trail time is up test',
+        'create_time' => '2015-07-07 07:25:46',
+        'create_user_ID' => 1,
+        'update_time' => '2015-07-07 07:25:46',
+        'update_user_ID' => 1,
+    ],
+];

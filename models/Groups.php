@@ -129,7 +129,7 @@ class Groups extends HikeActiveRecord
         return $data;
     }
 
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -178,7 +178,7 @@ class Groups extends HikeActiveRecord
     {
         return $this->hasMany(OpenNoodEnvelop::className(), ['group_ID' => 'group_ID']);
     }
-      
+
     public function getNoodEnvelops()
     {
         return $this->hasMany(NoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID'])
@@ -431,7 +431,7 @@ class Groups extends HikeActiveRecord
                 ->params([':event_ID' => Yii::$app->user->identity->selected_event_ID])
                 ->all();
         });
-        
+
         foreach ($data as $item) {
             $groupsArray[$item->group_ID] = $item->total_score;
         }

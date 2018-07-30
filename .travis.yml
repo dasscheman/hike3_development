@@ -37,7 +37,7 @@ install:
   - php yii migrate/up --migrationPath=@yii/rbac/migrations --interactive=0
   - php yii migrate/up --migrationPath=@vendor/dektrium/yii2-user/migrations --interactive=0
   - php yii migrate/up --interactive=0
-  - travis_retry composer update --no-interaction
+  - travis_retry composer install --no-interaction
   # install php extensions
   - |
     if (php --version | grep -i HipHop > /dev/null); then

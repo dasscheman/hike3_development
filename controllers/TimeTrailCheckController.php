@@ -87,29 +87,32 @@ class TimeTrailCheckController extends Controller {
      */
     public function actionCreate() {
         $code = Yii::$app->request->get('code');
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
-
-        if (!$groupPlayer) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Your are not a member of a group in this event.'));
-            return $this->redirect(['site/index']);
-        }
-
         $timeTrailItem = TimeTrailItem::find()
-            ->where('event_ID =:event_id AND code =:code')
+            ->where('code =:code')
             ->params([
-                ':event_id' => Yii::$app->user->identity->selected_event_ID,
                 ':code' => $code])
             ->one();
 
         if (!isset($timeTrailItem->code)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Not a valid Time Trail code.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Geen geldige tijdrit code.'));
             return $this->redirect(['site/overview-players']);
+        }
+
+        if($timeTrailItem->event_ID != Yii::$app->user->identity->selected_event_ID) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze tijdrit is niet voor deze hike.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
+        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($timeTrailItem->event_ID);
+        if (!$groupPlayer) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Geen geldige tijdrit code.'));
+            return $this->redirect(['site/index']);
         }
 
         $timeTrailCheck = $timeTrailItem->getTimeTrailItemCheckedByGroupCurrentUser();
 
         if ($timeTrailCheck != NULL) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Your group already scanned this time trail code.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Jou groep heeft deze QR al gescand.'));
             return $this->redirect(['time-trail/status']);
         }
         // Er is nog geen check voor huidig item, daarom overschrijven we hier de variable
@@ -124,12 +127,12 @@ class TimeTrailCheckController extends Controller {
 
             if ($timeTrailCheckPrevious == NULL) {
                 // Er is een vorig item aanwezig, dat niet gechecked is...
-                Yii::$app->session->setFlash('error', Yii::t('app', 'It seems you missed a time trail point.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Het lijkt erop dat je een tijdritpunt gemist.'));
                 return $this->redirect(['site/overview-players']);
             }
 
             if ($timeTrailCheckPrevious->start_time == NULL) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Something went wrong!!.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Er is iets niet goed gegaan!!.'));
                 return $this->redirect(['site/overview-players']);
             }
 
@@ -139,10 +142,10 @@ class TimeTrailCheckController extends Controller {
             $timeTrailCheckPrevious->end_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
 
             if ($end_date > time()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'You made it'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je hebt het gehaald'));
                 $timeTrailCheckPrevious->succeded = 1;
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'You are to late'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je bent te laat'));
                 $timeTrailCheckPrevious->succeded = 0;
             }
 

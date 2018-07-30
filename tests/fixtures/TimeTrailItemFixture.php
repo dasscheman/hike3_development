@@ -4,12 +4,9 @@ namespace app\tests\fixtures;
 
 use yii\test\ActiveFixture;
 
-class BonuspuntenFixture extends ActiveFixture
+class TimeTrailItemFixture extends ActiveFixture
 {
-    public $modelClass = 'app\models\Bonuspunten';
-    public $depends = [
-      'app\tests\fixtures\GroupsFixture',
-      'app\tests\fixtures\UsersFixture'];
+    public $modelClass = 'app\models\TimeTrailItem';
 
     public function beforeLoad() {
         parent::beforeLoad();
