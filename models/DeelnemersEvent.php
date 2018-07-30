@@ -97,7 +97,7 @@ class DeelnemersEvent extends HikeActiveRecord
                     $this->color = $color;
                     return true;
                 }
-                
+
                 $search_color = true;
                 while ($search_color) {
                     $hexcolor = $generalfucntions->random_color();
@@ -282,11 +282,11 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de group van een speler tijdens een bepaalde hike
      */
-    public function getGroupOfPlayer()
+    public function getGroupOfPlayer($even_id)
     {
         $data = DeelnemersEvent::find()
             ->where('event_ID = :event_Id AND user_ID=:user_Id')
-            ->params([':event_Id' => Yii::$app->user->identity->selected_event_ID, ':user_Id' => Yii::$app->user->identity->id])
+            ->params([':event_Id' => $even_id, ':user_Id' => Yii::$app->user->identity->id])
             ->one();
         if (!isset($data->rol)) {
             return false;
@@ -303,22 +303,16 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
      * @return de rol van een speler tijdens een bepaalde hike
      */
-    public function userSignedinInHike(
-        $event_Id,
-                                        $user_Id
-    ) {
+    public function userSignedinInHike($event_Id, $user_Id ) {
         $data = DeelnemersEvent::model()->exists(
             'event_ID = :event_Id AND user_ID=:user_Id',
-                                            array(':event_Id' => $event_Id,
-                                                  ':user_Id' => $user_Id)
+              array(':event_Id' => $event_Id,
+                    ':user_Id' => $user_Id)
         );
         return $data;
     }
 
-    public function getId(
-        $event_Id,
-                            $user_Id
-    ) {
+    public function getId($event_Id, $user_Id) {
         $data = DeelnemersEvent::model()->find(
             'event_ID = :event_Id AND user_ID=:user_Id',
                                             array(':event_Id' => $event_Id,

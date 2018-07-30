@@ -80,16 +80,47 @@ class OpenNoodEnvelopController extends Controller {
     public function actionOpen($nood_envelop_ID) {
         $model = new OpenNoodEnvelop;
         $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
+
+        if($modelEnvelop->event_ID != Yii::$app->user->identity->selected_event_ID) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor deze hike.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
+        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelEnvelop->event_ID);
+        if (!$groupPlayer) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Je mag deze hint niet openen.'));
+            return $this->redirect(['site/index']);
+        }
+
+        if ($modelEnvelop->route->day_date != EventNames::getActiveDayOfHike()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor vandaag.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
+        $openHint = OpenNoodEnvelop::find()
+            ->where('event_ID =:event_id AND nood_envelop_ID =:nood_envelop_id AND group_ID =:group_id')
+            ->params([
+                ':event_id' => $modelEnvelop->event_ID,
+                ':nood_envelop_id' => $modelEnvelop->nood_envelop_ID,
+                ':group_id' => $groupPlayer
+            ])
+            ->one();
+
+        if (isset($openHint->open_nood_envelop_ID)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Jou groep heeft deze Hint al geopend.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('open', [
                     'model' => $model,
                     'modelEnvelop' => $modelEnvelop,
             ]);
         }
-        if (Yii::$app->request->post('open-hint') == 'open-hint') {
-            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
-            $model->opened = 1;
 
+        if (Yii::$app->request->post('open-hint') == 'open-hint') {
+            $model->group_ID = $groupPlayer;
+            $model->opened = 1;
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
             } else {

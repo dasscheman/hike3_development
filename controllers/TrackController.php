@@ -81,7 +81,7 @@ class TrackController extends Controller
             return Json::encode(false);
         }
 
-        if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart && 
+        if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart &&
             Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_introductie) {
             return Json::encode(false);
         }
@@ -96,8 +96,8 @@ class TrackController extends Controller
             $model->timestamp = (int) $item['timestamp'];
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->user_ID = Yii::$app->user->identity->id;
-            if (DeelnemersEvent::getGroupOfPlayer()) {
-                $model->group_ID = DeelnemersEvent::getGroupOfPlayer();
+            if (DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID)) {
+                $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID);
             }
             if (!$model->save()) {
                 return Json::encode($model->getErrors());

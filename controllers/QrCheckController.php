@@ -16,9 +16,10 @@ use yii\web\NotFoundHttpException;
 /**
  * QrCheckController implements the CRUD actions for QrCheck model.
  */
-class QrCheckController extends Controller {
-
-    public function behaviors() {
+class QrCheckController extends Controller
+{
+    public function behaviors()
+    {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -30,7 +31,7 @@ class QrCheckController extends Controller {
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'allow' => FALSE,
+                        'allow' => false,
                         'roles' => ['?'],
                     ],
                     [
@@ -44,7 +45,7 @@ class QrCheckController extends Controller {
                         'roles' => ['deelnemerIntroductie', 'deelnemerGestartTime'],
                     ],
                     [
-                        'allow' => FALSE, // deny all users
+                        'allow' => false, // deny all users
                         'roles' => ['*'],
                     ],
                 ]
@@ -56,7 +57,8 @@ class QrCheckController extends Controller {
      * Lists all QrCheck models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new QrCheckSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -71,31 +73,37 @@ class QrCheckController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $qr_code = Yii::$app->request->get('qr_code');
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer();
-
-        if (!$groupPlayer) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Your are not a member of a group in this event.'));
-            return $this->redirect(['site/index']);
-        }
+        $even_id = Yii::$app->request->get('event_id');
 
         $qr = Qr::find()
             ->where('event_ID =:event_id AND qr_code =:qr_code')
             ->params([
-                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':event_id' => $even_id,
                 ':qr_code' => $qr_code])
             ->one();
 
         if (!isset($qr->qr_code)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Not a valid QR code.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Dit is geen geldige QR code.'));
             return $this->redirect(['site/overview-players']);
         }
 
-        if ($qr->route->day_date != EventNames::getActiveDayOfHike()){
-            if($qr->route->day_date != '0000-00-00' &&
-               EventNames::getActiveDayOfHike() != NULL)
-            Yii::$app->session->setFlash('error', Yii::t('app', 'This QR is not valid today.'));
+        if ($qr->event_ID != Yii::$app->user->identity->selected_event_ID) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR is niet voor deze hike.'));
+            return $this->redirect(['site/overview-players']);
+        }
+        
+        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($qr->event_ID);
+
+        if (!$groupPlayer) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Dit is geen geldige QR code.'));
+            return $this->redirect(['site/index']);
+        }
+
+        if ($qr->route->day_date != EventNames::getActiveDayOfHike()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR is vandaag niet geldig.'));
             return $this->redirect(['site/overview-players']);
         }
 
@@ -109,7 +117,7 @@ class QrCheckController extends Controller {
             ->one();
 
         if (isset($qrCheck->qr_check_ID)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Your group already scanned this QR code.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Jou groep heft deze QR al gescand.'));
             return $this->redirect(['site/overview-players']);
         }
 
@@ -138,7 +146,8 @@ class QrCheckController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($qr_check_ID) {
+    public function actionUpdate($qr_check_ID)
+    {
         $model = $this->findModel($qr_check_ID);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -158,7 +167,8 @@ class QrCheckController extends Controller {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
+    public function actionDelete($id)
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -171,7 +181,8 @@ class QrCheckController extends Controller {
      * @return QrCheck the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         $model = QrCheck::findOne([
                 'qr_check_ID' => $id,
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
@@ -182,5 +193,4 @@ class QrCheckController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
 }

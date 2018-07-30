@@ -129,7 +129,7 @@ class PostPassage extends HikeActiveRecord
         });
         return $data;
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -391,7 +391,7 @@ class PostPassage extends HikeActiveRecord
 
         return false;
     }
-    
+
     public function anyGroupScoredStation() {
         return PostPassage::find()
             ->where('event_ID =:event_id')

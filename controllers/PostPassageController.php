@@ -31,13 +31,15 @@ class PostPassageController extends Controller {
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['check-station'],
-                        'roles' => ['organisatieGestartTime'],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['update', 'create'],
-                        'roles' => ['organisatie'],
+                        'actions' => ['check-station','update', 'create'],
+                        'matchCallback' => function ($rule, $action) {
+                              $params = [
+                                  'action' => Yii::$app->getRequest()->get('action'),
+                                  'post_id' => Yii::$app->getRequest()->get('post_ID'),
+                                  'group_id' => Yii::$app->getRequest()->get('group_ID'),
+                              ];
+                              return Yii::$app->user->can('organisatiePostCheck', $params);
+                          }
                     ],
                     [
                         'allow' => FALSE, // deny all users
@@ -112,6 +114,7 @@ class PostPassageController extends Controller {
 
         if (Yii::$app->request->post('update') == 'delete') {
             if ($model->delete()) {
+                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));

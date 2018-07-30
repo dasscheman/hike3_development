@@ -7,6 +7,7 @@ use app\models\OpenVragen;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
 use app\models\DeelnemersEvent;
+use app\models\EventNames;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -75,20 +76,38 @@ class OpenVragenAntwoordenController extends Controller {
     public function actionBeantwoorden($open_vragen_ID) {
         $model = new OpenVragenAntwoorden;
         $modelVraag = OpenVragen::findOne($open_vragen_ID);
+
+        if($modelVraag->event_ID != Yii::$app->user->identity->selected_event_ID) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag is niet voor deze hike.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
+        if ($modelVraag->route->day_date != EventNames::getActiveDayOfHike()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag is niet voor vandaag.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('beantwoorden', [
-                    'model' => $model,
-                    'modelVraag' => $modelVraag,
+                'model' => $model,
+                'modelVraag' => $modelVraag,
             ]);
         }
         if (Yii::$app->request->post('submit') == 'beantwoord-vraag') {
-            $model->group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
+            $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID);
+            if (!$groupPlayer) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je mag deze vraag niet beantwoorden.'));
+                return $this->redirect(['site/index']);
+            }
+
+            $model->group_ID = $groupPlayer;
             $model->checked = 0;
+
             if (!$model->save()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan je antwoord niet opslaan.'));
             } else {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Question is answered.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Vraag is beantwoord.'));
             }
         }
 
