@@ -82,15 +82,15 @@ class EventNames extends HikeActiveRecord {
     public function attributeLabels() {
         return [
             'event_ID' => Yii::t('app', 'Hike ID'),
-            'event_name' => Yii::t('app', 'Hike Name'),
-            'start_date' => Yii::t('app', 'Start Date'),
-            'end_date' => Yii::t('app', 'End Date'),
+            'event_name' => Yii::t('app', 'Hike Naam'),
+            'start_date' => Yii::t('app', 'Start datum'),
+            'end_date' => Yii::t('app', 'Eind datum'),
             'status' => Yii::t('app', 'Status'),
-            'active_day' => Yii::t('app', 'Active Day'),
-            'max_time' => Yii::t('app', 'Max Time'),
+            'active_day' => Yii::t('app', 'Hike dag'),
+            'max_time' => Yii::t('app', 'Tijdslimiet'),
             'image' => Yii::t('app', 'Image'),
             'image_temp' => Yii::t('app', 'Update image'),
-            'organisatie' => Yii::t('app', 'Organisation'),
+            'organisatie' => Yii::t('app', 'Organisatie'),
             'website' => Yii::t('app', 'Website'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
@@ -238,11 +238,11 @@ class EventNames extends HikeActiveRecord {
      */
     public function getStatusOptions() {
         return [
-            self::STATUS_opstart => Yii::t('app', 'Startup'),
-            self::STATUS_introductie => Yii::t('app', 'Introduction'),
-            self::STATUS_gestart => Yii::t('app', 'Started'),
-            self::STATUS_beindigd => Yii::t('app', 'Ended'),
-            self::STATUS_geannuleerd => Yii::t('app', 'Canceled'),
+            self::STATUS_opstart => Yii::t('app', 'Uitzetten'),
+            self::STATUS_introductie => Yii::t('app', 'Introductiie'),
+            self::STATUS_gestart => Yii::t('app', 'Gestart'),
+            self::STATUS_beindigd => Yii::t('app', 'Beëindigd'),
+            self::STATUS_geannuleerd => Yii::t('app', 'Geannuleerd'),
         ];
     }
 

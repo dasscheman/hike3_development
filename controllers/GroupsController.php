@@ -106,7 +106,7 @@ class GroupsController extends Controller
         }
 
         if (!$model->save()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan'));
             return $this->redirect(['site/overview-organisation']);
         }
 
@@ -117,12 +117,12 @@ class GroupsController extends Controller
         if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             $errors = true;
         }
-        
+
         if (!Groups::addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
             $errors = true;
         }
         if (!$errors) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Created group {groupname}.', ['groupname' => $model->group_name]));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Groep {groupname} aangemaakt.', ['groupname' => $model->group_name]));
         }
         return $this->redirect(['site/overview-organisation']);
     }
@@ -161,7 +161,7 @@ class GroupsController extends Controller
                     try {
                         $player->delete();
                     } catch (\yii\db\IntegrityException $e) {
-                        throw new \yii\web\ForbiddenHttpException('Could not delete this player.');
+                        throw new \yii\web\ForbiddenHttpException('Je kunt deze speler niet verwijderen.');
                     }
                 }
             }
@@ -173,7 +173,7 @@ class GroupsController extends Controller
             } catch (\yii\db\IntegrityException $e) {
                 throw new \yii\web\ForbiddenHttpException('Could not delete this group.');
             }
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {group} from the hike', ['group' => $model->group_name]));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Groep {group} is van de hike verwijderd', ['group' => $model->group_name]));
             return $this->redirect(['site/overview-organisation']);
         }
 
@@ -186,7 +186,7 @@ class GroupsController extends Controller
             $errors = true;
         }
         if (!$errors) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Updated group {groupname}.', ['groupname' => $model->group_name]));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Groep {groupname} is gewijzigd.', ['groupname' => $model->group_name]));
         }
         return $this->redirect(['site/overview-organisation']);
     }

@@ -64,7 +64,7 @@
         scannen voor een eventueel volgende punt.
 		<br>
 		<br>
-		<i>www.kiwi.run</i>
+		<i>www.hike-app.nl</i>
 		<br><br>
 		<div class="centretext"><?php echo $code ?></div>
 	</div>

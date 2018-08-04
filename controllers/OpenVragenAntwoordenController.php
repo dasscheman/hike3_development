@@ -125,11 +125,11 @@ class OpenVragenAntwoordenController extends Controller {
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
             foreach ($model->getErrors() as $error) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.') . ' ' . Json::encode($error));
             }
         } else {
             Yii::$app->cache->flush();
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Changes are saved.'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Wijzigingen zijn opgeslagen.'));
         }
 
         return $this->redirect(['open-vragen-antwoorden/index']);
@@ -141,7 +141,7 @@ class OpenVragenAntwoordenController extends Controller {
         $model->correct = 1;
         if (!$model->save()) {
             foreach ($model->getErrors() as $error) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan vraag niet beoordelen.') . ' ' . Json::encode($error));
             }
         } else {
             Yii::$app->cache->flush();
@@ -163,7 +163,7 @@ class OpenVragenAntwoordenController extends Controller {
         $model->correct = 0;
         if (!$model->save()) {
             foreach ($model->getErrors() as $error) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the question.') . ' ' . Json::encode($error));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan vraag niet beoordelen.') . ' ' . Json::encode($error));
             }
         } else {
             Yii::$app->cache->flush();

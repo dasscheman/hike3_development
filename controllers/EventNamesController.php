@@ -192,9 +192,10 @@ class EventNamesController extends Controller
                         'warning',
                         Yii::t(
                             'app',
-                            'You created a new hike. Here you add players.
-                                On the route overview page you can create the route of an hike.
-                                Players cannot see this when the hike status is setup.'
+                            'Je hebt een nieuwe hike aangemaakt.
+                            Hier kun je deelnemers en organisatie toevoegen.
+                            Op de kaart pagina kun route onderdelen toevoegen aan de dagen van de hike.
+                            Zolang de status van de hike is \'Uitzetten\' kunnen de deelnemers niets van de hike zien.'
                         )
                     );
                 }
@@ -205,7 +206,7 @@ class EventNamesController extends Controller
             return $this->renderPartial('/event-names/create', ['model' => $model]);
         }
         return $this->render('/event-names/create', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -222,15 +223,15 @@ class EventNamesController extends Controller
 
         if (!$model->load(Yii::$app->request->post())) {
             return $this->renderPartial('update', [
-                    'model' => $model,
-                    'action' => $action,
+                'model' => $model,
+                'action' => $action,
             ]);
         }
 
         if (Yii::$app->request->get('action') == 'change_settings' ||
             Yii::$app->request->get('action') == 'set_max_time') {
             if (!$model->save()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save the changes.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.'));
             } else {
                 Yii::$app->cache->flush();
                 if (Yii::$app->request->get('action') === 'change_settings') {
@@ -256,13 +257,13 @@ class EventNamesController extends Controller
                 }
 
                 if (Yii::$app->request->get('action') == 'change_settings') {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Changes are saved.'));
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen zijn opgeslagen.'));
                 }
                 if (Yii::$app->request->get('action') == 'set_max_time') {
                     Yii::$app->session->setFlash('success', Yii::t(
                             'app',
-                        'You set the max time. This is the max walking time the groups have to finish.
-                        Time spend on a station is not included.'
+                        'Je hebt de tijdslimiet gezet. Dit is de maximum tijd dat groepen vandaag mogen lopen.
+                        Tijd die doorgebracht wordt op een post wordt niet meegerekend.'
                     ));
                 }
             }
@@ -283,7 +284,7 @@ class EventNamesController extends Controller
                 'user_ID' => Yii::$app->user->identity->id]);
 
         if ($check->rol !== DeelnemersEvent::ROL_organisatie) {
-            throw new HttpException(400, Yii::t('app', 'You cannot remove this hike.'));
+            throw new HttpException(400, Yii::t('app', 'Je kunt deze hike niet verwijderen.'));
         }
 
         $model = EventNames::findOne([
@@ -301,10 +302,10 @@ class EventNamesController extends Controller
             Groups::deleteAll('event_ID = :event_id', [':event_id' => $event_ID]);
             $model->delete();
         } catch (Exception $e) {
-            throw new HttpException(400, Yii::t('app', 'You cannot remove this hike.'));
+            throw new HttpException(400, Yii::t('app', 'Je kunt deze hike niet verwijderen.'));
         }
 
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Removed hike'));
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Hike is verwijderd'));
         return $this->redirect(['event-names/select-hike']);
     }
 
@@ -338,7 +339,7 @@ class EventNamesController extends Controller
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Je kunt de status niet wijzigen.'));
             return $this->redirect(['site/overview'], 404);
         }
 
@@ -352,10 +353,10 @@ class EventNamesController extends Controller
                     'warning',
                     Yii::t(
                         'app',
-                    'The hike is has status setup.
-                        Users cannot see anything of the hike. They can see the
-                        different hike elements when the hike has status introduction or started'
-                )
+                        'De hike heeft status \'Uitzetten\'.
+                        De spelers kunnen nog niets van de hike zien.
+                        Ze kunnen de verschillende onderdelen van de hike pas zien als de status \'Introdutie\' of \'Gestart\' is.'
+                    )
                 );
             }
             if ($model->status == EventNames::STATUS_introductie) {
@@ -363,19 +364,20 @@ class EventNamesController extends Controller
                     'warning',
                     Yii::t(
                         'app',
-                    'The hike is has status introduction.
-                        Users can see the questions for the introduction and they
-                        can scan the silent stations for the introduction.'
-                )
+                        'De hike heeft status \'Introductie\'.
+                        Spelers kunnen de vragen beantwoorden, stille post scannen en hints openen,
+                        maar alleen voor de onderdelen die onder de introductie vallen.'
+                    )
                 );
             }
             if ($model->status == EventNames::STATUS_gestart) {
                 Yii::$app->session->setFlash('warning', Yii::t(
                         'app',
-                    'The hike is started, active day is set on start date.
-                        For this day user can see the questions, scan stations and open hints.
-                        Don\'t forget to set the max time if you want to have a time limit.'
-                ));
+                        'De hike heeft status \'Gestart\', de hike dag is gezet op de eerste dag.
+                        Spelers kunnen de vragen beantwoorden, stille post scannen en hints openen,
+                        die voor vandaag aangemaakt zijn.
+                        Vergeet niet om de tijdslimiet te zetten als deelnemers maar een beperkt aantal uren mogen lopen.'
+                    ));
             }
         } else {
             // validation failed: $errors is an array containing error messages
@@ -397,7 +399,7 @@ class EventNamesController extends Controller
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Je kunt de status niet wijzigen.'));
             return $this->redirect(['site/overview-organisation'], 404);
         }
 
@@ -405,7 +407,7 @@ class EventNamesController extends Controller
         $model->active_day = Yii::$app->setupdatetime->storeFormat(Yii::$app->request->post('EventNames')['active_day'], 'date');
         if ($model->save()) {           // validation failed: $errors is an array containing error messages
             Yii::$app->cache->flush();
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Don\'t forget to set the max time.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Vergeet niet de tijdlimiet te zetten.'));
         } else {
             // validation failed: $errors is an array containing error messages
             foreach ($model->getErrors() as $error) {
@@ -426,7 +428,7 @@ class EventNamesController extends Controller
         $model = $this->findModel(Yii::$app->user->identity->selected_event_ID);
 
         if (null === Yii::$app->request->post('EventNames')) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can not change status.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Je kunt de status niet wijzigen.'));
             return $this->redirect(['site/overview-organisation'], 404);
         }
 
@@ -436,7 +438,10 @@ class EventNamesController extends Controller
             $model->save(false);
             Yii::$app->cache->flush();
             if ($model->status == EventNames::STATUS_gestart) {
-                Yii::$app->session->setFlash('warning', Yii::t('app', 'The hike is started, active day is set on start date, don\'t forget to set the max time.'));
+                Yii::$app->session->setFlash('warning', Yii::t(
+                    'app',
+                    'De hike heeft status \'Gestart\', de hike dag is gezet op de
+                    eerste dag. Vergeet niet om de tijdslimiet te zetten.'));
             }
         } else {
             // validation failed: $errors is an array containing error messages

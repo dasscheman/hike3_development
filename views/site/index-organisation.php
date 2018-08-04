@@ -69,7 +69,7 @@ $this->title = Yii::t('app', 'Hike overview');
                             'submitButton' => [
                                 'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
                                 'class' => 'btn btn-sm btn-primary',
-                                'label' => Yii::t('app', 'Save'),
+                                'label' => Yii::t('app', 'Opslaan'),
                                 'id' => $eventModel->event_ID.'-is_active_status-submit'
                             ],
                             // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
@@ -130,7 +130,7 @@ $this->title = Yii::t('app', 'Hike overview');
                     [
                         'id' =>'modalCreateGroup',
                         'toggleButton' => [
-                            'label' => Yii::t('app', 'Add runner group to hike'),
+                            'label' => Yii::t('app', 'Voeg een groep toe'),
                             'class' => 'btn btn-xs btn-success',
                             'disabled' => !Yii::$app->user->can('organisatie'),
                         ],
@@ -148,7 +148,7 @@ $this->title = Yii::t('app', 'Hike overview');
                     'pager' => FALSE,
                     'dataProvider' => $groupsData,
                     'itemView' => '/groups/_list',
-                    'emptyText' => Yii::t('app', 'No groups added to the hike.'),
+                    'emptyText' => Yii::t('app', 'Deze hike heeft nog geen groepen.'),
                 ]);
                 ?>
             </div>
@@ -168,7 +168,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         ],
                         'dataProvider' => $activityFeed,
                         'itemView' => '/groups/_list-feed',
-                        'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
+                        'emptyText' => Yii::t('app', 'Nog geen activiteit.'),
                     ]);
                     ?>
                 </div>
@@ -205,12 +205,12 @@ $this->title = Yii::t('app', 'Hike overview');
                     <p>
                         <?php
                         echo Html::a(
-                            Yii::t('app', 'Export Hike'),
+                            Yii::t('app', 'Exporteer Hike'),
                             [
                                 'export-import/export-route',
                             ],
                             [
-                                'title' => Yii::t('app', 'Create an excel file from hike'),
+                                'title' => Yii::t('app', 'Exporteer een excel bestand van de hike'),
                                 'class'=>'btn btn-primary btn-xs',
                             ]
                         );
@@ -263,7 +263,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         <p>
                             <?php
                             echo Html::a(
-                                    Yii::t('app', 'Add route items'),
+                                    Yii::t('app', 'Route overzicht'),
                                     ['/route/index'],
                                     [
                                         'class' => 'btn btn-xs btn-success',
@@ -273,7 +273,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         <p>
                             <?php
                             echo Html::a(
-                                    Yii::t('app', 'Add stations'),
+                                    Yii::t('app', 'Posten overzicht'),
                                     ['/posten/index'],
                                     [
                                         'class' => 'btn btn-xs btn-success',
@@ -305,7 +305,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         // TimePicker within a bootstrap modal window with initial values.
                         Modal::begin([
                             'toggleButton' => [
-                                'label' => Yii::t('app', 'Change max time hike'),
+                                'label' => Yii::t('app', 'Verander tijdslimiet'),
                                 'id' => 'modalChangeMaxTimeButton',
                                 'class' => 'btn btn-xs btn-success',
                                 'disabled' => !Yii::$app->user->can('organisatieGestart'),

@@ -100,8 +100,7 @@ class TimeTrailItemController extends Controller
             $model->setNewOrderForTimeTrailItem();
             $model->setUniqueCodeForTimeTrailItem();
             if ($model->save()) {
-//                $this->setCookieIndexTab($model->time_trail_ID);
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail item.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuw tijdrit onderdeel opgeslagen'));
                 return $this->redirect(['map/index']);
             }
         } else {
@@ -155,9 +154,9 @@ class TimeTrailItemController extends Controller
             if (!$exist) {
                 $model->delete();
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail item.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Tijdrit onderdeel verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail item, it contains checks.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan tijdrit onderdeel niet verwijderen, er is al een groep die de hem heeft gestart.'));
             }
             if ($map === true) {
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -170,7 +169,7 @@ class TimeTrailItemController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail item.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
 
                 if ($map === true) {
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -204,10 +203,10 @@ class TimeTrailItemController extends Controller
         try {
             $model->delete();
         } catch (Exception $e) {
-            throw new HttpException(400, Yii::t('app' . 'You cannot remove this time trail item.'));
+            throw new HttpException(400, Yii::t('app' . 'Je kunt dit onderdeel van de tijdrit niet verwijderen.'));
         }
 
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Removed time trail item'));
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Tijdrit onderdeel verwijderd'));
 
         $searchModel = new TimeTrailItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -252,8 +251,8 @@ class TimeTrailItemController extends Controller
             //    'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => [
-                'title' => Yii::t('app', 'Time trail:') . ' ' . $model->time_trail_item_name,
-                'subject' => Yii::t('app', 'Time trail:') . ' ' . $model->time_trail_item_name,
+                'title' => Yii::t('app', 'Tijdrit:') . ' ' . $model->time_trail_item_name,
+                'subject' => Yii::t('app', 'Tijdrit:') . ' ' . $model->time_trail_item_name,
             //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
             ],
             // call mPDF methods on the fly
@@ -304,8 +303,8 @@ class TimeTrailItemController extends Controller
             //    'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => [
-                'title' => Yii::t('app', 'Silent station:') . ' ' . $model->time_trail_item_name,
-                'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->time_trail_item_name,
+                'title' => Yii::t('app', 'Stille post:') . ' ' . $model->time_trail_item_name,
+                'subject' => Yii::t('app', 'Stille post:') . ' ' . $model->time_trail_item_name,
             //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
             ],
             // call mPDF methods on the fly
@@ -353,7 +352,7 @@ class TimeTrailItemController extends Controller
                 $modelItem->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
 

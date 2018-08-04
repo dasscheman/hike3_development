@@ -205,9 +205,9 @@ class RouteController extends Controller
 
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Route verwijdered.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan route niet verwijderen, het bevat onderdelen die eerst verwijderd moeten worden.'));
             }
             return $this->redirect(['route/index']);
         }
@@ -215,7 +215,7 @@ class RouteController extends Controller
         if (Yii::$app->request->post('Route') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to route.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
                 return $this->redirect(['route/index']);
             }
         }
@@ -263,7 +263,7 @@ class RouteController extends Controller
                 $model->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
 
@@ -316,9 +316,9 @@ class RouteController extends Controller
                 'route',
                 Yii::t(
                     'app',
-                    'Here you can create route items for each day.
-                   The route item \'Introduction\' you can use before the start of the hike, so players can get familiar with hike-app.nl.
-                   For each route item you can create questions, hints or silent stations.'
+                    'Hier zie je een overzicht van de route.
+                    De introductie kun je gebruiken voor de start van de hike zodat de deelnemers bekend raken met de hike-app.
+                    Voor elke dag kun je vragen, hints, stille posten maken. Dit doe je op de kaart.'
                 )
             );
         }
@@ -332,8 +332,8 @@ class RouteController extends Controller
                 'question',
                 Yii::t(
                     'app',
-                    'Questions are visable by player only when the hike is started and the same day is selected.
-                   The field {awnser} is never visable by players.',
+                    'Vragen zijn zichtbaar voor de speler wanneer de hike is gestart en de hike dag overeenkomen.
+                   Het veld {awnser} wordt nooit aan de spelers getoond.',
                     ['awnser' => $questionModel->getAttributeLabel('goede_antwoord'),]
                 )
             );
@@ -349,13 +349,12 @@ class RouteController extends Controller
                 'hint',
                 Yii::t(
                     'app',
-                    'Hints are visable by player only when the hike is started and the same day is selected.
-                   The field {remark} and {cordinate} are only visable by players when whey open a hint.
-                   The score fields are penalty score, use positive interger numbers.
-                   Use the {name} to give a clear description what this hint is about',
+                    'Hints zijn zichtbaar voor de speler wanneer de hike is gestart en de hike dag overeenkomen.
+                   Het veld {remark} is alleen zichtbaar als een groep de hint opent.
+                   Het score veld zijn strafpunten, vul positieve hele getallen in.
+                   Gebruik het veld {name} om een duidelijke omschrijving te geven wat de deelnemers van de hint kunnen verwachten',
                     [
                     'remark' => $hintsModel->getAttributeLabel('opmerkingen'),
-                    'cordinate' => $hintsModel->getAttributeLabel('coordinaat'),
                     'name' => $hintsModel->getAttributeLabel('nood_envelop_name'),
                 ]
                 )
@@ -372,9 +371,8 @@ class RouteController extends Controller
                 'qr',
                 Yii::t(
                     'app',
-                    'Silent station have to be printed and hanged along the hike route.
-                   Players get points when they scan the QR code.
-                   A silent station is automaticly created for each route item'
+                    'Stille posten moeten worden uitgeprint en opgehangen langs de route.
+                    Spelers krijgen de punten als ze hem scannen.'
                 )
             );
         }

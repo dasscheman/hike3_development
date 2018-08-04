@@ -96,7 +96,7 @@ class OpenVragenController extends Controller
             $model->setNewOrderForVragen();
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new question.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe vraaag opgeslagen.'));
                 return $this->redirect(['map/index']);
             }
         } else {
@@ -148,9 +148,9 @@ class OpenVragenController extends Controller
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted question.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Vraag verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete question, it is already awnseredby at least one group.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan vraag niet verwijderen, een groep heeft hem al beantwoord.'));
             }
             if ($map === true) {
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -163,7 +163,7 @@ class OpenVragenController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to question.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
                 if ($map === true) {
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
@@ -322,7 +322,7 @@ class OpenVragenController extends Controller
                 $model->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen'));
             }
         }
 
