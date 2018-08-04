@@ -129,7 +129,7 @@ class TimeTrailController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
 //                $this->setCookieIndexTab($model->time_trail_ID);
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new time trail.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe tijdrit opgeslagen.'));
                 return $this->redirect(['map/index']);
             }
         } else {
@@ -182,9 +182,9 @@ class TimeTrailController extends Controller
 
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted time trail.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Tijdrit verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete time trail, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan tijdrit niet verwijderen, er is al een groep die hem heeft gestart.'));
             }
             if ($map === true) {
                 echo "<script>window.close() window.opener.location.reload(true);</script>";
@@ -196,7 +196,7 @@ class TimeTrailController extends Controller
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to time trail.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
                 if ($map === true) {
                     echo "<script>window.close();</script>";
                     return;

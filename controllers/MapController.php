@@ -76,13 +76,13 @@ class MapController extends Controller
                 'warning',
                 Yii::t(
                     'app',
-                    'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
-                    If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
+                    'Je bent niet ingeeschreven voor een hike. Als je er een organiseerd, maak er dan een hike aan.
+                    Als je mee wilt doen aan een hike zoek dan een vriend die een hike organiseerd en vraag hem jou profiel aan de hike toe tevoegen.'
                 )
             );
             return $this->redirect(['/users/view']);
         }
-        
+
         switch (Yii::$app->user->identity->getStatusForEvent()) {
             case EventNames::STATUS_opstart:
                 if (Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie) {

@@ -33,7 +33,7 @@ AppAsset::register($this);
             NavBar::begin([
                 'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected_event_ID ?
                     Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . EventNames::getEventName(Yii::$app->user->identity->selected_event_ID) :
-                    Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . 'Kiwi.run',
+                    Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . 'hike-app.nl',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -267,9 +267,9 @@ AppAsset::register($this);
           if (Yii::$app->controller->id !== 'map') {
               ?>
             <footer class="footer">
-               
-                    <p class="pull-left">&copy; Kiwi.run <?= date('Y') ?></p>
-                
+
+                    <p class="pull-left">&copy; hike-app.nl <?= date('Y') ?></p>
+
             </footer>
             <?php
           };

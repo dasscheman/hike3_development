@@ -32,9 +32,9 @@ $this->title = 'My Yii Application';
 
         <div class="row">
             <div class="col-lg-4">
-                <h2>Deelnemer: Hoe gebruik je kiwi.run tijdens een hike.</h2>
+                <h2>Deelnemer: Hoe gebruik je hike-app tijdens een hike.</h2>
 
-                <p>Korte omschrijving hoe je kiwi.run gebruikt tijdens de hike.</p>
+                <p>Korte omschrijving hoe je hike-app gebruikt tijdens de hike.</p>
 
             </div>
             <div class="col-lg-8">

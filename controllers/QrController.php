@@ -89,7 +89,7 @@ class QrController extends Controller
             $model->setNewOrderForQr();
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new silent station.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe stille post opgeslagen.'));
                 return $this->redirect(['map/index']);
             }
         } else {
@@ -141,10 +141,10 @@ class QrController extends Controller
                 ->exists();
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted silent station.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Stille post verwijdered.'));
             } else {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete silent station, it is already checked by at leas one group.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan stille post niet verwijderen, er is al een groep die deze post gescand heeft.'));
             }
             if ($map === true) {
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -157,7 +157,7 @@ class QrController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to silent station.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen'));
                 if ($map === true) {
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
@@ -208,8 +208,8 @@ class QrController extends Controller
             //    'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => [
-                'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
-                'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                'title' => Yii::t('app', 'Stille post:') . ' ' . $model->qr_name,
+                'subject' => Yii::t('app', 'Stille post:') . ' ' . $model->qr_name,
             //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
             ],
             // call mPDF methods on the fly
@@ -258,8 +258,8 @@ class QrController extends Controller
             //    'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => [
-                'title' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
-                'subject' => Yii::t('app', 'Silent station:') . ' ' . $model->qr_name,
+                'title' => Yii::t('app', 'Stille post:') . ' ' . $model->qr_name,
+                'subject' => Yii::t('app', 'Stille post:') . ' ' . $model->qr_name,
             //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
             ],
             // call mPDF methods on the fly
@@ -303,7 +303,7 @@ class QrController extends Controller
                 $model->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
 

@@ -39,8 +39,8 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['error', 'about', 'contact', 'captcha'],
-                        'allow' => true
+                        'actions' => ['error', 'about', 'contact', 'captcha', 'quick-start'],
+                        'allow' => true,
                     ],
                     [
                         'actions' => ['logout', 'index', 'overview', 'cookie'],
@@ -95,8 +95,8 @@ class SiteController extends Controller
                     'warning',
                     Yii::t(
                         'app',
-                        'You are not subscribed to any hike. If you organizing a hike you can start a new hike.
-                        If you want to join an hike, look for a friend you is organising a hike and ask him to add your profile to the hike'
+                        'Je bent niet ingeeschreven voor een hike. Als je er een organiseerd, maak er dan een hike aan.
+                        Als je mee wilt doen aan een hike zoek dan een vriend die een hike organiseerd en vraag hem jou profiel aan de hike toe tevoegen.'
                     )
                 );
                 return $this->redirect(['/users/view']);
@@ -309,26 +309,9 @@ class SiteController extends Controller
                 'info',
                 Yii::t(
                     'app',
-                'The hike is has status setup.
-                    Users cannot see anything of the hike. They can see the
-                    different hike elements when the hike has status introduction or started'
-            )
-            );
-        }
-
-        $route = Route::find()
-            ->where('event_ID =:event_id')
-            ->params([':event_id' => $model->event_ID])
-            ->count();
-
-        if ($route < 5) {
-            Yii::$app->session->setFlash(
-                'route',
-                Yii::t(
-                    'app',
-                    'You have no or a few route items, click on the menu item
-                    \'Organisation/Route Overview\' to create route item,
-                    questions, silent stations and hints.'
+                    'De hike heeft status \'Uitzetten\'.
+                    De spelers kunnen nog niets van de hike zien.
+                    Ze kunnen de verschillende onderdelen van de hike pas zien als de status \'Introdutie\' of \'Gestart\' is.'
                 )
             );
         }
@@ -342,8 +325,10 @@ class SiteController extends Controller
                 'post',
                 Yii::t(
                     'app',
-                    'You have no or a few stations, click on the menu item
-                    \'Organisation/Stations\' to create stations.'
+                    'Je hebt geen of weinig posten, click on the menu item
+                    \'Kaarten\' om posten aan te maken.
+                    LET OP! Je moet voor elke dag een startpost maken, die je moet gebruiken om een groepje te laten starten.
+                    De startpost geef je 0 punten, tenzij je denkt dat het een prestatie is dat ze hike dag start.'
                 )
             );
         }

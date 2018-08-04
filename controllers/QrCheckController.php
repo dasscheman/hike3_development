@@ -94,7 +94,7 @@ class QrCheckController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR is niet voor deze hike.'));
             return $this->redirect(['site/overview-players']);
         }
-        
+
         $groupPlayer = DeelnemersEvent::getGroupOfPlayer($qr->event_ID);
 
         if (!$groupPlayer) {
@@ -130,12 +130,12 @@ class QrCheckController extends Controller
         if ($model->save()) {
             Yii::$app->cache->flush();
             if ($model->qr->score < 0) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Checked QR code! But you received penalty points...'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'QR code gecontroleerd! Maar je krijgt strafpunten...'));
             } else {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Checked QR code!'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'QR code gecontroleerd!'));
             }
         } else {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not check QR code!'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan QR code niet controleren!'));
         }
         return $this->redirect(['site/overview-players']);
     }

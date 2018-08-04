@@ -78,9 +78,9 @@ class PostPassageController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 if ($action === 'start') {
-                    Yii::$app->session->setFlash('info', Yii::t('app', 'Started'));
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Gestart'));
                 } else {
-                    Yii::$app->session->setFlash('info', Yii::t('app', 'Saved'));
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Opgeslagen'));
                 }
                 if (Yii::$app->request->isAjax) {
                     return $this->renderAjax('_list-groups', [
@@ -115,9 +115,9 @@ class PostPassageController extends Controller {
         if (Yii::$app->request->post('update') == 'delete') {
             if ($model->delete()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted route.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'In/uit check verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete route, it contains items which should be removed first.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan in/uit check niet verwijderen.'));
             }
             return $this->redirect(['groups/index-posten']);
         }
@@ -126,7 +126,7 @@ class PostPassageController extends Controller {
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
                 if (Yii::$app->request->isAjax) {
                     return $this->renderAjax('_list', ['model' => $model]);
                 }

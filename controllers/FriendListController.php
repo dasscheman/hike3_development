@@ -144,9 +144,9 @@ class FriendListController extends Controller
     public function actionConnect()
     {
         if (FriendList::sendRequest(Yii::$app->request->get('user_id'))) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Send invitation.'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Uitnodiging verzonden.'));
         } else {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not send invitation.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan uitnodiging niet verzenden.'));
         }
         $this->redirect(Yii::$app->request->referrer);
     }
@@ -170,7 +170,7 @@ class FriendListController extends Controller
         $valid = $modelAccepter->validate() && $valid;
 
         if (!$valid) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan uitnodiging niet accepteren.'));
         } else {
             // use false parameter to disable validation
             $modelRequester->save(false);
@@ -187,7 +187,7 @@ class FriendListController extends Controller
         $modelAccepter->status = FriendList::STATUS_declined;
 
         if (!$modelAccepter->validate()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not accept invitation.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan uitnodiging niet weigeren.'));
         } else {
             // use false parameter to disable validation
             $modelAccepter->save(false);

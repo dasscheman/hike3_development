@@ -163,7 +163,7 @@ class UsersController extends Controller
         $model = $this->findModel(Yii::$app->user->id);
 
         if (!$model->load(Yii::$app->request->post()) || !$model->save()) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Could not change password.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Kan wachtwoord niet wijzigen.'));
         }
 
         return $this->redirect(['view']);
@@ -181,7 +181,7 @@ class UsersController extends Controller
             if ($model->save()) {
                 $emailSend = $model->sendEmailWithNewPassword($newWachtwoord);
                 if ($emailSend) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Email is send.'));
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Email is verzonden.'));
                     return $this->redirect(['site/login']);
                 } else {
                     throw new CHttpException(400, Yii::t('app', "Je wachtwoord is gewijzigd, maar helaas is het verzenden van je wachtwoord niet gelukt. Probeer nog eens of stuur een mail hike-app@biologenkantoor.nl"));
@@ -191,7 +191,7 @@ class UsersController extends Controller
 
         if (isset(Yii::$app->request->post('Users')['voornaam']) and
             isset(Yii::$app->request->post('Users')['email']) and ! isset($model)) {
-            Yii::$app->session->setFlash('warning', Yii::t('app', 'Unknown user and/or email.'));
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Onbekende gebruiker en/of email.'));
         }
 
         $model = new Users;
@@ -211,7 +211,7 @@ class UsersController extends Controller
         try {
             $this->findModel($id)->delete();
         } catch (Exception $ex) {
-            throw new CHttpException(400, Yii::t('app', 'You cannot remove this user.'));
+            throw new CHttpException(400, Yii::t('app', 'Je kunt deze gebruiker niet verwijderen.'));
         }
 
 

@@ -97,7 +97,7 @@ class BonuspuntenController extends Controller
         if($model->save()) {
             Yii::$app->cache->flush();
         } else {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Could not save changes to group.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.'));
         }
 
         return $this->redirect(['site/index']);
@@ -113,7 +113,7 @@ class BonuspuntenController extends Controller
     {
         if ($this->findModel($bonuspunten_ID)->delete()) {
             Yii::$app->cache->flush();
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspoints are deleted'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Bonuspunten zijn verwijdered'));
             return $this->redirect(['bonuspunten/index']);
         }
         $model = $this->findModel($bonuspunten_ID);
@@ -138,9 +138,9 @@ class BonuspuntenController extends Controller
 
         if (Yii::$app->request->post('update') == 'delete') {
             if ($model->delete()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted bonus points.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Bonuspunten zijn verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete bonus points.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan bonuspunten niet verwijderen.'));
             }
             return $this->redirect(Yii::$app->request->referrer);
         }
@@ -149,7 +149,7 @@ class BonuspuntenController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
 //                if (Yii::$app->request->isAjax) {
 //                    return $this->renderAjax('_list', ['model' => $model]);
 //                }
