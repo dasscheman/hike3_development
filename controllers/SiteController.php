@@ -325,7 +325,7 @@ class SiteController extends Controller
                 'post',
                 Yii::t(
                     'app',
-                    'Je hebt geen of weinig posten, click on the menu item
+                    'Je hebt geen of weinig posten, klik op het menu item
                     \'Kaarten\' om posten aan te maken.
                     LET OP! Je moet voor elke dag een startpost maken, die je moet gebruiken om een groepje te laten starten.
                     De startpost geef je 0 punten, tenzij je denkt dat het een prestatie is dat ze hike dag start.'
