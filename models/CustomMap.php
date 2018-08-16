@@ -400,7 +400,7 @@ class CustomMap extends Map
             }
 
             foreach ($items->all() as $item) {
-                $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[fmod($kleur, 6)] . '_' . $countitems . '.png')]);
+                $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[fmod($kleur, 5)] . '_' . $countitems . '.png')]);
                 if ($item->latitude === null) {
                     $latitude = 0.0000;
                 } else {
