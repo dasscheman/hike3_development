@@ -400,7 +400,7 @@ class CustomMap extends Map
             }
 
             foreach ($items->all() as $item) {
-                $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_' . $countitems . '.png')]);
+                $icon = new Icon(['url' => Url::to('@web/images/map_icons/' . $kleuren->kleuren[fmod($kleur, 6)] . '_' . $countitems . '.png')]);
                 if ($item->latitude === null) {
                     $latitude = 0.0000;
                 } else {
@@ -487,7 +487,7 @@ class CustomMap extends Map
             return;
         }
         $groups = Groups::getGroupOptionsForEvent();
-        
+
         foreach ($groups as $group_ID => $group_name) {
             $this->addGroupTracks($model, $group_ID, $group_name);
         }
@@ -571,7 +571,7 @@ class CustomMap extends Map
             $this->addOverlay($marker);
         }
     }
-    
+
     public function addOrganisationTracks($model)
     {
         $organisations = DeelnemersEvent::getOrganisationCurrentGame();
@@ -609,7 +609,7 @@ class CustomMap extends Map
             }
         }
     }
-    
+
     /**
      * Finds the Groups model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
