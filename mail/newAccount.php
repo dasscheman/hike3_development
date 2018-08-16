@@ -2,7 +2,7 @@
 	<head></head>
 	<body>
 		Hallo <?php echo $newMailUsers; ?><br>
-		Je ontvangt deze mail omdat je je hebt ingeschreven op www.kiwi.run.
+		Je ontvangt deze mail omdat je je hebt ingeschreven op www.hike-app.nl.
 
 		Je kunt nu inloggen op de site hike-app.nl met <br>
         inlognaam: <?php echo $newMailUsers; ?> <br>

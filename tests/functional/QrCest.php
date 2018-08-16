@@ -210,7 +210,7 @@ class QrCest
         $I->amOnPage(['qr-check/create', 'event_id' => 3, 'qr_code' => 'asCDcwecwedsadasdaadq']);
         $I->see('Deze QR is vandaag niet geldig.');
         $I->amOnPage(['qr-check/create', 'event_id' => 3, 'qr_code' => 'haasxasdfasd2344ergxffghhebddSEF']);
-        $I->see('Checked QR code!');
+        $I->see('QR code gecontroleerd!');
         $I->see('Stille posten: 6');
         $I->amOnPage(['qr-check/create', 'event_id' => 4, 'qr_code' => 'qerqwerqwccwaswerqwerqwerqw']);
         $I->see('Deze QR is niet voor deze hike.');

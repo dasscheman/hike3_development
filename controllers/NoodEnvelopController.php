@@ -90,7 +90,7 @@ class NoodEnvelopController extends Controller
             $model->setNewOrderForNoodEnvelop();
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new hint.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe hint opgeslagen'));
                 return $this->redirect(['map/index']);
             } else {
                 foreach ($model->getErrors() as $error) {
@@ -146,9 +146,9 @@ class NoodEnvelopController extends Controller
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted hint.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Hint verwijderd.'));
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete hint, it is opened by at least one group.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je kunt de hint niet verwijderen, er is een groep die hem al geopend heeft'));
             }
             if ($map === true) {
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -161,7 +161,7 @@ class NoodEnvelopController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to hint.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen.'));
                 if ($map === true) {
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
                     return;
@@ -210,7 +210,7 @@ class NoodEnvelopController extends Controller
                 $model->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
 

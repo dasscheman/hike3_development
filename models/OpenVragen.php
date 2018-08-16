@@ -70,7 +70,7 @@ class OpenVragen extends HikeActiveRecord
             'event_ID' => Yii::t('app', 'Hike ID'),
             'route_ID' => Yii::t('app', 'Route ID'),
             'vraag_volgorde' => Yii::t('app', 'Question Order'),
-            'omschrijving' => Yii::t('app', 'Description'),
+            'omschrijving' => Yii::t('app', 'Omschrijving'),
             'vraag' => Yii::t('app', 'Question'),
             'goede_antwoord' => Yii::t('app', 'Correct Answer'),
             'score' => Yii::t('app', 'Score'),

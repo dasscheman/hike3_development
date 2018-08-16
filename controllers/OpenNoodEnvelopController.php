@@ -122,11 +122,11 @@ class OpenNoodEnvelopController extends Controller {
             $model->group_ID = $groupPlayer;
             $model->opened = 1;
             if (!$model->save()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not open the hint.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je kunt deze hint niet openen'));
             } else {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is opened.'));
-                Yii::$app->session->setFlash('info', Yii::t('app', 'All opened hints are displayed on this dashboard.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is geopend.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Alle geopende hints worden op dit dashboard getoond.'));
             }
         }
 

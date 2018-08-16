@@ -99,7 +99,7 @@ class DeelnemersEventController extends Controller {
                 ->setSubject('Inschrijving Hike')
                 ->send();
 
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Added {username} to hike and sended an confiration mail', ['username' => $model->user->username]));
+            Yii::$app->session->setFlash('success', Yii::t('app', '{username} is aan de hike toegevoegd en een bevestigingsmail is verstuurd', ['username' => $model->user->username]));
         } else {
             foreach ($model->getErrors() as $error) {
                 Yii::$app->session->setFlash('error', Json::encode($error));
@@ -127,14 +127,14 @@ class DeelnemersEventController extends Controller {
             try {
                 $model->delete();
             } catch (Exception $e) {
-                throw new HttpException(400, Yii::t('app' . 'You cannot remove this player'));
+                throw new HttpException(400, Yii::t('app' . 'Je kunt deze speler niet verwijderen'));
             }
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Removed {username} from the hike', ['username' => $model->user->username]));
+            Yii::$app->session->setFlash('info', Yii::t('app', '{username} is verwijderd van de hike', ['username' => $model->user->username]));
             return $this->redirect(['site/overview-organisation']);
         }
 
         if ($model->save()) {
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Saved changes'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Wijzigingen opgeslagen'));
             return $this->redirect(['site/overview-organisation']);
         }
         foreach ($model->getErrors() as $error) {

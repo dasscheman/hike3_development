@@ -4,7 +4,7 @@ use app\components\CustomAlertBlock;
 use yii\helpers\Html;
 /* @var $this yii\web\View */
 
-$this->title = 'Kiwi.run';
+$this->title = 'Hike-app';
 ?>
 
 <div class="site-index">
@@ -17,11 +17,11 @@ $this->title = 'Kiwi.run';
     ?>
     <div class="jumbotron">
         <h1><?php echo Yii::t('app', 'Welcome') ?></h1>
-		<h3>Dit is de vernieuwde hike-app, nu kiwi.run</h3>
+		<h3>Dit is de Hike-app</h3>
         <p>
             <?php
             echo Html::a(
-                    Yii::t('app', 'Create new kiwi.run account'),
+                    Yii::t('app', 'Create new hike-app account'),
                     ['/user/registration/register'],
                     ['class' => 'btn btn-xl btn-success']
                 );?>

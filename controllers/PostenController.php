@@ -88,7 +88,7 @@ class PostenController extends Controller
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForPosten();
             if ($model->save()) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Saved new station.'));
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe post opgeslagen.'));
                 return $this->redirect(['map/index']);
             } else {
                 foreach ($model->getErrors() as $error) {
@@ -144,10 +144,10 @@ class PostenController extends Controller
                 ->exists();
             if (!$exist && Yii::$app->user->can('organisatieOpstart')) {
                 $model->delete();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Deleted station.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Post verwijderd.'));
             } else {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Could not delete station, it is already awnseredby at least one group.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan post niet verwijderen, er is al een groep ingecheckt.'));
             }
             if ($map === true) {
                 echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -160,7 +160,7 @@ class PostenController extends Controller
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->cache->flush();
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Saved changes to station.'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen opgeslagen'));
 
                 if ($map === true) {
                     echo "<script>window.close(); window.opener.location.reload(true);</script>";
@@ -229,7 +229,7 @@ class PostenController extends Controller
                 $model->save();
                 $previousModel->save();
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change order.'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
 
@@ -299,7 +299,7 @@ class PostenController extends Controller
         if (null !== Yii::$app->request->get('post_id')) {
             $post_id = Yii::$app->request->get('post_id');
         }
-        
+
         $out = [];
         if (null !== Yii::$app->request->post('depdrop_parents')) {
             $parents = Yii::$app->request->post('depdrop_parents');
@@ -331,9 +331,9 @@ class PostenController extends Controller
                 'post',
                 Yii::t(
                     'app',
-                    'Here you can create stations for each day.
-                  For each day an start station is made, you have to use this when you want a group to start.
-                  The start station should have a score of 0, unless you think starting your hike is a challange on it self and deserves points.'
+                    'Hier zie je een overzicht van alle posten per dag.
+                    Je moet voor elke dag een startpost maken, die je moet gebruiken om een groepje te laten starten.
+                    De start post geef je 0 punten, tenzij je denkt dat het een prestatie is dat ze hike dag start.'
                 )
             );
         }

@@ -136,7 +136,7 @@ class PostenCest
         $I->see('Te gaan: 23:30');
 
         $I->amOnPage(['qr-check/create', 'qr_code' => 'haasxasxaergxffghhebddSEF', 'event_id' => 3]);
-        $I->see('Checked QR code!');
+        $I->see('QR code gecontroleerd!');
 
         $I->amOnPage(['posten/index']);
         $I->dontSee('Hints:');

@@ -54,13 +54,13 @@
 		<b>Stille Post</b><br>
 		Dit is een stille post. Je kunt deze scannen met een QR code scanner op je smartphone.
 		Als je de QR code gescand hebt, dan moet je de link volgen die in de code staat.
-		Je komt dan op de site van www.kiwi.run, er wordt om je inlog gevraagd.
+		Je komt dan op de site van www.hike-app.nl, er wordt om je inlog gevraagd.
 		Als je inlogt krijgt je groepje punten voor het vinden van deze stille post.
 		Indien je geen bereik hebt kun je met de meeste QR code scanners de code ook bewaren.
 		Je kunt dan de link in de code volgen als je weer bereik hebt.
 		<br>
 		<br>
-		<i>www.kiwi.run</i>
+		<i>www.hike-app.nl</i>
 		<br><br>
 		<div class="centretext"><?php echo $qr_code ?></div>
 	</div>

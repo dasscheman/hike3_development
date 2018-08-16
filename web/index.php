@@ -1,11 +1,16 @@
 <?php
 
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
+$ip = require(__DIR__ . '/../config/ip_white_list.php');
 
-// NOTE: Make sure this file is not accessible when deployed to production
-if (YII_ENV === 'test' && !in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', '145.133.104.158'])) {
-    die('You are not allowed to access this file.');
+if($_SERVER[HTTPS_HOST] == 'test.kiwi.run' ||
+    $_SERVER[HTTPS_HOST] == 'test.hike-app.nl' ||
+    $_SERVER[HTTP_HOST] == 'hike.devel' ||
+    in_array(@$_SERVER['REMOTE_ADDR'], $ip )){
+    defined('YII_DEBUG') or define('YII_DEBUG', true);
+    defined('YII_ENV') or define('YII_ENV', 'dev');
+} else {
+    defined('YII_DEBUG') or define('YII_DEBUG', false);
+    defined('YII_ENV') or define('YII_ENV', 'prod');
 }
 
 require(__DIR__ . '/../vendor/autoload.php');

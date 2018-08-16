@@ -10,9 +10,9 @@ $this->title = 'About';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-    <?php echo Yii::t('app', 'Kiwi.run is based on open source:') ?>
+    <?php echo Yii::t('app', 'Hike-app is based on open source:') ?>
     </p>
-    
+
     <p>
         <?= Yii::powered() ?>
     </p>
@@ -38,8 +38,8 @@ $this->title = 'About';
         Added Export functionality. You can export a complete hike.
     </p>
     <p>
-        Added Time Trail. This is comparible with the silent stations. 
-        But the qr code of a time trail have a time restriction. The player have 
+        Added Time Trail. This is comparible with the silent stations.
+        But the qr code of a time trail have a time restriction. The player have
         to scan them within a certain time. Time trail can run over several day's.
     </p>
     <p>
