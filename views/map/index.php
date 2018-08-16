@@ -344,7 +344,7 @@ echo Dialog::widget();
                             'placement' => PopoverX::ALIGN_RIGHT,
                             'content' => Yii::t('app', 'This is one time trail, the numbers indicates the order of the items.'),
                             'toggleButton' => [
-                                'label'=> Html::img('@web/images/map_icons/' . $kleuren->kleuren[$kleur] . '_0.png'),
+                                'label'=> Html::img('@web/images/map_icons/' . $kleuren->kleuren[fmod($kleur, 5)] . '_0.png'),
                                 'class' => 'map-popover'],
                         ]); ?>
                     </div>
