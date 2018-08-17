@@ -345,22 +345,24 @@ class MapController extends Controller
             $route_id = Yii::$app->getRequest()->getCookies()->getValue('route_map_tab' . Yii::$app->user->id);
         }
 
-        if ($route_id === null) {
+        if ($route_id !== null) {
+            $model = Route::find()
+                ->where([
+                    'route_ID' => $route_id,
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+        }
+        
+        if ($route_id === null || !$model->exists()) {
             $model = Route::find()
                 ->where([
                     'event_ID' => Yii::$app->user->identity->selected_event_ID])
                 ->orderBy([
                     'route_volgorde' => SORT_ASC,
-                    'day_date' => SORT_ASC])
-                ->one();
-        } else {
-            $model = Route::findOne([
-                    'route_ID' => $route_id,
-                    'event_ID' => Yii::$app->user->identity->selected_event_ID]);
+                    'day_date' => SORT_ASC]);
         }
 
-        if ($model !== null) {
-            return $model;
+        if ($model->one() !== null) {
+            return $model->one();
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
