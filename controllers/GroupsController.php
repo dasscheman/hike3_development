@@ -145,14 +145,14 @@ class GroupsController extends Controller
             ]);
         }
 
+        $groups_leden = DeelnemersEvent::find()
+            ->where(['group_ID' => $model->group_ID])
+            ->andWhere(['event_ID' => Yii::$app->user->identity->selected_event_ID])
+            ->all();
         if (Yii::$app->request->post('action') == 'update' ||
             $model->load(Yii::$app->request->post())) {
             // Eerst verwijderen we alle leden van huidige group, om ze
             // vervolgens weer toe tevoegen. indien nodig
-            $groups_leden = DeelnemersEvent::find()
-                ->where(['group_ID' => $model->group_ID])
-                ->andWhere(['event_ID' => Yii::$app->user->identity->selected_event_ID])
-                ->all();
             if ($groups_leden) {
                 foreach ($groups_leden as $player) {
                     if (array_search($player->user_ID, Yii::$app->request->post('Groups')['users_temp']) !== false) {
@@ -168,10 +168,19 @@ class GroupsController extends Controller
         }
 
         if (Yii::$app->request->post('action') == 'delete') {
+            if ($groups_leden) {
+                foreach ($groups_leden as $player) {
+                    try {
+                        $player->delete();
+                    } catch (\yii\db\IntegrityException $e) {
+                        throw new \yii\web\ForbiddenHttpException('Je kunt deze speler niet verwijderen.');
+                    }
+                }
+            }
             try {
                 $model->delete();
             } catch (\yii\db\IntegrityException $e) {
-                throw new \yii\web\ForbiddenHttpException('Could not delete this group.');
+                throw new \yii\web\ForbiddenHttpException('Je kunt deze groep niet verwijderen.');
             }
             Yii::$app->session->setFlash('info', Yii::t('app', 'Groep {group} is van de hike verwijderd', ['group' => $model->group_name]));
             return $this->redirect(['site/overview-organisation']);
