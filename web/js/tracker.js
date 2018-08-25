@@ -54,7 +54,7 @@ function Tracker() {
         } else {
             document.write(' FATAL - ERROR navigator.geolocation need to be enabled ');
         }
-        this.resetData();
+        // this.resetData();
     };
     this.stopTracking = function() {
         console.log('stopTracking');
