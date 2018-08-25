@@ -179,11 +179,9 @@ function Tracker() {
         var self = this;
         console.log('run');
         this.injectJquery();
-        this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
         setInterval(function() {
-            self.sendData(function() {
-                self.stopTracking();
-            });
+            this.getStatus(function() {this.startTracking();}, function() {this.stopTracking();});
+            this.sendData(function() {this.stopTracking();});
         }, this.getSavingInterval());
     };
 
