@@ -180,9 +180,10 @@ function Tracker() {
         console.log('run');
         this.injectJquery();
         setInterval(function() {
-            this.getStatus(function() {this.startTracking();}, function() {this.stopTracking();});
-            this.sendData(function() {this.stopTracking();});
-        }, this.getSavingInterval());
+            this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
+            self.sendData(function() {self.stopTracking(); });
+        } 300000);
+        // }, this.getSavingInterval());
     };
 
     function bind(scope, fn) {
