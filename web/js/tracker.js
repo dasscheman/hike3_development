@@ -59,7 +59,7 @@ function Tracker() {
     this.stopTracking = function() {
         console.log('stopTracking');
         navigator.geolocation.clearWatch(this.navigatorId);
-        this.setSavingInterval(20000);
+        // this.setSavingInterval(20000);
         this.navigatorId = null;
         this.resetData();
     };
@@ -181,6 +181,7 @@ function Tracker() {
         this.injectJquery();
         //set interval loopt niet vanaf de start, daarom eerst een keer sowieso runnen.
         this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
+        this.stopTracking()
         setInterval(function() {
             self.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
             self.sendData(function() {self.stopTracking(); });
