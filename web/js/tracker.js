@@ -182,7 +182,7 @@ function Tracker() {
         setInterval(function() {
             this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
             self.sendData(function() {self.stopTracking(); });
-        } 300000);
+        }, 300000);
         // }, this.getSavingInterval());
     };
 
