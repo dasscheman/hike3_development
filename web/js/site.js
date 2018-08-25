@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -21,7 +21,7 @@ $(function() {
 function setCookie() {
     var getUrl = window.location;
     var link = getUrl .protocol + "//" + getUrl.host + "" + getUrl.pathname.split('?')[0] + '?r=site/cookie';
-      
+
     $.ajax({
         url: link,
         type: 'POST',
@@ -40,7 +40,7 @@ document.getElementById("map-click").addEventListener("click", setCookie);
 
 window.onload = function() {
     var tracker = new Tracker();
-    tracker.setSavingInterval(300000);
+    tracker.setSavingInterval(3000);
     tracker.setGPSConfiguration({
         enableHighAccuracy: true,
         timeout: 10000,
@@ -55,9 +55,6 @@ window.onload = function() {
 function ChangePosition(pos) {
     var crd = pos.coords;
     var path = [];
-    console.log('Latitude : ' + crd.latitude);
-    console.log('Longitude: ' + crd.longitude);
-    console.log('More or less ' + crd.accuracy + ' meters.');
 }
 
 function switchAllowTracking() {
