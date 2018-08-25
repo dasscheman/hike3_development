@@ -148,7 +148,7 @@ class Track extends HikeActiveRecord
             ->orderBy(['timestamp' => SORT_DESC]);
 
         if (!$model->exists()) {
-            return false;
+            return true;
         }
 
         $time_diff = time() - $model->one()->timestamp;
