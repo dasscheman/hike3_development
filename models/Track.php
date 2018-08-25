@@ -110,7 +110,7 @@ class Track extends HikeActiveRecord
         });
         return $data;
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -145,12 +145,14 @@ class Track extends HikeActiveRecord
             ->select('timestamp')
             ->where('event_ID =:event_id AND user_ID =:user_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-            ->orderBy(['timestamp' => SORT_DESC])
-            ->one();
-        
-        $time_diff = time() - $model->timestamp;
-        
-        
+            ->orderBy(['timestamp' => SORT_DESC]);
+
+        if (!$model->exists()) {
+            return false;
+        }
+
+        $time_diff = time() - $model->one()->timestamp;
+
         if ($time_diff > 60 * 5) {
             return true;
         }
