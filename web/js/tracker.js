@@ -181,7 +181,7 @@ function Tracker() {
         this.injectJquery();
         //set interval loopt niet vanaf de start, daarom eerst een keer sowieso runnen.
         this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
-        this.stopTracking()
+        self.sendData(function() {self.stopTracking(); });
         setInterval(function() {
             self.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
             self.sendData(function() {self.stopTracking(); });
