@@ -1,0 +1,4 @@
+# ignore alle gegenereerde files, behalve de appasset.php
+!.gitignore
+!AppAsset.php
+!LeafletFullscreenAsset.php
