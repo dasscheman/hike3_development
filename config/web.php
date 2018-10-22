@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__.'/debug.php');
+$ip = require(__DIR__ . '/../config/ip_white_list.php');
 $params = require(__DIR__ . '/params.php');
 $keys = require(__DIR__ . '/keys.php');
 
@@ -114,13 +115,6 @@ $config = [
         ],
         'assetManager' => [
             'bundles' => [
-                'dosamigos\google\maps\MapAsset' => [
-                    'options' => [
-                        'key' => $keys['google_key'],
-                        'language' => 'nl',
-                        'version' => '3.1.18'
-                    ]
-                ]
             ]
         ],
         'db' => require(__DIR__ . '/db.php'),
@@ -136,13 +130,13 @@ if (YII_ENV == 'dev' || YII_ENV == 'test') {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '145.133.104.158'],
+        'allowedIPs' => $ip,
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '145.133.104.158'],
+        'allowedIPs' => $ip,
     ];
 }
 

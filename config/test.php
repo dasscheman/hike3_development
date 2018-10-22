@@ -113,13 +113,6 @@ $config = [
         ],
         'assetManager' => [
             'bundles' => [
-                'dosamigos\google\maps\MapAsset' => [
-                    'options' => [
-                        'key' => $keys['google_key'],
-                        'language' => 'nl',
-                        'version' => '3.1.18'
-                    ]
-                ]
             ]
         ],
         'db' => require(__DIR__ . '/test_db.php'),

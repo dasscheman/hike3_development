@@ -116,7 +116,7 @@ AppAsset::register($this);
                         'label' => Yii::t('app', 'Kaart'),
                         'options' => [
                             'id' => 'map-click'],
-                            'url' => ['/map/index'],
+                            'url' => ['/open-map/index'],
                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('Organisatie') || Yii::$app->user->can('deelnemer')
                         ],
                     !Yii::$app->user->can('organisatie') ? '' :
@@ -247,7 +247,7 @@ AppAsset::register($this);
             );
             NavBar::end();
 
-            if (Yii::$app->controller->id !== 'map') {
+            if (Yii::$app->controller->id !== 'open-map') {
                 ?>
                 <div class="container">
             <?php
@@ -264,7 +264,7 @@ AppAsset::register($this);
                 </div>
             </div>
             <?php
-          if (Yii::$app->controller->id !== 'map') {
+          if (Yii::$app->controller->id !== 'open-map') {
               ?>
             <footer class="footer">
 

@@ -1,5 +1,6 @@
 <?php
 
+$ip = require(__DIR__ . '/../config/ip_white_list.php');
 $params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
 
@@ -38,7 +39,6 @@ $config = [
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
-            'useFileTransport' => YII_ENV == 'dev' || YII_ENV == 'test' ? true : false,
             'transport' => require(__DIR__ . '/email.php')
         ],
         'urlManager' => [
@@ -74,7 +74,7 @@ if (YII_ENV == 'dev') {
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '145.133.104.158'],
+        'allowedIPs' => $ip,
     ];
 }
 
