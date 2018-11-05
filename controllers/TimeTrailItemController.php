@@ -101,7 +101,7 @@ class TimeTrailItemController extends Controller
             $model->setUniqueCodeForTimeTrailItem();
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuw tijdrit onderdeel opgeslagen'));
-                return $this->redirect(['map/index']);
+                return $this->redirect(['open-map/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;

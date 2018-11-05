@@ -91,7 +91,7 @@ class NoodEnvelopController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe hint opgeslagen'));
-                return $this->redirect(['map/index']);
+                return $this->redirect(['open-map/index']);
             } else {
                 foreach ($model->getErrors() as $error) {
                     Yii::$app->session->setFlash('error', Json::encode($error));

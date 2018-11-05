@@ -147,9 +147,7 @@ class OpenMapController extends Controller
 
         $routeSearchModel = new RouteSearch();
         $routeDataProvider = $routeSearchModel->searchRouteInEvent(Yii::$app->request->queryParams);
-        // $coord = new LatLng(['lat' => 52.082689705630365, 'lng' => 5.264233018789355]);
         $map = new OpenMap([
-            // 'center' => $coord, // set the center
             'zoom' => 12,
             'clientOptions' => [
                 'fullscreenControl' => true
@@ -162,6 +160,8 @@ class OpenMapController extends Controller
         $map->setHintMarkers($routeModel->route_ID, true);
         $map->setVragenMarkers($routeModel->route_ID, true);
         $map->setTimeTrailMarkers(true);
+        $map->setEventTrack();
+        $map->setEventWayPoints();
 
         $marker = $map->getDragableMarker();      // add the marker
         $map->addLayer($marker);      // add the marker
@@ -203,7 +203,7 @@ class OpenMapController extends Controller
         $map->setQrMarkers($routeModel->route_ID, false, $group);
         $map->setHintMarkers($routeModel->route_ID, false, $group);
         $map->setVragenMarkers($routeModel->route_ID, false, $group);
-        $map->setTimeTrailMarkers(true);
+        $map->setTimeTrailMarkers(false, $group);
         $map->clientOptions['bounds'] =json_encode($map->allCoordinates);
 
         return $this->render('view', [

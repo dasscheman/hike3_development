@@ -23,7 +23,7 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use DateTime;
 use yii\web\HttpException;
-use app\models\CustomMap;
+use app\models\OpenMap;
 
 /**
  * EventNamesController implements the CRUD actions for EventNames model.
@@ -459,7 +459,7 @@ class EventNamesController extends Controller
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
         if (null !== Yii::$app->request->get('event_ID')) {
-            CustomMap::setCookieIndexRoute(null);
+            OpenMap::setCookieIndexRoute(null);
             $modelDeelnemersEvent = DeelnemersEvent::find()
                 ->where([
                     'event_ID' => Yii::$app->request->get('event_ID'),

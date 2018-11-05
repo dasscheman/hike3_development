@@ -130,7 +130,7 @@ class TimeTrailController extends Controller
             if ($model->save()) {
 //                $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe tijdrit opgeslagen.'));
-                return $this->redirect(['map/index']);
+                return $this->redirect(['open-map/index']);
             }
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;

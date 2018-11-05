@@ -15,6 +15,7 @@ use dosamigos\leaflet\types\LatLngBounds;
 use dosamigos\leaflet\types\Icon;
 use dosamigos\leaflet\types\Point;
 use dosamigos\leaflet\layers\Marker;
+use dosamigos\leaflet\layers\PolyLine;
 use dosamigos\leaflet\plugins\markercluster\MarkerCluster;
 use yii\db\ActiveQuery;
 use yii\caching\TagDependency;
@@ -356,13 +357,14 @@ class OpenMap extends LeafLet
             $model = $groupModel->getTimeTrail();
         } else {
             $model = TimeTrail::find()
-                    ->where([
-                        'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                    ])
-                    ->orderBy([
-                        'time_trail_ID' => SORT_ASC
-                    ]);
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                ])
+                ->orderBy([
+                    'time_trail_ID' => SORT_ASC
+                ]);
         }
+
         if (!$model->exists()) {
             return;
         }
@@ -370,11 +372,7 @@ class OpenMap extends LeafLet
         $kleuren = new OpenMap();
         $kleur = 0;
         foreach ($model->all() as $timeTrail) {
-            if ($group) {
-                $items = $timeTrail->getTimeTrailItemsCheckedByGroup($group);
-            } else {
-                $items = $timeTrail->getTimeTrailItems();
-            }
+            $items = $timeTrail->getTimeTrailItems();
             $countitems = 1;
             if ($items->all() == null) {
                 continue;
@@ -426,7 +424,6 @@ class OpenMap extends LeafLet
                     ],
                     'clientEvents' => $event
                 ]);
-
                 array_push($this->allCoordinates, $coord);
                 array_push($this->allCoordinatesArray, $coord->toArray());
                 $this->cluster->addMarker($marker);
@@ -437,7 +434,107 @@ class OpenMap extends LeafLet
         }
     }
 
-    public function getDragableMarker() {
+    public function setEventTrack()
+    {
+        $coordinates = [];
+        $models = RouteTrack::find()
+            ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'type' => RouteTrack::TYPE_track])
+            ->all();
+
+        foreach ($models as $model) {
+            array_push($coordinates, $this->getCoordinates($model));
+        }
+
+        $path = new PolyLine();
+        $path->setLatLngs($coordinates);
+        $this->addLayer($path);
+    }
+
+    public function setEventTrackPoints()
+    {
+        $coordinates = [];
+        $models = RouteTrack::find()
+            ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'type' => RouteTrack::TYPE_track])
+            ->all();
+
+        $iconSettings = $this->iconSettings;
+        $iconSettings['iconSize'] =  new Point(['x' =>10, 'y' => 10]);
+        $iconSettings['iconUrl'] = Url::to('@web/images/map_icons/circle.jpg');
+
+        $iconSettings['iconAnchor'] = new Point(['x' => 1, 'y' => 1]);
+        $iconSettings['shadowUrl'] = '';
+
+        foreach ($models as $model) {
+            $coord = $this->getCoordinates($model);
+            array_push($this->allCoordinatesArray, $coord->toArray());
+            $icon = new Icon(
+                $iconSettings
+            );
+
+            $link = Url::to(['route-track/ajax-delete'], true);
+            $event = $this->getRightMouseEvent($link, $model->route_track_ID);
+
+            // Lets add a marker now
+            $marker = new Marker([
+                'latLng' => $coord,
+                'popupContent' => $model->name . ': ' . $model->latitude . ', ' . $model->longitude,
+                'clientOptions' => [
+                    'icon' => $icon,
+                    'iconSize' => [
+                        '130px',
+                        '130px'
+                    ]
+                    // 'draggable' => $edit,
+                ],
+                'clientEvents' => $event
+            ]);
+            $this->addLayer($marker);
+            // $this->cluster->addMarker($marker);
+        }
+        // $this->installPlugin($this->cluster);
+    }
+
+    public function setEventWayPoints()
+    {
+        $coordinates = [];
+        $models = RouteTrack::find()
+            ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                'type' => RouteTrack::TYPE_waypoint])
+            ->all();
+
+        foreach ($models as $model) {
+            $coord = $this->getCoordinates($model);
+            $this->iconSettings['iconUrl'] = Url::to('@web/images/map_icons/footprint.png');
+            $icon = new Icon(
+                $this->iconSettings
+            );
+
+            $link = Url::to(['route-track/ajax-delete'], true);
+            $event = $this->getRightMouseEvent($link, $model->route_track_ID);
+
+            // Lets add a marker now
+            $marker = new Marker([
+                'latLng' => $coord,
+                'popupContent' => $model->name . ' - RD: ' . $model->getLatitude() . ', ' . $model->getLongitude(),
+                'clientOptions' => [
+                    'icon' => $icon,
+                    // 'draggable' => $edit,
+                ],
+                'clientEvents' => $event
+            ]);
+
+            $this->cluster->addMarker($marker);
+        }
+        $this->installPlugin($this->cluster);
+    }
+
+    public function getDragableMarker()
+    {
         $bounds = LatLngBounds::getBoundsOfLatLngs($this->allCoordinates);
         $lat = ($bounds->northEast->lat + $bounds->southWest->lat) / 2;
         $lng = ($bounds->northEast->lng + $bounds->southWest->lng) / 2;
@@ -457,8 +554,8 @@ class OpenMap extends LeafLet
     /*
      * Gets the coordinates from any model with long and lat
      */
-    public function getCoordinates($model) {
-
+    public function getCoordinates($model)
+    {
         if ($model->latitude === null) {
             $latitude = 0.000;
         } else {
@@ -524,21 +621,21 @@ class OpenMap extends LeafLet
         $event['dragend'] =
         "
             function(event){
-                    document.getElementById('latitudetest').innerHTML = event.target.getLatLng().lat.toFixed(6);
-                    document.getElementById('longitudetest').innerHTML = event.target.getLatLng().lng.toFixed(6);
+                document.getElementById('latitude').innerHTML = event.target.getLatLng().lat.toFixed(6);
+                document.getElementById('longitude').innerHTML = event.target.getLatLng().lng.toFixed(6);
 
-                    function setLngLat() {
-                        x=document.getElementsByClassName('latitudetest');
-                        for(var i = 0; i < x.length; i++){
-                            x[i].value=event.target.getLatLng().lat;    // Change the content
-                        }
-                        y=document.getElementsByClassName('longitudetest');
-
-                        for(var i = 0; i < y.length; i++){
-                            y[i].value=event.target.getLatLng().lng;    // Change the content
-                        }
+                function setLngLat() {
+                    x=document.getElementsByClassName('latitude');
+                    for(var i = 0; i < x.length; i++){
+                        x[i].value=event.target.getLatLng().lat;    // Change the content
                     }
-                    setLngLat()
+                    y=document.getElementsByClassName('longitude');
+
+                    for(var i = 0; i < y.length; i++){
+                        y[i].value=event.target.getLatLng().lng;    // Change the content
+                    }
+                }
+                setLngLat()
 
                 krajeeDialog.confirm('" . Yii::t('app', 'Weet je zeker dat je de nieuwe lokatie wilt opslaan?') . "', function (result) {
                     if (result) {
@@ -554,6 +651,7 @@ class OpenMap extends LeafLet
                                 map: true
                             },
                             success: function (data) {
+
                                 if(data !== '1') {
                                     alert(data);
                                 }
@@ -564,6 +662,66 @@ class OpenMap extends LeafLet
                         })
                     } else {
                         location.reload();
+                    }
+                })
+            }
+        ";
+
+        return $event;
+    }
+
+    public function getRightMouseEventConfirm($link, $id)
+    {
+        $event['contextmenu'] =
+        "
+            function(event){
+                krajeeDialog.confirm('" . Yii::t('app', 'Weet je zeker dat je dit waypoint wilt verwijderen?') . "', function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: '$link',
+                            type: 'POST',
+                            data: {
+                                id: $id,
+                                map: true
+                            },
+                            success: function (data) {
+                                if(data !== '1') {
+                                    alert(data);
+                                }
+                                map.removeLayer(event.target);
+                            },
+                            error: function(jqXHR, errMsg, data) {
+                                alert(errMsg + data);
+                            }
+                        })
+                    }
+                })
+            }
+        ";
+
+        return $event;
+    }
+
+    public function getRightMouseEvent($link, $id)
+    {
+        $event['contextmenu'] =
+        "
+            function(event){
+                $.ajax({
+                    url: '$link',
+                    type: 'POST',
+                    data: {
+                        id: $id,
+                        map: true
+                    },
+                    success: function (data) {
+                        if(data !== '1') {
+                            alert(data);
+                        }
+                        map.removeLayer(event.target);
+                    },
+                    error: function(jqXHR, errMsg, data) {
+                        alert(errMsg + data);
                     }
                 })
             }

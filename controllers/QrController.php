@@ -90,7 +90,7 @@ class QrController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe stille post opgeslagen.'));
-                return $this->redirect(['map/index']);
+                return $this->redirect(['open-map/index']);
             }
         } else {
             $model->route_ID = $route_ID;

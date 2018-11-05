@@ -22,4 +22,8 @@ class LeafletFullscreenAsset extends AssetBundle
     public $js = [
         'Control.FullScreen.js',
     ];
+
+    public $depends = [
+        'dosamigos\leaflet\LeafLetAsset',
+    ];
 }

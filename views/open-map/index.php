@@ -11,8 +11,8 @@ use kartik\popover\PopoverX;
 /* @var $searchModel app\models\NoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
-echo Dialog::widget();
+    $this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
+    echo Dialog::widget();
 ?>
 <div class="container-map">
 <div class="map-index">
@@ -39,14 +39,13 @@ echo Dialog::widget();
             );
         }
     }
-
     echo CustomAlertBlock::widget([
         'type' => CustomAlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,
         'delay' => false,
         'options' => [
-        'class' => 'map-alert']
-    ]);
+            'class' => 'map-alert']
+        ]);
     ?>
     <div class="map">
         <?php
@@ -105,7 +104,7 @@ echo Dialog::widget();
         <div class="kwart">
             <div class="map-button">
                 <div class="map-right">
-                    <h3 id="latitudetest" class="latitudetest"><?php
+                    <h3 id="latitudetest" class="latitude"><?php
                     echo round($marker->getLatLng()->lat, 5); ?></h3>
                 </div>
                 <div class="map-left">
@@ -127,7 +126,7 @@ echo Dialog::widget();
         <div class="kwart">
             <div class="map-button">
                 <div class="map-right">
-                    <h3 id="longitudetest" class="longitudetest"><?php echo round($marker->getLatLng()->lng, 6); ?></h3>
+                    <h3 id="longitudetest" class="longitude"><?php echo round($marker->getLatLng()->lng, 6); ?></h3>
                 </div>
                 <div class="map-left">
                     <?php
