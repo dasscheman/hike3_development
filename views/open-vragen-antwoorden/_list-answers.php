@@ -41,6 +41,6 @@ use app\models\DeelnemersEvent;
     <b>
     <?php echo Html::encode($model->getAttributeLabel('update_time')); ?>:
     </b>
-    <?php echo Html::encode($model->update_time); ?></br>
+    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true)); ?></br>
 
 </div>

@@ -23,6 +23,6 @@ use yii\widgets\Pjax;
     <b>
     <?php echo Html::encode($model->getAttributeLabel('create_time')); ?>:
     </b>
-    <?php echo Html::encode($model->create_time); ?></br>
+    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true)); ?></br>
 
 </div>

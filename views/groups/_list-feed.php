@@ -10,12 +10,16 @@ use app\models\Groups;
         <div class="well">
             <?php echo $model['groupname']; ?>
             (<?php echo $model['username']; ?>)
-            <!-- <img src="bandmember.jpg" class="img-circle" height="55" width="55" alt="Avatar"> -->
-
             <h4>
                 <?php echo $model['title'];?>
             </h4>
-            <?php echo $model['timestamp']; ?>
+
+            <?php
+
+                echo Yii::$app->setupdatetime->displayFormat($model['timestamp'], 'datetime', false, true);
+                echo '<br>';
+                echo $model['timestamp'];
+            ?>
         </div>
     </div>
 </div>

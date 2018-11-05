@@ -51,11 +51,11 @@ use prawee\widgets\ButtonAjax;
         <b>
         <?php echo Html::encode($model->getAttributeLabel('binnenkomst')); ?>
         </b>
-        <?php echo Html::encode($model->binnenkomst); ?></br>
+        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->binnenkomst, 'datetime', false, true)); ?></br>
         <b>
         <?php echo Html::encode($model->getAttributeLabel('vertrek')); ?>
         </b>
-        <?php echo Html::encode($model->vertrek); ?></br>
+        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->vertrek, 'datetime', false, true)); ?></br>
         <?php Pjax::end(); ?>
         </div>
     </div>

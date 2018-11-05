@@ -6,6 +6,18 @@ use yii\data\ArrayDataProvider;
 use app\components\CustomAlertBlock;
 use yii\bootstrap\Modal;
 
+$add_time = 0;
+$factor = 1;
+$alternate_time = array_key_exists(Yii::$app->user->identity->selected_event_ID, Yii::$app->params["alternate_time"]);
+
+if($alternate_time) {
+    $add_time = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['add'] * 1000;
+    $factor = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['factor'];
+}
+$this->registerJsVar ( 'alternate_time', $alternate_time, \yii\web\View::POS_HEAD );
+$this->registerJsVar ( 'add_time', $add_time, \yii\web\View::POS_HEAD );
+$this->registerJsVar ( 'factor', $factor, \yii\web\View::POS_HEAD );
+$this->registerJsFile('@web/js/countdown.js', [yii\web\JqueryAsset::className()]);
 /* @var $this yii\web\View */
 /* @var $model app\models\TimeTrail */
 
@@ -13,6 +25,7 @@ $this->title = Yii::t('app', 'Time Trails');
 $dataProvider = new ArrayDataProvider([
     'allModels' => $models,
 ]);
+// dd(Yii::$app->user->identity->   selected_event_ID);
 ?>
 <div class="tbl-time-trail-view-list">
     <div class="container text-center">
@@ -34,7 +47,6 @@ $dataProvider = new ArrayDataProvider([
                 'pager' => FALSE,
                 'dataProvider' => $dataProvider,
                 'itemView' => '/time-trail/_list',
-    //            'viewParams' => ['time_trail_item_id' => $time_trail_item_id],
                 'emptyText' => 'Er is nog geen time trail gestart.',
             ]);
             ?>
@@ -42,7 +54,4 @@ $dataProvider = new ArrayDataProvider([
         <div class="col-sm-3">
         </div>
     </div>
-</div>
-
-
 </div>

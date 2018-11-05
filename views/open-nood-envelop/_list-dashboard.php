@@ -48,10 +48,10 @@ use app\models\DeelnemersEvent;
         if ($model->show_coordinates) {
             ?>
             <b>
-            <?php
-            echo Html::encode($model->getAttributeLabel('coordinaat')); ?>:
+            <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
             </b>
-            <?php echo Html::encode($model->coordinaat); ?> </br>
+            <?php echo Html::encode($model->getLatitude()); ?>,
+            <?php echo Html::encode($model->getLongitude()); ?></br>
         <?php
         } ?>
         <b>
@@ -65,6 +65,7 @@ use app\models\DeelnemersEvent;
         <b>
         <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_time')); ?>:
         </b>
-        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->create_time);
+        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->getOpenNoodEnvelops()->one()->create_time, 'datetime', false, true)
+            );
     }?>
     </div>

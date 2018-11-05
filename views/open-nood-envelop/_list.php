@@ -63,7 +63,14 @@ use kartik\widgets\Alert;
             <b>
             <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_time')); ?>:
             </b>
-            <?php echo Html::encode($model->getHintOpenedByGroup()->create_time);
+            <?php echo Html::encode(
+                Yii::$app->setupdatetime->displayFormat(
+                    $model->getHintOpenedByGroup()->create_time,
+                    'datetime',
+                    false,
+                    true
+                )
+            );
         }
 
         Pjax::end(); ?>
