@@ -9,9 +9,14 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="tbl-open-vragen-form">
+    </br>
+    <b>
+        <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
+    </b>
+    <?php echo Html::encode($model->getLatitude()); ?>,
+    <?php echo Html::encode($model->getLongitude()); ?></br></br>
 
     <?php
-
     $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['open-vragen/create', 'route_ID' => $model->route_ID] : ['open-vragen/' .  Yii::$app->controller->action->id, 'open_vragen_ID' => $model->open_vragen_ID]]);
     echo $form->field($model, 'open_vragen_name')->textInput([
@@ -46,8 +51,6 @@ use yii\widgets\ActiveForm;
             'app',
             'Points for passing this station. Use positive integers.'
         )]);
-    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
-    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>

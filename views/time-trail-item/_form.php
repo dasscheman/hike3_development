@@ -10,6 +10,12 @@ use kartik\widgets\TimePicker;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 <div class="tbl-time-trail-item-form">
+    </br>
+    <b>
+        <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
+    </b>
+    <?php echo Html::encode($model->getLatitude()); ?>,
+    <?php echo Html::encode($model->getLongitude()); ?></br></br>
 
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? [
@@ -19,7 +25,7 @@ use kartik\widgets\TimePicker;
             'time-trail-item/' .  Yii::$app->controller->action->id,
             'time_trail_item_ID' => $model->time_trail_item_ID
         ]]);
-    
+
     echo $form->field($model, 'time_trail_item_name')->textInput([
         'maxlength' => true,
         'placeholder' => Yii::t(
@@ -41,8 +47,6 @@ use kartik\widgets\TimePicker;
             'Instructions for the next point. They see this instruction when they scan this item.'
         )
     ]);
-    echo $form->field($model, 'latitude')->textInput(['readonly' => true, 'class' => 'form-control latitude']);
-    echo $form->field($model, 'longitude')->textInput(['readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'time_trail_ID')->hiddenInput(['value'=> $model->time_trail_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     echo $form->field($model, 'max_time')->widget(
@@ -63,7 +67,7 @@ use kartik\widgets\TimePicker;
         )
     );
     ?>
-    
+
     <div class="form-group">
         <?php
         echo Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);

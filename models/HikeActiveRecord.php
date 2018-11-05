@@ -4,6 +4,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
+use RDConverter\RDConverter;
 
 abstract class HikeActiveRecord extends ActiveRecord
 {
@@ -30,5 +31,31 @@ abstract class HikeActiveRecord extends ActiveRecord
                 },
             ],
         ];
+    }
+
+    public function coordinatenLabel()
+    {
+        return 'RD coordinaten';
+    }
+
+    public function getLatitude()
+    {
+        if (!isset($this->latitude) ||
+            !isset($this->longitude)) {
+            return;
+        }
+        $converter = new RDConverter;
+
+        return round($converter->gps2X($this->latitude, $this->longitude));
+    }
+
+    public function getLongitude()
+    {
+        if (!isset($this->latitude) ||
+                !isset($this->longitude)) {
+            return;
+        }
+        $converter = new RDConverter;
+        return round($converter->gps2Y($this->latitude, $this->longitude));
     }
 }

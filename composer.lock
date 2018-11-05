@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "338adf00d5d4f9acba525ad080215a6b",
+    "content-hash": "6a5c27078dec549ea460fc796e619304",
     "packages": [
         {
             "name": "2amigos/qrcode-library",
@@ -253,6 +253,51 @@
                 "yii2"
             ],
             "time": "2015-03-31T11:45:57+00:00"
+        },
+        {
+            "name": "aberkhout/rd-converter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ABerkhout/rd-converter.git",
+                "reference": "363d904819f43325a84afead26eded48813d45e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ABerkhout/rd-converter/zipball/363d904819f43325a84afead26eded48813d45e2",
+                "reference": "363d904819f43325a84afead26eded48813d45e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RDConverter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Rijksdriehoekcoördinaten naar WGS84 converter",
+            "homepage": "https://github.com/ABerkhout/rd-converter",
+            "keywords": [
+                "Amersfoort",
+                "Dutch",
+                "RD",
+                "Rijksdriehoekcoördinaten",
+                "gps",
+                "lat",
+                "latitude",
+                "long",
+                "longitude",
+                "nederland",
+                "wgs",
+                "wgs84"
+            ],
+            "time": "2015-06-30T14:17:30+00:00"
         },
         {
             "name": "alexandernst/yii2-device-detect",
@@ -681,12 +726,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dektrium/yii2-rbac.git",
-                "reference": "737c68006b8fbc925619fe4ace85f791627bad60"
+                "reference": "a53c498847103ab1904699219b8d67c0ab63f000"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dektrium/yii2-rbac/zipball/737c68006b8fbc925619fe4ace85f791627bad60",
-                "reference": "737c68006b8fbc925619fe4ace85f791627bad60",
+                "url": "https://api.github.com/repos/dektrium/yii2-rbac/zipball/a53c498847103ab1904699219b8d67c0ab63f000",
+                "reference": "a53c498847103ab1904699219b8d67c0ab63f000",
                 "shasum": ""
             },
             "require": {
@@ -726,7 +771,7 @@
                 "yii2",
                 "yii2-rbac"
             ],
-            "time": "2018-08-14T13:29:32+00:00"
+            "time": "2018-10-31T02:08:49+00:00"
         },
         {
             "name": "dektrium/yii2-user",
@@ -1663,12 +1708,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-mpdf.git",
-                "reference": "4f2babb1b3bdfc0b87231915919ff1c43bf88591"
+                "reference": "fb71e832cc1864578a9a9fe888785039755bf58c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-mpdf/zipball/4f2babb1b3bdfc0b87231915919ff1c43bf88591",
-                "reference": "4f2babb1b3bdfc0b87231915919ff1c43bf88591",
+                "url": "https://api.github.com/repos/kartik-v/yii2-mpdf/zipball/fb71e832cc1864578a9a9fe888785039755bf58c",
+                "reference": "fb71e832cc1864578a9a9fe888785039755bf58c",
                 "shasum": ""
             },
             "require": {
@@ -1707,7 +1752,7 @@
                 "utf8",
                 "yii2"
             ],
-            "time": "2018-10-15T05:19:33+00:00"
+            "time": "2018-10-26T19:08:56+00:00"
         },
         {
             "name": "kartik-v/yii2-nav-x",
@@ -4181,16 +4226,16 @@
         },
         {
             "name": "codeception/base",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/base.git",
-                "reference": "04761aa6864d8fe7f6360aa3210cbf8235ad0d76"
+                "reference": "ec6b7bd4d78c1adba3dbd5c3c52fc683e8aef6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/base/zipball/04761aa6864d8fe7f6360aa3210cbf8235ad0d76",
-                "reference": "04761aa6864d8fe7f6360aa3210cbf8235ad0d76",
+                "url": "https://api.github.com/repos/Codeception/base/zipball/ec6b7bd4d78c1adba3dbd5c3c52fc683e8aef6de",
+                "reference": "ec6b7bd4d78c1adba3dbd5c3c52fc683e8aef6de",
                 "shasum": ""
             },
             "require": {
@@ -4267,20 +4312,20 @@
                 "functional testing",
                 "unit testing"
             ],
-            "time": "2018-09-24T09:46:36+00:00"
+            "time": "2018-10-29T21:37:15+00:00"
         },
         {
             "name": "codeception/codeception",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Codeception.git",
-                "reference": "dee493561daf644134c95cf176fd2c25aff59ea9"
+                "reference": "e0a658c64e98811a6fd4f6aa7c3222e0609066a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/dee493561daf644134c95cf176fd2c25aff59ea9",
-                "reference": "dee493561daf644134c95cf176fd2c25aff59ea9",
+                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/e0a658c64e98811a6fd4f6aa7c3222e0609066a9",
+                "reference": "e0a658c64e98811a6fd4f6aa7c3222e0609066a9",
                 "shasum": ""
             },
             "require": {
@@ -4359,7 +4404,7 @@
                 "functional testing",
                 "unit testing"
             ],
-            "time": "2018-09-24T09:33:01+00:00"
+            "time": "2018-10-29T21:23:19+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",
@@ -6622,7 +6667,7 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -6680,16 +6725,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8"
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d0cd638f4634c16d8df4508e847f14e9e43168b8",
-                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
                 "shasum": ""
             },
             "require": {
@@ -6735,7 +6780,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-08-06T14:22:27+00:00"
+            "time": "2018-09-21T13:07:52+00:00"
         },
         {
             "name": "symfony/process",
@@ -7093,7 +7138,8 @@
         "prawee/yii2-widgets": 20,
         "dektrium/yii2-user": 20,
         "dektrium/yii2-rbac": 20,
-        "yiidoc/yii2-redactor": 20
+        "yiidoc/yii2-redactor": 20,
+        "aberkhout/rd-converter": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
