@@ -6,7 +6,6 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblQr */
 
-$this->title = Yii::t('app', 'Create silent station');
 ?>
 <div class="tbl-qr-create">
 

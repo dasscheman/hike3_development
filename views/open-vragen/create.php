@@ -6,7 +6,6 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TblOpenVragen */
 
-$this->title = Yii::t('app', 'Create question');
 ?>
 <div class="tbl-open-vragen-create">
 
