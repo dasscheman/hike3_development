@@ -24,7 +24,7 @@ $this->title = Yii::t('app', 'Hike overview');
                 echo CustomAlertBlock::widget([
                     'type' => CustomAlertBlock::TYPE_ALERT,
                     'useSessionFlash' => true,
-                    'delay' => FALSE,
+                    'delay' => false,
                 ]);
                 Modal::begin(['id'=>'main-modal']);
                 echo '<div id="main-content-modal"></div>';
@@ -75,8 +75,8 @@ $this->title = Yii::t('app', 'Hike overview');
                             // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
                             // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
                             // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
-                            'showAjaxErrors' => FALSE,
-                            'asPopover' => TRUE,
+                            'showAjaxErrors' => false,
+                            'asPopover' => true,
                             'format' => Editable::FORMAT_BUTTON,
                             'inputType' => Editable::INPUT_DROPDOWN_LIST,
                             'data' => $eventModel->getStatusOptions(),
@@ -106,16 +106,16 @@ $this->title = Yii::t('app', 'Hike overview');
                             // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
                             // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
                             // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
-                            'showAjaxErrors' => FALSE,
-                            'asPopover' => TRUE,
+                            'showAjaxErrors' => false,
+                            'asPopover' => true,
                             'format' => Editable::FORMAT_BUTTON,
                             'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => $eventModel->getDatesAvailable(FALSE),
+                            'data' => $eventModel->getDatesAvailable(false),
                             'options' =>
                             [
                                 'id' => $eventModel->event_ID.'-is_active_day',
                             ],
-                            'disabled' => $eventModel->status === EventNames::STATUS_gestart ? FALSE : TRUE,
+                            'disabled' => $eventModel->status === EventNames::STATUS_gestart ? false : true,
                             'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
                         ]); ?></br>
                     <b>
@@ -144,8 +144,8 @@ $this->title = Yii::t('app', 'Hike overview');
 
                 <?php
                 echo ListView::widget([
-                    'summary' => FALSE,
-                    'pager' => FALSE,
+                    'summary' => false,
+                    'pager' => false,
                     'dataProvider' => $groupsData,
                     'itemView' => '/groups/_list',
                     'emptyText' => Yii::t('app', 'Deze hike heeft nog geen groepen.'),
@@ -153,11 +153,12 @@ $this->title = Yii::t('app', 'Hike overview');
                 ?>
             </div>
             <?php
-            if(!Yii::$app->devicedetect->isMobile()) { ?>
+            if (!Yii::$app->devicedetect->isMobile()) {
+                ?>
                 <div class="col-sm-6">
                     <?php
                     echo ListView::widget([
-                        'summary' => FALSE,
+                        'summary' => false,
                         'pager' => [
                             'prevPageLabel' => Yii::t('app', 'previous'),
                             'nextPageLabel' => Yii::t('app', 'next'),
@@ -169,10 +170,10 @@ $this->title = Yii::t('app', 'Hike overview');
                         'dataProvider' => $activityFeed,
                         'itemView' => '/groups/_list-feed',
                         'emptyText' => Yii::t('app', 'Nog geen activiteit.'),
-                    ]);
-                    ?>
+                    ]); ?>
                 </div>
-            <?php } ?>
+            <?php
+            } ?>
             <div class="col-sm-3 well">
                 <div class="thumbnail">
                     <?php
@@ -188,7 +189,7 @@ $this->title = Yii::t('app', 'Hike overview');
                         'disabled' => !Yii::$app->user->can('organisatie'),
                         'pluginOptions'=>[
                             'allowedFileExtensions' => ['jpg', 'jpeg', 'gif','png'],
-                            'uploadLabel' => Yii::t('app',  'save'),
+                            'uploadLabel' => Yii::t('app', 'save'),
                             'removeLabel' => '',
                             'browseClass' => 'btn btn-primary btn-block',
                             'browseIcon' => '<i class="glyphicon glyphicon-camera"></i> ',
@@ -199,6 +200,47 @@ $this->title = Yii::t('app', 'Hike overview');
                     ActiveForm::end();
                     ?>
                     </p>
+                </div>
+
+                <div class="thumbnail">
+                    <?php
+                    $form = ActiveForm::begin([
+                        'id' => 'test',
+                        // 'options'=>['enctype'=>'multipart/form-data'],
+                        'action' => ['route-track/upload-track','event_ID' => $eventModel->event_ID],// important
+                    ]); ?>
+                    <p>
+                    <?php
+                    // your fileinput widget for single file upload
+                    echo $form->field($routeTrackModel, 'track_temp')->widget(FileInput::classname(), [
+                        'options'=>['accept'=>'xml'],
+                        'disabled' => !Yii::$app->user->can('organisatie'),
+                        'pluginOptions'=>[
+                            'allowedFileExtensions' => ['gpx'],
+                            'uploadLabel' => Yii::t('app', 'save'),
+                            'browseClass' => 'btn btn-primary btn-block',
+                            'browseIcon' => '<i class="glyphicon glyphicon-road"></i> ',
+                            'browseLabel' => '',
+                            'showPreview' => false,
+                            'removeLabel' => '',
+                        ]
+                    ]);
+                    ActiveForm::end();
+                    ?>
+                    </p>
+                    <p>
+                    <?php
+                    echo Html::a(
+                        Yii::t('app', 'Bewerken van tracks'),
+                        [
+                            'route-track/edit-track',
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Bewerken van tracks'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                    ?> </p>
                 </div>
 
                 <div class="well">
@@ -259,7 +301,8 @@ $this->title = Yii::t('app', 'Hike overview');
                 <div class="well">
                     <h3><?php echo Yii::t('app', 'actions')?></h3>
                     <?php
-                    if ($eventModel->status === EventNames::STATUS_opstart) { ?>
+                    if ($eventModel->status === EventNames::STATUS_opstart) {
+                        ?>
                         <p>
                             <?php
                             echo Html::a(
@@ -267,8 +310,8 @@ $this->title = Yii::t('app', 'Hike overview');
                                     ['/route/index'],
                                     [
                                         'class' => 'btn btn-xs btn-success',
-                                    ]);
-                            ?>
+                                    ]
+                ); ?>
                         </p>
                         <p>
                             <?php
@@ -277,8 +320,8 @@ $this->title = Yii::t('app', 'Hike overview');
                                     ['/posten/index'],
                                     [
                                         'class' => 'btn btn-xs btn-success',
-                                    ]);
-                            ?>
+                                    ]
+                            ); ?>
                         </p> <?php
                     }
                     ?>
@@ -338,8 +381,8 @@ $this->title = Yii::t('app', 'Hike overview');
                 <p>
                     <?php
                         echo ListView::widget([
-                            'summary' => FALSE,
-                            'pager' => FALSE,
+                            'summary' => false,
+                            'pager' => false,
                             'dataProvider' => $dataProviderCheck,
                             'itemView' => '/open-vragen-antwoorden/_list-controle',
                             'emptyText' => Yii::t('app', 'No question which should be checked'),
@@ -368,19 +411,20 @@ $this->title = Yii::t('app', 'Hike overview');
                 </p>
                 <?php
                 echo ListView::widget([
-                    'summary' => FALSE,
-                    'pager' => FALSE,
+                    'summary' => false,
+                    'pager' => false,
                     'dataProvider' => $organisatieData,
                     'itemView' => '/deelnemers-event/_list',
                     'emptyText' => Yii::t('app', 'No organisation.'),
                 ]); ?>
             </div>
             <?php
-            if(Yii::$app->devicedetect->isMobile()) {?>
+            if (Yii::$app->devicedetect->isMobile()) {
+                ?>
                 <div class="col-sm-3 well">
                     <?php
                     echo ListView::widget([
-                        'summary' => FALSE,
+                        'summary' => false,
                         'pager' => [
                             'prevPageLabel' => Yii::t('app', 'previous'),
                             'nextPageLabel' => Yii::t('app', 'next'),
@@ -394,7 +438,8 @@ $this->title = Yii::t('app', 'Hike overview');
                         'emptyText' => Yii::t('app', 'No feeds activity for this hike.'),
                     ]); ?>
                 </div>
-            <?php } ?>
+            <?php
+            } ?>
         </div>
     </div>
 </div>

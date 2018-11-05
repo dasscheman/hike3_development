@@ -13,6 +13,7 @@ use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
 use app\models\Route;
+use app\models\RouteTrack;
 use app\models\Posten;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
@@ -101,7 +102,6 @@ class SiteController extends Controller
                 );
                 return $this->redirect(['/users/view']);
             }
-
             if (!empty(Yii::$app->user->identity->selected_event_ID)) {
                 $event_id = Yii::$app->user->identity->selected_event_ID;
                 $user = DeelnemersEvent::find()
@@ -166,7 +166,7 @@ class SiteController extends Controller
                 'query' => $queryCheckQuestions
             ]);
 
-
+            $routeTrackModel = new RouteTrack;
 
             $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
@@ -178,6 +178,7 @@ class SiteController extends Controller
                     'groupModel' => $groupModel,
                     'dataProviderCheck' => $dataProviderCheck,
                     'activityFeed' => $feed->getData(),
+                    'routeTrackModel' => $routeTrackModel,
                     'modelDeelnemer' => new DeelnemersEvent,
                     'importModel' => new ExportImport,
             ));
