@@ -180,7 +180,7 @@ class QrCest
         $I->see('In/Uit checken van post');
 
         $I->fillField('PostPassage[vertrek]',date("Y-m-d H:i", time() - 3600));
-      		$I->click('Create');
+  		$I->click('Create');
         $I->canSeeRecord('app\models\PostPassage', array(
           'group_id' => '5',
           'post_ID' => '1'
@@ -211,7 +211,8 @@ class QrCest
         $I->see('Deze QR is vandaag niet geldig.');
         $I->amOnPage(['qr-check/create', 'event_id' => 3, 'qr_code' => 'haasxasdfasd2344ergxffghhebddSEF']);
         $I->see('QR code gecontroleerd!');
-        $I->see('Stille posten: 6');
+        $I->amOnPage(['site/overview-players']);
+        $I->see('Dag 2 gestart tweede QR');
         $I->amOnPage(['qr-check/create', 'event_id' => 4, 'qr_code' => 'qerqwerqwccwaswerqwerqwerqw']);
         $I->see('Deze QR is niet voor deze hike.');
         $I->amOnPage(['qr-check/create', 'event_id' => 4, 'qr_code' => 'asdsadacqccsdaadq']);
