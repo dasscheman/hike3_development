@@ -165,7 +165,9 @@ class OpenMapController extends Controller
 
         $marker = $map->getDragableMarker();      // add the marker
         $map->addLayer($marker);      // add the marker
-        $map->clientOptions['bounds'] =json_encode($map->allCoordinatesArray);
+        if(!empty($map->allCoordinatesArray)) {
+            $map->clientOptions['bounds'] = json_encode($map->allCoordinatesArray);
+        }
 
         return $this->render('index', [
                 'routeModel' => $routeModel,
@@ -204,7 +206,9 @@ class OpenMapController extends Controller
         $map->setHintMarkers($routeModel->route_ID, false, $group);
         $map->setVragenMarkers($routeModel->route_ID, false, $group);
         $map->setTimeTrailMarkers(false, $group);
-        $map->clientOptions['bounds'] =json_encode($map->allCoordinates);
+        if(!empty($map->allCoordinates)) {
+            $map->clientOptions['bounds'] = json_encode($map->allCoordinates);
+        }
 
         return $this->render('view', [
                 'routeModel' => $routeModel,
@@ -235,8 +239,9 @@ class OpenMapController extends Controller
         $map->setHintMarkers($routeModel->route_ID, false);
         $map->setVragenMarkers($routeModel->route_ID, false);
         $map->setTimeTrailMarkers(false);
-        $map->clientOptions['bounds'] =json_encode($map->allCoordinates);
-
+        if(!empty($map->allCoordinates)) {
+            $map->clientOptions['bounds'] = json_encode($map->allCoordinates);
+        }
         return $this->render('view', [
                 'routeModel' => $routeModel,
                 'timeTrailData' => $timeTrailData,
