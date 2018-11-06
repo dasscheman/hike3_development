@@ -39,6 +39,7 @@
         "bower-asset/font-awesome" : "5.3.1",
         "bower-asset/leaflet.markercluster": "~1",
         "bower-asset/leaflet.fullscreen": "~1",
+        "bower-asset/leaflet.locatecontrol": "0.*",
         "codemix/yii2-excelexport" : "*",
         "phpoffice/phpspreadsheet": "*",
         "russ666/yii2-countdown": "*",

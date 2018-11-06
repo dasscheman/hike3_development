@@ -34,5 +34,7 @@ class AppAsset extends AssetBundle
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
         'app\assets\LeafletFullscreenAsset',
+        'app\assets\LeafletLocateAsset',
+        'dosamigos\leaflet\plugins\markercluster\MarkerClusterAsset'
     ];
 }

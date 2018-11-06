@@ -8,6 +8,7 @@ use yii\web\Cookie;
 use yii\helpers\ArrayHelper;
 use yii\web\JsExpression;
 use app\models\Groups;
+use app\models\Locate;
 use app\components\GeneralFunctions;
 use dosamigos\leaflet\LeafLet;
 use dosamigos\leaflet\types\LatLng;
@@ -450,6 +451,20 @@ class OpenMap extends LeafLet
         $path = new PolyLine();
         $path->setLatLngs($coordinates);
         $this->addLayer($path);
+    }
+
+    public function setLocate(){
+        $options = [
+            'position' => 'topleft',
+            'clientOptions' => [
+                'strings' => [
+                    'title' => 'waar ben ik?'
+                ],
+                'flyto' => 'true',
+                'icon' => 'glyphicon glyphicon-map-marker']
+        ];
+        $locate = new Locate($options);
+        $this->addControl($locate);
     }
 
     public function setEventTrackPoints()
