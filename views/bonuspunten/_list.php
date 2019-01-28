@@ -32,32 +32,33 @@ use yii\widgets\Pjax;
                 <?php
                 if (Yii::$app->user->can('organisatie')) {
                     echo ButtonAjax::widget([
-                       'name' => Yii::t('app', 'Edit bonuspunten'),
+                       'name' => Yii::t('app', 'Bewerken bonuspunten'),
                        'route' => ['/bonuspunten/update', 'bonuspunten_ID' => $model->bouspunten_ID],
                        'modalId' => '#main-modal',
                        'modalContent'=>'#main-content-modal',
                        'options' => [
                            'class' => 'btn btn-xs btn-success',
-                           'title' => Yii::t('app', 'Edit bonuspunten'),
+                           'title' => Yii::t('app', 'Bewerken bonuspunten'),
                            'disabled' => !Yii::$app->user->can('organisatie'),
                        ]
                    ]);
                 }
                 ?>
             </p>
-            <b>
-            <?php echo Html::encode($model->getAttributeLabel('score')); ?>:
-            </b>
-            <?php echo Html::encode($model->score); ?></br>
-            <b>
-            <?php echo Html::encode($model->getAttributeLabel('create_user_ID')); ?>:
-            </b>
-            <?php echo Html::encode($model->createUser->voornaam . ' ' . $model->createUser->achternaam); ?></br>
-            <b>
-            <?php echo Html::encode($model->getAttributeLabel('create_time')); ?>:
-            </b>
-            <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true)); ?></br>
-            <?php Pjax::end(); ?>
+            <?php
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('score')) . ': ');
+            echo Html::encode($model->score);
+            echo Html::tag('br');
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('create_user_ID')) . ': ');
+            echo Html::encode($model->createUser->voornaam . ' ' . $model->createUser->achternaam);
+            echo Html::tag('br');
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('create_time')) . ': ');
+            echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true));
+            if(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')){
+                echo  Html::tag('br');
+                echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')), ['class'=>'btn-xs']);
+            }
+            Pjax::end(); ?>
         </div>
     </div>
 </div>

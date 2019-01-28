@@ -40,8 +40,9 @@ class OrganisatiePostCheckRule extends Rule
         $post_id = $params['post_id'];
         $action = $params['action'];
 
+        $post = Posten::findOne($post_id);
         if($action=='start' &&
-            Posten::isStartPost($post_id) &&
+            $posten->isStartPost() &&
             !PostPassage::isPostChechedOutByGroup($group_id,$post_id)) {
                 return true;
         }
@@ -53,9 +54,9 @@ class OrganisatiePostCheckRule extends Rule
             PostPassage::istimeLeftToday($group_id)) {
                 return true;
         }
-        
+
         if($action=='checkin' &&
-            !Posten::isStartPost($post_id) &&
+            !$posten->isStartPost() &&
             PostPassage::isGroupStarted($group_id) &&
             !PostPassage::isPostPassedByGroup($group_id, $post_id) )    {
                 return true;

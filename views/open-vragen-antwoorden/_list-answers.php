@@ -12,35 +12,27 @@ use app\models\DeelnemersEvent;
 ?>
 <div class="view">
     <?php
-    $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
+    echo Html::tag('h4', Html::encode($model->openVragen->open_vragen_name));
+    echo Html::tag('b', Html::encode($model->openVragen->getAttributeLabel('vraag')) . ': ');
+    echo Html::encode($model->openVragen->vraag);
+    echo Html::tag('br');
+    echo Html::tag('b', Html::encode($model->openVragen->getAttributeLabel('score')) . ': ');
+    echo Html::encode($model->openVragen->score);
+    echo Html::tag('br');
+    echo Html::tag('b', Html::encode($model->getAttributeLabel('antwoord_spelers')) . ': ');
+    echo Html::encode($model->antwoord_spelers);
+    echo Html::tag('br');
+    echo Html::tag('b', Html::encode($model->getAttributeLabel('checked')) . ': ');
+    echo GeneralFunctions::printGlyphiconCheck($model->checked);
+    echo Html::tag('br');
+    echo Html::tag('b', Html::encode($model->getAttributeLabel('correct')) . ': ');
+    echo GeneralFunctions::printGlyphiconCheck($model->correct);
+    echo Html::tag('br');
+    echo Html::tag('b', Html::encode($model->getAttributeLabel('update_time')) . ': ');
+    echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true));
+    if(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')){
+        echo  Html::tag('br');
+        echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')), ['class'=>'btn-xs']);
+    }
     ?>
-    <h4>
-        <?php echo Html::encode($model->openVragen->open_vragen_name); ?>
-    </h4>
-    <b>
-    <?php echo Html::encode($model->openVragen->getAttributeLabel('vraag')); ?>:
-    </b>
-    <?php echo Html::encode($model->openVragen->vraag); ?></br>
-    <b>
-    <?php echo Html::encode($model->openVragen->getAttributeLabel('score')); ?>:
-    </b>
-    <?php echo Html::encode($model->openVragen->score); ?></br>
-
-    <b>
-    <?php echo Html::encode($model->getAttributeLabel('antwoord_spelers')); ?>:
-    </b>
-    <?php echo Html::encode($model->antwoord_spelers); ?></br>
-    <b>
-    <?php echo Html::encode($model->getAttributeLabel('checked')); ?>:
-    </b>
-    <?php echo GeneralFunctions::printGlyphiconCheck($model->checked); ?>
-    <b>
-    <?php echo Html::encode($model->getAttributeLabel('correct')); ?>:
-    </b>
-    <?php echo GeneralFunctions::printGlyphiconCheck($model->correct);?></br>
-    <b>
-    <?php echo Html::encode($model->getAttributeLabel('update_time')); ?>:
-    </b>
-    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true)); ?></br>
-
 </div>

@@ -351,13 +351,13 @@ class PostPassage extends HikeActiveRecord
             ->params([':post_id' => $post_id, ':group_id' => $group_id])
             ->exists();
         Posten::getStartPost($active_day);
-        if (Posten::isStartPost($post_id) &&
+        if ($data->isStartPost() &&
             $data->date === $active_day &&
             !PostPassage::isGroupStarted($group_id)) {
             return 'start';
         }
 
-        if (!Posten::isStartPost($post_id) &&
+        if (!$data->isStartPost() &&
             $data->date === $active_day &&
             !$postPassage &&
             !PostPassage::isPostPassedByGroup($group_id, $post_id)) {

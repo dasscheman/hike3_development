@@ -30,21 +30,25 @@ use app\models\TimeTrailCheck;
 
             if($timeTrailCheck->exists()) {
                 $timeTrailCheckData = $timeTrailCheck->one();
-                ?>
-                </br>
-                <b>
-                <?php echo Html::encode($timeTrailCheckData->getAttributeLabel('succeded')); ?>
-                </b>
-                <?php echo GeneralFunctions::printGlyphiconCheck($timeTrailCheckData->succeded); ?></br>
-                <b>
-                <?php echo Html::encode($timeTrailCheckData->getAttributeLabel('start_time')); ?>
-                </b>
-                <?php echo Html::encode($timeTrailCheckData->start_time); ?></br>
-                <b>
-                <?php echo Html::encode($timeTrailCheckData->getAttributeLabel('end_time')); ?>
-                </b>
-                <?php echo Html::encode($timeTrailCheckData->end_time); ?></br>
-            <?php } ?>
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($timeTrailCheckData->getAttributeLabel('succeded')));
+                echo GeneralFunctions::printGlyphiconCheck($timeTrailCheckData->succeded);
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($timeTrailCheckData->getAttributeLabel('start_time')));
+                echo Html::encode(Yii::$app->setupdatetime->displayFormat($timeTrailCheckData->start_time, 'datetime', false, true));
+                if(Yii::$app->setupdatetime->displayRealTime($timeTrailCheckData->start_time, 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($timeTrailCheckData->start_time, 'datetime')), ['class'=>'btn-xs']);
+                }
+
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($timeTrailCheckData->getAttributeLabel('end_time')));
+                echo Html::encode(Yii::$app->setupdatetime->displayFormat($timeTrailCheckData->end_time, 'datetime', false, true));
+                if(Yii::$app->setupdatetime->displayRealTime($timeTrailCheckData->end_time, 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($timeTrailCheckData->end_time, 'datetime')), ['class'=>'btn-xs']);
+                }
+            } ?>
         </p>
         </div>
     </div>

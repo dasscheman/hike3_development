@@ -44,19 +44,29 @@ use prawee\widgets\ButtonAjax;
             }
             ?>
         </p>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('gepasseerd')); ?>
-        </b>
-        <?php echo GeneralFunctions::printGlyphiconCheck($model->gepasseerd); ?></br>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('binnenkomst')); ?>
-        </b>
-        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->binnenkomst, 'datetime', false, true)); ?></br>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('vertrek')); ?>
-        </b>
-        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->vertrek, 'datetime', false, true)); ?></br>
-        <?php Pjax::end(); ?>
+        <?php
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('gepasseerd')));
+            echo GeneralFunctions::printGlyphiconCheck($model->gepasseerd);
+            echo Html::tag('br');
+            if(!$model->post->isStartPost()) {
+                echo Html::tag('b', Html::encode($model->getAttributeLabel('binnenkomst')) . ': ');
+                echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->binnenkomst, 'datetime', false, true));
+                if(Yii::$app->setupdatetime->displayRealTime($model->binnenkomst, 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->binnenkomst, 'datetime')), ['class'=>'btn-xs']);
+                }
+                echo  Html::tag('br');
+            }
+
+            if(!$model->post->isEndPost()) {
+                echo Html::tag('b',  Html::encode($model->getAttributeLabel('vertrek')) . ': ');
+                echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->vertrek, 'datetime', false, true));
+                if(Yii::$app->setupdatetime->displayRealTime($model->vertrek, 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->vertrek, 'datetime')), ['class'=>'btn-xs']);
+                }
+            }
+            Pjax::end(); ?>
         </div>
     </div>
 </div>

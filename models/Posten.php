@@ -227,15 +227,16 @@ class Posten extends HikeActiveRecord
         return false;
     }
 
-    public function higherOrderNumberExists($date, $post_volgorde)
+    public function higherOrderNumberExists($post_id)
     {
         // Kan deze niet cachen, geeft problemen bij omhoog en omlaag vinkje bij post/index
+        $data = Posten::findOne($post_id);
         $dataNext = Posten::find()
             ->where('event_ID =:event_id AND date =:date AND post_volgorde >:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $date, ':order' => $post_volgorde])
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->date, ':order' => $data->post_volgorde])
             ->orderBy(['post_volgorde' => SORT_ASC])
             ->exists();
-        
+
         if ($dataNext) {
             return true;
         }
@@ -284,8 +285,9 @@ class Posten extends HikeActiveRecord
     /**
     * Checks if the post is a start post of a day.
     */
-    public function isStartPost($post_id)
+    public function isStartPost()
     {
+        $post_id = $this->post_ID;
         if (Posten::lowerOrderNumberExists($post_id)) {
             return false;
         } else {
@@ -306,5 +308,18 @@ class Posten extends HikeActiveRecord
             )
             ->exists();
         return $exists;
+    }
+
+    /**
+    * Checks if the post is a end post of a day.
+    */
+    public function isEndPost()
+    {
+        $post_id = $this->post_ID;
+        if (Posten::higherOrderNumberExists($post_id)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

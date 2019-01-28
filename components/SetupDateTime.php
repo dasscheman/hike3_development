@@ -3,6 +3,7 @@
 namespace app\components;
 
 use Yii;
+use app\models\DeelnemersEvent;
 
 /*
  * Fix issues with time datetime and date.
@@ -15,18 +16,31 @@ class SetupDateTime
     const DAY_FORMAT = 'php:d';
     const DATE_FORMAT = 'php:Y-m-d';
     const DATETIME_FORMAT = 'php:Y-m-d H:i:s';
+    const DATETIME_FORMAT_NO_SEC = 'php:Y-m-d H:i:';
     const TIME_FORMAT = 'php:H:i:s';
 
     public static function convert($dateStr, $type='date', $format = null)
     {
-        if ($type === 'datetime') {
-            $fmt = ($format == null) ? self::DATETIME_FORMAT : $format;
-        } elseif ($type === 'time') {
-            $fmt = ($format == null) ? self::TIME_FORMAT : $format;
-        } elseif ($type === 'days') {
-            $fmt = ($format == null) ? self::DAY_FORMAT : $format;
+        if($format != null) {
+            $fmt = $format;
         } else {
-            $fmt = ($format == null) ? self::DATE_FORMAT : $format;
+            switch ($type) {
+                case 'datetime':
+                    $fmt = self::DATETIME_FORMAT;
+                    break;
+                case 'datetime_no_sec':
+                    $fmt = self::DATETIME_FORMAT_NO_SEC;
+                    break;
+                case 'time':
+                    $fmt = self::TIME_FORMAT;
+                    break;
+                case 'day':
+                    $fmt = self::DAY_FORMAT;
+                    break;
+                default:
+                    $fmt = self::DATE_FORMAT;
+                    break;
+            }
         }
         return \Yii::$app->formatter->asDate($dateStr, $fmt);
     }
@@ -45,43 +59,48 @@ class SetupDateTime
         } else {
             $fmt = self::DATE_FORMAT;
         }
-        return \Yii::$app->formatter->asDate($dateStr, $fmt);
+        return Yii::$app->formatter->asDate($dateStr, $fmt);
     }
 
     /*
-     * All Datetime, time and date field should be stored with this function.
+     * All Datetime, time and date field should be displayed with this function.
      * To garante consistencie. This function can be used on any datetime, date,
-     * time field just before the 'save'.
+     * time field.
      */
     public static function displayFormat($dateStr, $type='date', $absoluteTime = false, $alternate = false)
     {
-        \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();
-        if ($type === 'datetime') {
-            $fmt = 'php:d-m-Y H:i:s';
-        } elseif ($type === 'time') {
-            $fmt = self::TIME_FORMAT;
-        } else {
-            $fmt = 'php:d-m-Y';
-        }
-
         if ($absoluteTime) {
             // Krijg niet het de goede tijd terug waneer de looptijd berekend wordt.
-            // Werkt wel wanneer ik hie UTC gebruik. Naderhand weer terug gezet.
-            \Yii::$app->formatter->timeZone = "UTC";
+            // Werkt wel wanneer ik hier UTC gebruik. Naderhand weer terug gezet.
+            Yii::$app->formatter->timeZone = "UTC";
         }
-        $time = \Yii::$app->formatter->asDate($dateStr, $fmt);
+        $time = self::convert($dateStr, $type);
+
+        // d($time);
+        // d($dateStr);
+        // d($type);
         $alternate_time = array_key_exists(Yii::$app->user->identity->selected_event_ID, Yii::$app->params["alternate_time"]);
 
         if($alternate && $alternate_time) {
             $add_time = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['add'];
             $factor = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['factor'];
-            $dateStr = ($dateStr + $add_time) * $factor;
-            $time = \Yii::$app->formatter->asDate($dateStr, $fmt);
-        }
+            $dateStr = ($dateStr / $factor) + $add_time;
 
+            $time = self::convert($dateStr, $type);
+        }
         \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();
         return $time;
     }
+
+    public static function displayRealTime($dateStr, $type='date') {
+        if((Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_organisatie ||
+        Yii::$app->user->identity->getRolUserForEvent() === DeelnemersEvent::ROL_post) &&
+        array_key_exists(Yii::$app->user->identity->selected_event_ID, Yii::$app->params["alternate_time"])){
+            return self::displayFormat($dateStr, $type, false, false);
+        }
+        return false;
+    }
+
 
     public static function getDay($dateStr)
     {

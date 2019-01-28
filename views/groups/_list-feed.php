@@ -1,5 +1,7 @@
 <?php
+
 use app\models\Groups;
+use yii\helpers\Html;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
@@ -15,10 +17,11 @@ use app\models\Groups;
             </h4>
 
             <?php
-
                 echo Yii::$app->setupdatetime->displayFormat($model['timestamp'], 'datetime', false, true);
-                echo '<br>';
-                echo $model['timestamp'];
+                if(Yii::$app->setupdatetime->displayRealTime($model['timestamp'], 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model['timestamp'], 'datetime')), ['class'=>'btn-xs']);
+                }
             ?>
         </div>
     </div>

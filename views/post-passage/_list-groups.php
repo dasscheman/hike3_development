@@ -24,12 +24,8 @@ use prawee\widgets\ButtonAjax;
                 'useSessionFlash' => true,
                 'delay' => 4000,
             ]);
-        ?>
-        <p>
-            <h3>
-                <?php echo Html::encode($model->group_name); ?>
-            </h3>
-            <?php
+
+            echo Html::tag('h3', Html::encode($model->group_name));
             $action = PostPassage::determineAction($post_id, $model->group_ID);
             $title = PostPassage::getActionTitle($action, $model->group_name);
             $postPassage = PostPassage::find()
@@ -60,23 +56,31 @@ use prawee\widgets\ButtonAjax;
             }
             if($postPassage->exists()) {
                 $postPassageData = $postPassage->one();
-                ?>
-                </br>
-                <b>
-                <?php echo Html::encode($postPassageData->getAttributeLabel('gepasseerd')); ?>
-                </b>
-                <?php echo GeneralFunctions::printGlyphiconCheck($postPassageData->gepasseerd); ?></br>
-                <b>
-                <?php echo Html::encode($postPassageData->getAttributeLabel('binnenkomst')); ?>
-                </b>
-                <?php echo Html::encode($postPassageData->binnenkomst); ?></br>
-                <b>
-                <?php echo Html::encode($postPassageData->getAttributeLabel('vertrek')); ?>
-                </b>
-                <?php echo Html::encode($postPassageData->vertrek); ?></br>
-            <?php } ?>
-        </p>
-        <?php Pjax::end(); ?>
+                echo Html::tag('b', Html::encode($postPassageData->getAttributeLabel('gepasseerd')) . ': ' );
+                echo GeneralFunctions::printGlyphiconCheck($postPassageData->gepasseerd);
+
+                if(!$postPassageData->post->isStartPost()) {
+                    echo Html::tag('br');
+                    echo Html::tag('b', Html::encode($postPassageData->getAttributeLabel('binnenkomst')) . ': ');
+                    echo Html::encode($postPassageData->binnenkomst);
+
+                    if(Yii::$app->setupdatetime->displayRealTime($postPassageData->binnenkomst, 'datetime')){
+                        echo  Html::tag('br');
+                        echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($postPassageData->binnenkomst, 'datetime')), ['class'=>'btn-xs']);
+                    }
+                }
+
+                if(!$postPassageData->post->isEndPost()) {
+                    echo Html::tag('br');
+                    echo Html::tag('b', Html::encode($postPassageData->getAttributeLabel('vertrek')) . ': ');
+                    echo Html::encode($postPassageData->vertrek);
+                    if(Yii::$app->setupdatetime->displayRealTime($postPassageData->vertrek, 'datetime')){
+                        echo  Html::tag('br');
+                        echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($postPassageData->vertrek, 'datetime')), ['class'=>'btn-xs']);
+                    }
+                }
+            }
+            Pjax::end(); ?>
         </div>
     </div>
 </div>

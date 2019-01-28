@@ -37,43 +37,36 @@ use kartik\widgets\Alert;
 
         ?>
         </p>
-        <h3>
-        <?php echo Html::encode($model->nood_envelop_name); ?>
-        </h3>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('score')); ?>:
-        </b>
-        <?php echo Html::encode($model->score); ?></br>
-
         <?php
-        if ($model->isHintOpenedByGroup()) {
-            ?>
-            <b>
-            <?php echo Html::encode($model->getAttributeLabel('coordinaat')); ?>:
-            </b>
-            <?php echo Html::encode($model->coordinaat); ?> </br>
-            <b>
-            <?php echo Html::encode($model->getAttributeLabel('opmerkingen')); ?>:
-            </b>
-            <?php echo Html::encode($model->opmerkingen); ?></br>
-            <b>
-            <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_user_ID')); ?>:
-            </b>
-            <?php echo Html::encode($model->getHintOpenedByGroup()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam); ?></br>
-            <b>
-            <?php echo Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_time')); ?>:
-            </b>
-            <?php echo Html::encode(
-                Yii::$app->setupdatetime->displayFormat(
-                    $model->getHintOpenedByGroup()->create_time,
-                    'datetime',
-                    false,
-                    true
-                )
-            );
-        }
-
-        Pjax::end(); ?>
+            echo Html::tag('h3', Html::encode($model->nood_envelop_name));
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('score')) . ': ');
+            echo Html::encode($model->score);
+            echo Html::tag('br');
+            if ($model->isHintOpenedByGroup()) {
+                echo Html::tag('b', Html::encode($model->getAttributeLabel('coordinaat')) . ': ');
+                echo Html::encode($model->coordinaat);
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($model->getAttributeLabel('opmerkingen')) . ': ');
+                echo Html::encode($model->opmerkingen);
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_user_ID')) . ': ');
+                echo Html::encode($model->getHintOpenedByGroup()->createUser->voornaam . ' ' . $model->getHintOpenedByGroup()->createUser->achternaam);
+                echo Html::tag('br');
+                echo Html::tag('b', Html::encode($model->getHintOpenedByGroup()->getAttributeLabel('create_time')) . ': ');
+                echo Html::encode(
+                    Yii::$app->setupdatetime->displayFormat(
+                        $model->getHintOpenedByGroup()->create_time,
+                        'datetime',
+                        false,
+                        true
+                    )
+                );
+                if(Yii::$app->setupdatetime->displayRealTime($model->getHintOpenedByGroup()->create_time, 'datetime')){
+                    echo  Html::tag('br');
+                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->getHintOpenedByGroup()->create_time, 'datetime')), ['class'=>'btn-xs']);
+                }
+            }
+            Pjax::end(); ?>
         </div>
     </div>
 </div>

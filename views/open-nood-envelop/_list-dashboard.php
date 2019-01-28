@@ -14,10 +14,8 @@ use app\models\DeelnemersEvent;
 
 ?>
     <div class="view">
-    <h4>
-        <?php echo Html::encode($model->nood_envelop_name); ?>
-    </h4>
     <?php
+    echo Html::tag('h4', Html::encode($model->nood_envelop_name));
     if (!$model->isHintOpenedByGroup()) {
         $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
 
@@ -36,36 +34,29 @@ use app\models\DeelnemersEvent;
                 'disabled' => !Yii::$app->user->can('deelnemerIntroductie') && !Yii::$app->user->can('deelnemerGestartTime')
             ]
         ]);
+        echo Html::tag('br');
     }
-    ?>
-    <b>
-    <?php echo Html::encode($model->getAttributeLabel('score')); ?>:
-    </b>
-    <?php echo Html::encode($model->score); ?></br>
-
-    <?php
+    echo Html::tag('b', Html::encode($model->getAttributeLabel('score')) . ': ');
+    echo Html::encode($model->score);
+    echo Html::tag('br');
     if ($model->isHintOpenedByGroup()) {
         if ($model->show_coordinates) {
-            ?>
-            <b>
-            <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
-            </b>
-            <?php echo Html::encode($model->getLatitude()); ?>,
-            <?php echo Html::encode($model->getLongitude()); ?></br>
-        <?php
-        } ?>
-        <b>
-        <?php echo Html::encode($model->getAttributeLabel('opmerkingen')); ?>:
-        </b>
-        <?php echo Html::encode($model->opmerkingen); ?></br>
-        <b>
-        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_user_ID')); ?>:
-        </b>
-        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->createUser->voornaam . ' ' . $model->getOpenNoodEnvelops()->one()->createUser->achternaam); ?></br>
-        <b>
-        <?php echo Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_time')); ?>:
-        </b>
-        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->getOpenNoodEnvelops()->one()->create_time, 'datetime', false, true)
-            );
+            echo Html::tag('b', Html::encode($model->coordinatenLabel('coordinaten')) . ': ');
+            echo Html::encode($model->getLatitude() . ', ');
+            echo Html::encode($model->getLongitude());
+            echo Html::tag('br');
+        }
+        echo Html::tag('b', Html::encode($model->getAttributeLabel('opmerkingen')) . ': ');
+        echo Html::encode($model->opmerkingen);
+        echo Html::tag('br');
+        echo Html::tag('b', Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_user_ID')) . ': ');
+        echo Html::encode($model->getOpenNoodEnvelops()->one()->createUser->voornaam . ' ' . $model->getOpenNoodEnvelops()->one()->createUser->achternaam);
+        echo Html::tag('br');
+        echo Html::tag('b', Html::encode($model->getOpenNoodEnvelops()->one()->getAttributeLabel('create_time')) . ': ');
+        echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->getOpenNoodEnvelops()->one()->create_time, 'datetime', false, true));
+        if(Yii::$app->setupdatetime->displayRealTime($model->getOpenNoodEnvelops()->one()->create_time, 'datetime')){
+            echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->getOpenNoodEnvelops()->one()->create_time, 'datetime')), ['class'=>'btn-xs']);
+            echo  Html::tag('br');
+        }
     }?>
     </div>
