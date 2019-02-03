@@ -36,7 +36,7 @@ class NewsletterController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['unsubscribe'],
+                        'actions' => ['unsubscribe', 'subscribe'],
                         'roles' => ['?'],
                     ],
                     [
@@ -185,6 +185,23 @@ class NewsletterController extends Controller
             }
         } else {
             Yii::$app->session->setFlash('warning', 'Unknown user credentials');
+        }
+        return $this->render('unsubscribe');
+    }
+
+    public function actionSubscribe($user_id, $email)
+    {
+        $user = Users::findOne($user_id);
+
+        if ($user->email === $email) {
+            $user->newsletter = true;
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', 'Aangemeld voor nieuwsbrief.');
+            } else {
+                Yii::$app->session->setFlash('warning', 'Kan wijzigingen niet opslaan.');
+            }
+        } else {
+            Yii::$app->session->setFlash('warning', 'Onbekende gebruiker.');
         }
         return $this->render('unsubscribe');
     }
