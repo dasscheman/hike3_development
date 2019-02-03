@@ -15,8 +15,8 @@ use yii\helpers\Url;
         <br>
 				<br>
         <?php
-        $link_newsletter = Url::to(['/newsletter/subscribe', 'user_id' => $user_id, 'email' => $email], true);
-        echo Html::a('Aanmelden voor nieuwsbrieven', $link_newsletter);?>
+        $link_new_newsletter = Url::to(['/newsletter/subscribe', 'user_id' => $user_id, 'email' => $email], true);
+        echo Html::a('Aanmelden voor nieuwsbrieven', $link_new_newsletter);?>
         <br>
         <br>
         <?php
