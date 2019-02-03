@@ -395,8 +395,8 @@ class OpenMap extends LeafLet
                         if ($countgroups === 0) {
                             $content = 'Time trail ' . $check->getTimeTrailItem()->one()->getTimeTrail()->one()->time_trail_name . ' ' . $check->getTimeTrailItem()->one()->time_trail_item_name . '<br>';
                         }
-                        $start = \Yii::$app->formatter->asDate($check->start_time, 'php:d-M H:i');
-                        $eind = \Yii::$app->formatter->asDate($check->end_time, 'php:d-M H:i');
+                        $start = Yii::$app->setupdatetime->displayFormat($check->start_time, 'datetime_no_sec', false, true);
+                        $eind = Yii::$app->setupdatetime->displayFormat($check->end_time, 'datetime_no_sec', false, true);
                         if (isset($check->end_time)) {
                             $icon2 = GeneralFunctions::printGlyphiconCheck($check->succeded);
                         } else {

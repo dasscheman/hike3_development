@@ -76,16 +76,12 @@ class SetupDateTime
         }
         $time = self::convert($dateStr, $type);
 
-        // d($time);
-        // d($dateStr);
-        // d($type);
         $alternate_time = array_key_exists(Yii::$app->user->identity->selected_event_ID, Yii::$app->params["alternate_time"]);
 
         if($alternate && $alternate_time) {
             $add_time = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['add'];
             $factor = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['factor'];
-            $dateStr = ($dateStr / $factor) + $add_time;
-
+            $dateStr = (strtotime($dateStr) / $factor) + $add_time;
             $time = self::convert($dateStr, $type);
         }
         \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();
