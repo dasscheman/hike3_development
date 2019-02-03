@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 
 ?>
 <div class="tbl-time-trail-view-dashboard">
-    <h3> <?php echo Yii::t('app', 'Checked time trails') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Gescande tijdritten') ?> </h3>
     <p>
         <?php
         // this is needed for the pagination.

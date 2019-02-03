@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
     <b>
         <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
     </b>
-    <?php echo Html::encode($model->getLatitude()); ?>, 
+    <?php echo Html::encode($model->getLatitude()); ?>,
     <?php echo Html::encode($model->getLongitude()); ?></br></br>
 
     <?php $form = ActiveForm::begin([

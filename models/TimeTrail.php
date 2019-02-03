@@ -54,7 +54,7 @@ class TimeTrail extends HikeActiveRecord
     {
         return [
             'time_trail_ID' => Yii::t('app', 'Time Trail  ID'),
-            'time_trail_name' => Yii::t('app', 'Time Trail Name'),
+            'time_trail_name' => Yii::t('app', 'Tijdrit titel'),
             'event_ID' => Yii::t('app', 'Event  ID'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User  ID'),
@@ -103,7 +103,7 @@ class TimeTrail extends HikeActiveRecord
         $group = Groups::findOne($group_id);
         return $group->getTimeTrailItems();
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */

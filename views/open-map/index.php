@@ -6,13 +6,14 @@ use app\components\CustomAlertBlock;
 use kartik\dialog\Dialog;
 use app\models\OpenMap;
 use kartik\popover\PopoverX;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\NoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-    $this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
-    echo Dialog::widget();
+$this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
+echo Dialog::widget();
 ?>
 <div class="container-map">
 <div class="map-index">
@@ -197,7 +198,7 @@ use kartik\popover\PopoverX;
                             [
                                 'id' => 'modalCreateQr',
                                 'toggleButton' => [
-                                    'label' => Yii::t('app', 'Add silent station'),
+                                    'label' => Yii::t('app', 'Stillepost toevoegen'),
                                     'class' => 'btn btn btn-success padding-right',
                                     'disabled' => !Yii::$app->user->can('organisatie'),
                                 ],
@@ -215,7 +216,7 @@ use kartik\popover\PopoverX;
 
                     <?php
                     echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Silent stations'),
+                        'header' => Yii::t('app', 'Stilleposts'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
                         'content' => Yii::t('app', 'This are stations where groups can scan qr codes'),
@@ -224,7 +225,7 @@ use kartik\popover\PopoverX;
                             'class' => 'map-popover'],
                     ]);?>
                 </div>
-                <h4 class="left"><?php echo Yii::t('app', 'Silent station') ?></h4>
+                <h4 class="left"><?php echo Yii::t('app', 'Stillepost') ?></h4>
             </div>
         </div>
         <div class="kwart">

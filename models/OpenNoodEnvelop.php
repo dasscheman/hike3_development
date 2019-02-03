@@ -63,9 +63,9 @@ class OpenNoodEnvelop extends HikeActiveRecord
             'nood_envelop_ID' => Yii::t('app', 'Hints ID'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'group_ID' => Yii::t('app', 'Group ID'),
-            'opened' => Yii::t('app', 'Opened'),
-            'create_time' => Yii::t('app', 'Opened at'),
-            'create_user_ID' => Yii::t('app', 'Opened by'),
+            'opened' => Yii::t('app', 'Geopend'),
+            'create_time' => Yii::t('app', 'Geopend op'),
+            'create_user_ID' => Yii::t('app', 'Geopend door'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
         ];
@@ -203,7 +203,7 @@ class OpenNoodEnvelop extends HikeActiveRecord
         }
         return $score;
     }
-       
+
     public function anyGroupScoredOpenedHints() {
         return OpenNoodEnvelop::find()
             ->where('event_ID =:event_id')

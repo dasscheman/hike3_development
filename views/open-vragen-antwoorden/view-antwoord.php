@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 
 ?>
 <div class="tbl-open-vragen-view-antwoord">
-    <h3> <?php echo Yii::t('app', 'Checked question') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Beantwoorde vragen') ?> </h3>
     <p>
         <?php
         // this is needed for the pagination.

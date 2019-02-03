@@ -61,7 +61,7 @@ class Route extends HikeActiveRecord
     {
         return [
             'route_ID' => Yii::t('app', 'Route ID'),
-            'route_name' => Yii::t('app', 'Route Name'),
+            'route_name' => Yii::t('app', 'Route titel'),
             'event_ID' => Yii::t('app', 'Event ID'),
             'day_date' => Yii::t('app', 'Day'),
             'route_volgorde' => Yii::t('app', 'Route Order'),

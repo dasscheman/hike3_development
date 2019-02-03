@@ -70,6 +70,7 @@ class Qr extends HikeActiveRecord
             'qr_code' => Yii::t('app', 'Qr Code'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'route_ID' => Yii::t('app', 'Route ID'),
+            'route_name' => Yii::t('app', 'Route titel'),
             'qr_volgorde' => Yii::t('app', 'Qr Order'),
             'score' => Yii::t('app', 'Score'),
             'create_time' => Yii::t('app', 'Create Time'),

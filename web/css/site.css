@@ -161,7 +161,7 @@ Hiermee wordt het modal naar voren gehaald.*/
     margin-top: 10px;
     font-size: 20px;
     display: inline-block;
-} 
+}
 
 .container > .container-map {
     width: 98%;
@@ -187,11 +187,11 @@ Hiermee wordt het modal naar voren gehaald.*/
     display: block;
     max-width: 100%;
     height: auto;
-    /*width: 19.96%;*/ 
-    width: 15.46%; 
+    /*width: 19.96%;*/
+    width: 15.46%;
 
 }
-.kwart{    
+.kwart{
     padding-top: 15px;
     padding-left: 25px;
     min-width: 300px;
@@ -210,12 +210,12 @@ Hiermee wordt het modal naar voren gehaald.*/
     }
 }
 
-.map-right{    
+.map-right{
     padding-right: 8px;
     float: right!important;
-}  
+}
 
-.map-left{   
+.map-left{
     padding-top: 13px;
     padding-left: 15px;
     white-space: nowrap
@@ -238,14 +238,14 @@ h4.left{
 
 .map-button{
     padding-bottom: 18px;
-    background-color: rgba(51, 122, 183, 0.6); 
+    background-color: rgba(51, 122, 183, 0.6);
     margin-left: -13px;
-    margin-top: -4px;     
+    margin-top: -4px;
 }
 
 .map-popover{
     border: none;
-    background-color: rgba(51, 122, 183, 0.0); 
+    background-color: rgba(51, 122, 183, 0.0);
     margin-bottom: -2px;
 
 }
@@ -271,4 +271,10 @@ h3 {
     width: 96%;
 
     /*adding-top: 9px;*/
+}
+
+/* .leaflet-control-locate */
+.leaflet-bar-part
+{
+    padding-left: 0px;
 }

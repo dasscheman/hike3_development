@@ -15,7 +15,7 @@ use yii\data\ArrayDataProvider;
 ?>
 <div class="tbl-qr-view">
 
-    <h1><?= Html::encode(Yii::t('app', 'Silent stations for {routename}', ['routename' => $model->route_name])) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Stilleposten voor {routename}', ['routename' => $model->route_name])) ?></h1>
 
     <?php
 

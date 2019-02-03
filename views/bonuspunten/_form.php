@@ -77,7 +77,7 @@ use yii\widgets\Pjax;
         <?php
         if (!$model->isNewRecord) {
             echo Html::a(
-                Yii::t('app', 'Save'),
+                Yii::t('app', 'Opslaan'),
                 [
                     '/bonuspunten/update',
                     'bonuspunten_ID' => $model->bouspunten_ID
@@ -89,7 +89,7 @@ use yii\widgets\Pjax;
                 ]
             );
             echo Html::a(
-                Yii::t('app', 'Delete'),
+                Yii::t('app', 'Verwijderen'),
                 [
                     '/bonuspunten/delete',
                     'bonuspunten_ID' => $model->bouspunten_ID],
@@ -102,7 +102,7 @@ use yii\widgets\Pjax;
         }
         if ($model->isNewRecord) {
             echo Html::a(
-                Yii::t('app', 'Save'),
+                Yii::t('app', 'Opslaan'),
                 [
                     '/bonuspunten/create',
                 ],

@@ -385,7 +385,7 @@ $this->title = Yii::t('app', 'Hike overview');
                             'pager' => false,
                             'dataProvider' => $dataProviderCheck,
                             'itemView' => '/open-vragen-antwoorden/_list-controle',
-                            'emptyText' => Yii::t('app', 'No question which should be checked'),
+                            'emptyText' => Yii::t('app', 'Er zijn geen vragen die gecontroleerd moeten worden'),
                         ]);
                     ?>
                 </p>
@@ -398,7 +398,7 @@ $this->title = Yii::t('app', 'Hike overview');
                                 'tabindex' => true // important for Select2 to work properly
                             ],
                             'toggleButton' => [
-                                'label' => Yii::t('app', 'Add organizer to hike'),
+                                'label' => Yii::t('app', 'Voeg organiator toe aan hike'),
                                 'id' => 'modalAddOrganisationButton',
                                 'class' => 'btn btn-xs btn-success',
                                 'disabled' => !Yii::$app->user->can('organisatie'),

@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\QrCheckSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Overview checked silent stations');
+$this->title = Yii::t('app', 'Overzicht gescande stilleposten');
 ?>
 <div class="qr-check-index">
 

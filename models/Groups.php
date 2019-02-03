@@ -75,7 +75,7 @@ class Groups extends HikeActiveRecord
     {
         return [
             'group_ID' => Yii::t('app', 'Group ID'),
-            'group_name' => Yii::t('app', 'Group Name'),
+            'group_name' => Yii::t('app', 'Groepsnaam'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
@@ -91,7 +91,7 @@ class Groups extends HikeActiveRecord
             'total_score' => Yii::t('app', 'Totaal'),
             'time_walking' => Yii::t('app', 'Looptijd'),
             'time_left' => Yii::t('app', 'Te gaan'),
-            'users_temp' => Yii::t('app', 'Players'),
+            'users_temp' => Yii::t('app', 'Spelerss'),
             'users_email_temp' => Yii::t('app', 'Players email'),
         ];
     }

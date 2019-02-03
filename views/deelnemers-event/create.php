@@ -9,7 +9,7 @@ use yii\helpers\Html;
 ?>
 <div class="tbl-deelnemers-event-create">
 
-    <h1><?= Html::encode(Yii::t('app', 'Add organisation to hike')) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Voeg organisator toe aan hke')) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

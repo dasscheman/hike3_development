@@ -63,8 +63,8 @@ class TimeTrailCheck extends HikeActiveRecord
             'time_trail_item_ID' => Yii::t('app', 'Time Trail Item  ID'),
             'event_ID' => Yii::t('app', 'Event  ID'),
             'group_ID' => Yii::t('app', 'Group  ID'),
-            'start_time' => Yii::t('app', 'Start Time'),
-            'end_time' => Yii::t('app', 'Endtime Time'),
+            'start_time' => Yii::t('app', 'Starttijd'),
+            'end_time' => Yii::t('app', 'Eindtijd'),
             'succeded' => Yii::t('app', 'Succeded'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User  ID'),
@@ -108,7 +108,7 @@ class TimeTrailCheck extends HikeActiveRecord
         });
         return $data;
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -124,7 +124,7 @@ class TimeTrailCheck extends HikeActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
-        
+
     public function anyGroupScoredTimeTrail() {
         return TimeTrailCheck::find()
             ->where('event_ID =:event_id')

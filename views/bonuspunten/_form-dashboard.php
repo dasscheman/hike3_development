@@ -92,7 +92,7 @@ dd('KAK OF TOCH NIET VERWIJDEREN?!');
         if(!$model->isNewRecord) {
 
             echo Html::a(
-                Yii::t('app', 'Save'),
+                Yii::t('app', 'Opslaan'),
                 [
                     '/bonuspunten/update',
                     'bonuspunten_ID' => $model->bouspunten_ID
@@ -104,7 +104,7 @@ dd('KAK OF TOCH NIET VERWIJDEREN?!');
                 ]
             );
             echo Html::a(
-                Yii::t('app', 'Delete'),
+                Yii::t('app', 'Verwijderen'),
                 [
                     '/bonuspunten/delete',
                     'bonuspunten_ID' => $model->bouspunten_ID],
@@ -117,7 +117,7 @@ dd('KAK OF TOCH NIET VERWIJDEREN?!');
         }
         if($model->isNewRecord) {
             echo Html::a(
-                Yii::t('app', 'Save'),
+                Yii::t('app', 'Opslaan'),
                 [
                     '/bonuspunten/create',
                 ],

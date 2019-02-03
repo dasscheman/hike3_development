@@ -67,14 +67,15 @@ class NoodEnvelop extends HikeActiveRecord
     {
         return [
             'nood_envelop_ID' => Yii::t('app', 'Hint ID'),
-            'nood_envelop_name' => Yii::t('app', 'Hint Name'),
+            'nood_envelop_name' => Yii::t('app', 'Hint titel'),
             'event_ID' => Yii::t('app', 'Hike ID'),
             'route_ID' => Yii::t('app', 'Route ID'),
-            'nood_envelop_volgorde' => Yii::t('app', 'Hint Order'),
-            'coordinaat' => Yii::t('app', 'Coordinate'),
-            'show_coordinates' => Yii::t('app', 'Display coordinates to player when the open this hint'),
-            'opmerkingen' => Yii::t('app', 'Remarks'),
-            'score' => Yii::t('app', 'Penalty points'),
+            'route_name' => Yii::t('app', 'Route titel'),
+            'nood_envelop_volgorde' => Yii::t('app', 'Volgorde'),
+            'coordinaat' => Yii::t('app', 'Coordinaten'),
+            'show_coordinates' => Yii::t('app', 'Toon coordinaten aan speler wanneer hij deze hint opent'),
+            'opmerkingen' => Yii::t('app', 'Opmerkingen'),
+            'score' => Yii::t('app', 'Strafpunten'),
             'create_time' => Yii::t('app', 'Create Time'),
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),
@@ -190,14 +191,14 @@ class NoodEnvelop extends HikeActiveRecord
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
                 ->one();
         });
-        
+
         $data = $db->cache(function ($db) use ($group_id) {
             return OpenNoodEnvelop::find()
             ->where('event_ID =:event_id AND group_ID =:group_id AND nood_envelop_ID =:nood_envelop_id')
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':group_id' => $group_id->group_ID, ':nood_envelop_id' => $this->nood_envelop_ID])
             ->exists();
         });
-        
+
         return $data;
     }
 

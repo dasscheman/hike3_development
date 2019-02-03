@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 
 ?>
 <div class="tbl-qr-check-view-dashboard">
-    <h3> <?php echo Yii::t('app', 'Silent station') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Stillepost') ?> </h3>
     <p>
         <?php
         Pjax::begin(['id' => 'qr-check-view-dashboard', 'enablePushState' => false]);
@@ -30,7 +30,7 @@ use yii\widgets\Pjax;
             ],
             'dataProvider' => $model,
             'itemView' => '/qr-check/_list-dashboard',
-            'emptyText' => Yii::t('app', 'No silent stations scanned.'),
+            'emptyText' => Yii::t('app', 'Geen stilleposten gescand.'),
         ]);
     ?>
     <?php Pjax::end(); ?>

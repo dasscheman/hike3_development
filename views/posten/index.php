@@ -137,7 +137,7 @@ $this->title = Yii::t('app', 'Posten');
                 },
                 'down' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
-                        Posten::higherOrderNumberExists($model->date, $model->post_volgorde)) {
+                        Posten::higherOrderNumberExists($model->post_ID)) {
                         return true;
                     }
                     return false;
