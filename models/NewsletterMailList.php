@@ -132,7 +132,7 @@ class NewsletterMailList extends HikeActiveRecord
                     'user_id' => $user_mail->user_id,
                     'email' => $user_mail->email
                 ])
-                ->setFrom('noreply@biologenkantoor.nl')
+                ->setFrom(Yii::$app->params["admin_email"])
                 ->setTo($user_mail->email)
                 ->setSubject($mail->subject)
                 ->send();

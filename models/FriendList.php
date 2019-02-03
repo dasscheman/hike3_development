@@ -231,7 +231,7 @@ class FriendList extends HikeActiveRecord
                 'mailUsersNameReceiver' => $this->friendsWithUser->username,
                 'mailUsersEmailReceiver' => $this->friendsWithUser->email,
             ])
-            ->setFrom('noreply@biologenkantoor.nl')
+            ->setFrom(Yii::$app->params["admin_email"])
             ->setTo($this->friendsWithUser->email)
             ->setCc($this->user->email)
             ->setSubject('Friend request on hike-app')

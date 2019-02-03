@@ -364,7 +364,7 @@ class DeelnemersEvent extends HikeActiveRecord
                 'mailRolText' => DeelnemersEvent::getRolText($this->rol),
                 'mailGroupName' => $this->group->group_name,
             ])
-            ->setFrom('noreply@biologenkantoor.nl')
+            ->setFrom(Yii::$app->params["admin_email"])
             ->setTo($this->user->email)
             ->setSubject('Inschrijving Hike')
             ->send();

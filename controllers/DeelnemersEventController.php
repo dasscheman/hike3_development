@@ -94,7 +94,7 @@ class DeelnemersEventController extends Controller {
                     'mailRolText' => DeelnemersEvent::getRolText($model->rol),
                     'mailGroupName' => $model->group_ID,
                 ])
-                ->setFrom('noreply@biologenkantoor.nl')
+                ->setFrom(Yii::$app->params["admin_email"])
                 ->setTo($model->user->email)
                 ->setSubject('Inschrijving Hike')
                 ->send();

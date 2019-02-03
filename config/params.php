@@ -1,17 +1,21 @@
 <?php
 
 return [
-    'admin_email' => 'admin@hike-app.nl',
+    'admin_email' => 'beheer@hike-app.nl',
     'contact_email' => 'contact@hike-app.nl',
-    'adminEmail' => 'admin@hike-app.nl',
+    'adminEmail' => 'beheer@hike-app.nl',
     'noreply_email' => 'noreply@hike-app.nl',
     'event_images_url' => 'uploads/event_images/',
     'event_import_url' => 'uploads/import/',
-    'url' => 'http://localhost/Hike3_development/web',
+    'url' => 'http://localhost/hike3_development/web',
     'alternate_time' => [
-        122 => [
-            'add' => 75736689120,
-            'factor' => 0.8
+        133 => [
+            'add' => 258002870,
+            'factor' => 1.2 //1 sec alternatieve tijd is 1.2 sec echte tijd
+        ],
+        102 => [
+            'add' => 258002870,
+            'factor' => 1.2 //1 sec alternatieve tijd is 1.2 sec echte tijd
         ]
     ]
 ];
