@@ -5,13 +5,13 @@ use app\components\CustomAlertBlock;
 
 /* @var $this yii\web\View */
 
-$this->title = 'Unsubscribe newsletter';
+$this->title = 'Newsletter';
 ?>
 <div class="newsletter-unsubscribe">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-	<?php 
+	<?php
     echo $this->render('/_alert');
     ?>
 </div>
