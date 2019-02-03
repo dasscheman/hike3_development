@@ -13,14 +13,14 @@ use yii\helpers\Url;
 		<?php echo $body ?>
         <br>
         <br>
-		<br>
+				<br>
         <?php
-        $link_newsletter = Url::to(['/newsletter/unsubscribe', 'user_id' => $user_id, 'email' => $email]);
+        $link_newsletter = Url::to(['/newsletter/unsubscribe', 'user_id' => $user_id, 'email' => $email], true);
         echo Html::a('Uitschrijven voor nieuwsbrieven', $link_newsletter);?>
         <br>
         <br>
         <?php
-        $link_remove_account = Url::to(['/users/remove', 'id' => $user_id, 'email' => $email]);
+        $link_remove_account = Url::to(['/users/remove', 'id' => $user_id, 'email' => $email], true);
         echo Html::a('Account verwijderen', $link_remove_account);?>
         <br>
         <br>
