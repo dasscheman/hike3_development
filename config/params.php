@@ -7,7 +7,7 @@ return [
     'noreply_email' => 'noreply@hike-app.nl',
     'event_images_url' => 'uploads/event_images/',
     'event_import_url' => 'uploads/import/',
-    'url' => 'http://localhost/hike3_development/web',
+    'url' => 'https://hike-app.nl',
     'alternate_time' => [
         133 => [
             'add' => 258002870,
