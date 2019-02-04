@@ -611,8 +611,10 @@ class OpenMap extends LeafLet
         $event["drag"] =
             "
                 function(event){
-                    document.getElementById('latitude').innerHTML = event.target.getLatLng().lat.toFixed(6);
-                    document.getElementById('longitude').innerHTML = event.target.getLatLng().lng.toFixed(6);
+                    proj4.defs('EPSG:28992', '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs');
+                    var rd=proj4('EPSG:28992', [event.target.getLatLng().lng, event.target.getLatLng().lat]);
+                    document.getElementById('latitude').innerHTML = rd[0].toFixed(0);
+                    document.getElementById('longitude').innerHTML = rd[1].toFixed(0);
 
                     function setLngLat() {
                         x=document.getElementsByClassName('latitude');
@@ -623,6 +625,15 @@ class OpenMap extends LeafLet
 
                         for(var i = 0; i < y.length; i++){
                             y[i].value=event.target.getLatLng().lng;    // Change the content
+                        }
+                        x=document.getElementsByClassName('latitude-rd');
+                        for(var i = 0; i < x.length; i++){
+                            x[i].innerHTML=rd[0].toFixed(0)    // Change the content
+                        }
+                        y=document.getElementsByClassName('longitude-rd');
+
+                        for(var i = 0; i < y.length; i++){
+                            y[i].innerHTML=rd[1].toFixed(0);    // Change the content
                         }
                     }
                     setLngLat()
@@ -642,12 +653,12 @@ class OpenMap extends LeafLet
                 function setLngLat() {
                     x=document.getElementsByClassName('latitude');
                     for(var i = 0; i < x.length; i++){
-                        x[i].value=event.target.getLatLng().lat;    // Change the content
+                        x[i].innerHTML=event.target.getLatLng().lat;    // Change the content
                     }
                     y=document.getElementsByClassName('longitude');
 
                     for(var i = 0; i < y.length; i++){
-                        y[i].value=event.target.getLatLng().lng;    // Change the content
+                        y[i].innerHTML=event.target.getLatLng().lng;    // Change the content
                     }
                 }
                 setLngLat()

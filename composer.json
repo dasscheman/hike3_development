@@ -40,6 +40,7 @@
         "bower-asset/leaflet.markercluster": "~1",
         "bower-asset/leaflet.fullscreen": "~1",
         "bower-asset/leaflet.locatecontrol": "0.*",
+        "npm-asset/proj4": "*",
         "codemix/yii2-excelexport" : "*",
         "phpoffice/phpspreadsheet": "*",
         "russ666/yii2-countdown": "*",

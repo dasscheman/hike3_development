@@ -13,9 +13,9 @@ use yii\widgets\ActiveForm;
     <b>
         <?php echo Html::encode($model->coordinatenLabel('coordinaten')); ?>:
     </b>
-    <?php echo Html::encode($model->getLatitude()); ?>,
-    <?php echo Html::encode($model->getLongitude()); ?></br></br>
-
+    <?= Html::tag('b', Html::encode($model->getLatitude()), ['class' => 'latitude-rd']) ?>,
+    <?= Html::tag('b', Html::encode($model->getLongitude()), ['class' => 'longitude-rd']) ?>
+    <br>
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['nood-envelop/create', 'route_ID' => $model->route_ID] : ['nood-envelop/' .  Yii::$app->controller->action->id, 'nood_envelop_ID' => $model->nood_envelop_ID]]);
 
@@ -41,6 +41,9 @@ use yii\widgets\ActiveForm;
                 'Penalty points for opening. Use positive integers.'
             )
         ]);
+
+    echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);    
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
