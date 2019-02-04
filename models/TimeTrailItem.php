@@ -26,12 +26,12 @@ use yii\helpers\Url;
  * @property string $latitude
  * @property string $longitude
  *
- * @property TblTimeTrailCheck[] $tblTimeTrailChecks
- * @property TblGroups[] $groups
- * @property TblUsers $createUser
- * @property TblEventNames $event
- * @property TblTimeTrail $timeTrail
- * @property TblUsers $updateUser
+ * @property TimeTrailCheck[] $tblTimeTrailChecks
+ * @property Groups[] $groups
+ * @property Users $createUser
+ * @property EventNames $event
+ * @property TimeTrail $timeTrail
+ * @property Users $updateUser
  */
 class TimeTrailItem extends HikeActiveRecord
 {
@@ -50,7 +50,7 @@ class TimeTrailItem extends HikeActiveRecord
     {
         return [
             [['time_trail_ID', 'event_ID', 'volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['time_trail_item_name', 'code', 'instruction', 'event_ID', 'score'], 'required'],
+            [['time_trail_item_name', 'code', 'instruction', 'event_ID', 'score', 'latitude', 'longitude'], 'required'],
             [['time_trail_ID', 'max_time', 'create_time', 'update_time'], 'safe'],
             [['latitude', 'longitude'], 'number'],
             [['time_trail_item_name', 'code', 'instruction'], 'string', 'max' => 255],

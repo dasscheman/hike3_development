@@ -13,6 +13,13 @@ use yii\data\ArrayDataProvider;
         echo Html::tag('b',Html::encode($model->qr->getAttributeLabel('score')) . ': ');
         echo Html::encode($model->qr->score);
         echo Html::tag('br');
+        if($model->qr->message != null) {
+            ?><div class="btn-info"> <?php
+            echo Html::tag('b', Html::encode($model->getAttributeLabel('message')) . ': ');
+            echo Html::encode($model->qr->message);
+            echo Html::tag('br');
+            ?></div> <?php
+        }
         echo Html::tag('b', Html::encode($model->getAttributeLabel('create_user_ID')) . ': ');
         echo Html::encode($model->createUser->voornaam . ' ' . $model->createUser->achternaam);
         echo Html::tag('br');

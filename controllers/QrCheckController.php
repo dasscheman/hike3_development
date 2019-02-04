@@ -117,7 +117,7 @@ class QrCheckController extends Controller
             ->one();
 
         if (isset($qrCheck->qr_check_ID)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Jou groep heft deze QR al gescand.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Jou groep heeft deze QR al gescand.'));
             return $this->redirect(['site/overview-players']);
         }
 
@@ -129,6 +129,9 @@ class QrCheckController extends Controller
 
         if ($model->save()) {
             Yii::$app->cache->flush();
+            if ($model->qr->message != null) {
+                Yii::$app->session->setFlash('info', $model->qr->message);
+            }
             if ($model->qr->score < 0) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'QR code gecontroleerd! Maar je krijgt strafpunten...'));
             } else {

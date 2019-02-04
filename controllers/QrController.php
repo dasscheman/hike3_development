@@ -20,6 +20,9 @@ use yii\helpers\Json;
  */
 class QrController extends Controller
 {
+    /** 
+    * {@inheritdoc}
+    */
     public function behaviors()
     {
         return [

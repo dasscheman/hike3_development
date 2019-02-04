@@ -7,10 +7,13 @@ use kartik\dialog\Dialog;
 use app\models\OpenMap;
 use kartik\popover\PopoverX;
 use yii\web\View;
+use RDConverter\RDConverter;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\NoodEnvelopSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+
+$converter = new RDConverter;
 
 $this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
 echo Dialog::widget();
@@ -64,7 +67,7 @@ echo Dialog::widget();
             <div class="map-button">
                 <div class="map-right">
                     <h3 id="latitude"><?php
-                    echo round($marker->getLatLng()->lat, 5); ?></h3>
+                    echo round($converter->gps2X($marker->getLatLng()->lat, $marker->getLatLng()->lng)); ?></h3>
                 </div>
                 <div class="map-left">
                     <?php
@@ -85,49 +88,8 @@ echo Dialog::widget();
         <div class="kwart">
             <div class="map-button">
                 <div class="map-right">
-                    <h3 id="longitude"><?php echo round($marker->getLatLng()->lng, 6); ?></h3>
-                </div>
-                <div class="map-left">
-                    <?php
-                    echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Longitude'),
-                        'type' => PopoverX::TYPE_INFO,
-                        'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'Coordinates of the pointer'),
-                        'toggleButton' => [
-                        'label'=> Html::img('@web/images/map_icons/map.png'),
-                            'class' => 'map-popover'],
-                    ]);?>
-                </div>
-                <h4 class="left">Longitude</h4>
-            </div>
-        </div>
-        <div class="kwart">
-            <div class="map-button">
-                <div class="map-right">
-                    <h3 id="latitudetest" class="latitude"><?php
-                    echo round($marker->getLatLng()->lat, 5); ?></h3>
-                </div>
-                <div class="map-left">
-                    <?php
-                    echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Latitude'),
-                        'type' => PopoverX::TYPE_INFO,
-                        'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'Coordinates of the pointer'),
-                        'toggleButton' => [
-                        'label'=> Html::img('@web/images/map_icons/map.png'),
-                            'class' => 'map-popover'],
-                    ]);?>
-                </div>
-                <h4 class="left">Latitude</h4>
-            </div>
-        </div>
-
-        <div class="kwart">
-            <div class="map-button">
-                <div class="map-right">
-                    <h3 id="longitudetest" class="longitude"><?php echo round($marker->getLatLng()->lng, 6); ?></h3>
+                    <h3 id="longitude"><?php
+                    echo round($converter->gps2Y($marker->getLatLng()->lat, $marker->getLatLng()->lng)); ?></h3>
                 </div>
                 <div class="map-left">
                     <?php
@@ -386,7 +348,7 @@ echo Dialog::widget();
                         <?php
                         $kleuren = new OpenMap;
                         $numberItems = $timeTrail->getTimeTrailItems()->count();
-            echo PopoverX::widget([
+                        echo PopoverX::widget([
                             'header' => Yii::t('app', 'Time trail '). $timeTrail->time_trail_name,
                             'type' => PopoverX::TYPE_INFO,
                             'placement' => PopoverX::ALIGN_RIGHT,

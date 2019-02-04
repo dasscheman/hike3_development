@@ -44,7 +44,7 @@ class Posten extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['post_name', 'event_ID', 'score'], 'required'],
+            [['post_name', 'event_ID', 'score', 'latitude', 'longitude'], 'required'],
             [['event_ID', 'score', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['latitude', 'longitude', 'date', 'create_time', 'update_time'], 'safe'],
             [['latitude', 'longitude'], 'number'],

@@ -10,25 +10,27 @@ use yii\helpers\Url;
 /**
  * This is the model class for table "tbl_qr".
  *
- * @property integer $qr_ID
+ * @property int $qr_ID
  * @property string $qr_name
  * @property string $qr_code
- * @property integer $event_ID
- * @property integer $route_ID
- * @property integer $qr_volgorde
- * @property integer $score
+ * @property int $event_ID
+ * @property int $route_ID
+ * @property int $qr_volgorde
+ * @property int $score
  * @property string $create_time
- * @property integer $create_user_ID
+ * @property int $create_user_ID
  * @property string $update_time
- * @property integer $update_user_ID
+ * @property int $update_user_ID
  * @property string $latitude
  * @property string $longitude
+ * @property string $message
  *
  * @property Users $createUser
  * @property EventNames $event
  * @property Route $route
  * @property Users $updateUser
  * @property QrCheck[] $QrChecks
+ * @property Groups[] $groups
  */
 class Qr extends HikeActiveRecord
 {
@@ -46,7 +48,7 @@ class Qr extends HikeActiveRecord
     public function rules()
     {
         return [
-            [['qr_name', 'qr_code', 'event_ID', 'route_ID', 'score'], 'required'],
+            [['qr_name', 'qr_code', 'event_ID', 'route_ID', 'score', 'latitude', 'longitude'], 'required'],
             [['event_ID', 'route_ID', 'qr_volgorde', 'score', 'create_user_ID', 'update_user_ID'], 'integer'],
             [['create_time', 'update_time'], 'safe'],
             [['latitude', 'longitude'], 'number'],
@@ -55,7 +57,13 @@ class Qr extends HikeActiveRecord
                 ['qr_code', 'event_ID'],
                 'unique',
                 'targetAttribute' => ['qr_code', 'event_ID'],
-                'message' => Yii::t('app', 'This qr code exists for this hike')]
+                'message' => Yii::t('app', 'This qr code exists for this hike')],
+            [['message'], 'string', 'max' => 1050],
+            [['create_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['create_user_ID' => 'id']],
+            [['event_ID'], 'exist', 'skipOnError' => true, 'targetClass' => EventNames::className(), 'targetAttribute' => ['event_ID' => 'event_ID']],
+            [['route_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Route::className(), 'targetAttribute' => ['route_ID' => 'route_ID']],
+            [['update_user_ID'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['update_user_ID' => 'id']],
+
         ];
     }
 
@@ -77,6 +85,9 @@ class Qr extends HikeActiveRecord
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
+            'latitude' => Yii::t('app', 'Latitude'),
+            'longitude' => Yii::t('app', 'Longitude'),
+            'message' => Yii::t('app', 'Bericht'),
         ];
     }
 
