@@ -6,6 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TimeTrail */
 
+$this->title = Yii::t('app', 'Tijdrit toevoegen');
 ?>
 <div class="tbl-time-trail-create">
 

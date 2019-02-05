@@ -16,6 +16,7 @@ $this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
 echo Dialog::widget();
 ?>
 
+<div class="container-map">
 <div class="map-index">
     <?php
     foreach ($routeDataProvider->getModels() as $routeItem) {
@@ -55,7 +56,7 @@ echo Dialog::widget();
     ?>
     <div class="map">
         <?php
-        $screen = Yii::$app->getRequest()->getCookies()->getValue('screen_size') - 320;
+        $screen = Yii::$app->getRequest()->getCookies()->getValue('screen_size') - 520;
         if ($screen === null ||
             $screen < 250) {
             $screen = 250;

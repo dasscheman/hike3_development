@@ -6,6 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Posten */
 
+$this->title = Yii::t('app', 'Post toevoegen');
 ?>
 <div class="tbl-posten-create">
 

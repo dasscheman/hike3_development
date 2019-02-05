@@ -4,8 +4,9 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblOpenVragen */
+/* @var $model app\models\OpenVragen */
 
+$this->title = Yii::t('app', 'Vragen toevoegen');
 ?>
 <div class="tbl-open-vragen-create">
 

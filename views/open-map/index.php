@@ -15,7 +15,7 @@ use RDConverter\RDConverter;
 
 $converter = new RDConverter;
 
-$this->title = Yii::t('app', 'Map for route: ') . $routeModel->route_name;
+$this->title = Yii::t('app', 'Kaart voor: ') . $routeModel->route_name;
 echo Dialog::widget();
 ?>
 <div class="container-map">
@@ -75,7 +75,7 @@ echo Dialog::widget();
                         'header' => Yii::t('app', 'Latitude'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'Coordinates of the pointer'),
+                        'content' => Yii::t('app', 'Latitude van de pointer'),
                         'toggleButton' => [
                         'label'=> Html::img('@web/images/map_icons/map.png'),
                             'class' => 'map-popover'],
@@ -97,7 +97,7 @@ echo Dialog::widget();
                         'header' => Yii::t('app', 'Longitude'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'Coordinates of the pointer'),
+                        'content' => Yii::t('app', 'Longitude van de pointer'),
                         'toggleButton' => [
                         'label'=> Html::img('@web/images/map_icons/map.png'),
                             'class' => 'map-popover'],
@@ -116,7 +116,7 @@ echo Dialog::widget();
                                 [
                                     'id' => 'modalCreatePost',
                                     'toggleButton' => [
-                                        'label' => Yii::t('app', 'Add station'),
+                                        'label' => Yii::t('app', 'Post toevoegen'),
                                         'class' => 'btn btn btn-success padding-right',
                                         'disabled' => !Yii::$app->user->can('organisatie'),
                                     ],
@@ -139,16 +139,16 @@ echo Dialog::widget();
                         'header' => Yii::t('app', 'Stations'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'For each day you can make a station. '
-                            . 'Groups get the score when they arrive on the station.'
-                            . 'Don\'t forget to create a start and a finish station for each day.'
-                            . 'Note, stations are per day and not per route item. And stations are not available during the introduction'),
+                        'content' => Yii::t('app', 'Voor elke dag kun je post toevoegen. '
+                            . 'Groepen krijgen de punten als ze ingechecked worden op een post.'
+                            . 'Vergeet niet een start- en eind-post voor elke dag aan te maken.'
+                            . 'Ps. posten zijn per dag en niet per routeonderdeel. Posten zijn niet voor de introductie'),
                         'toggleButton' => [
                             'label'=> Html::img('@web/images/map_icons/star-3.png'),
                             'class' => 'map-popover'],
                     ]);?>
                 </div>
-                <h4 class="left"><?php echo Yii::t('app', 'Stations') ?></h4>
+                <h4 class="left"><?php echo Yii::t('app', 'Posten') ?></h4>
             </div>
         </div>
         <div class="kwart">
@@ -178,10 +178,10 @@ echo Dialog::widget();
 
                     <?php
                     echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Stilleposts'),
+                        'header' => Yii::t('app', 'Stilleposten'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'This are stations where groups can scan qr codes'),
+                        'content' => Yii::t('app', 'Stille posten zijn qr codes die de deelnemers zelf kunnen scannen'),
                         'toggleButton' => [
                         'label'=> Html::img('@web/images/map_icons/qr-code.png'),
                             'class' => 'map-popover'],
@@ -199,7 +199,7 @@ echo Dialog::widget();
                             [
                                 'id' => 'modalCreateHint',
                                 'toggleButton' => [
-                                    'label' => Yii::t('app', 'Add hint'),
+                                    'label' => Yii::t('app', 'Hint toevoegen'),
                                     'class' => 'btn btn btn-success padding-right',
                                     'disabled' => !Yii::$app->user->can('organisatie'),
                                 ],
@@ -220,7 +220,8 @@ echo Dialog::widget();
                         'header' => Yii::t('app', 'Hints'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'Hints can give a clue how to solve a puzzle or where a new route item starts.'),
+                        'content' => Yii::t('app', 'Met hints kun je deelnemers een aanwijzing geven voor een puzzel, '
+                            . 'of je kunt een aanwijzing geven waar een volgend route onderdeel begint.'),
                         'toggleButton' => [
                         'label'=> Html::img('@web/images/map_icons/postal.png'),
                             'class' => 'map-popover'],
@@ -239,7 +240,7 @@ echo Dialog::widget();
                             [
                                 'id' => 'modalCreateVraag',
                                 'toggleButton' => [
-                                    'label' => Yii::t('app', 'Add question'),
+                                    'label' => Yii::t('app', 'Vraag toevoegen'),
                                     'class' => 'btn btn btn-success padding-right',
                                     'disabled' => !Yii::$app->user->can('organisatie'),
                                 ],
@@ -255,16 +256,16 @@ echo Dialog::widget();
                 <div class="map-left">
                     <?php
                     echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Questions'),
+                        'header' => Yii::t('app', 'Vragen'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'With questions you can check if groups are on the right track.'),
+                        'content' => Yii::t('app', 'Met extra vragen kun je controleren of deelnemers juis lopen.'),
                         'toggleButton' => [
                         'label'=> Html::img('@web/images/map_icons/notvisited.png'),
                             'class' => 'map-popover'],
                     ]);?>
                 </div>
-                <h4 class="left"><?php echo Yii::t('app', 'Questions') ?></h4>
+                <h4 class="left"><?php echo Yii::t('app', 'Vragen') ?></h4>
             </div>
         </div>
 
@@ -278,7 +279,7 @@ echo Dialog::widget();
                             [
                                 'id' => 'modalCreateTimeTrail',
                                 'toggleButton' => [
-                                    'label' => Yii::t('app', 'Add time trail'),
+                                    'label' => Yii::t('app', 'Tijdrit toevoegen'),
                                     'class' => 'btn btn btn-success padding-right',
                                     'disabled' => !Yii::$app->user->can('organisatie'),
                                 ],
@@ -303,13 +304,13 @@ echo Dialog::widget();
                     }
 
                     echo PopoverX::widget([
-                        'header' => Yii::t('app', 'Time trails'),
+                        'header' => Yii::t('app', 'Tijdritten'),
                         'type' => PopoverX::TYPE_INFO,
                         'placement' => PopoverX::ALIGN_RIGHT,
-                        'content' => Yii::t('app', 'For an hike you can make 6 time trails. These time trails are independent of days and routes.'
-                            . 'When a group scans the first item of a time trail, the get a clue where they can find the next item. '
-                            . 'But they have limited time to reach the next item. When they are in time, they get points. When they are to late '
-                            . 'they still have to scan the item, to get the clue for the next item.'),
+                        'content' => Yii::t('app', 'Voor een hike kun je 6 tijdritten maken. Deze tijdritten zijn onafhankelijk van dagen en routes.'
+                            . 'Als en groep het eerste item scant, krijgt de group een aanwijzing waar ze de volgende qr kunnen vinden.'
+                            . 'Maar de groep heeft een tijdslimiet, wanneer ze binnen de tijd de volgende qr scannen krijgen ze punten.'
+                            . 'Wanneer ze te laat zijn, moeten ze nog steeds de qr scannen om de aanwijzing te krijgen voor de volgende qr.'),
                         'toggleButton' => [
                             'label'=> Html::img('@web/images/map_icons/marker/' . $kleuren->kleuren[5] . '_leeg_marker.png'),
                             'class' => 'map-popover time-trial-popover'],
@@ -332,7 +333,7 @@ echo Dialog::widget();
                                 [
                                     'id' => 'modalCreateTimeTrail' . $timeTrail->time_trail_ID,
                                     'toggleButton' => [
-                                        'label' => Yii::t('app', 'Add item to ' . $timeTrail->time_trail_name),
+                                        'label' => Yii::t('app', 'Item voor ' . $timeTrail->time_trail_name),
                                         'class' => 'btn btn btn-success padding-right',
                                         'disabled' => !Yii::$app->user->can('organisatie'),
                                     ],
@@ -340,7 +341,8 @@ echo Dialog::widget();
                             );
 
                             echo $this->render('/time-trail-item/create', [
-                                'model' => $timeTrailItemModel]);
+                                'model' => $timeTrailItemModel,
+                                'time_trail_name' => $timeTrail->time_trail_name]);
                             Modal::end(); ?>
                         </h3>
                     </div>
@@ -349,16 +351,16 @@ echo Dialog::widget();
                         $kleuren = new OpenMap;
                         $numberItems = $timeTrail->getTimeTrailItems()->count();
                         echo PopoverX::widget([
-                            'header' => Yii::t('app', 'Time trail '). $timeTrail->time_trail_name,
+                            'header' => Yii::t('app', 'Tijdrit') . ' ' . $timeTrail->time_trail_name,
                             'type' => PopoverX::TYPE_INFO,
                             'placement' => PopoverX::ALIGN_RIGHT,
-                            'content' => Yii::t('app', 'This is one time trail, the numbers indicates the order of the items.'),
+                            'content' => Yii::t('app', 'Dit is een tijdrit waar items aan toegevoegd kan worden.'),
                             'toggleButton' => [
                                 'label'=> Html::img('@web/images/map_icons/marker/' . $kleuren->kleuren[fmod($kleur, 5)] . '_' . $numberItems . '.png'),
                                 'class' => 'map-popover'],
                         ]); ?>
                     </div>
-                    <h4 class="left"><?php echo Yii::t('app', 'Time trail ') . $timeTrail->time_trail_name ?></h4>
+                    <h4 class="left"><?php echo Yii::t('app', 'Tijdrit') . ' ' . $timeTrail->time_trail_name ?></h4>
                 </div>
             </div>
             <?php
