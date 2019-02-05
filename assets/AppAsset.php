@@ -36,6 +36,6 @@ class AppAsset extends AssetBundle
         'app\assets\LeafletFullscreenAsset',
         'app\assets\LeafletLocateAsset',
         'app\assets\Proj4Asset',
-        'dosamigos\leaflet\plugins\markercluster\MarkerClusterAsset'
+        'app\assets\FixMarkerClusterAsset',
     ];
 }
