@@ -324,7 +324,7 @@ class PostenController extends Controller
         $event = EventNames::findOne($event_id);
 
         $datediff = strtotime($event->end_date) - strtotime($event->start_date);
-        $days = Yii::$app->setupdatetime->convert($datediff, 'days');
+        $days = Yii::$app->setupdatetime->convert($datediff, 'day');
         $tresholt = $days + 4;
         if ($posten->count() <= $tresholt) {
             Yii::$app->session->setFlash(

@@ -235,6 +235,9 @@ class OpenMapController extends Controller
         $map = new OpenMap([
             'center' => $coord,
             'zoom' => 14,
+            'clientOptions' => [
+                'fullscreenControl' => true
+            ]
         ]);
 
         $map->setPostMarkers($routeModel->day_date, false);
