@@ -168,7 +168,6 @@ class TimeTrailController extends Controller
     {
         $model = $this->findModel($time_trail_ID);
 
-//        $this->setCookieIndexTab($time_trail_ID);
         if (Yii::$app->request->post('update') == 'delete') {
             $exist = TimeTrailItem::find()
                 ->where('event_ID=:event_id and time_trail_ID=:time_trail_ID')
@@ -190,7 +189,7 @@ class TimeTrailController extends Controller
                 echo "<script>window.close() window.opener.location.reload(true);</script>";
                 return;
             }
-            return $this->redirect(['route/index']);
+            return $this->redirect(['time-trail/index']);
         }
 
         if (Yii::$app->request->post('TimeTrail') &&
@@ -201,7 +200,7 @@ class TimeTrailController extends Controller
                     echo "<script>window.close();</script>";
                     return;
                 }
-                return $this->redirect(['route/index']);
+                return $this->redirect(['time-trail/index']);
             }
         }
 
