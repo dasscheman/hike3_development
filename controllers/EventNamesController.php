@@ -9,6 +9,7 @@ use app\models\DeelnemersEvent;
 use app\models\Route;
 use app\models\Users;
 use app\models\Posten;
+use app\models\PostPassage;
 use app\models\NoodEnvelop;
 use app\models\OpenVragen;
 use app\models\TimeTrail;
@@ -228,45 +229,64 @@ class EventNamesController extends Controller
             ]);
         }
 
-        if (Yii::$app->request->get('action') == 'change_settings' ||
-            Yii::$app->request->get('action') == 'set_max_time') {
-            if (!$model->save()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.'));
-            } else {
-                Yii::$app->cache->flush();
-                if (Yii::$app->request->get('action') === 'change_settings') {
-                    $begin = new DateTime($model->start_date);
-                    $end = new DateTime($model->end_date);
+        if (Yii::$app->request->get('action') != 'change_settings' &&
+            Yii::$app->request->get('action') != 'set_max_time' &&
+            Yii::$app->request->get('action') != 'set_change_status') {
+              return $this->redirect(['site/overview-organisation']);
+        }
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.'));
+            return $this->redirect(['site/overview-organisation']);
+        }
 
-                    for ($i = $begin; $i <= $end; $i->modify('+1 day')) {
-                        $day = Yii::$app->setupdatetime->convert($i);
-                        $dayname = Yii::$app->setupdatetime->getDay($i);
-                        // Wanneer er een hike aangemaakt wordt, dan wordt er voor
-                        // elke dag een route aangemaakt.
-                        if (!Route::routeExistForDay($day)) {
-                            $modelRoute = new Route;
-                            $modelRoute->setAttributes([
-                                'event_ID' => $model->event_ID,
-                                'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
-                                'day_date' => $day,
-                                'route_volgorde' => 1
-                            ]);
-                            $modelRoute->save();
-                        }
-                    }
-                }
+        Yii::$app->cache->flush();
+        if (Yii::$app->request->get('action') === 'change_settings') {
+            $begin = new DateTime($model->start_date);
+            $end = new DateTime($model->end_date);
 
-                if (Yii::$app->request->get('action') == 'change_settings') {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen zijn opgeslagen.'));
-                }
-                if (Yii::$app->request->get('action') == 'set_max_time') {
-                    Yii::$app->session->setFlash('success', Yii::t(
-                            'app',
-                        'Je hebt de tijdslimiet gezet. Dit is de maximum tijd dat groepen vandaag mogen lopen.
-                        Tijd die doorgebracht wordt op een post wordt niet meegerekend.'
-                    ));
+            for ($i = $begin; $i <= $end; $i->modify('+1 day')) {
+                  $day = Yii::$app->setupdatetime->convert($i);
+                  $dayname = Yii::$app->setupdatetime->getDay($i);
+                  // Wanneer er een hike aangemaakt wordt, dan wordt er voor
+                  // elke dag een route aangemaakt.
+                  if (!Route::routeExistForDay($day)) {
+                      $modelRoute = new Route;
+                      $modelRoute->setAttributes([
+                          'event_ID' => $model->event_ID,
+                          'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
+                          'day_date' => $day,
+                          'route_volgorde' => 1
+                      ]);
+                      $modelRoute->save();
+                  }
+            }
+        }
+        if (Yii::$app->request->get('action') === 'set_change_status') {
+            if(Yii::$app->request->post('EventNames')['start_all_groups']) {
+                $startPost = Posten::getStartPost($model->active_day);
+                foreach($model->groups as $group) {
+                    $modelPassage = new PostPassage();
+                    $modelPassage->post_ID = $startPost;
+                    $modelPassage->event_ID = $model->event_ID;
+                    $modelPassage->group_ID = $group->group_ID;
+                    $modelPassage->gepasseerd = 1;
+                    $modelPassage->vertrek = Yii::$app->request->post('EventNames')['start_time_all_groups'];
+                    $modelPassage->save();
+                    // d($modelPassage);
+                    // d($modelPassage->save());
+                    // d($modelPassage->getErrors());
                 }
             }
+        }
+        if (Yii::$app->request->get('action') == 'change_settings') {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen zijn opgeslagen.'));
+        }
+        if (Yii::$app->request->get('action') == 'set_max_time') {
+            Yii::$app->session->setFlash('success', Yii::t(
+                    'app',
+                'Je hebt de tijdslimiet gezet. Dit is de maximum tijd dat groepen vandaag mogen lopen.
+                Tijd die doorgebracht wordt op een post wordt niet meegerekend.'
+            ));
         }
         return $this->redirect(['site/overview-organisation']);
     }

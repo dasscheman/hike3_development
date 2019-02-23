@@ -56,75 +56,23 @@ $this->title = Yii::t('app', 'Hike overview');
                     <?php echo Html::encode($eventModel->getAttributeLabel('end_date')); ?>:
                     </b>
                     <?php echo Html::encode($eventModel->end_date); ?></br>
-                    <b>
-                    <?php echo Html::encode($eventModel->getAttributeLabel('status')); ?>:
-                    </b>
-                    <?php echo Editable::widget([
-                            'model'=> $eventModel,
-                            'attribute' => 'status',
-                            'formOptions' => [
-                                'action' => Url::to(['/event-names/change-status']),
-                            ],
-                            'buttonsTemplate' => '{submit}',
-                            'submitButton' => [
-                                'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
-                                'class' => 'btn btn-sm btn-primary',
-                                'label' => Yii::t('app', 'Opslaan'),
-                                'id' => $eventModel->event_ID.'-is_active_status-submit'
-                            ],
-                            // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
-                            // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
-                            // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
-                            'showAjaxErrors' => false,
-                            'asPopover' => true,
-                            'format' => Editable::FORMAT_BUTTON,
-                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => $eventModel->getStatusOptions(),
-                            'options' => [
-                                'class'=>'form-control',
-                                'id' => $eventModel->event_ID.'-is_active_status'
-                            ],
-                            'displayValue' => $eventModel->getStatusText(),
-                        ]); ?></br>
-                    <b>
-                    <?php echo Html::encode($eventModel->getAttributeLabel('active_day')); ?>:
-                    </b>
-                    <?php echo  Editable::widget([
-                            'name'=>'active_day',
-                            'model'=> $eventModel,
-                            'attribute' => 'active_day',
-                            'formOptions' => [
-                                'action' => Url::to(['/event-names/change-day']),
-                            ],
-                            'buttonsTemplate' => '{submit}',
-                            'submitButton' => [
-                                'icon' => '<i class="glyphicon glyphicon-floppy-disk"></i>',
-                                'class' => 'btn btn-sm btn-primary',
-                                'label' => Yii::t('app', 'Save'),
-                                'id' => $eventModel->event_ID.'-is_active_day-submit'
-                            ],
-                            // Er word hier een redirect gedaan na de submit. Die geeft een ajax error.
-                            // 302 als standaard, en als 200 wordt gebruikt ook. Iets met JSON format.
-                            // Omdat de DB fouten afgevangen worden, wordt de ajax errors onderdrukt.
-                            'showAjaxErrors' => false,
-                            'asPopover' => true,
-                            'format' => Editable::FORMAT_BUTTON,
-                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'data' => $eventModel->getDatesAvailable(false),
-                            'options' =>
-                            [
-                                'id' => $eventModel->event_ID.'-is_active_day',
-                            ],
-                            'disabled' => $eventModel->status === EventNames::STATUS_gestart ? false : true,
-                            'displayValue' => $eventModel->status === EventNames::STATUS_gestart ? $eventModel->active_day : Yii::t('app', 'na'),
-                        ]); ?></br>
-                    <b>
-                    <?php echo Html::encode($eventModel->getAttributeLabel('max_time')); ?>:
-                    </b>
-                    <?php echo Html::encode((empty($eventModel->max_time)) ? '(not set)' : $eventModel->max_time); ?></br>
+                    <br>
+                    <br>
+                    <?php
+                    Modal::begin([
+                        'toggleButton' => [
+                            'label' => Yii::t('app', 'Pas status aan'),
+                            'id' => 'modalChangeMaxTimeButton',
+                            'class' => 'btn btn-xs btn-success',
+                            // 'disabled' => !Yii::$app->user->can('organisatieGestart'),
+                        ],
+                    ]);
+                    echo $this->render('/event-names/update', [
+                        'model' => $eventModel,
+                        'action' => 'set_change_status']);
+                    Modal::end();?>
+
                 </div>
-
-
                 <?php
                 Modal::begin(
                     [
@@ -325,42 +273,6 @@ $this->title = Yii::t('app', 'Hike overview');
                         </p> <?php
                     }
                     ?>
-                    <p>
-                        <?php
-                        Modal::begin([
-                            'toggleButton' => [
-                                'label' => Yii::t('app', 'Change settings hike'),
-                                'id' => 'modalChangeSettingsButton',
-                                'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatieOpstart'),
-                            ],
-                        ]);
-                        ?>
-                    </p>
-                    <p>
-                        <?php
-
-                        echo $this->render('/event-names/update', [
-                            'model' => $eventModel,
-                            'action' => 'change_settings']);
-                        Modal::end();
-
-                        // TimePicker within a bootstrap modal window with initial values.
-                        Modal::begin([
-                            'toggleButton' => [
-                                'label' => Yii::t('app', 'Verander tijdslimiet'),
-                                'id' => 'modalChangeMaxTimeButton',
-                                'class' => 'btn btn-xs btn-success',
-                                'disabled' => !Yii::$app->user->can('organisatieGestart'),
-                            ],
-                        ]);
-                        echo $this->render('/event-names/update', [
-                            'model' => $eventModel,
-                            'action' => 'set_max_time']);
-                        Modal::end();
-
-                        ?>
-                    </p>
                     <p>
                         <?php
                         Modal::begin([

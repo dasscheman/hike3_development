@@ -1,9 +1,11 @@
 <?php
 use yii\helpers\Html;
-use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
-
+use app\models\PostPassage;
+use app\models\Posten;
 use kartik\widgets\Select2;
+use prawee\widgets\ButtonAjax;
+
 /* @var $this GroupsController */
 /* @var $data Groups */
 
@@ -55,7 +57,33 @@ use kartik\widgets\Select2;
             }
             echo $player->user->voornaam . ' ' . $player->user->achternaam;
             $printSeparator = true;
-        }?>
+        }
+
+
+        if(!PostPassage::isGroupStarted($model->group_ID) && !empty($model->event->active_day)) {
+            $post_id = Posten::getStartPost($model->event->active_day);
+            echo ButtonAjax::widget([
+                'name' => 'Start',
+                 'route'=>[
+                     'post-passage/check-station',
+                     'group_ID' => $model->group_ID,
+                     'post_ID' => $post_id,
+                     'action' => 'start'
+                 ],
+                 'modalId' => '#main-modal',
+                 'modalContent' => '#main-content-modal',
+                 'id' => 'check-post-' . $post_id .'-'. $model->group_ID,
+                 'options' => [
+                    'class' => 'btn btn-xs btn-success',
+                    'title' => 'Start',
+                    'disabled' =>  !Yii::$app->user->can('organisatiePostCheck', [
+                        'group_id' => $model->group_ID,
+                        'post_id' => $post_id,
+                        'action' => 'start']),
+                 ]
+             ]);
+          }
+        ?>
         </p>
       </div>
     </div>

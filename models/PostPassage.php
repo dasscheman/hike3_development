@@ -20,11 +20,11 @@ use yii\helpers\ArrayHelper;
  * @property string $update_time
  * @property integer $update_user_ID
  *
- * @property TblUsers $createUser
- * @property TblEventNames $event
- * @property TblGroups $group
- * @property TblPosten $post
- * @property TblUsers $updateUser
+ * @property Users $createUser
+ * @property EventNames $event
+ * @property Groups $group
+ * @property Posten $post
+ * @property Users $updateUser
  */
 class PostPassage extends HikeActiveRecord
 {
@@ -294,7 +294,15 @@ class PostPassage extends HikeActiveRecord
     public function isGroupStarted($group_id)
     {
         $active_day = EventNames::getActiveDayOfHike();
+        if($active_day == null) {
+            // Geen active dag geselecteerd, dus deze dag kan ook niet gestart zijn
+            return false;
+        }
         $start_post_id = Posten::getStartPost($active_day);
+        if($start_post_id == null) {
+            // Er zijn geen posten aangemaakt voor deze. Dus de groep is gewoon gestart.
+            return true;
+        }
         $data = PostPassage::find()
             ->where('event_ID =:event_id AND post_ID =:post_id AND group_ID =:group_id')
             ->params([

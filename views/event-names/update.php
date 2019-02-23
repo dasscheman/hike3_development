@@ -13,7 +13,7 @@ use yii\helpers\Html;
             'hike' => $model->event_name])
     )?></h1>
 
-    <?= $this->render('_form', [
+    <?= $this->render('_form-status', [
         'model' => $model,
         'action' => $action,
     ]) ?>

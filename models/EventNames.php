@@ -54,6 +54,8 @@ class EventNames extends HikeActiveRecord {
     */
     public $image_temp;
     public $daterange;
+    public $start_all_groups;
+    public $start_time_all_groups;
 
     /**
      * @inheritdoc
