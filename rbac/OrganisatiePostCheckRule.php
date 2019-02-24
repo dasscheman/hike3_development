@@ -42,7 +42,7 @@ class OrganisatiePostCheckRule extends Rule
 
         $post = Posten::findOne($post_id);
         if($action=='start' &&
-            $posten->isStartPost() &&
+            $post->isStartPost() &&
             !PostPassage::isPostChechedOutByGroup($group_id,$post_id)) {
                 return true;
         }
@@ -56,7 +56,7 @@ class OrganisatiePostCheckRule extends Rule
         }
 
         if($action=='checkin' &&
-            !$posten->isStartPost() &&
+            !$post->isStartPost() &&
             PostPassage::isGroupStarted($group_id) &&
             !PostPassage::isPostPassedByGroup($group_id, $post_id) )    {
                 return true;

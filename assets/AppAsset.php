@@ -28,6 +28,7 @@ class AppAsset extends AssetBundle
         'js/tracker.js',
         'js/site.js',
         'js/countdown.js',
+        'js/disablestatus.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
