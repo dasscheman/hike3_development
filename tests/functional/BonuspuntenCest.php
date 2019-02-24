@@ -32,7 +32,7 @@ class BonuspuntenCest
 
     public function _failed(\FunctionalTester $I)
     {
-        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
+        exec("mysqldump -u test -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testBonuspuntenViewOpstartOrganisatie(\FunctionalTester $I)
@@ -251,9 +251,9 @@ class BonuspuntenCest
         ]);
 
         $I->canSeeRecord('app\models\Bonuspunten', array(
-          'group_id' => '1',
-          'omschrijving' => 'Bonuspunten vfrvfr event 1',
-          'score' => '10'
+            'group_id' => '1',
+            'omschrijving' => 'Bonuspunten vfrvfr event 1',
+            'score' => '10'
         ));
         $I->amOnPage(['bonuspunten/index']);
         $I->see('Overzicht bonuspunten');
@@ -277,15 +277,14 @@ class BonuspuntenCest
         ]);
 
         $I->canSeeRecord('app\models\Bonuspunten', array(
-          'group_id' => '3',
-          'omschrijving' => 'Bonuspunten asdfasdf event 2',
-          'score' => '9'
+            'group_id' => '3',
+            'omschrijving' => 'Bonuspunten asdfasdf event 2',
+            'score' => '9'
         ));
 
         $I->amOnPage(['bonuspunten/index']);
         $I->see('groep A introductie');
         $I->see('Bonuspunten asdfasdf event 2');
-        $I->see('9');
         $I->dontSee('groep A gestart');
         $I->dontSee('Bonuspunten lkj event 3');
         $I->dontSee('groep A beindigd');
@@ -316,7 +315,6 @@ class BonuspuntenCest
         $I->amOnPage(['bonuspunten/index']);
         $I->dontSee('groep A introductie');
         $I->dontSee('Bonuspunten asdfasdf event 2');
-        $I->dontSee('9');
         $I->see('groep A gestart');
         $I->see('Bonuspunten lkj event 3');
         $I->see('8');
@@ -350,7 +348,6 @@ class BonuspuntenCest
         $I->amOnPage(['bonuspunten/index']);
         $I->dontSee('groep A introductie');
         $I->dontSee('Bonuspunten asdfasdf event 2');
-        $I->dontSee('9');
         $I->dontSee('groep A gestart');
         $I->dontSee('Bonuspunten lkj event 3');
         $I->see('groep A beindigd');
