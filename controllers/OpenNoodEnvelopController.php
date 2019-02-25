@@ -78,6 +78,7 @@ class OpenNoodEnvelopController extends Controller {
      * @return mixed
      */
     public function actionOpen($nood_envelop_ID) {
+        Yii::$app->cache->flush();
         $model = new OpenNoodEnvelop;
         $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
 
@@ -124,7 +125,6 @@ class OpenNoodEnvelopController extends Controller {
             if (!$model->save()) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Je kunt deze hint niet openen'));
             } else {
-                Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Hint is geopend.'));
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Alle geopende hints worden op dit dashboard getoond.'));
             }

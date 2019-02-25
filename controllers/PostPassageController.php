@@ -57,6 +57,7 @@ class PostPassageController extends Controller {
      * @return mixed
      */
     public function actionCheckStation() {
+        Yii::$app->cache->flush();
         $action = Yii::$app->request->get('action');
         $post_ID = Yii::$app->request->get('post_ID');
         $group_ID = Yii::$app->request->get('group_ID');
@@ -68,7 +69,7 @@ class PostPassageController extends Controller {
                 ->one();
         } else {
             $model = new PostPassage();
-            $model->gepasseerd = TRUE;
+            $model->gepasseerd = 1;
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->post_ID = $post_ID;
             $model->group_ID = $group_ID;
@@ -90,6 +91,7 @@ class PostPassageController extends Controller {
                 return $this->redirect(['posten/index']);
             }
         }
+
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('check-station', [
                     'model' => $model,

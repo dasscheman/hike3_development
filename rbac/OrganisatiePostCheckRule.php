@@ -41,6 +41,10 @@ class OrganisatiePostCheckRule extends Rule
         $action = $params['action'];
 
         $post = Posten::findOne($post_id);
+        if(empty($post)) {
+            return false;
+        }
+        
         if($action=='start' &&
             $post->isStartPost() &&
             !PostPassage::isPostChechedOutByGroup($group_id,$post_id)) {

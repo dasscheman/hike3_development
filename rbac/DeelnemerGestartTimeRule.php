@@ -5,6 +5,7 @@ namespace app\rbac;
 use Yii;
 use yii\rbac\Rule;
 use app\models\DeelnemersEvent;
+use app\models\Posten;
 use app\models\PostPassage;
 use app\models\EventNames;
 
@@ -21,13 +22,23 @@ class DeelnemerGestartTimeRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
-            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer &&
-            PostPassage::isGroupStarted(Yii::$app->user->identity->getGroupUserForEvent()) &&
-            PostPassage::istimeLeftToday(Yii::$app->user->identity->getGroupUserForEvent())) {
-            return true;
+        if (Yii::$app->user->identity->getStatusForEvent() != EventNames::STATUS_gestart) {
+            return false;
+        }
+        
+        // De aanname is dat als er geen startpost is, dat er dan gewoon gestart kan worden.
+        // De max tijd werkt dan niet.
+        if(!empty(Yii::$app->user->identity->getActiveDayForEvent()) &&
+            Posten::startPostExist(Yii::$app->user->identity->getActiveDayForEvent())) {
+            if(!PostPassage::isGroupStarted(Yii::$app->user->identity->getGroupUserForEvent())) {
+                return false;
+            }
+
+            if(!PostPassage::istimeLeftToday(Yii::$app->user->identity->getGroupUserForEvent())) {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 }

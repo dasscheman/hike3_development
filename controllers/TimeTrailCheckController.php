@@ -39,7 +39,7 @@ class TimeTrailCheckController extends Controller {
                     [
                         'allow' => true,
                         'actions' => ['create'],
-                        'roles' => ['deelnemerGestartTime', 'deelnemerIntroductie'],
+                        'roles' => ['deelnemerGestartTime'],
                     ],
                     [
                         'allow' => true,

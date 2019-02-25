@@ -87,7 +87,7 @@ class BonuspuntenSearch extends Bonuspunten
     {
         if ($group_id === NULL) {
             // Get group id of current user.
-            $group_id = DeelnemersEvent::find()
+            $groupModel = DeelnemersEvent::find()
                 ->select('group_ID')
                 ->where('tbl_deelnemers_event.event_ID =:event_id and user_ID =:user_id')
                 ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])

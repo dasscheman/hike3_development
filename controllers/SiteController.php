@@ -44,7 +44,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'overview', 'cookie'],
+                        'actions' => ['logout', 'index', 'overview', 'cookie', 'cache-flush'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -55,7 +55,7 @@ class SiteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['overview-organisation', 'cache-flush'],
+                        'actions' => ['overview-organisation'],
                         'roles' => ['organisatie'],
                     ],
                     [

@@ -48,28 +48,37 @@ use kartik\widgets\TimePicker;
             'Instructions for the next point. They see this instruction when they scan this item.'
         )
     ]);
-    
-    echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
-    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);
-    echo $form->field($model, 'time_trail_ID')->hiddenInput(['value'=> $model->time_trail_ID])->label(false);
-    echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
-    echo $form->field($model, 'max_time')->widget(
+
+     echo $form->field($model, 'max_time')->widget(
         TimePicker::classname(),
         [
             'attribute' => 'max_time',
             'pluginOptions' => [
+                'id' => $model->time_trail_ID,
                 'showSeconds' => false,
                 'showMeridian' => false,
                 'minuteStep' => 1,
                 'defaultTime' => '10:00'
-            ]
+            ],
+            'options' => ['id' => $model->time_trail_ID]
         ]
     )->label(
         Yii::t(
             'app',
-            'Max time (hh:mm) a group get to scan the next item.'
+            'Max tijd (hh:mm) een groep krijgt om het volgende item te scannen.'
         )
     );
+
+    echo Html::tag('i', Html::encode(  Yii::t(
+          'app',
+          'Let op! bij het laatste tijdrit-item hoef je geen tijd in te vullen.'
+    )));
+    echo Html::tag('br');
+    echo Html::tag('br');
+    echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
+    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);
+    echo $form->field($model, 'time_trail_ID')->hiddenInput(['value'=> $model->time_trail_ID])->label(false);
+    echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
 
     <div class="form-group">

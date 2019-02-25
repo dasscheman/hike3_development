@@ -311,6 +311,20 @@ class Users extends BaseUser
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getActiveDayForEvent()
+    {
+        $status = $this->hasOne(DeelnemersEvent::className(), ['user_ID' => 'id'])
+            ->where('event_ID =:event_id')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
+            ->one()
+            ->event
+            ->active_day;
+        return $status;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getEventNames()
     {
         return $this->hasMany(EventNames::className(), ['create_user_ID' => 'id']);

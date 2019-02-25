@@ -278,3 +278,9 @@ h3 {
 {
     padding-left: 0px;
 }
+
+
+div.required label.control-label:after {
+    content: " *";
+    color: red;
+}

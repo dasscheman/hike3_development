@@ -21,7 +21,7 @@ class DeelnemerGestartRule extends Rule
     public function execute($user, $item, $params)
     {
         if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
-            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemerS) {
+            Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_deelnemer) {
             return TRUE;
         }
         return FALSE;

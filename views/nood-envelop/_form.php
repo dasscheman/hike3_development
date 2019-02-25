@@ -23,27 +23,27 @@ use yii\widgets\ActiveForm;
             'maxlength' => true,
             'placeholder' => Yii::t(
                 'app',
-                'Recognizable name for this hint, visable by players.'
+                'Herkenbare naam, waardoor de spelers weten waar deze hint over gaat.'
             )
         ]);
     echo $form->field($model, 'show_coordinates')->checkbox();
 
-    echo $form->field($model, 'opmerkingen')->textInput([
+    echo $form->field($model, 'opmerkingen')->textArea([
             'maxlength' => true,
             'placeholder' => Yii::t(
                 'app',
-                'The actual hint to help the players, only visable by players when they open the hint.'
+                'Hint om de spelers te helpen. Alleen zichtbaar wanneer een groep de hint heeft geopend.'
             )
         ]);
     echo $form->field($model, 'score')->textInput([
             'placeholder' => Yii::t(
                 'app',
-                'Penalty points for opening. Use positive integers.'
+                'Strafpunten, gebruik positieve hele getallen.'
             )
         ]);
 
     echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
-    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);    
+    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
