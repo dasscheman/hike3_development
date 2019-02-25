@@ -1,5 +1,6 @@
 <?php
 use app\tests\fixtures;
+use app\models\OpenVragenAntwoorden;
 
 class VragenCest
 {
@@ -51,7 +52,7 @@ class VragenCest
 
     public function _failed(\FunctionalTester $I)
     {
-        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
+        exec("mysqldump -u test -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testQrScanOpstartSpeler(\FunctionalTester $I)
@@ -237,6 +238,11 @@ class VragenCest
         $I->click('Opslaan');
         $I->see('Vraag is beantwoord.');
 
+        $antwoord = OpenVragenAntwoorden::find()
+            ->where('antwoord_spelers =:antwoord')
+            ->params([':antwoord' => 'LULULULUL IS DIT GOED'])
+            ->one();
+
         $I->amOnPage(['user/security/logout']);
         $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         Yii::$app->user->identity->selected_event_ID = 3;
@@ -244,7 +250,10 @@ class VragenCest
 
         $I->amOnPage(['site/index']);
         $I->see('Answer Players: LULULULUL IS DIT GOED');
-        $I->click('#correct-awnser-3');
+        $I->click('#correct-awnser-' . $antwoord->open_vragen_antwoorden_ID);
+
+        sleep(2);
+        $I->amOnPage(['site/cache-flush']);
         $I->amOnPage(['user/security/logout']);
 
         $I->amLoggedInAs(\app\models\Users::findByUsername('deelnemerb'));

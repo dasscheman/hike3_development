@@ -72,6 +72,7 @@ $config = [
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'nullDisplay' => '',
+            'defaultTimeZone' => 'Europe/Amsterdam',
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -117,8 +118,8 @@ $config = [
         ],
         'db' => require(__DIR__ . '/test_db.php'),
         'devicedetect' => [
-		'class' => 'alexandernst\devicedetect\DeviceDetect'
-	],
+    		'class' => 'alexandernst\devicedetect\DeviceDetect'
+    	],
     ],
     'params' => $params,
 ];

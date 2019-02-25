@@ -6,7 +6,7 @@ use app\tests\fixtures;
 use app\models\Users;
 
 class UserTest extends \Codeception\Test\Unit
-{    
+{
     public function _fixtures()
     {
         return [
@@ -19,7 +19,7 @@ class UserTest extends \Codeception\Test\Unit
 
     public function testFindUserById()
     {
-        expect_that($user = Users::findIdentity(1));
+        expect_that($user = User::findIdentity(1));
         expect($user->username)->equals('organisatie');
 
         expect_not(Users::findIdentity(999));
@@ -30,12 +30,12 @@ class UserTest extends \Codeception\Test\Unit
         expect_that($user = Users::findIdentityByAccessToken('100-token'));
         expect($user->username)->equals('organisatie');
 
-        expect_not(Users::findIdentityByAccessToken('non-existing'));        
+        expect_not(Users::findIdentityByAccessToken('non-existing'));
     }
 
     public function testFindUserByUsername()
     {
-        expect_that($user = Users::findByUsername('organisatie'));
+        expect_that($user = User::findByUsername('organisatie'));
         expect_not(Users::findByUsername('not-admin'));
     }
 

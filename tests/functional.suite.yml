@@ -15,6 +15,6 @@ modules:
          dsn: 'mysql:host=localhost;dbname=hike-app-test'
          user: 'test'
          password: 'secret'
-         #cleanup: true
+         cleanup: true
          populate: true # load dump before all tests
-         dump: 'tests/_data/query_before_test.sql'
+         dump: 'tests/_data/clean_dump.sql'

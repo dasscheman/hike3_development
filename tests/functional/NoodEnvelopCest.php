@@ -38,13 +38,13 @@ class NoodEnvelopCest
          Yii::$app->cache->flush();
     }
 
-        public function _after(FunctionalTester $I)
-        {
-        }
+    public function _after(FunctionalTester $I)
+    {
+    }
 
     public function _failed(\FunctionalTester $I)
     {
-        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
+        exec("mysqldump -u test -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testOpenHintOpstartSpeler(\FunctionalTester $I)
@@ -96,7 +96,7 @@ class NoodEnvelopCest
         $I->dontSee('Hints:');
 
         $I->amOnPage(['open-nood-envelop/open', 'nood_envelop_ID' => 4]);
-        $I->see('Hint Name:');
+        $I->see('Hint titel:');
         $I->see('intro intro');
         $I->see('Weet je zeker dat je deze hint wilt openen?');
         $I->click('open-hint');
@@ -163,6 +163,7 @@ class NoodEnvelopCest
 
     public function testOpemHintsGestartStartPosSpeler(\FunctionalTester $I)
     {
+        Yii::$app->cache->flush();
         $I->amGoingTo('Start post uitchecken');
         $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         Yii::$app->user->identity->selected_event_ID = 3;
@@ -179,10 +180,10 @@ class NoodEnvelopCest
         $I->see('In/Uit checken van post');
 
         $I->fillField('PostPassage[vertrek]',date("Y-m-d H:i", time() - 3600));
-      		$I->click('Create');
+    		$I->click('Create');
         $I->canSeeRecord('app\models\PostPassage', array(
-          'group_id' => '5',
-          'post_ID' => '1'
+            'group_id' => '5',
+            'post_ID' => '1'
         ));
         $I->amOnPage(['user/security/logout']);
 
@@ -213,7 +214,9 @@ class NoodEnvelopCest
         $I->see('dag 2 gestart');
         $I->see('Weet je zeker dat je deze hint wilt openen?');
         $I->click('open-hint');
+        $I->see('Hint is geopend');
 
+        $I->amOnPage(['site/cache-flush']);
         $I->amOnPage(['site/overview-players', 'group_ID' => '5']);
         $I->see('Hints: 2');
 

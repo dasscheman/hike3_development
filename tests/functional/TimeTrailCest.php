@@ -55,7 +55,7 @@ class TimeTrailCest
     }
     public function _failed(\FunctionalTester $I)
     {
-        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
+        exec("mysqldump -u test -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testScanTimeTrailOpstartSpeler(\FunctionalTester $I)
@@ -101,41 +101,36 @@ class TimeTrailCest
         Yii::$app->user->identity->selected_event_ID = 2;
         Yii::$app->user->identity->save();
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwefeadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsaasdfsaadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'asdfasdsffwefeadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwefeadcsadcassafasdfaasdf324dc']);
-        $I->see('eerste intro');
-        $I->see('ga naar twee');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwefeadsadcasdcasddwec']);
-        $I->see('Je hebt het gehaald');
-        $I->see('tweede intro');
-        $I->see('ga naar drie');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwFRefeadcsad65hy3432dc']);
-        $I->see('Je hebt het gehaald');
-        $I->see('derde intro');
-        $I->see('eind');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadf32efdEXEasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdGFFQFQWFwefeadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdf78tyujyRGReadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadf32efdEXEasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdf78tyujyRGReadcsadcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwererh5h4h5334543c']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwefewere5casdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
         $I->amOnPage(['time-trail-check/create', 'code' => 'sasdfsadfqwefVRWVV45dcasdc']);
-        $I->see('Deze tijdrit is niet voor deze hike.');
+        $I->see('Forbidden (#403)');
     }
 
-    public function testScanTimeTrailGepstartSpeler(\FunctionalTester $I)
+    public function testScanTimeTrailGestartSpeler(\FunctionalTester $I)
     {
         // bij deze test is er nog niet uitgechecked bij een start post.
         $I->amGoingTo('scan Qr of hike gestart with deelnemera');
@@ -174,7 +169,7 @@ class TimeTrailCest
 
 
 
-    public function testScanTimeTrailGestartStartPosSpeler(\FunctionalTester $I)
+    public function testScanTimeTrailGestartStartPostSpeler(\FunctionalTester $I)
     {
         $I->amGoingTo('Start post uitchecken');
         $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
@@ -183,8 +178,8 @@ class TimeTrailCest
         Yii::$app->cache->flush();
         $I->amOnPage(['posten/index']);
         $I->canSeeRecord('app\models\Posten', array(
-          'post_ID' => 1,
-          'event_ID' => 3
+            'post_ID' => 1,
+            'event_ID' => 3
         ));
 
         $I->see('Start hike groep A gestart');
@@ -192,10 +187,10 @@ class TimeTrailCest
         $I->see('In/Uit checken van post');
 
         $I->fillField('PostPassage[vertrek]',date("Y-m-d H:i", time() - 3600));
-      		$I->click('Create');
+    		$I->click('Create');
         $I->canSeeRecord('app\models\PostPassage', array(
-          'group_id' => '5',
-          'post_ID' => '1'
+            'group_id' => '5',
+            'post_ID' => '1'
         ));
         $I->amOnPage(['user/security/logout']);
 
@@ -242,6 +237,27 @@ class TimeTrailCest
     public function testScanTimeTrailTimeIsUpGestartStartPosSpeler(\FunctionalTester $I)
     {
         $I->amGoingTo('Time trail with time is up uitchecken');
+        $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
+        Yii::$app->user->identity->selected_event_ID = 3;
+        Yii::$app->user->identity->save();
+        Yii::$app->cache->flush();
+        $I->amOnPage(['posten/index']);
+        $I->canSeeRecord('app\models\Posten', array(
+            'post_ID' => 1,
+            'event_ID' => 3
+        ));
+
+        $I->see('Start hike groep A gestart');
+        $I->amOnPage(['post-passage/check-station', 'post_ID' => 1,'group_ID' => 5, 'action' => 'start']);
+        $I->see('In/Uit checken van post');
+
+        $I->fillField('PostPassage[vertrek]',date("Y-m-d H:i", time() - 3600));
+        $I->click('Create');
+        $I->canSeeRecord('app\models\PostPassage', array(
+          'group_id' => '5',
+          'post_ID' => '1'
+        ));
+        $I->amOnPage(['user/security/logout']);
 
         $I->amGoingTo('scan Qr of hike gestart with deelnemera');
         $I->amLoggedInAs(\app\models\Users::findByUsername('deelnemera'));

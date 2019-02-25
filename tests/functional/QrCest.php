@@ -55,7 +55,7 @@ class QrCest
     }
     public function _failed(\FunctionalTester $I)
     {
-        exec("mysqldump -u root -psecret hike-app-test> tests/_data/test_dump.sql");
+        exec("mysqldump -u test -psecret hike-app-test> tests/_data/test_dump.sql");
     }
 
     public function testQrScanOpstartSpeler(\FunctionalTester $I)
@@ -180,7 +180,7 @@ class QrCest
         $I->see('In/Uit checken van post');
 
         $I->fillField('PostPassage[vertrek]',date("Y-m-d H:i", time() - 3600));
-  		$I->click('Create');
+  		  $I->click('Create');
         $I->canSeeRecord('app\models\PostPassage', array(
           'group_id' => '5',
           'post_ID' => '1'
@@ -212,6 +212,7 @@ class QrCest
         $I->amOnPage(['qr-check/create', 'event_id' => 3, 'qr_code' => 'haasxasdfasd2344ergxffghhebddSEF']);
         $I->see('QR code gecontroleerd!');
         $I->amOnPage(['site/overview-players']);
+        $I->see('Dag 2 gestart');
         $I->see('Dag 2 gestart tweede QR');
         $I->amOnPage(['qr-check/create', 'event_id' => 4, 'qr_code' => 'qerqwerqwccwaswerqwerqwerqw']);
         $I->see('Deze QR is niet voor deze hike.');
