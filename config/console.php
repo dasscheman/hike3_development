@@ -41,6 +41,9 @@ $config = [
             // for the mailer to send real emails.
             'transport' => require(__DIR__ . '/email.php')
         ],
+        'assetManager' => [
+            'bundles' => [
+        ]
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
             'scriptUrl' => $params['url']

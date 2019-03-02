@@ -110,7 +110,7 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('gebruiker')
                             ],
                         ],
-                        ],
+                    ],
                     !Yii::$app->user->can('organisatie') && !Yii::$app->user->can('deelnemer')? '' :
                         [
                         'label' => Yii::t('app', 'Kaart'),
@@ -269,7 +269,9 @@ AppAsset::register($this);
             <footer class="footer">
 
                     <p class="pull-left">&copy; hike-app.nl <?= date('Y') ?></p>
-
+                    <a class="pull-right" target="_blank" href="https://seal.beyondsecurity.com/vulnerability-scanner-verification/hike-app.nl" >
+                        <img src="https://seal.beyondsecurity.com/verification-images/hike-app.nl/vulnerability-scanner-10.gif" alt="Vulnerability Scanner" border="0" />
+                    </a>
             </footer>
             <?php
           };

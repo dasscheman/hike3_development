@@ -23,6 +23,19 @@ $this->title = 'About';
         Icons by <a align="center" href="https://mapicons.mapsmarker.com/">Maps Icons Collection</a>
     </p>
     <h2><?= Html::encode('change log') ?></h2>
+    <h3><?= Html::encode('3.3') ?></h3>
+    <p>
+        Added open street maps.
+    </p>
+    <p>
+        Added messages option to silent stations.
+    </p>
+    <p>
+        Added tracks, organisation can add gpx files.
+    </p>
+    <p>
+        Lots more.
+    </p>
     <h3><?= Html::encode('3.2') ?></h3>
     <p>
         Added new user dektrium yii2-user and dektrium yii2-rbac.
