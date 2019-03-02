@@ -459,7 +459,7 @@ class OpenMap extends LeafLet
             foreach ($models as $model) {
                 array_push($coordinates, $this->getCoordinates($model));
             }
-            
+
             $path = new PolyLine([
                 'popupContent' => $trackName->name,
                 'clientOptions' => ['color' => '#' . $generalfucntions->random_color()]
@@ -566,10 +566,17 @@ class OpenMap extends LeafLet
 
     public function getDragableMarker()
     {
-        $bounds = LatLngBounds::getBoundsOfLatLngs($this->allCoordinates);
-        $lat = ($bounds->northEast->lat + $bounds->southWest->lat) / 2;
-        $lng = ($bounds->northEast->lng + $bounds->southWest->lng) / 2;
+        $cordinates = $this->allCoordinates;
+        if(empty($cordinates)) {
+            // zet de default pointer op de bison.
+            $lat = 52.0825;
+            $lng = 5.2643;
+        } else {
+            $bounds = LatLngBounds::getBoundsOfLatLngs($cordinates);
+            $lat = ($bounds->northEast->lat + $bounds->southWest->lat) / 2;
+            $lng = ($bounds->northEast->lng + $bounds->southWest->lng) / 2;
 
+        }
         $coords = new LatLng(['lat' => $lat, 'lng' => $lng]);
         $marker = new Marker([
             'latLng' => $coords,
@@ -579,6 +586,7 @@ class OpenMap extends LeafLet
              ],
              'clientEvents' => $this->getDragEvent()
         ]);
+        $this->addLayer($marker);      // add the marker
         return $marker;
     }
 

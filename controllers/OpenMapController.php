@@ -163,9 +163,7 @@ class OpenMapController extends Controller
         $map->setEventTrack();
         $map->setEventWayPoints();
         $map->setLocate();
-
         $marker = $map->getDragableMarker();      // add the marker
-        $map->addLayer($marker);      // add the marker
         if(!empty($map->allCoordinatesArray)) {
             $map->clientOptions['bounds'] = json_encode($map->allCoordinatesArray);
         }
