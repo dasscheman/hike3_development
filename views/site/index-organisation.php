@@ -57,21 +57,41 @@ $this->title = Yii::t('app', 'Hike overview');
                     </b>
                     <?php echo Html::encode($eventModel->end_date); ?></br>
                     <br>
-                    <br>
-                    <?php
-                    Modal::begin([
-                        'toggleButton' => [
-                            'label' => Yii::t('app', 'Pas status aan'),
-                            'id' => 'modalChangeMaxTimeButton',
-                            'class' => 'btn btn-xs btn-success',
-                            // 'disabled' => !Yii::$app->user->can('organisatieGestart'),
-                        ],
-                    ]);
-                    echo $this->render('/event-names/update', [
-                        'model' => $eventModel,
-                        'action' => 'set_change_status']);
-                    Modal::end();?>
-
+                    <p>
+                        <?php
+                        Modal::begin([
+                           'toggleButton' => [
+                               'label' => Yii::t('app', 'Change settings hike'),
+                               'id' => 'modalChangeSettingsButton',
+                               'class' => 'btn btn-xs btn-success',
+                               'disabled' => !Yii::$app->user->can('organisatieOpstart'),
+                           ],
+                        ]);
+                        ?>
+                    </p>
+                    <p>
+                        <?php
+                        echo $this->render('/event-names/update', [
+                            'model' => $eventModel,
+                            'action' => 'change_settings']);
+                        Modal::end();
+                        ?>
+                    </p>
+                    <p>
+                        <?php
+                        Modal::begin([
+                            'toggleButton' => [
+                                'label' => Yii::t('app', 'Pas status aan'),
+                                'id' => 'modalChangeMaxTimeButton',
+                                'class' => 'btn btn-xs btn-success',
+                                // 'disabled' => !Yii::$app->user->can('organisatieGestart'),
+                            ],
+                        ]);
+                        echo $this->render('/event-names/update', [
+                            'model' => $eventModel,
+                            'action' => 'set_change_status']);
+                        Modal::end();?>
+                    </p>
                 </div>
                 <?php
                 Modal::begin(

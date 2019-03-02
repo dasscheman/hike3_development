@@ -11,60 +11,46 @@ use kartik\widgets\ActiveForm;
 
 <div class="tbl-event-names-form">
     <?php
+    $attributes['event_name'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
+        ],
+    ];
 
-    if ($action == 'set_max_time') {
-        $attributes['max_time'] = [
-            'type' => Form::INPUT_WIDGET,
-            'widgetClass' => 'kartik\time\TimePicker',
-            'options' => [
-                'attribute' => 'max_time',
-                'pluginOptions' => [
-                    'showSeconds' => FALSE,
-                    'showMeridian' => FALSE,
-                    'minuteStep' => 5,
-                    'defaultTime' => '10:00'
-                ]
-            ]
-        ];
-    } else {
-        $attributes['event_name'] = [
-            'type' => Form::INPUT_TEXT,
-            'options' => [
-                'placeholder' => Yii::t('app', 'Geef je hike een herkenbare naam')
-            ],
-        ];
-
-        $attributes['organisatie'] = [
-            'type' => Form::INPUT_TEXT,
-            'options' => [
-                'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
-            ]
-        ];
-
-        $attributes['daterange'] = [
-            'type' => Form::INPUT_WIDGET,
-            'widgetClass' => 'kartik\daterange\DateRangePicker',
-            'options' => [
-                'startAttribute' => 'start_date',
-                'endAttribute' => 'end_date',
-                'pluginOptions' => [
-                    'dateLimit' => [
-                        'days' => 10
+    $attributes['organisatie'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'De organisatie die de hike organiseert')
+        ]
+    ];
+    $attributes['daterange'] = [
+        'type' => Form::INPUT_WIDGET,
+        'widgetClass' => 'kartik\daterange\DateRangePicker',
+        'options' => [
+            'attribute' => 'daterange',
+            'startAttribute' => 'start_date',
+            'endAttribute' => 'end_date',
+            'pluginOptions' => [
+                'startDate' => $model->start_date,
+                'endDate' => $model->end_date,
+                'dateLimit' => [
+                    'days' => 10
+                ],
+                'locale' => [
+                    'format' => 'YYYY-MM-DD'
                     ],
-                    'locale' => [
-                        'format' => 'YYYY-MM-DD'
-                        ],
-                ]
             ]
-        ];
+        ]
+    ];
 
-        $attributes['website'] = [
-            'type' => Form::INPUT_TEXT,
-            'options' => [
-                'placeholder' => Yii::t('app', 'Website organisatie')
-            ]
-        ];
-    }
+    $attributes['website'] = [
+        'type' => Form::INPUT_TEXT,
+        'options' => [
+            'placeholder' => Yii::t('app', 'Website organisatie')
+        ]
+    ];
+
 
     $form = ActiveForm::begin([
         'id' => 'event-names-form',
@@ -75,7 +61,7 @@ use kartik\widgets\ActiveForm;
     echo Form::widget([
         'model' => $model,
         'form' => $form,
-        'columns' => 4,
+        'columns' => 2,
         'attributes' => $attributes,
     ]);?>
 

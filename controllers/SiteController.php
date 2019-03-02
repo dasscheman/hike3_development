@@ -133,6 +133,8 @@ class SiteController extends Controller
                 ->addParams([':event_id' => $event_id])
                 ->one();
 
+            $eventModel->setDaterange();
+
             $queryOrganisatie = DeelnemersEvent::find()
                 ->where(['=', 'event_ID', $event_id])
                 ->andWhere(['!=', 'rol', DeelnemersEvent::ROL_deelnemer])

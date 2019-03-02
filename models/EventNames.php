@@ -6,7 +6,6 @@ use app\models\HikeActiveRecord;
 use app\models\DeelnemersEvent;
 use app\models\EventNames;
 use Yii;
-use kartik\daterange\DateRangeBehavior;
 
 /**
  * This is the model class for table "tbl_event_names".
@@ -53,7 +52,7 @@ class EventNames extends HikeActiveRecord {
     * widget for upload on the form
     */
     public $image_temp;
-    public $daterange;
+    private $_daterange;
     public $start_all_groups;
     public $start_time_all_groups;
 
@@ -101,18 +100,12 @@ class EventNames extends HikeActiveRecord {
         ];
     }
 
-    public function behaviors() {
-        return [
-            [
-                'class' => DateRangeBehavior::className(),
-                'attribute' => 'daterange',
-                'dateStartAttribute' => 'start_date',
-                'dateEndAttribute' => 'end_date',
-                'dateStartFormat' => 'Y-m-d',
-                'dateEndFormat' => 'Y-m-d',
+    public function setDaterange(){
+        $this->_daterange =  $this->start_date . ' - '. $this->end_date;
+    }
 
-            ]
-        ];
+    public function getDaterange(){
+        return $this->_daterange;
     }
 
     /**

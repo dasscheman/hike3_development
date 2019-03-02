@@ -230,7 +230,6 @@ class EventNamesController extends Controller
         }
 
         if (Yii::$app->request->get('action') != 'change_settings' &&
-            Yii::$app->request->get('action') != 'set_max_time' &&
             Yii::$app->request->get('action') != 'set_change_status') {
               return $this->redirect(['site/overview-organisation']);
         }
