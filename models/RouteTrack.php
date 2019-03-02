@@ -130,15 +130,15 @@ class RouteTrack extends HikeActiveRecord
 
     public function importTrack($track, $name)
     {
-        $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            $dbTransaction = Yii::$app->db->beginTransaction();
             foreach ($track->trkseg->trkpt as $point) {
-
                 $model = new RouteTrack;
                 $model->type = RouteTrack::TYPE_track;
                 $model->latitude = $point['lat'];
                 $model->longitude = $point['lon'];
                 $model->timestamp = Yii::$app->setupdatetime->storeFormat($point->time, 'datetime');
+
                 if(isset($point->ele)){
                     $model->elevation = $point->ele;
                 }
@@ -156,15 +156,14 @@ class RouteTrack extends HikeActiveRecord
             }
             $dbTransaction->commit();
         } catch (\Exception $e) {
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Could not save this track: ' . $type . ' '.  $e));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Could not save this track: ' . $name . ' '.  $e));
         }
     }
 
     public function importPoints($track, $type)
     {
-        $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            // dd($track);
+            $dbTransaction = Yii::$app->db->beginTransaction();
             foreach ($track as $point) {
 
                 $model = new RouteTrack;

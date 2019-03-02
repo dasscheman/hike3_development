@@ -7,9 +7,9 @@ use yii\helpers\Url;
 use yii\web\Cookie;
 use yii\helpers\ArrayHelper;
 use yii\web\JsExpression;
+use app\components\GeneralFunctions;
 use app\models\Groups;
 use app\models\Locate;
-use app\components\GeneralFunctions;
 use dosamigos\leaflet\LeafLet;
 use dosamigos\leaflet\types\LatLng;
 use dosamigos\leaflet\types\LatLngBounds;
@@ -437,20 +437,36 @@ class OpenMap extends LeafLet
 
     public function setEventTrack()
     {
-        $coordinates = [];
-        $models = RouteTrack::find()
+        $content = '';
+        $generalfucntions = new GeneralFunctions;
+        $trackNames = RouteTrack::find()
             ->where([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                'type' => RouteTrack::TYPE_track])
+                'type' => RouteTrack::TYPE_track
+            ])
+            ->groupBy('name')
             ->all();
 
-        foreach ($models as $model) {
-            array_push($coordinates, $this->getCoordinates($model));
-        }
+        foreach($trackNames as $trackName) {
+            $coordinates = [];
+            $models = RouteTrack::find()
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                    'type' => RouteTrack::TYPE_track,
+                    'name' => $trackName->name])
+                ->all();
 
-        $path = new PolyLine();
-        $path->setLatLngs($coordinates);
-        $this->addLayer($path);
+            foreach ($models as $model) {
+                array_push($coordinates, $this->getCoordinates($model));
+            }
+            
+            $path = new PolyLine([
+                'popupContent' => $trackName->name,
+                'clientOptions' => ['color' => '#' . $generalfucntions->random_color()]
+            ]);
+            $path->setLatLngs($coordinates);
+            $this->addLayer($path);
+        }
     }
 
     public function setLocate(){
