@@ -112,4 +112,69 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
 
         return $dataProvider;
     }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchOpenedByGroup($params, $group_id = NULL)
+    {
+        if ($group_id === NULL) {
+            // Get group id of current user.
+            $groupModel = DeelnemersEvent::find()
+                ->select('group_ID')
+                ->where('event_ID =:event_id and user_ID =:user_id')
+                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
+                ->one();
+            $group_id = $groupModel->group_ID;
+        }
+
+        // Find all open hints for founr group id
+        $query = OpenNoodEnvelop::find()
+            ->joinWith(['group', 'createUser'])
+            ->where('tbl_open_nood_envelop.event_ID=:event_id AND tbl_open_nood_envelop.group_ID=:group_id AND opened=:opened')
+            ->addParams([
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':group_id' => $group_id,
+                ':opened' => OpenNoodEnvelop::STATUS_open
+            ])
+            ->orderBy(['create_time' => SORT_DESC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 1,
+            ],
+        ]);
+
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere([
+            'open_nood_envelop_ID' => $this->open_nood_envelop_ID,
+            'nood_envelop_ID' => $this->nood_envelop_ID,
+            'group_ID' => $this->group_ID,
+            'opened' => $this->opened,
+            'create_time' => $this->create_time,
+            'create_user_ID' => $this->create_user_ID,
+            'update_time' => $this->update_time,
+            'update_user_ID' => $this->update_user_ID,
+        ])
+            ->andFilterWhere(['like', 'tbl_groups.group_name', $this->group_name])
+            ->andFilterWhere(['like', 'tbl_nood_envelop.nood_envelop_name', $this->nood_envelop_name])
+            ->andFilterWhere(['like', 'tbl_nood_envelop.score', $this->score])
+            ->andFilterWhere(['like', 'user.username', $this->username])
+            ->andFilterWhere(['like', 'tbl_route.route_name', $this->route_name]);
+
+        return $dataProvider;
+    }
 }

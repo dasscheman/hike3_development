@@ -91,7 +91,7 @@ class Groups extends HikeActiveRecord
             'total_score' => Yii::t('app', 'Totaal'),
             'time_walking' => Yii::t('app', 'Looptijd'),
             'time_left' => Yii::t('app', 'Te gaan'),
-            'users_temp' => Yii::t('app', 'Spelerss'),
+            'users_temp' => Yii::t('app', 'Spelers'),
             'users_email_temp' => Yii::t('app', 'Players email'),
         ];
     }

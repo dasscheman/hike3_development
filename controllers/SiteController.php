@@ -15,6 +15,7 @@ use app\models\Groups;
 use app\models\Route;
 use app\models\RouteTrack;
 use app\models\Posten;
+use app\models\OpenNoodEnvelopSearch;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
 use app\models\OpenVragenSearch;
@@ -212,7 +213,9 @@ class SiteController extends Controller
 
             $searchHintsModel = new NoodEnvelopSearch();
             $closedHintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams, $group_id);
-            $openHintsData = $searchHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams, $group_id);
+
+            $searchOpenHintsModel = new OpenNoodEnvelopSearch();
+            $openHintsData = $searchOpenHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams, $group_id);
 
             $searchBonusModel = new BonuspuntenSearch();
             $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams, $group_id);

@@ -26,7 +26,7 @@ use yii\widgets\Pjax;
                 ],
             ],
             'dataProvider' => $model,
-            'itemView' => '/open-nood-envelop/_list-dashboard',
+            'itemView' => '/open-nood-envelop/_list-dashboard-open',
             'emptyText' => Yii::t('app', 'No hints that are opened.'),
         ]);
     ?>

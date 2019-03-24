@@ -132,7 +132,9 @@ class NoodEnvelop extends HikeActiveRecord
      */
     public function getOpenNoodEnvelops()
     {
-        return $this->hasMany(OpenNoodEnvelop::className(), ['nood_envelop_ID' => 'nood_envelop_ID']);
+        return $this->hasMany(
+            OpenNoodEnvelop::className(),
+            ['nood_envelop_ID' => 'nood_envelop_ID']);
     }
 
     /**

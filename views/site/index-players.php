@@ -123,7 +123,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <div class="well">
                       <?php
                       ?>
-                        <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
+                        <?php echo Yii::$app->controller->renderPartial('/nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
                     </div>
                 <?php
                 } ?>
