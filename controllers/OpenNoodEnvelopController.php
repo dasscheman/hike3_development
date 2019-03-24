@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\DeelnemersEvent;
 use app\models\OpenNoodEnvelop;
 use app\models\OpenNoodEnvelopSearch;
 use yii\web\Controller;
@@ -51,7 +52,12 @@ class OpenNoodEnvelopController extends Controller {
             ]
         ];
     }
-
+    public function beforeAction($action) {
+        if($action->id == 'open'){
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
     /**
      * Lists all TblOpenNoodEnvelop models.
      * @return mixed
@@ -81,10 +87,27 @@ class OpenNoodEnvelopController extends Controller {
         Yii::$app->cache->flush();
         $model = new OpenNoodEnvelop;
         $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
+        if(!$modelEnvelop) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Geen geldige hint.'));
+            return $this->redirect(['site/overview-players']);
+        }
 
         if($modelEnvelop->event_ID != Yii::$app->user->identity->selected_event_ID) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor deze hike.'));
-            return $this->redirect(['site/overview-players']);
+            $modelDeelnemersEvent = DeelnemersEvent::find()
+                ->where([
+                    'event_ID' => $modelEnvelop->event_ID,
+                    'user_ID' => Yii::$app->user->identity->id
+                ])
+                ->one();
+
+            if (!isset($modelDeelnemersEvent->rol) ||
+                !$modelDeelnemersEvent->rol >= 1) {
+                  Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor deze hike.'));
+                  return $this->redirect(['site/overview-players']);
+            }
+            Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
+            Yii::$app->user->identity->save();
+            Yii::$app->cache->flush();
         }
 
         $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelEnvelop->event_ID);
