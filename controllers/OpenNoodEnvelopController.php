@@ -4,15 +4,14 @@ namespace app\controllers;
 
 use Yii;
 use app\models\DeelnemersEvent;
+use app\models\EventNames;
+use app\models\NoodEnvelop;
 use app\models\OpenNoodEnvelop;
 use app\models\OpenNoodEnvelopSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use app\models\DeelnemersEvent;
-use app\models\NoodEnvelop;
-use app\models\EventNames;
 
 /**
  * OpenNoodEnvelopController implements the CRUD actions for TblOpenNoodEnvelop model.
