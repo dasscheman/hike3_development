@@ -73,13 +73,6 @@ and increase each route item with 1 and add N before the number.s')],
 //                            'day_date'=>SORT_ASC,
                                 'route_volgorde' => SORT_ASC,
                             ]),
-                        'titles' => [
-                            'route_ID',
-                            'route_name',
-                            'event_ID',
-                            'day_date', // Related attribute
-                            'route_volgorde',
-                        ],
                     ],
                     'Questions' => [
                         'class' => 'codemix\excelexport\ActiveExcelSheet',
@@ -89,17 +82,6 @@ and increase each route item with 1 and add N before the number.s')],
                                 'vraag_volgorde' => SORT_DESC,
                                 // 'day_date'=>SORT_ASC
                             ]),
-                        'titles' => [
-                            'open_vragen_ID',
-                            'open_vragen_name',
-                            'event_ID',
-                            'route_ID',
-                            'vraag_volgorde',
-                            'omschrijving',
-                            'vraag',
-                            'goede_antwoord',
-                            'score',
-                        ],
                     ],
                     'Silentstations' => [
                         'class' => 'codemix\excelexport\ActiveExcelSheet',
@@ -109,15 +91,6 @@ and increase each route item with 1 and add N before the number.s')],
                                 'qr_volgorde' => SORT_DESC,
                                 //   'day_date'=>SORT_ASC
                             ]),
-                        'titles' => [
-                            'qr_ID',
-                            'qr_name',
-                            'qr_code',
-                            'event_ID',
-                            'route_ID',
-                            'qr_volgorde',
-                            'score',
-                        ],
                     ],
                     'Hints' => [
                         'class' => 'codemix\excelexport\ActiveExcelSheet',
@@ -127,16 +100,6 @@ and increase each route item with 1 and add N before the number.s')],
                                 'nood_envelop_volgorde' => SORT_DESC,
                                 // 'day_date'=>SORT_ASC
                             ]),
-                        'titles' => [
-                            'nood_envelop_ID',
-                            'nood_envelop_name',
-                            'event_ID',
-                            'route_ID',
-                            'nood_envelop_volgorde',
-                            'coordinaat',
-                            'opmerkingen',
-                            'score',
-                        ],
                     ],
                     'TimeTrail' => [
                         'class' => 'codemix\excelexport\ActiveExcelSheet',
@@ -147,28 +110,6 @@ and increase each route item with 1 and add N before the number.s')],
                                 'volgorde' => SORT_DESC,
                                 // 'day_date'=>SORT_ASC
                             ]),
-                        'titles' => [
-                            'nood_envelop_ID',
-                            'nood_envelop_name',
-                            'event_ID',
-                            'route_ID',
-                            'nood_envelop_volgorde',
-                            'coordinaat',
-                            'opmerkingen',
-                            'score',
-                        ],
-                    // 'formats' => [
-                    //     // Either column name or 0-based column index can be used
-                    //     'C' => '#,##0.00',
-                    //     3 => 'dd/mm/yyyy hh:mm:ss',
-                    // ],
-                    //
-                    // 'formatters' => [
-                    //     // Dates and datetimes must be converted to Excel format
-                    //     4 => function ($value, $row, $data) {
-                    //         return \PHPExcel_Shared_Date::PHPToExcel(strtotime($value));
-                    //     },
-                    // ],
                     ],
                 ],
         ]);
