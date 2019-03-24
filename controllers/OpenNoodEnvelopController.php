@@ -134,7 +134,7 @@ class OpenNoodEnvelopController extends Controller {
             return $this->redirect(['site/overview-players']);
         }
 
-        if (!$model->load(Yii::$app->request->post())) {
+        if (!Yii::$app->request->post()) {
             return $this->renderPartial('open', [
                     'model' => $model,
                     'modelEnvelop' => $modelEnvelop,
@@ -142,6 +142,10 @@ class OpenNoodEnvelopController extends Controller {
         }
 
         if (Yii::$app->request->post('open-hint') == 'open-hint') {
+            if (!$model->load(Yii::$app->request->post())) {
+                $model->event_ID = Yii::$app->request->post('event_ID');
+                $model->nood_envelop_ID = Yii::$app->request->post('nood_envelop_ID');
+            }
             $model->group_ID = $groupPlayer;
             $model->opened = 1;
             if (!$model->save()) {
