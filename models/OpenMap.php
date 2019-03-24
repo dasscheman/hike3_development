@@ -583,6 +583,7 @@ class OpenMap extends LeafLet
             'popupContent' => Yii::t('app', 'Verplaats de marker naar waar een een item toe wilt voegen'),
             'clientOptions' => [
                  'draggable' => true,
+                 'id' => 'pointer_id'
              ],
              'clientEvents' => $this->getDragEvent()
         ]);
