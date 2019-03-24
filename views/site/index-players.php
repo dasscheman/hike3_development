@@ -113,7 +113,17 @@ $this->title = Yii::t('app', 'Hike overzicht');
                 }
                 if ($openHintsData->totalCount > 0) { ?>
                     <div class="well">
+                      <?php
+                      ?>
                         <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
+                    </div>
+                <?php
+                }
+                if ($closedHintsData->totalCount > 0) { ?>
+                    <div class="well">
+                      <?php
+                      ?>
+                        <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
                     </div>
                 <?php
                 } ?>

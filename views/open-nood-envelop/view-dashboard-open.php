@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 
 ?>
 <div class="tbl-open-nood-envelop-view-dashboard-open">
-    <h3> <?php echo Yii::t('app', 'Open hint') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Geopende hint') ?> </h3>
     <p>
         <?php
         Pjax::begin(['id' => 'nood-envelop-view-dashboard-open', 'enablePushState' => false]);

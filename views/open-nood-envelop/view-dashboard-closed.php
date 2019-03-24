@@ -8,7 +8,7 @@ use yii\widgets\Pjax;
 
 ?>
 <div class="tbl-open-nood-envelop-view-dashboard-closed">
-    <h3> <?php echo Yii::t('app', 'Closed Hint') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Gesloten Hint') ?> </h3>
     <p>
         <?php
         // this is needed for the pagination.
