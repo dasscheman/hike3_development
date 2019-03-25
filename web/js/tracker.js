@@ -102,13 +102,15 @@ function Tracker() {
 
     this.saveData = function(pos) {
         var temp = new Array();
-        temp = {
-            accuracy: pos.coords.accuracy,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            timestamp: pos.timestamp / 1000 | 0
-        };
-        this.data.push(temp);
+        if (pos.coords.accuracy < 500) {
+            temp = {
+              accuracy: pos.coords.accuracy,
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              timestamp: pos.timestamp / 1000 | 0
+            };
+            this.data.push(temp);
+        }
         return true;
     };
     this.sendData = function(stopTracking) { // TODO must be sincronico , validar response
