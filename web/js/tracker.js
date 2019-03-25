@@ -59,7 +59,7 @@ function Tracker() {
     this.stopTracking = function() {
         console.log('stopTracking');
         navigator.geolocation.clearWatch(this.navigatorId);
-        // this.setSavingInterval(20000);
+        this.setSavingInterval(20000);
         this.navigatorId = null;
         this.resetData();
     };

@@ -102,7 +102,6 @@ class TrackController extends Controller
             if (!$model->save()) {
                 return Json::encode($model->getErrors());
             }
-            Yii::$app->cache->flush();
         }
         if ($model->group_ID === null) {
             TagDependency::invalidate(Yii::$app->cache, 'tracks_user_' . $model->user_ID);

@@ -81,7 +81,8 @@ class SetupDateTime
         if($alternate && $alternate_time) {
             $add_time = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['add'];
             $factor = Yii::$app->params["alternate_time"][Yii::$app->user->identity->selected_event_ID]['factor'];
-            $dateStr = (strtotime($dateStr) / $factor) + $add_time;
+
+            $dateStr = (strtotime($dateStr) * $factor) + $add_time;
             $time = self::convert($dateStr, $type);
         }
         \Yii::$app->formatter->timeZone =  \Yii::$app->getTimeZone();

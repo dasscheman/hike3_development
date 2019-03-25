@@ -4,8 +4,8 @@ function runTimer(end_date, id) {
     var countDownDate = end_date * 1000;
     var now = new Date().getTime();
     if (alternate_time == true) {
-        countDownDate = (countDownDate + add_time) * factor;
-        now = (now + add_time) * factor;
+        countDownDate = (countDownDate * factor) + add_time;
+        now = (now * factor) + add_time;
     }
     // Get todays date and time
     // Find the distance between now and the count down date

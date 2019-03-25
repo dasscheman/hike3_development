@@ -41,7 +41,7 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
                 <h1>
                     <?php
                     echo Countdown::widget([
-                        'id' => 'test',
+                        'id' => 'counter',
                         'datetime' => date('Y-m-d H:i:s O', $end_date),
                         'format' => '%H:%M:%S',
                         'events' => [
@@ -61,10 +61,14 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
 
 if ($model->getTimeTrailItem()->one()->getNextItem() != NULL) {
     $id = 'countdown-time-trail-' . $model->time_trail_check_ID;
+    $setTime = 1000;
+    if(isset(Yii::$app->params["alternate_time"][$model->event_ID]['factor']){
+        $setTime = $setTime * Yii::$app->params["alternate_time"][$model->event_ID]['factor']);
+    }
 
     $this->registerJs(
-        'setInterval(function() { runTimer(' . $end_date . ', "' . $id . '"); }, 800);',
+        'setInterval(function() { runTimer(' . $end_date . ', "' . $id . '"); }, ' . $setTime .');',
         View::POS_LOAD,
-        'test');
+        'counter');
 }
 ?>
