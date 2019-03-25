@@ -85,7 +85,7 @@ function Tracker() {
         console.log('getstatus');
         $.ajax({
             url: link,
-            type: 'POST',
+            type: 'GET',
             success: function(data) {
                 if (data === 'true') {
                     callbackStart();

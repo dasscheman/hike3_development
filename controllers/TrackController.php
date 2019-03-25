@@ -133,17 +133,17 @@ class TrackController extends Controller
     public function actionStatus()
     {
         if (!Yii::$app->user->identity->allow_track) {
-            return Json::encode(false);
+            return $this->asJson(['status' => 'false']);
         }
 
         if (Yii::$app->user->identity->getStatusForEvent() !== EventNames::STATUS_gestart) {
-            return Json::encode(false);
+            return $this->asJson(['status' => 'false']);
         }
         $track = new Track;
         if (!$track->checkInterval()) {
-            return Json::encode(false);
+            return $this->asJson(['status' => 'false']);
         }
-        return Json::encode(true);
+        return $this->asJson(['status' => 'true']);
     }
 
     public function actionSwitch()
