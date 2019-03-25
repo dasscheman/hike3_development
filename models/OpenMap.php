@@ -471,19 +471,25 @@ class OpenMap extends LeafLet
 
     public function setOrganisationMarkers()
     {
-        $models = Track::find()
+        $organisations = DeelnemersEvent::find()
             ->where([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID
+              'event_ID' => Yii::$app->user->identity->selected_event_ID
             ])
-            ->andWhere(['is', 'group_ID', new \yii\db\Expression('null')])
-            ->groupBy('user_ID')
-            ->orderBy(['timestamp' => SORT_DESC]);
+            ->all();
 
-        if (!$models->exists()) {
-            return;
-        }
+        foreach ($organisations as $organisation) {
+            $model = Track::find()
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                    'user_ID' => $organisation->user_ID
+                ])
+                ->orderBy(['timestamp' => SORT_DESC]);
 
-        foreach ($models->all() as $waypoint) {
+
+            if (!$model->exists()) {
+              return;
+            }
+            $waypoint = $model->one();
             $coord = $this->getCoordinates($waypoint);
 
             $content = $waypoint->getUserName() . ': ' . \Yii::$app->formatter->asDate($waypoint->timestamp, 'php:d-M H:i');
