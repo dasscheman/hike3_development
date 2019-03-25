@@ -486,7 +486,7 @@ class OpenMap extends LeafLet
         foreach ($models->all() as $waypoint) {
             $coord = $this->getCoordinates($waypoint);
 
-            $content = $waypoint->getUserName . ': ' . \Yii::$app->formatter->asDate($waypoint->timestamp, 'php:d-M H:i');
+            $content = $waypoint->getUserName() . ': ' . \Yii::$app->formatter->asDate($waypoint->timestamp, 'php:d-M H:i');
 
             $this->iconSettings['iconUrl'] = Url::to('@web/images/map_icons/comment-map-icon.png');
             $icon = new Icon(
