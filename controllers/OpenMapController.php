@@ -244,6 +244,8 @@ class OpenMapController extends Controller
         $map->setVragenMarkers($routeModel->route_ID, false);
         $map->setTimeTrailMarkers(false);
         $map->setEventTrack();
+        $map->setTrackGroups();
+        $map->setOrganisationMarkers();
         $map->setEventWayPoints();
         $map->setLocate();
 

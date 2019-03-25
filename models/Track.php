@@ -20,11 +20,11 @@ use Yii;
  * @property string $update_time
  * @property int $update_user_ID
  *
- * @property TblUsers $createUser
- * @property TblEventNames $event
- * @property TblGroups $group
- * @property TblUsers $updateUser
- * @property TblUsers $user
+ * @property Users $createUser
+ * @property EventNames $event
+ * @property Groups $group
+ * @property Users $updateUser
+ * @property Users $user
  */
 class Track extends HikeActiveRecord
 {

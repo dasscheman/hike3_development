@@ -469,6 +469,77 @@ class OpenMap extends LeafLet
         }
     }
 
+    public function setOrganisationMarkers()
+    {
+        $models = Track::find()
+            ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID
+            ])
+            ->andWhere(['is', 'group_ID', new \yii\db\Expression('null')])
+            ->groupBy('user_ID')
+            ->orderBy(['timestamp' => SORT_DESC]);
+
+        if (!$models->exists()) {
+            return;
+        }
+
+        foreach ($models->all() as $waypoint) {
+            $coord = $this->getCoordinates($waypoint);
+
+            $content = $waypoint->getUserName . ': ' . \Yii::$app->formatter->asDate($waypoint->timestamp, 'php:d-M H:i');
+
+            $this->iconSettings['iconUrl'] = Url::to('@web/images/map_icons/comment-map-icon.png');
+            $icon = new Icon(
+                $this->iconSettings
+            );
+            // Lets add a marker now
+            $marker = new Marker([
+                'latLng' => $coord,
+                'popupContent' => $content,
+                'clientOptions' => [
+                    'icon' => $icon,
+                ],
+            ]);
+
+            array_push($this->allCoordinates, $coord);
+            array_push($this->allCoordinatesArray, $coord->toArray());
+            $this->cluster->addMarker($marker);
+        }
+        $this->installPlugin($this->cluster);
+    }
+
+    public function setTrackGroups()
+    {
+        $content = '';
+        $generalfucntions = new GeneralFunctions;
+        $groups = Groups::find()
+            ->where([
+                'event_ID' => Yii::$app->user->identity->selected_event_ID
+            ])
+            ->all();
+
+        foreach($groups as $group) {
+            $coordinates = [];
+            $models = Track::find()
+                ->where([
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
+                    'group_ID' => $group->group_ID
+                ])
+                ->all();
+
+            foreach ($models as $model) {
+                array_push($coordinates, $this->getCoordinates($model));
+            }
+
+            $path = new PolyLine([
+                'popupContent' => $group->group_name,
+                'clientOptions' => ['color' => '#' . $generalfucntions->random_color()]
+            ]);
+            $path->setLatLngs($coordinates);
+            $this->addLayer($path);
+        }
+    }
+
     public function setLocate(){
         $options = [
             'position' => 'topleft',
