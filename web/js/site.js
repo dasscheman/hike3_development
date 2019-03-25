@@ -40,7 +40,7 @@ document.getElementById("map-click").addEventListener("click", setCookie);
 
 window.onload = function() {
     var tracker = new Tracker();
-    tracker.setSavingInterval(60000);
+    tracker.setSavingInterval(30000);
     tracker.setGPSConfiguration({
         enableHighAccuracy: true,
         timeout: 10000,

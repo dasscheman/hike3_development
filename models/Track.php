@@ -153,7 +153,7 @@ class Track extends HikeActiveRecord
 
         $time_diff = time() - $model->one()->timestamp;
 
-        if ($time_diff > 60 * 5) {
+        if ($time_diff > 30) {
             return true;
         }
         return false;

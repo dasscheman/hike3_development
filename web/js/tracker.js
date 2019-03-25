@@ -68,12 +68,10 @@ function Tracker() {
         this.onErrorCallBack = callback;
     };
     this.ProcessGpsData = function(callback) {
-        console.log('ProcessGpsData');
         return this.saveData(callback);
     };
     this.isOk = function() {
         var result = true;
-        console.log('isOkWs');
         if (this.webserviceUrl == null)
             result = false;
         if (!window.jQuery)
@@ -103,9 +101,7 @@ function Tracker() {
     };
 
     this.saveData = function(pos) {
-        console.log('saveData');
         var temp = new Array();
-
         temp = {
             accuracy: pos.coords.accuracy,
             latitude: pos.coords.latitude,
@@ -113,16 +109,12 @@ function Tracker() {
             timestamp: pos.timestamp / 1000 | 0
         };
         this.data.push(temp);
-        console.log(this.data);
         return true;
     };
     this.sendData = function(stopTracking) { // TODO must be sincronico , validar response
         console.log('sendData');
         if (this.isOk()) {
-            console.log(this.data.length);
             if (this.data.length >= 1) {
-                console.log('data before send');
-                console.log(this.getData());
                 $.ajax({
                     type: "POST",
                     url: this.getWebserviceUrl(),
@@ -132,7 +124,6 @@ function Tracker() {
                     },
                     success: function(data) {
                         if (data === 'false') {
-                            console.log('stopTracking');
                             stopTracking();
                         }
                     },
@@ -152,7 +143,6 @@ function Tracker() {
     };
 
     this.resetData = function() {
-        console.log('resetData');
         this.data = [];
     };
     this.setSavingInterval = function(value) {
@@ -164,21 +154,22 @@ function Tracker() {
     this.loadedJquery = function(value) {
         this.loadedJQ = value;
     };
-    this.injectJquery = function(callback) {
-        console.log('injectJquery');
-        if (this.loadedJQ == false && !window.jQuery) {
-            console.log('!window.jQuery');
-            var script = document.createElement('script');
-            script.type = "text/javascript";
-            script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js";
-            script.onload = this.loadedJquery(true);
-            document.getElementsByTagName('head')[0].appendChild(script);
-        }
-    };
+    // this.injectJquery = function(callback) {
+    //     console.log('injectJquery');
+    //     if (this.loadedJQ == false && !window.jQuery) {
+    //         console.log('!window.jQuery');
+    //         var script = document.createElement('script');
+    //         script.type = "text/javascript";
+    //         script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js";
+    //         script.onload = this.loadedJquery(true);
+    //         document.getElementsByTagName('head')[0].appendChild(script);
+    //     }
+    // };
+
     this.run = function() {
         var self = this;
         console.log('run');
-        this.injectJquery();
+        // this.injectJquery();
         //set interval loopt niet vanaf de start, daarom eerst een keer sowieso runnen.
         this.getStatus(function() {self.startTracking();}, function() {self.stopTracking();});
         self.sendData(function() {self.stopTracking(); });
