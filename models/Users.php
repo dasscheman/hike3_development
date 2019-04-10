@@ -89,7 +89,7 @@ class Users extends BaseUser
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios[self::SCENARIO_REGISTER] = ['password_repeat','password'];
+        $scenarios[self::SCENARIO_REGISTER] = ['password_repeat','password', 'username', 'email'];
         return $scenarios;
     }
 
@@ -121,7 +121,7 @@ class Users extends BaseUser
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => '\app\models\Users', 'message' => Yii::t('app', 'This email address has already been taken.')],
-            [['password_repeat','password', 'email'], 'required', 'on' => self::SCENARIO_REGISTER],
+            [['username','password', 'email'], 'required', 'on' => self::SCENARIO_REGISTER],
             ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match", 'on' => self::SCENARIO_REGISTER],
         ];
     }
@@ -176,6 +176,22 @@ class Users extends BaseUser
                 },
             ],
         ];
+    }
+
+    /**
+     * Role wordt gezet voor user on create.
+     */
+    public function afterSave( $insert, $changedAttributes )
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if($insert) {
+            Yii::$app->db->createCommand()->insert('auth_assignment',
+            [
+                'user_id' =>  $this->id,
+                'item_name' => 'gebruiker'
+            ])->execute();
+        }
+        return true;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Route;
 use app\models\OpenVragen;
+use app\models\Posten;
 use app\models\Qr;
 use app\models\NoodEnvelop;
 use app\models\TimeTrailItem;
@@ -74,6 +75,15 @@ and increase each route item with 1 and add N before the number.s')],
                                 'route_volgorde' => SORT_ASC,
                             ]),
                     ],
+                    'Posten' => [
+                        'class' => 'codemix\excelexport\ActiveExcelSheet',
+                        'query' => Posten::find()
+                            ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
+                            ->orderBy([
+                                'date'=>SORT_ASC,
+                                'post_volgorde' => SORT_DESC
+                            ]),
+                    ],
                     'Questions' => [
                         'class' => 'codemix\excelexport\ActiveExcelSheet',
                         'query' => OpenVragen::find()
@@ -126,17 +136,13 @@ and increase each route item with 1 and add N before the number.s')],
 
         if ($model->load(Yii::$app->request->post())) {
             $model->importFile = UploadedFile::getInstance($model, 'importFile');
-
-// dd($model); //->checkExtensionByMimeType);
             if ($model->upload()) {
                 // file is uploaded successfully
                 $model->importExcel();
                 return;
             }
         }
-        // d($model);
 
-        dd($model->errors);
         return $this->redirect(['site/overview-organisation']);
     }
 

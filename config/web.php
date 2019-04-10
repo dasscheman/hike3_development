@@ -29,18 +29,10 @@ $config = [
         'user' => [
             'class' => 'dektrium\user\Module',
             'modelMap' => [
-                'User' => 'app\models\Users',
-                'LoginForm' => 'app\models\LoginForm',
-            ],
-            'controllerMap' => [
-                'admin' => 'app\controllers\user\AdminController',
-                'registration' => 'app\controllers\user\RegistrationController',
-                'recovery' => 'app\controllers\user\RecoveryController',
-                'security' => 'app\controllers\user\SecurityController',
+                'User' => 'app\models\Users'
             ],
             'mailer' => [
                 'sender' => ['noreply@hike-app.nl' => 'hike-app.nl'],
-                'viewPath' => '@app/mail/user',
             ],
             'admins' => ['dasman'],
             'debug' => YII_ENV == 'dev' || YII_ENV == 'test' ? false : false,
@@ -82,13 +74,6 @@ $config = [
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
-        ],
-        'view' => [
-            'theme' => [
-                'pathMap' => [
-                    '@dektrium/user/views' => '@app/views/users'
-                ],
-            ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

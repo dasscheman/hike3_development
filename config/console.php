@@ -54,16 +54,9 @@ $config = [
             'class' => 'dektrium\user\Module',
             'modelMap' => [
                 'User' => 'app\models\Users',
-                'LoginForm' => 'app\models\LoginForm',
-            ],
-            'controllerMap' => [
-                'admin' => 'app\controllers\user\AdminController',
-                'registration' => 'app\controllers\user\RegistrationController',
-                'recovery' => 'app\controllers\user\RecoveryController',
-                'security' => 'app\controllers\user\SecurityController',
             ],
             'mailer' => [
-                'viewPath' => '@app/mail/user',
+                'sender' => ['noreply@hike-app.nl' => 'hike-app.nl'],
             ],
             'admins' => ['dasman']
         ],
