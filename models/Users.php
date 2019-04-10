@@ -677,7 +677,18 @@ class Users extends BaseUser
 
     public function getFullName()
     {
-        return $this->voornaam.' '.$this->achternaam;
+        if(!empty($this->voornaam) && !empty($this->achternaam)) {
+            return $this->voornaam.' '.$this->achternaam;
+        }
+
+        if(!empty($this->voornaam)) {
+            return $this->voornaam;
+        }
+
+        if(!empty($this->achternaam)) {
+            return $this->achternaam;
+        }
+        return $this->username;
     }
 
     /**
