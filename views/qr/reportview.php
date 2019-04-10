@@ -39,7 +39,7 @@
 		<h1> <?php echo $event_name; ?> </h1>
 		<h2> Datum <?php echo $start_date; ?> tot <?php echo $end_date?> </h2>
 
-		<b>Score:</b><?php echo $score; ?><br>
+		<!-- <b>Score:</b><?php //echo $score; ?><br> -->
 		<b>QR code naam:</b> <?php echo $qr_name ?><br>
 		<b>Organisatie:</b><?php echo $organisatie ?><br>
 

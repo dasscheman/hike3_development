@@ -70,7 +70,7 @@ AppAsset::register($this);
                             ],
                             [
                                 'label' => Yii::t('app', 'Maak Account'),
-                                'url' => ['/users/create', 'language' => 'nl'],
+                                'url' => ['/user/registration/register', 'language' => 'nl'],
                                 'visible' => Yii::$app->user->isGuest,
                             ],
                             [
@@ -79,7 +79,7 @@ AppAsset::register($this);
                                 'visible' => Yii::$app->user->isGuest,
                             ],
                             [
-                                'label' => isset(Yii::$app->user->identity->voornaam) ? Yii::t('app', 'Uitloggen') . ' ' . Yii::$app->user->identity->voornaam : '',
+                                'label' => Yii::t('app', 'Uitloggen'),
                                 'url' => ['/user/security/logout'],
                                 'linkOptions' => ['data-method' => 'post'],
                                 'visible' => !Yii::$app->user->isGuest,
