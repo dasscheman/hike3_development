@@ -63,7 +63,7 @@ if ($model->getTimeTrailItem()->one()->getNextItem() != NULL) {
     $id = 'countdown-time-trail-' . $model->time_trail_check_ID;
     $setTime = 1000;
     if(isset(Yii::$app->params["alternate_time"][$model->event_ID]['factor'])) {
-        $setTime = $setTime * Yii::$app->params["alternate_time"][$model->event_ID]['factor']);
+        $setTime = $setTime / Yii::$app->params["alternate_time"][$model->event_ID]['factor'];
     }
 
     $this->registerJs(
