@@ -36,9 +36,9 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
             if ($model->getTimeTrailItem()->one()->getNextItem() == NULL) {
                 echo Html::encode(Yii::t('app', 'The time trail is finished.'));
             } elseif ($end_date > time()) {
-                if(!isset(Yii::$app->params["alternate_time"][$model->event_ID])) { ?>
+                // if(!isset(Yii::$app->params["alternate_time"][$model->event_ID])) { ?>
                     <h1 id="countdown-time-trail-<?php echo $model->time_trail_check_ID ?>"></h1>
-                <?php } else { ?>
+                <!-- <?php //} else { ?> -->
                     <h1>
                         <?php
                         echo Countdown::widget([
@@ -52,7 +52,7 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
                         ]);
                         ?>
                     </h1> <?php
-                }
+                // }
             } else {
                 echo Html::encode(Yii::t('app', 'Je bent te laat. Maar je moet nog steeds de QR scannen voor intructies naar het volgende item.'));
             }
