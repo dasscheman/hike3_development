@@ -32,6 +32,7 @@ function runTimer(end_date, id) {
     // If the count down is finished, write some text
     if (distance < 0) {
         clearInterval(runTimer);
-        document.getElementById(id).innerHTML = "EXPIRED";
+        location.reload()
+        // document.getElementById(id).innerHTML = "EXPIRED";
     }
 };

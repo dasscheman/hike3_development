@@ -21,11 +21,11 @@ $this->registerJsFile('@web/js/countdown.js', [yii\web\JqueryAsset::className()]
 /* @var $this yii\web\View */
 /* @var $model app\models\TimeTrail */
 
-$this->title = Yii::t('app', 'Time Trails');
+$this->title = Yii::t('app', 'Tijdritten');
 $dataProvider = new ArrayDataProvider([
     'allModels' => $models,
 ]);
-// dd(Yii::$app->user->identity->   selected_event_ID);
+
 ?>
 <div class="tbl-time-trail-view-list">
     <div class="container text-center">
