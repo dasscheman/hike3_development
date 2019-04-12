@@ -71,7 +71,7 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde posten');
         [
             'attribute' => 'time_walking',
             'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->displayFormat($model->time_walking, 'time', TRUE);
+                return Yii::$app->setupdatetime->displayFormat($model->time_walking, 'time', true, true);
             },
             'visible'=> TRUE,
             'filter' => FALSE,
@@ -80,9 +80,9 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde posten');
         [
             'attribute' => 'time_left',
             'value'=> function ($model, $key, $index, $column) {
-                return Yii::$app->setupdatetime->displayFormat($model->time_left, 'time', TRUE);
+                return Yii::$app->setupdatetime->displayFormat($model->time_left, 'time', true, true);
             },
-            'visible'=> TRUE,
+            'visible'=> isset($model->event->max_time)?true:false,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
         ],
@@ -141,7 +141,7 @@ $this->title = Yii::t('app', 'Overzicht van gepasserde posten');
             'heading' => $heading,
             'footer' => $footer
         ],
-        'persistResize' => false,   
+        'persistResize' => false,
         'exportConfig' => $exportConfig,
     ]); ?>
 

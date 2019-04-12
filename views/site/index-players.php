@@ -50,13 +50,17 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <b>
                     <?php echo Html::encode($groupModel->getAttributeLabel('time_walking')); ?>:
                     </b>
-                    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_walking, 'time', TRUE)); ?></br>
-                    <b>
-                    <?php echo Html::encode($groupModel->getAttributeLabel('time_left')); ?>:
-                    </b>
-                    <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_left, 'time', TRUE)); ?></br>
+                    <?php
+                    echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_walking, 'time', true, true)); ?> </br>
                     <b>
                     <?php
+                    if(isset($groupModel->event->max_time)) {
+                        echo Html::encode($groupModel->getAttributeLabel('time_left')); ?>:
+                        </b>
+                        <?php echo Html::encode(Yii::$app->setupdatetime->displayFormat($groupModel->time_left, 'time', TRUE)); ?></br>
+                        <b>
+                    <?php
+                    }
                     if($groupModel->qr_score > 0) {
                         echo Html::encode($groupModel->getAttributeLabel('qr_score')); ?>:
                         </b>

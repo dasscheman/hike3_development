@@ -18,10 +18,6 @@ use yii\helpers\Html;
 
             <?php
                 echo Yii::$app->setupdatetime->displayFormat($model['timestamp'], 'datetime', false, true);
-                if(Yii::$app->setupdatetime->displayRealTime($model['timestamp'], 'datetime')){
-                    echo  Html::tag('br');
-                    echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model['timestamp'], 'datetime')), ['class'=>'btn-xs']);
-                }
             ?>
         </div>
     </div>

@@ -187,11 +187,19 @@ class HikeActivityFeed extends Model
                 return Groups::findOne($post['group_ID']);
             });
 
+            if(isset($post['vertrek'])) {
+                $timestamp = $post['vertrek'];
+                $title = Yii::t('app', 'Vertrokken vanaf post');
+            } else {
+                $timestamp = $post['binnenkomst'];
+                $title = Yii::t('app', 'Ingecheckt op post');
+            }
+
             $data[] = [
                 'id' => $post['posten_passage_ID'],
                 'source' => 'postenpassage',
-                'timestamp' => $post['create_time'],
-                'title' => Yii::t('app', 'Ingecheckt op post'),
+                'timestamp' => $timestamp,
+                'title' => $title,
                 'description' => $postData->post_name,
                 'score' => $postData->score,
                 'username' => $user->voornaam . ' ' . $user->achternaam,
