@@ -49,10 +49,12 @@ use app\models\Groups;
         $action === 'update') {
         echo  $form->field($model, 'vertrek')->widget(
             DateTimePicker::classname(), [
-            	'options' => ['readonly' => TRUE, 'placeholder' => Yii::t('app', 'Enter leave time')],
-                'type' => DateTimePicker::TYPE_INPUT,
+            	'options' => [
+                  'type' => DateTimePicker::TYPE_INPUT,
+                  'readonly' => TRUE,
+                  'placeholder' => Yii::t('app', 'Enter leave time')],
             	'pluginOptions' => [
-            		'autoclose' => true
+            		  'autoclose' => true
             	]
         ]);
     }

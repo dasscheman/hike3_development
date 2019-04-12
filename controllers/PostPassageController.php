@@ -42,6 +42,11 @@ class PostPassageController extends Controller {
                           }
                     ],
                     [
+                        'allow' => true,
+                        'actions' => ['update'],
+                        'roles' => ['organisatieGestart'],
+                    ],
+                    [
                         'allow' => FALSE, // deny all users
                         'roles' => ['*'],
                     ],
