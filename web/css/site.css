@@ -284,3 +284,15 @@ div.required label.control-label:after {
     content: " *";
     color: red;
 }
+
+.max-titel-route-items-height {
+    height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.max-route-items-height {
+    height: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -19,11 +19,11 @@ use yii\data\ArrayDataProvider;
 
     <?php
 
-        // EXAMPLE
+        $pages = new yii\data\Pagination(['pageSize' => 100]);
         $dataProvider = new yii\data\ArrayDataProvider([
             'allModels' => $model->qrs,
+            'pagination' => $pages,
         ]);
-
         echo ListView::widget([
             'summary' => FALSE,
             'pager' => FALSE,

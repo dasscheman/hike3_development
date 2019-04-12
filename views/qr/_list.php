@@ -22,8 +22,10 @@ use app\models\Qr;
                     'useSessionFlash' => true,
                     'delay' => 4000,
                 ]); ?>
-                <h3>
-                    <?php echo Html::encode($model->qr_name); ?> </br>
+                <h3 class="max-titel-route-items-height">
+                    <b>
+                      <?php echo Html::encode($model->qr_name); ?>
+                    </b>
                 </h3>
                 <?php
                  echo ButtonAjax::widget([
@@ -63,6 +65,17 @@ use app\models\Qr;
                         'class'=>'btn btn-primary btn-xs',
                         'disabled' => !Qr::higherOrderNumberExists($model->qr_ID),
                     ]
+                );
+                ?> <br> <?php
+
+                echo Html::a(
+                    Yii::t('app', 'Create pdf file'),
+                    ['/qr/print-pdf', 'qr_ID' => $model->qr_ID],
+                    [
+                        'class' => 'btn btn-xs btn-primary',
+                        'target'=>'_blank',
+                        'data-pjax' => "0"
+                    ]
                 ); ?>
             </p>
             <b>
@@ -77,17 +90,13 @@ use app\models\Qr;
             <?php echo Html::encode($model->getAttributeLabel('score')); ?>
             </b>
             <?php echo Html::encode($model->score); ?></br>
-            <?php Pjax::end();
-
-            echo Html::a(
-                Yii::t('app', 'Create pdf file'),
-                ['/qr/print-pdf', 'qr_ID' => $model->qr_ID],
-                [
-                    'class' => 'btn btn-xs btn-primary',
-                    'target'=>'_blank',
-                    'data-pjax' => "0"
-                ]
-            ); ?></br>
+            <b>
+            <?php echo Html::encode($model->getAttributeLabel('message')); ?>
+            </b>
+            <p class="max-route-items-height">
+                <?php echo Html::encode($model->message); ?></br>
+            </p>
+            <?php Pjax::end();?>
 
 
         </div>
