@@ -46,7 +46,6 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
                             'datetime' => date('Y-m-d H:i:s O', $end_date),
                             'format' => '%H:%M:%S',
                             'events' => [
-                                // 'update' => 'function(){console.log(jQuery("#test").countdown);}',
                                 'finish' => 'function(){location.reload()}',
                             ],
                         ]);
@@ -69,7 +68,7 @@ if ($model->getTimeTrailItem()->one()->getNextItem() != NULL) {
         $this->registerJs(
             'setInterval(function() { runTimer(' . $end_date . ', "' . $id . '"); }, ' . $setTime .');',
             View::POS_LOAD,
-            'counter');
+            $id);
     }
 
 }
