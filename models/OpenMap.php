@@ -249,11 +249,13 @@ class OpenMap extends LeafLet
                 }
                 $count = 0;
                 foreach ($hints->all() as $hint) {
-                    if ($count === 0) {
-                        $content = 'Hints ' . $hint->getNoodEnvelop()->one()->nood_envelop_name . '<br>';
-                    }
+                    $content = 'Hints ' . $hint->getNoodEnvelop()->one()->nood_envelop_name . '<br>';
                     $binnenkomst = \Yii::$app->formatter->asDate($hint->create_time, 'php:d-M H:i');
-                    $content .= $hint->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
+                    if ($group) {
+                        $content .= '<i>' . $post->opmerkingen .'</i></br>';
+                    } else {
+                        $content .= $hint->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
+                    }
                     $count++;
                 }
             }
