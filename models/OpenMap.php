@@ -389,6 +389,11 @@ class OpenMap extends LeafLet
                     $checks = $item->getTimeTrailChecks()->orderBy(['create_time' => SORT_DESC]);
                     if ($group) {
                         $checks->andWhere(['group_ID' => $group]);
+                        if(!$checks->exists()) {
+                            // als voor een group de check niet bestaat dan naar
+                            // het volgend item.
+                            continue;
+                        }
                     }
                     $countgroups = 0;
                     foreach ($checks->all() as $check) {
@@ -487,7 +492,7 @@ class OpenMap extends LeafLet
 
 
             if (!$model->exists()) {
-              return;
+                return;
             }
             $waypoint = $model->one();
             $coord = $this->getCoordinates($waypoint);

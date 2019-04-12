@@ -181,20 +181,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     <?php } ?>
                 </div>
             <?php
-            }
-            if(Yii::$app->devicedetect->isMobile() && $timeTrailCheckDataLastItem->totalCount > 0) {?>
-                <div class="col-sm-3 well">
-                    <?php
-                        echo ListView::widget([
-                                'summary' => FALSE,
-                            'pager' => FALSE,
-                            'dataProvider' => $timeTrailCheckDataLastItem,
-                            'itemView' => '/time-trail/_list',
-                            'emptyText' => FALSE,
-                        ]);
-                    ?>
-                </div>
-            <?php } ?>
+            } ?>
         </div>
     </div>
 </div>
