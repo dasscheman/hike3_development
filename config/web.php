@@ -107,6 +107,11 @@ $config = [
         'devicedetect' => [
       		  'class' => 'alexandernst\devicedetect\DeviceDetect'
       	],
+        'user' => [
+            'identityClass' => 'app\models\Users',
+            'enableAutoLogin' => true,
+            'authTimeout' => 86400,
+         ]
     ],
     'params' => $params,
 ];
