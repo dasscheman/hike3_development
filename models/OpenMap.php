@@ -104,8 +104,11 @@ class OpenMap extends LeafLet
         }
 
         foreach ($model->all() as $post) {
+            $content = 'Post Passages ' . $post->post_name . '<br>';
+            if (!$model->exists()) {
+                $content .= Yii::t('app', 'No groups have past this station');
+            }
             $coord = $this->getCoordinates($post);
-            $content = Yii::t('app', 'No groups have past this station');
 
             if ($edit) {
                 $content = '<a href="' . Url::to(['posten/map-update', 'post_ID' => $post->post_ID], true) . '" target="_blank">' . $post->post_name . '</a>';
@@ -114,9 +117,6 @@ class OpenMap extends LeafLet
 
                 $count = 0;
                 foreach ($passages->all() as $passage) {
-                    if ($count === 0) {
-                        $content = 'Post Passages ' . $passage->getPost()->one()->post_name . '<br>';
-                    }
                     $binnenkomst = \Yii::$app->formatter->asDate($passage->binnenkomst, 'php:d-M H:i');
                     $vertrek = \Yii::$app->formatter->asDate($passage->vertrek, 'php:d-M H:i');
                     $content .= $passage->getGroupName() . ' <i>' . $binnenkomst . ' - ' . $vertrek . '</i></br>';
@@ -169,8 +169,11 @@ class OpenMap extends LeafLet
         }
 
         foreach ($model->all() as $post) {
+            $content = 'Stille post: ' . $post->qr_name . '<br>';
+            if (!$model->exists()) {
+                $content .= Yii::t('app', 'No groups have checked this silent station');
+            }
             $coord = $this->getCoordinates($post);
-            $content = Yii::t('app', 'No groups have checked this silent station');
             if ($edit) {
                 $content = '<a href="' . Url::to(['qr/map-update', 'qr_ID' => $post->qr_ID], true) . '" target="_blank">' . $post->qr_name . '</a>';
             } else {
@@ -181,9 +184,6 @@ class OpenMap extends LeafLet
                 }
                 $count = 0;
                 foreach ($checks->all() as $check) {
-                    if ($count === 0) {
-                        $content = 'Silent station ' . $check->getQr()->one()->qr_name . '<br>';
-                    }
                     $binnenkomst = \Yii::$app->formatter->asDate($check->create_time, 'php:d-M H:i');
                     $content .= $check->getGroupName() . ' <i>' . $binnenkomst .'</i></br>';
                     $count++;
@@ -239,7 +239,8 @@ class OpenMap extends LeafLet
         foreach ($model->all() as $post) {
             $coord = $this->getCoordinates($post);
 
-            $content = Yii::t('app', 'No group have opened this hint');
+            $content = 'Hints ' . $post->nood_envelop_name . '<br>';
+            $content .= Yii::t('app', 'No group have opened this hint');
             if ($edit) {
                 $content = '<a href="' . Url::to(['nood-envelop/map-update', 'nood_envelop_ID' => $post->nood_envelop_ID], true) . '" target="_blank">' . $post->nood_envelop_name . '</a>';
             } else {
@@ -249,7 +250,6 @@ class OpenMap extends LeafLet
                 }
                 $count = 0;
                 foreach ($hints->all() as $hint) {
-                    $content = 'Hints ' . $hint->getNoodEnvelop()->one()->nood_envelop_name . '<br>';
                     $binnenkomst = \Yii::$app->formatter->asDate($hint->create_time, 'php:d-M H:i');
                     if ($group) {
                         $content .= '<i>' . $post->opmerkingen .'</i></br>';
@@ -384,7 +384,8 @@ class OpenMap extends LeafLet
             $count_items = 1;
             foreach ($items->all() as $item) {
                 $coord = $this->getCoordinates($item);
-                $content = Yii::t('app', 'No group have checked this time trail item');
+                $content = 'Time trail ' . $item->getTimeTrail()->one()->time_trail_name . '<br>'
+                  . $item->time_trail_item_name . '<br>';
                 if ($edit) {
                     $content = '<a href="' . Url::to(['time-trail-item/map-update', 'time_trail_item_ID' => $item->time_trail_item_ID], true) . '" target="_blank">' . $item->time_trail_item_name . '</a>';
                 } else {
@@ -397,11 +398,11 @@ class OpenMap extends LeafLet
                             continue;
                         }
                     }
-                    $countgroups = 0;
+
+                    if (!$checks->exists()) {
+                        $content .= Yii::t('app', 'No group have checked this time trail item');
+                    }
                     foreach ($checks->all() as $check) {
-                        if ($countgroups === 0) {
-                            $content = 'Time trail ' . $check->getTimeTrailItem()->one()->getTimeTrail()->one()->time_trail_name . ' ' . $check->getTimeTrailItem()->one()->time_trail_item_name . '<br>';
-                        }
                         $start = Yii::$app->setupdatetime->displayFormat($check->start_time, 'datetime_no_sec', false, true);
                         $eind = Yii::$app->setupdatetime->displayFormat($check->end_time, 'datetime_no_sec', false, true);
                         if (isset($check->end_time)) {
@@ -410,7 +411,6 @@ class OpenMap extends LeafLet
                             $icon2 = '<span class="glyphicon glyphicon-question-sign"></span> ';
                         }
                         $content .= $icon2 . ' ' . $check->getGroupName() . ' <i>' . $start . ' - ' . $eind . '</i></br>';
-                        $countgroups++;
                     }
                 }
 
