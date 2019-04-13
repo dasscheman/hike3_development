@@ -39,7 +39,7 @@ $this->registerJsFile('@web/js/countdown.js', [yii\web\JqueryAsset::className()]
                 ],
             ],
             'dataProvider' => $model,
-            'itemView' => '/time-trail/_list',
+            'itemView' => '/time-trail/_list-dashboard',
             'emptyText' => 'Er is nog geen time trail gestart.',
         ]);
     ?>

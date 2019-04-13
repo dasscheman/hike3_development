@@ -27,12 +27,12 @@ use yii\widgets\ActiveForm;
             )
         ]);
     echo $form->field($model, 'show_coordinates')->checkbox();
-
     echo $form->field($model, 'opmerkingen')->textArea([
             'maxlength' => true,
             'placeholder' => Yii::t(
                 'app',
-                'Hint om de spelers te helpen. Alleen zichtbaar wanneer een groep de hint heeft geopend.'
+                'Hint om de spelers te helpen. Alleen zichtbaar wanneer een groep'
+                .'de hint heeft geopend. Gebruik https:// voor een link.'
             )
         ]);
     echo $form->field($model, 'score')->textInput([

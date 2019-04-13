@@ -30,7 +30,9 @@ use yii\widgets\ActiveForm;
             'maxlength' => true,
             'placeholder' => Yii::t(
                 'app',
-                'Je kunt hier een bericht zetten die de deelnemers te zien krijgen als ze de code scannen. Veld mag ook leeg blijven.'
+                'Je kunt hier een bericht zetten die de deelnemers te zien'
+                . ' krijgen als ze de code scannen. Veld mag ook leeg blijven.'
+                . ' Gebruik https:// voor een link.'
             )
         ]);
     echo $form->field($model, 'score')->textInput([

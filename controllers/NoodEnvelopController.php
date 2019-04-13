@@ -84,7 +84,6 @@ class NoodEnvelopController extends Controller
     {
         $model = new NoodEnvelop();
 
-        d(Yii::$app->request->post());
         if (Yii::$app->request->post('NoodEnvelop') &&
             $model->load(Yii::$app->request->post())) {
             $model->setNewOrderForNoodEnvelop();
@@ -217,12 +216,15 @@ class NoodEnvelopController extends Controller
         $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
         $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
         $searchModel = new RouteSearch();
-
+        
         if (Yii::$app->request->isAjax) {
-            return $this->renderAjax('/route/index', [
+            $searchModel = new NoodEnvelopSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+            return $this->renderAjax('/nood-envelop/index', [
                     'searchModel' => $searchModel,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate]);
+                    'dataProvider' => $dataProvider,
+            ]);
         }
 
         return $this->render('/route/index', [

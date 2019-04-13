@@ -63,9 +63,7 @@ class RouteController extends Controller
         $event_Id = Yii::$app->user->identity->selected_event_ID;
         $startDate = EventNames::getStartDate($event_Id);
         $endDate = EventNames::getEndDate($event_Id);
-
         $searchModel = new RouteSearch();
-
         $this::setRouteIndexMessage($event_Id);
 
         return $this->render('index', [
@@ -80,49 +78,49 @@ class RouteController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
-        $route_id = $_GET['route_id'];
-        $event_id = $_GET['event_id'];
-
-        $where = "event_ID = $event_id AND route_ID =$route_id";
-
-        $vragenDataProvider = new CActiveDataProvider('OpenVragen', array(
-            'criteria' => array(
-                'condition' => $where,
-                'order' => 'vraag_volgorde ASC',
-            ),
-            'pagination' => array(
-                'pageSize' => 50,
-            ),
-        ));
-
-        $envelopDataProvider = new CActiveDataProvider('NoodEnvelop', array(
-            'criteria' => array(
-                'condition' => $where,
-                'order' => 'nood_envelop_volgorde ASC',
-            ),
-            'pagination' => array(
-                'pageSize' => 50,
-            ),
-        ));
-
-        $qrDataProvider = new CActiveDataProvider('Qr', array(
-            'criteria' => array(
-                'condition' => $where,
-                'order' => 'qr_volgorde ASC',
-            ),
-            'pagination' => array(
-                'pageSize' => 15,
-            ),
-        ));
-        return $this->render('view', [
-                'model' => $this->findModel($id),
-                'vragenDataProvider' => $vragenDataProvider,
-                'envelopDataProvider' => $envelopDataProvider,
-                'qrDataProvider' => $qrDataProvider,
-        ]);
-    }
+    // public function actionView($id)
+    // {
+    //     $route_id = $_GET['route_id'];
+    //     $event_id = $_GET['event_id'];
+    //
+    //     $where = "event_ID = $event_id AND route_ID =$route_id";
+    //
+    //     $vragenDataProvider = new CActiveDataProvider('OpenVragen', array(
+    //         'criteria' => array(
+    //             'condition' => $where,
+    //             'order' => 'vraag_volgorde ASC',
+    //         ),
+    //         'pagination' => array(
+    //             'pageSize' => 50,
+    //         ),
+    //     ));
+    //
+    //     $envelopDataProvider = new CActiveDataProvider('NoodEnvelop', array(
+    //         'criteria' => array(
+    //             'condition' => $where,
+    //             'order' => 'nood_envelop_volgorde ASC',
+    //         ),
+    //         'pagination' => array(
+    //             'pageSize' => 50,
+    //         ),
+    //     ));
+    //
+    //     $qrDataProvider = new CActiveDataProvider('Qr', array(
+    //         'criteria' => array(
+    //             'condition' => $where,
+    //             'order' => 'qr_volgorde ASC',
+    //         ),
+    //         'pagination' => array(
+    //             'pageSize' => 15,
+    //         ),
+    //     ));
+    //     return $this->render('view', [
+    //             'model' => $this->findModel($id),
+    //             'vragenDataProvider' => $vragenDataProvider,
+    //             'envelopDataProvider' => $envelopDataProvider,
+    //             'qrDataProvider' => $qrDataProvider,
+    //     ]);
+    // }
 
     /**
      * Creates a new Route model.

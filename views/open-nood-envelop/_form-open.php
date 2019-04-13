@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TblOpenNoodEnvelop */
+/* @var $model app\models\OpenNoodEnvelop */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

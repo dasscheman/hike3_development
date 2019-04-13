@@ -49,7 +49,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
             ->one();
         $group_id = $groupModel->group_ID;
-  
+
         $event = EventNames::find()
             ->where('event_ID =:event_id')
             ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
@@ -64,7 +64,7 @@ class NoodEnvelopSearch extends NoodEnvelop
                 ':group_id' => $group_id,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ]);
-        
+
 
         // Find all hinits NOT opened by found group id.
         $query = NoodEnvelop::find()
@@ -72,13 +72,13 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID
             ]);
-        
+
         $query->joinWith(['route', 'openNoodEnvelops'])
             ->where(
                 'tbl_nood_envelop.event_ID = :event_id',
                 [':event_id'=>Yii::$app->user->identity->selected_event_ID]
             )
-            ->orderBy('route_volgorde');
+            ->orderBy(['route_volgorde' => SORT_ASC, 'nood_envelop_volgorde' => SORT_ASC]);
 
         if($event->active_day == NULL ||
            $event->active_day == '0000-00-00') {
@@ -99,7 +99,7 @@ class NoodEnvelopSearch extends NoodEnvelop
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 10,
+                'pageSize' => 20,
             ],
         ]);
 

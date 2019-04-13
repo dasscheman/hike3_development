@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\models\DeelnemersEvent;
+use app\models\NoodEnvelop;
 use prawee\widgets\ButtonAjax;
 use yii\bootstrap\Modal;
 
@@ -43,7 +44,7 @@ $this->title = Yii::t('app', 'Hints zoeken');
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Actions',
-            'template' => '{open}',
+            'template' => '{open} {up} {down}',
             'buttons' => [
                 'open' => function ($url, $model) {
                     return ButtonAjax::widget([
@@ -62,7 +63,52 @@ $this->title = Yii::t('app', 'Hints zoeken');
                             ]
                     ]);
                 },
+                'up' => function ($url, $model) {
+                    return Html::a(
+                            '<span class="glyphicon glyphicon-chevron-up"></span>',
+                        [
+                            '/nood-envelop/move-up-down',
+                            'nood_envelop_id' => $model->nood_envelop_ID,
+                            'up_down' => 'up',
+                            ],
+                        [
+                            'title' => Yii::t('app', 'Move up'),
+                            'class' => 'btn btn-primary btn-xs',
+                            ]
+                    );
+                },
+
+                'down' => function ($url, $model) {
+                    return Html::a(
+                            '<span class="glyphicon glyphicon-chevron-down"></span>',
+                        [
+                            '/nood-envelop/move-up-down',
+                            'nood_envelop_id' => $model->nood_envelop_ID,
+                            'up_down' => 'down',
+                            ],
+                        [
+                            'title' => Yii::t('app', 'Mode down'),
+                            'class' => 'btn btn-primary btn-xs',
+                            ]
+                    );
+                },
             ],
+            'visibleButtons' => [
+              'up' => function ($model, $key, $index) {
+                if (Yii::$app->user->can('organisatie') &&
+                    NoodEnvelop::lowererOrderNumberExists($model->nood_envelop_ID)) {
+                    return true;
+                }
+                return false;
+              },
+              'down' => function ($model, $key, $index) {
+                if (Yii::$app->user->can('organisatie') &&
+                NoodEnvelop::higherOrderNumberExists($model->nood_envelop_ID)) {
+                  return true;
+                }
+                return false;
+              }
+            ]
         ],
     ];
 
