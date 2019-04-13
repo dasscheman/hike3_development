@@ -32,6 +32,9 @@ $this->title = Yii::t('app', 'Hints zoeken');
     Modal::end();
     $gridColumns = [
         [
+            'attribute' => 'nood_envelop_ID',
+        ],
+        [
             'attribute' => 'nood_envelop_name',
         ],
         [
