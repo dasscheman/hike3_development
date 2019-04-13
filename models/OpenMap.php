@@ -409,6 +409,7 @@ class OpenMap extends LeafLet
                             $icon2 = GeneralFunctions::printGlyphiconCheck($check->succeded);
                         } else {
                             $icon2 = '<span class="glyphicon glyphicon-question-sign"></span> ';
+                            $eind = Yii::t('app', 'volgende punt nog niet gescand');
                         }
                         $content .= $icon2 . ' ' . $check->getGroupName() . ' <i>' . $start . ' - ' . $eind . '</i></br>';
                     }
