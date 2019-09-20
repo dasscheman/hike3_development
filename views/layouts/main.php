@@ -212,10 +212,6 @@ AppAsset::register($this);
                                 'url' => ['/site/quick-start'],
                             ],
                             [
-                                'label' => Yii::t('app', 'Contact'),
-                                'url' => ['/site/contact'],
-                            ],
-                            [
                                 'label' => Yii::t('app', 'About'),
                                 'url' => ['/site/about'],
                             ],
