@@ -66,8 +66,9 @@ class OpenNoodEnvelopController extends Controller {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $startDate = EventNames::getStartDate($event_id);
-        $endDate = EventNames::getEndDate($event_id);
+        $eventNames = new EventNames();
+        $startDate = $eventNames->getStartDate($event_id);
+        $endDate = $eventNames->getEndDate($event_id);
 
         return $this->render('index', [
                 'searchModel' => $searchModel,

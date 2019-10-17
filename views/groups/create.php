@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use app\models\FriendList;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblGroups */
@@ -12,6 +13,7 @@ use yii\helpers\Html;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'friendList' => new FriendList()
     ]) ?>
 
 </div>

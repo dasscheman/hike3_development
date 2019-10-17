@@ -478,7 +478,8 @@ class EventNamesController extends Controller
             ->where(['user_ID' => Yii::$app->user->id])
             ->joinwith('deelnemersEvents');
         if (null !== Yii::$app->request->get('event_ID')) {
-            OpenMap::setCookieIndexRoute(null);
+            $openMap = new OpenMap();
+            $openMap->setCookieIndexRoute(null);
             $modelDeelnemersEvent = DeelnemersEvent::find()
                 ->where([
                     'event_ID' => Yii::$app->request->get('event_ID'),

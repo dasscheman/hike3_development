@@ -9,6 +9,8 @@ use prawee\widgets\ButtonAjax;
 /* @var $this GroupsController */
 /* @var $data Groups */
 
+$postPassage = new PostPAssage();
+$posten = new Posten();
 ?>
 <div class="row">
   <div class="col-sm-12">
@@ -60,8 +62,8 @@ use prawee\widgets\ButtonAjax;
         }
 
 
-        if(!PostPassage::isGroupStarted($model->group_ID) && !empty($model->event->active_day)) {
-            $post_id = Posten::getStartPost($model->event->active_day);
+        if(!$postPassage->isGroupStarted($model->group_ID) && !empty($model->event->active_day)) {
+            $post_id = $posten->getStartPost($model->event->active_day);
             echo ButtonAjax::widget([
                 'name' => 'Start',
                  'route'=>[

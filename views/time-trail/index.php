@@ -168,15 +168,17 @@ $this->title = Yii::t('app', 'Time Trails');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
+                    $timeTrailItem = new TimeTrailItem();
                     if (Yii::$app->user->can('organisatie') &&
-                        TimeTrailItem::lowererOrderNumberExists($model->time_trail_item_ID)) {
+                        $timeTrailItem->lowererOrderNumberExists($model->time_trail_item_ID)) {
                         return true;
                     }
                     return false;
                 },
                 'down' => function ($model, $key, $index) {
+                    $timeTrailItem = new TimeTrailItem();
                     if (Yii::$app->user->can('organisatie') &&
-                        TimeTrailItem::higherOrderNumberExists($model->time_trail_item_ID)) {
+                        $timeTrailItem->higherOrderNumberExists($model->time_trail_item_ID)) {
                         return true;
                     }
                     return false;

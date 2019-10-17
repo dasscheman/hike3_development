@@ -8,6 +8,7 @@ use app\models\Qr;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
+$qr = new Qr();
 
 ?>
 
@@ -50,7 +51,7 @@ use app\models\Qr;
                         'title' => Yii::t('app', 'Move up'),
 
                         'class'=>'btn btn-primary btn-xs',
-                        'disabled' => !Qr::lowererOrderNumberExists($model->qr_ID),
+                        'disabled' => !$qr->lowererOrderNumberExists($model->qr_ID),
                     ]
                 );
 
@@ -63,7 +64,7 @@ use app\models\Qr;
                             'up_down' => 'down']) . "';",
                         'title' => Yii::t('app', 'Move down'),
                         'class'=>'btn btn-primary btn-xs',
-                        'disabled' => !Qr::higherOrderNumberExists($model->qr_ID),
+                        'disabled' => !$qr->higherOrderNumberExists($model->qr_ID),
                     ]
                 );
                 ?> <br> <?php

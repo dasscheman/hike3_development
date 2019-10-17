@@ -13,8 +13,6 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use app\models\EventNames;
 
-//use yii\web\Cookie;
-
 /**
  * PostenController implements the CRUD actions for Posten model.
  */
@@ -62,9 +60,10 @@ class PostenController extends Controller
      */
     public function actionIndex()
     {
+        $eventNames = new EventNames();
         $event_Id = Yii::$app->user->identity->selected_event_ID;
-        $startDate = EventNames::getStartDate($event_Id);
-        $endDate = EventNames::getEndDate($event_Id);
+        $startDate = $eventNames->getStartDate($event_Id);
+        $endDate = $eventNames->getEndDate($event_Id);
         $searchModel = new PostenSearch();
 
         $this::setPostenIndexMessage($event_Id);

@@ -293,12 +293,14 @@ class PostPassage extends HikeActiveRecord
 
     public function isGroupStarted($group_id)
     {
-        $active_day = EventNames::getActiveDayOfHike();
+        $eventNames = new EventNAmes();
+        $active_day = $eventNames->getActiveDayOfHike();
         if($active_day == null) {
             // Geen active dag geselecteerd, dus deze dag kan ook niet gestart zijn
             return false;
         }
-        $start_post_id = Posten::getStartPost($active_day);
+        $posten = new Posten();
+        $start_post_id = $posten->getStartPost($active_day);
         if($start_post_id == null) {
             // Er zijn geen posten aangemaakt voor deze. Dus de groep is gewoon gestart.
             return true;

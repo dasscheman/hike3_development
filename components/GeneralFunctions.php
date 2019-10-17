@@ -155,7 +155,7 @@ class GeneralFunctions
         return substr(str_shuffle($chars), 0, $length);
     }
 
-    public function printGlyphiconCheck($check)
+    static function printGlyphiconCheck($check)
     {
         if ($check) {
             return '<span class="glyphicon glyphicon-ok"></span>';

@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
-use app\models\FriendList;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Groups */
@@ -21,7 +20,7 @@ use app\models\FriendList;
     echo $form->field($model, 'users_temp')->widget(Select2::classname(), [
         'value' => $model->users_temp,
         'id' => $model->group_ID,
-        'data' => FriendList::getFriendsForEvent($model->group_ID),
+        'data' => $friendList->getFriendsForEvent($model->group_ID),
         'options' => [
             'placeholder' => 'Filter as you type ...',
             'id' => $model->group_ID,

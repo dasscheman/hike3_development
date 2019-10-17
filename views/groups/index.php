@@ -13,6 +13,13 @@ use app\models\QrCheck;
 /* @var $searchModel app\models\TblGroupsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$bonuspunten = new Bonuspunten();
+$postPassage = new PostPassage();
+$qrCheck = new QrCheck();
+$openVragenAntwoorden = new OpenVragenAntwoorden();
+$timeTrailCheck = new TimeTrailCheck();
+$openNoodEnvelop = new OpenNoodEnvelop();
+
 $this->title = Yii::t('app', 'Overzicht groepsscores');
 ?>
 <div class="tbl-groups-index">
@@ -63,42 +70,42 @@ $this->title = Yii::t('app', 'Overzicht groepsscores');
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => Bonuspunten::anyGroupScoredBonuspunten(),
+            'visible' => $bonuspunten->anyGroupScoredBonuspunten(),
         ],
         [
             'attribute' => 'post_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => PostPassage::anyGroupScoredStation()
+            'visible' => $postPassage->anyGroupScoredStation()
         ],
         [
             'attribute' => 'qr_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => QrCheck::anyGroupScoredQr()
+            'visible' => $qrCheck->anyGroupScoredQr()
         ],
         [
             'attribute' => 'vragen_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => OpenVragenAntwoorden::anyGroupScoredQuestions()
+            'visible' => $openVragenAntwoorden->anyGroupScoredQuestions()
         ],
         [
             'attribute' => 'trail_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => TimeTrailCheck::anyGroupScoredTimeTrail()
+            'visible' => $timeTrailCheck->anyGroupScoredTimeTrail()
         ],
         [
             'attribute' => 'hint_score',
             'visible'=> TRUE,
             'filter' => FALSE,
             'contentOptions' => ['class' => 'kv-align-center'],
-            'visible' => OpenNoodEnvelop::anyGroupScoredOpenedHints()
+            'visible' => $openNoodEnvelop->anyGroupScoredOpenedHints()
         ],
         [
             'attribute' => 'total_score',
@@ -140,7 +147,7 @@ $this->title = Yii::t('app', 'Overzicht groepsscores');
             'heading' => $heading,
             'footer' => $footer
         ],
-        'persistResize' => false,   
+        'persistResize' => false,
         'exportConfig' => $exportConfig,
     ]); ?>
 </div>

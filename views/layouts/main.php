@@ -12,6 +12,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\EventNames;
 
+$eventNames = new EventNames();
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -32,7 +33,7 @@ AppAsset::register($this);
             <?php
             NavBar::begin([
                 'brandLabel' => !Yii::$app->user->isGuest && Yii::$app->user->identity->selected_event_ID ?
-                    Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . EventNames::getEventName(Yii::$app->user->identity->selected_event_ID) :
+                    Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . $eventNames->getEventName(Yii::$app->user->identity->selected_event_ID) :
                     Html::img('@web/images/kiwilogo40-39.jpg', ['class' => 'img-circle', 'height' => "37", 'width' => "37"]) . 'hike-app.nl',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
@@ -267,11 +268,7 @@ AppAsset::register($this);
           if (Yii::$app->controller->id !== 'open-map') {
               ?>
             <footer class="footer">
-
-                    <p class="pull-left">&copy; hike-app.nl <?= date('Y') ?></p>
-                    <a class="pull-right" target="_blank" href="https://seal.beyondsecurity.com/vulnerability-scanner-verification/hike-app.nl" >
-                        <img src="https://seal.beyondsecurity.com/verification-images/hike-app.nl/vulnerability-scanner-10.gif" alt="Vulnerability Scanner" border="0" />
-                    </a>
+                <p class="pull-left">&copy; hike-app.nl <?= date('Y') ?></p>
             </footer>
             <?php
           };

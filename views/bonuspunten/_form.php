@@ -1,8 +1,5 @@
 <?php
 
-use app\models\EventNames;
-use app\models\Posten;
-use app\models\Groups;
 use kartik\widgets\DepDrop;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -42,7 +39,7 @@ use yii\widgets\Pjax;
                 'id' => 'bonuspunten-group-field-create',
             ],
         ])->dropDownList(
-            Groups::getGroupOptionsForEvent(),
+            $groups->getGroupOptionsForEvent(),
             [
                 'prompt'=>'Select...',
                 'id' => 'bonuspunten-group-dropdown-create'
@@ -50,7 +47,7 @@ use yii\widgets\Pjax;
         );
     }
     echo $form->field($model, 'date')->dropDownList(
-        EventNames::getDatesAvailable(),
+        $eventNames->getDatesAvailable(),
         [
             'prompt'=>'Select...',
             'id' => 'date-' . $model->bouspunten_ID,
