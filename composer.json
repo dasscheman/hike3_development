@@ -44,7 +44,8 @@
         "dektrium/yii2-rbac": "@dev",
         "yiidoc/yii2-redactor": "@dev",
         "alexandernst/yii2-device-detect": "0.0.12",
-        "aberkhout/rd-converter": "dev-master"
+        "aberkhout/rd-converter": "dev-master",
+        "2amigos/yii2-ckeditor-widget" : "~2.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
