@@ -12,9 +12,9 @@ modules:
       - Filesystem
       - Yii2
       - Db:
-         dsn: 'mysql:host=localhost;dbname=hike-app-test'
-         user: 'test'
-         password: 'secret'
+         dsn: 'mysql:host=localhost;dbname=test'
+         user: 'root'
+         password: ''
          cleanup: true
          populate: true # load dump before all tests
          dump: 'tests/_data/clean_dump.sql'

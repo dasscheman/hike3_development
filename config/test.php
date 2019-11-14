@@ -118,8 +118,8 @@ $config = [
         ],
         'db' => require(__DIR__ . '/test_db.php'),
         'devicedetect' => [
-    		'class' => 'alexandernst\devicedetect\DeviceDetect'
-    	],
+  		      'class' => 'alexandernst\devicedetect\DeviceDetect'
+	      ],
     ],
     'params' => $params,
 ];
