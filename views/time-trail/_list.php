@@ -60,7 +60,7 @@ if (Yii::$app->controller->action->id == 'status' || $model->getTimeTrailItem()-
     </div> <?php
 }
 
-if ($model->getTimeTrailItem()->one()->getNextItem() != NULL) {
+if ($model->getTimeTrailItem()->one()->getNextItem() != NULL && $end_date > time()) {
     $id = 'countdown-time-trail-' . $model->time_trail_check_ID;
     $setTime = 1000;
     if(isset(Yii::$app->params["alternate_time"][$model->event_ID]['factor'])) {

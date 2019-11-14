@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\widgets\DateTimePicker;
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Route */
@@ -12,15 +14,33 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? [
-	    'route/create', 
-	    'date' => $model->day_date
+	    'route/create'
 	] : [
- 	    'route/update', 
+ 	    'route/update',
 	    'route_ID' => $model->route_ID]]);
 
         echo $form->field($model, 'route_name')->textInput(['maxlength' => true]);
+        echo $form->field($model, 'start_datetime')->widget(DateTimePicker::classname(), [
+          	'options' => [
+                'placeholder' => 'Starttijd van route onderdeel',
+                'value' => Yii::$app->setupdatetime->displayFormat($model->start_datetime, 'datetime_no_sec', false, false),
+            ],
+          	'pluginOptions' => [
+          		  'autoclose' => true
+          	]
+        ]);
+        // dateTime();
+        echo $form->field($model, 'end_datetime')->widget(DateTimePicker::classname(), [
+          	'options' => [
+                'placeholder' => 'Eindtijd van route onderdeel',
+                'value' => Yii::$app->setupdatetime->displayFormat($model->end_datetime, 'datetime_no_sec', false, false),
+            ],
+          	'pluginOptions' => [
+          		  'autoclose' => true
+          	]
+        ]);
+        // ->dateTime();
         echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
-        echo $form->field($model, 'day_date')->hiddenInput(['value'=> $model->day_date])->label(false);
     ?>
     <div class="form-route">
         <?php

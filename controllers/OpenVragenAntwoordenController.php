@@ -82,7 +82,8 @@ class OpenVragenAntwoordenController extends Controller {
             return $this->redirect(['site/overview-players']);
         }
 
-        if ($modelVraag->route->day_date != EventNames::getActiveDayOfHike()) {
+        $eventNames = new EventNames();
+        if ($modelVraag->route->day_date != $eventNames->getActiveDayOfHike()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag is niet voor vandaag.'));
             return $this->redirect(['site/overview-players']);
         }
@@ -93,8 +94,9 @@ class OpenVragenAntwoordenController extends Controller {
                 'modelVraag' => $modelVraag,
             ]);
         }
-        if (Yii::$app->request->post('submit') == 'beantwoord-vraag') {
-            $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelVraag->event_ID);
+        $deelnemersEvent = new DeelnemersEvent();
+        if (Yii::$app->request->post('beantwoord') == 'beantwoord-vraag') {
+            $groupPlayer = $deelnemersEvent->getGroupOfPlayer($modelVraag->event_ID);
             if (!$groupPlayer) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Je mag deze vraag niet beantwoorden.'));
                 return $this->redirect(['site/index']);

@@ -94,8 +94,7 @@ class OpenMap extends LeafLet
         } else {
             $model = Posten::find()
                 ->where([
-                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                    'date' => $date
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID
                 ]);
         }
 
@@ -159,8 +158,7 @@ class OpenMap extends LeafLet
         } else {
             $model = Qr::find()
                 ->where([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                'route_ID' => $route_id
+                'event_ID' => Yii::$app->user->identity->selected_event_ID
             ]);
         }
 
@@ -223,8 +221,7 @@ class OpenMap extends LeafLet
         } else {
             $model = NoodEnvelop::find()
                 ->where([
-                    'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                    'route_ID' => $route_id
+                    'event_ID' => Yii::$app->user->identity->selected_event_ID
                 ]);
         }
         // When in group overview, display hint on map only when this attribute is set.
@@ -293,8 +290,7 @@ class OpenMap extends LeafLet
         } else {
             $model = OpenVragen::find()
                 ->where([
-                'event_ID' => Yii::$app->user->identity->selected_event_ID,
-                'route_ID' => $route_id
+                'event_ID' => Yii::$app->user->identity->selected_event_ID
             ]);
         }
 

@@ -18,34 +18,8 @@ echo Dialog::widget();
 
 <div class="container-map">
 <div class="map-index">
+    <br><br>
     <?php
-    foreach ($routeDataProvider->getModels() as $routeItem) {
-        if (Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
-            ?> <br><br> <?php
-            break;
-        }
-        if ($routeItem->route_ID !== $routeModel->route_ID) {
-            echo Html::a(
-                $routeItem->route_name,
-                [
-                'view',
-                'route_ID' => $routeItem->route_ID,
-                ],
-                ['class' => 'btn-lg route-buttons']
-            );
-        } else {
-            OpenMap::setCookieIndexRoute($routeModel->route_ID);
-            echo Html::label(
-                $routeItem->route_name,
-                [
-                'view',
-                'route_ID' => $routeItem->route_ID,
-                ],
-                ['class' => 'btn-lg route-buttons']
-            );
-        }
-    }
-
     echo CustomAlertBlock::widget([
         'type' => CustomAlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,

@@ -20,7 +20,7 @@ use yii\helpers\Json;
  */
 class QrController extends Controller
 {
-    /** 
+    /**
     * {@inheritdoc}
     */
     public function behaviors()
@@ -57,24 +57,6 @@ class QrController extends Controller
                 ],
             ]
         ];
-    }
-
-    /**
-     * Lists all Qr models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $event_id = $_GET['event_id'];
-        $where = "event_ID = $event_id";
-
-        $searchModel = new QrSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-        ]);
     }
 
     /**

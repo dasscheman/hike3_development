@@ -118,6 +118,22 @@ $this->title = Yii::t('app', 'Hike overview');
                     'itemView' => '/groups/_list',
                     'emptyText' => Yii::t('app', 'Deze hike heeft nog geen groepen.'),
                 ]);
+
+
+                echo ListView::widget([
+                    'summary' => false,
+                    'pager' => [
+                        'prevPageLabel' => Yii::t('app', 'previous'),
+                        'nextPageLabel' => Yii::t('app', 'next'),
+                        'maxButtonCount' => 5,
+                        'options' => [
+                           'class' => 'pagination pagination-sm',
+                        ],
+                    ],
+                    'dataProvider' => $activityFeed,
+                    'itemView' => '/groups/_list-feed',
+                    'emptyText' => Yii::t('app', 'Nog geen activiteit.'),
+                ]); 
                 ?>
             </div>
             <?php
@@ -125,20 +141,22 @@ $this->title = Yii::t('app', 'Hike overview');
                 ?>
                 <div class="col-sm-6">
                     <?php
-                    echo ListView::widget([
-                        'summary' => false,
-                        'pager' => [
-                            'prevPageLabel' => Yii::t('app', 'previous'),
-                            'nextPageLabel' => Yii::t('app', 'next'),
-                            'maxButtonCount' => 5,
-                            'options' => [
-                               'class' => 'pagination pagination-sm',
-                            ],
-                        ],
-                        'dataProvider' => $activityFeed,
-                        'itemView' => '/groups/_list-feed',
-                        'emptyText' => Yii::t('app', 'Nog geen activiteit.'),
-                    ]); ?>
+
+                    echo Yii::$app->controller->renderPartial('/routebook/view', [
+                        'model' => $routebookModel,
+                        'vragen' => true,
+                        'openVragen' => false,
+                        'beantwoordeVragen' => false,
+                        'hints' => true,
+                        'closedHints' => true,
+                        'openHints' => false,
+                        'qr' => true,
+                        'qrCheck' => false,
+                        'group_id' => null,
+                        'timeTableData' => $timeTableData
+                    ]);
+
+                    ?>
                 </div>
             <?php
             } ?>

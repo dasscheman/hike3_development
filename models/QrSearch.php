@@ -45,6 +45,9 @@ class QrSearch extends Qr
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+              'pageSize' => 1,
+            ],
         ]);
 
         $this->load($params);
@@ -71,5 +74,5 @@ class QrSearch extends Qr
             ->andFilterWhere(['like', 'qr_code', $this->qr_code]);
 
         return $dataProvider;
-    }    
+    }
 }

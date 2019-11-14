@@ -110,13 +110,15 @@ class OpenNoodEnvelopController extends Controller {
             Yii::$app->cache->flush();
         }
 
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelEnvelop->event_ID);
+        $deelnemersEvent = new DeelnemersEvent();
+        $groupPlayer = $deelnemersEvent->getGroupOfPlayer($modelEnvelop->event_ID);
         if (!$groupPlayer) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Je mag deze hint niet openen.'));
             return $this->redirect(['site/index']);
         }
 
-        if ($modelEnvelop->route->day_date != EventNames::getActiveDayOfHike()) {
+        $eventNames = new EventNames();
+        if ($modelEnvelop->route->day_date != $eventNames->getActiveDayOfHike()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor vandaag.'));
             return $this->redirect(['site/overview-players']);
         }

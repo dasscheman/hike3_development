@@ -130,7 +130,7 @@ $this->title = Yii::t('app', 'Posten');
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
-                        Posten::lowererOrderNumberExists($model->date, $model->post_volgorde)) {
+                        Posten::lowerOrderNumberExists($model->post_ID)) {
                         return true;
                     }
                     return false;
@@ -146,58 +146,44 @@ $this->title = Yii::t('app', 'Posten');
         ],
     ];
 
-    while (strtotime($startDate) <= strtotime($endDate)) {
-        $dataArray[$count] = array(
-            'label' => $startDate,
-            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('posten_day_tab') ? true : false,
-            'content' => GridView::widget([
-                'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
-                'dataProvider' => $searchModel->searchPostenInEvent(['PostenSearch' => ['date' => $startDate]]),
-                'columns' => $gridColumns,
-                'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
-                'responsiveWrap' => $responsiveWrap,
-                'headerRowOptions' => ['class' => 'kartik-sheet-style'],
-                'filterRowOptions' => ['class' => 'kartik-sheet-style'],
-                'pjax' => true, // pjax is set to always true for this demo
-                // set your toolbar
-                'toolbar' => [
-                    ['content' =>
-                        ButtonAjax::widget([
-                            'name' => Yii::t('app', 'Add station'),
-                            'route' => ['posten/create', 'date' => $startDate],
-                            'modalId' => '#main-modal',
-                            'modalContent' => '#main-content-modal',
-                            'options' => [
-                                'class' => 'btn btn-success',
-                                'title' => Yii::t('app', 'Create new station'),
-                                'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
-                            ]
-                        ]),
-                    ],
-                ],
-                // parameters from the demo form
-                'bordered' => $bordered,
-                'striped' => $striped,
-                'condensed' => $condensed,
-                'responsive' => $responsive,
-                'hover' => $hover,
-                'showPageSummary' => $pageSummary,
-                'panel' => [
-                    'type' => GridView::TYPE_INFO,
-                    'heading' => $heading,
-                ],
-                'persistResize' => false,
-            ])
-        );
-        $startDate = date('Y-m-d', strtotime($startDate . ' + 1 days'));
-        $count++;
-        // more then 10 days is unlikly, therefore break.
-        if ($count == 10) {
-            break;
-        }
-    }
-    echo Tabs::widget([
-        'items' => $dataArray
+
+    echo GridView::widget([
+        'id' => 'kv-grid-posten',
+        'dataProvider' => $searchModel->searchPostenInEvent([]),
+        'columns' => $gridColumns,
+        'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
+        'responsiveWrap' => $responsiveWrap,
+        'headerRowOptions' => ['class' => 'kartik-sheet-style'],
+        'filterRowOptions' => ['class' => 'kartik-sheet-style'],
+        'pjax' => true, // pjax is set to always true for this demo
+        // set your toolbar
+        'toolbar' => [
+            ['content' =>
+                ButtonAjax::widget([
+                    'name' => Yii::t('app', 'Add station'),
+                    'route' => ['posten/create'],
+                    'modalId' => '#main-modal',
+                    'modalContent' => '#main-content-modal',
+                    'options' => [
+                        'class' => 'btn btn-success',
+                        'title' => Yii::t('app', 'Create new station'),
+                        'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
+                    ]
+                ]),
+            ],
+        ],
+        // parameters from the demo form
+        'bordered' => $bordered,
+        'striped' => $striped,
+        'condensed' => $condensed,
+        'responsive' => $responsive,
+        'hover' => $hover,
+        'showPageSummary' => $pageSummary,
+        'panel' => [
+            'type' => GridView::TYPE_INFO,
+            'heading' => $heading,
+        ],
+        'persistResize' => false,
     ]);
-    ?>
+?>
 </div>

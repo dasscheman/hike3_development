@@ -15,10 +15,10 @@ use Yii;
  * @property string $update_time
  * @property integer $update_user_ID
  *
- * @property TblUsers $createUser
- * @property TblEventNames $event
- * @property TblUsers $updateUser
- * @property TblTimeTrailItem[] $tblTimeTrailItems
+ * @property User $createUser
+ * @property EventNames $event
+ * @property User $updateUser
+ * @property TimeTrailItem[] $tblTimeTrailItems
  */
 class TimeTrail extends HikeActiveRecord
 {

@@ -47,9 +47,19 @@ $this->title = Yii::t('app', 'Routes');
             'format' => 'raw',
            // here comes the problem - instead of parent_region I need to have parent
             'value'=>function ($model, $key, $index, $column) {
+                $label = $model->route_name;
+                if(isset($model->start_datetime) ||
+                  isset($model->end_datetime)){
+                    $label = $model->route_name  .
+                        ' (' .
+                        Yii::$app->setupdatetime->displayFormat($model->start_datetime, 'datetime_short', false, false)
+                        . ' - ' .
+                        Yii::$app->setupdatetime->displayFormat($model->end_datetime, 'datetime_short', false, false) .')';
+
+                }
                 return ButtonAjax::widget([
-                    'name'=>$model->route_name,
-                     'route'=>['route/update', 'route_ID' => $key],
+                    'name' => $label,
+                     'route' => ['route/update', 'route_ID' => $key],
                      'modalId'=>'#main-modal',
                      'modalContent'=>'#main-content-modal',
                      'options'=>[
@@ -131,7 +141,7 @@ $this->title = Yii::t('app', 'Routes');
         [
             'class' => 'yii\grid\ActionColumn',
             'header'=>'Actions',
-            'template' => '{up} {down}',
+            'template' => '{up} {down} {routebook}',
             'buttons' => [
                 'up' => function ($url, $model) {
                     return Html::a(
@@ -161,18 +171,33 @@ $this->title = Yii::t('app', 'Routes');
                         ]
                     );
                 },
+                'routebook' => function ($url, $model) {
+                    return Html::a(
+                        '<span class="glyphicon glyphicon-road"></span>',
+                        [
+                            'routebook/update',
+                            'route_ID' => $model->route_ID
+                        ],
+                        [
+                            'title' => Yii::t('app', 'Bewerk routeboek'),
+                            'class'=>'btn btn-primary btn-xs',
+                        ]
+                    );
+                },
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
+                    $route = new Route();
                     if (Yii::$app->user->can('organisatie') &&
-                        Route::lowererOrderNumberExists($model->route_ID)) {
+                        $route->lowerOrderNumberExists($model->route_ID)) {
                         return true;
                     }
                     return false;
                 },
                 'down' => function ($model, $key, $index) {
+                    $route = new Route();
                     if (Yii::$app->user->can('organisatie') &&
-                        Route::higherOrderNumberExists($model->route_ID)) {
+                        $route->higherOrderNumberExists($model->route_ID)) {
                         return true;
                     }
                     return false;
@@ -181,105 +206,43 @@ $this->title = Yii::t('app', 'Routes');
         ],
     ];
 
-    $dataArray[$count]=array(
-        'label' => Yii::t('app', 'Introduction'),
-        'active' => true,
-        'options' => ['id' => 'Introduction'],
-        'content' => GridView::widget([
-            'id' => 'kv-grid-0000-00-00',
-            'dataProvider'=>$searchModel->searchIntroRouteInEvent(),
-            'columns'=>$gridColumns,
-            'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
-            'headerRowOptions'=>['class'=>'kartik-sheet-style'],
-            'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-            'resizableColumns' => $resizableColumns,
-            'pjax'=>true, // pjax is set to always true for this demo
-            // set your toolbar
-            'toolbar'=> [
-                ['content'=>
-                    ButtonAjax::widget([
-                        'name'=> Yii::t('app', 'Add route item'),
-                        'route'=>['route/create'],
-                        'modalId'=>'#main-modal',
-                        'modalContent'=>'#main-content-modal',
-                        'options'=>[
-                            'class'=>'btn btn-success',
-                            'title'=>Yii::t('app', 'Create new route item'),
-                            'disabled' => !Yii::$app->user->can('organisatieOpstart'),
-                        ]
-                    ]),
-                ],
+    echo GridView::widget([
+        'id' => 'kv-grid-route',
+        'responsiveWrap' => $responsiveWrap,
+        'dataProvider'=>$searchModel->searchRouteInEvent([]),
+        'columns'=>$gridColumns,
+        'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
+        'headerRowOptions'=>['class'=>'kartik-sheet-style'],
+        'filterRowOptions'=>['class'=>'kartik-sheet-style'],
+        'resizableColumns' => $resizableColumns,
+        'pjax'=>true, // pjax is set to always true for this demo
+        // set your toolbar
+        'toolbar'=> [
+            ['content'=>
+                ButtonAjax::widget([
+                    'name'=> Yii::t('app', 'Add route item'),
+                    'route'=>['route/create'],
+                    'modalId'=>'#main-modal',
+                    'modalContent'=>'#main-content-modal',
+                    'options'=>[
+                        'class'=>'btn btn-success',
+                        'title'=>Yii::t('app', 'Create new route item'),
+                        'disabled' => !Yii::$app->user->can('organisatieOpstart'),
+                    ]
+                ]),
             ],
-            // parameters from the demo form
-            'bordered'=>$bordered,
-            'striped'=>$striped,
-            'condensed'=>$condensed,
-            'responsive'=>$responsive,
-            'responsiveWrap' => $responsiveWrap,
-            'hover'=>$hover,
-            'showPageSummary'=>$pageSummary,
-            'panel'=>[
-                'type'=>GridView::TYPE_INFO,
-                'heading'=>$heading,
-            ],
-            'persistResize'=>false,
-        ])
-    );
-    $count++;
-
-    while (strtotime($startDate) <= strtotime($endDate)) {
-        $dataArray[$count]=array(
-            'label' =>$startDate,
-//            'active' => $startDate === Yii::$app->getRequest()->getCookies()->getValue('route_day_tab')? true: false,
-            'options' => ['id' => $startDate],
-            'content' => GridView::widget([
-                'id' => 'kv-grid-' . $startDate, //'kv-grid-demo',
-                'responsiveWrap' => $responsiveWrap,
-                'dataProvider'=>$searchModel->searchRouteInEvent(['RouteSearch' => ['day_date' => $startDate]]),
-                'columns'=>$gridColumns,
-                'containerOptions'=>['style'=>'overflow: auto'], // only set when $responsive = false
-                'headerRowOptions'=>['class'=>'kartik-sheet-style'],
-                'filterRowOptions'=>['class'=>'kartik-sheet-style'],
-                'resizableColumns' => $resizableColumns,
-                'pjax'=>true, // pjax is set to always true for this demo
-                // set your toolbar
-                'toolbar'=> [
-                    ['content'=>
-                        ButtonAjax::widget([
-                            'name'=> Yii::t('app', 'Add route item'),
-                            'route'=>['route/create', 'date' => $startDate],
-                            'modalId'=>'#main-modal',
-                            'modalContent'=>'#main-content-modal',
-                            'options'=>[
-                                'class'=>'btn btn-success',
-                                'title'=>Yii::t('app', 'Create new route item'),
-                                'disabled' => !Yii::$app->user->can('organisatieOpstart'),
-                            ]
-                        ]),
-                    ],
-                ],
-                'bordered'=>$bordered,
-                'striped'=>$striped,
-                'condensed'=>$condensed,
-                'responsive'=>$responsive,
-                'hover'=>$hover,
-                'showPageSummary'=>$pageSummary,
-                'panel'=>[
-                    'type'=>GridView::TYPE_INFO,
-                    'heading'=>$heading,
-                ],
-                'persistResize'=>false,
-            ])
-        );
-        $startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));
-        $count++;
-        // more then 10 days is unlikly, therefore break.
-        if ($count == 10) {
-            break;
-        }
-    }
-    echo Tabs::widget([
-        'items' => $dataArray
+        ],
+        'bordered'=>$bordered,
+        'striped'=>$striped,
+        'condensed'=>$condensed,
+        'responsive'=>$responsive,
+        'hover'=>$hover,
+        'showPageSummary'=>$pageSummary,
+        'panel'=>[
+            'type'=>GridView::TYPE_INFO,
+            'heading'=>$heading,
+        ],
+        'persistResize'=>false,
     ]);
     ?>
 </div>

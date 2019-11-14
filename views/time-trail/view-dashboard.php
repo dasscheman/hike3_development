@@ -20,7 +20,7 @@ $this->registerJsFile('@web/js/countdown.js', [yii\web\JqueryAsset::className()]
 
 ?>
 <div class="tbl-time-trail-view-dashboard">
-    <h3> <?php echo Yii::t('app', 'Gescande tijdritten') ?> </h3>
+    <h3> <?php echo Yii::t('app', 'Alle gescande tijdritten') ?> </h3>
     <p>
         <?php
         // this is needed for the pagination.

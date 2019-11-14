@@ -75,60 +75,11 @@ class RouteController extends Controller
     }
 
     /**
-     * Displays a single Route model.
-     * @param integer $id
-     * @return mixed
-     */
-    // public function actionView($id)
-    // {
-    //     $route_id = $_GET['route_id'];
-    //     $event_id = $_GET['event_id'];
-    //
-    //     $where = "event_ID = $event_id AND route_ID =$route_id";
-    //
-    //     $vragenDataProvider = new CActiveDataProvider('OpenVragen', array(
-    //         'criteria' => array(
-    //             'condition' => $where,
-    //             'order' => 'vraag_volgorde ASC',
-    //         ),
-    //         'pagination' => array(
-    //             'pageSize' => 50,
-    //         ),
-    //     ));
-    //
-    //     $envelopDataProvider = new CActiveDataProvider('NoodEnvelop', array(
-    //         'criteria' => array(
-    //             'condition' => $where,
-    //             'order' => 'nood_envelop_volgorde ASC',
-    //         ),
-    //         'pagination' => array(
-    //             'pageSize' => 50,
-    //         ),
-    //     ));
-    //
-    //     $qrDataProvider = new CActiveDataProvider('Qr', array(
-    //         'criteria' => array(
-    //             'condition' => $where,
-    //             'order' => 'qr_volgorde ASC',
-    //         ),
-    //         'pagination' => array(
-    //             'pageSize' => 15,
-    //         ),
-    //     ));
-    //     return $this->render('view', [
-    //             'model' => $this->findModel($id),
-    //             'vragenDataProvider' => $vragenDataProvider,
-    //             'envelopDataProvider' => $envelopDataProvider,
-    //             'qrDataProvider' => $qrDataProvider,
-    //     ]);
-    // }
-
-    /**
      * Creates a new Route model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($date = null)
+    public function actionCreate()
     {
         $model = new Route;
 
@@ -142,10 +93,6 @@ class RouteController extends Controller
             $model->setAttributes([
                 'event_ID' => Yii::$app->user->identity->selected_event_ID,
             ]);
-            // This set the tab from which the call is started.
-            if ($date != null) {
-                $model->setAttributes(['day_date' => $date]);
-            }
         }
 
         if (Yii::$app->request->isAjax) {
@@ -153,8 +100,8 @@ class RouteController extends Controller
         }
 
         return $this->render([
-                '/route/create',
-                'model' => $model
+            '/route/create',
+            'model' => $model
         ]);
     }
 
@@ -174,7 +121,7 @@ class RouteController extends Controller
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':route_id' => $model->route_ID
-                ]
+                    ]
                 )
                 ->exists();
 
@@ -185,7 +132,7 @@ class RouteController extends Controller
                         [
                             ':event_id' => Yii::$app->user->identity->selected_event_ID,
                             ':route_id' => $model->route_ID
-                    ]
+                        ]
                     )
                     ->exists();
             }

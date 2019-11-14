@@ -16,7 +16,8 @@ class SetupDateTime
     const DAY_FORMAT = 'php:d';
     const DATE_FORMAT = 'php:Y-m-d';
     const DATETIME_FORMAT = 'php:Y-m-d H:i:s';
-    const DATETIME_FORMAT_NO_SEC = 'php:Y-m-d H:i:';
+    const DATETIME_FORMAT_NO_SEC = 'php:Y-m-d H:i';
+    const DATETIME_FORMAT_SHORT = 'php:d M H:i';
     const TIME_FORMAT = 'php:H:i:s';
 
     public static function convert($dateStr, $type='date', $format = null)
@@ -30,6 +31,9 @@ class SetupDateTime
                     break;
                 case 'datetime_no_sec':
                     $fmt = self::DATETIME_FORMAT_NO_SEC;
+                    break;
+                case 'datetime_short':
+                    $fmt = self::DATETIME_FORMAT_SHORT;
                     break;
                 case 'time':
                     $fmt = self::TIME_FORMAT;

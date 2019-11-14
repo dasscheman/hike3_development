@@ -4,6 +4,10 @@ use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\widgets\ListView;
 use app\components\CustomAlertBlock;
+use app\models\NoodEnvelopSearch;
+use app\models\OpenNoodEnvelopSearch;
+use app\models\OpenVragenAntwoordenSearch;
+use app\models\QrCheckSearch;
 
 /* @var $this yii\web\View */
 $this->title = Yii::t('app', 'Hike overzicht');
@@ -39,7 +43,26 @@ $this->title = Yii::t('app', 'Hike overzicht');
                         ?>
                     </div>
                 </div>
+                <?php
+                $viewData = [
+                    'model' => $routebookModel,
+                    'vragen' => false,
+                    'openVragen' => true,
+                    'beantwoordeVragen' => true,
+                    'hints' => false,
+                    'openHints' => true,
+                    'closedHints' => true,
+                    'qr' => false,
+                    'qrCheck' => true,
+                    'group_id' => $groupModel->group_ID,
+                    'timeTableData' => $timeTableData
+                ];
 
+                if(Yii::$app->devicedetect->isMobile()) { ?>
+                    <div class="col-sm-6">
+                        <?php echo Yii::$app->controller->renderPartial('/routebook/view', $viewData); ?>
+                    </div>
+                <?php } ?>
                 <div class="well">
                     <h3><?php echo  $groupModel->group_name ?></h3>
                     <?php echo '(' . Html::encode($groupModel->group_members) . ')'; ?></br>
@@ -109,24 +132,24 @@ $this->title = Yii::t('app', 'Hike overzicht');
 
                 </div>
                 <?php
-                if ($questionsData->totalCount > 0) { ?>
-                    <div class="well">
-                        <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-vraag', ['model'=>$questionsData]); ?>
-                    </div>
-                <?php
-                }
+                $searchOpenHintsModel = new OpenNoodEnvelopSearch([
+                    'group_ID' => $groupModel->group_ID
+                ]);
+                $openHintsData = $searchOpenHintsModel->searchOpenedByGroup([]);
                 if ($openHintsData->totalCount > 0) { ?>
                     <div class="well">
-                      <?php
-                      ?>
-                        <?php echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData]); ?>
+                        <?php
+                        echo Yii::$app->controller->renderPartial('/open-nood-envelop/view-dashboard-open', ['model' => $openHintsData, 'test' => 'test']);
+                        ?>
                     </div>
                 <?php
                 }
+                $searchHintsModel = new NoodEnvelopSearch([
+                    'group_id' => $groupModel->group_ID
+                ]);
+                $closedHintsData = $searchHintsModel->searchNotOpenedByGroup([], $groupModel->group_ID);
                 if ($closedHintsData->totalCount > 0) { ?>
                     <div class="well">
-                      <?php
-                      ?>
                         <?php echo Yii::$app->controller->renderPartial('/nood-envelop/view-dashboard-closed', ['model' => $closedHintsData]); ?>
                     </div>
                 <?php
@@ -135,24 +158,18 @@ $this->title = Yii::t('app', 'Hike overzicht');
             <?php
             if(!Yii::$app->devicedetect->isMobile()) { ?>
                 <div class="col-sm-6">
-                    <?php
-                    echo ListView::widget([
-                      'summary' => FALSE,
-                      'pager' => [
-                          'prevPageLabel' => Yii::t('app', 'previous'),
-                          'nextPageLabel' => Yii::t('app', 'next'),
-                          'maxButtonCount' => 3,
-                          'options' => [
-                             'class' => 'pagination pagination-sm',
-                          ],
-                      ],
-                      'dataProvider' => $activityFeed,
-                      'itemView' => '/groups/_list-feed',
-                      'emptyText' => 'Er is nog geen activiteit bij dit profiel.',
-                    ]);
-                    ?>
+                    <?php echo Yii::$app->controller->renderPartial('/routebook/view', $viewData); ?>
                 </div>
             <?php }
+            $searchAnswersModel = new OpenVragenAntwoordenSearch([
+                'group_ID' => $groupModel->group_ID
+            ]);
+            $answerData = $searchAnswersModel->searchQuestionAnsweredByGroup([], $groupModel->group_ID);
+            $searchQrModel = new QrCheckSearch([
+                'group_ID' => $groupModel->group_ID
+            ]);
+            $qrCheckData = $searchQrModel->searchByGroup([]);
+
             if($timeTrailCheckData->totalCount > 0 ||
                 $answerData->totalCount > 0 ||
                 $qrCheckData->totalCount > 0 ||
@@ -166,6 +183,7 @@ $this->title = Yii::t('app', 'Hike overzicht');
                         </div>
                     <?php
                     }
+
                     if ($answerData->totalCount > 0) { ?>
                         <div class="well">
                             <?php echo Yii::$app->controller->renderPartial('/open-vragen-antwoorden/view-antwoord', ['model'=>$answerData]); ?>
@@ -174,7 +192,12 @@ $this->title = Yii::t('app', 'Hike overzicht');
                     }
                     if ($qrCheckData->totalCount > 0) { ?>
                         <div class="well">
-                            <?php echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', ['model' => $qrCheckData]); ?>
+                            <?php
+                            echo Yii::$app->controller->renderPartial('/qr-check/view-dashboard', [
+                                'model' => $qrCheckData,
+                                'test' => 'test5'
+                            ]);
+                            ?>
                         </div>
                     <?php
                     }

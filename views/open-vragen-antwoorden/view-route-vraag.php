@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
     <p>
         <?php
         // this is needed for the pagination.
-        Pjax::begin(['id' => 'open-vragen-antwoorden-view-vraag', 'enablePushState' => false]);
+        Pjax::begin(['id' => 'open-vragen-antwoorden-view-vraag-' . $route_id, 'enablePushState' => false]);
         ?>
     </p>
     <?php
