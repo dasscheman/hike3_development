@@ -43,7 +43,7 @@ $config = [
         ],
         'assetManager' => [
             'bundles' => [
-        ]
+        ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
             'scriptUrl' => $params['url']
