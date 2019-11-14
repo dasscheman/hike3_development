@@ -42,7 +42,7 @@ $config = [
             'transport' => require(__DIR__ . '/email.php')
         ],
         'assetManager' => [
-            'bundles' => [
+            'bundles' => []
         ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
