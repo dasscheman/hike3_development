@@ -15,15 +15,16 @@ use yii\data\ArrayDataProvider;
 ?>
 <div class="tbl-qr-view">
 
-    <h1><?= Html::encode(Yii::t('app', 'Stilleposten voor {routename}', ['routename' => $model->route_name])) ?></h1>
+    <h1><?= Html::encode(Yii::t('app', 'Stilleposten')) ?></h1>
 
     <?php
 
         $pages = new yii\data\Pagination(['pageSize' => 100]);
-        $dataProvider = new yii\data\ArrayDataProvider([
-            'allModels' => $model->qrs,
-            'pagination' => $pages,
+        $dataProvider = new ArrayDataProvider([
+          'allModels' => $model->qrs,
+          'pagination' => $pages,
         ]);
+
         echo ListView::widget([
             'summary' => FALSE,
             'pager' => FALSE,

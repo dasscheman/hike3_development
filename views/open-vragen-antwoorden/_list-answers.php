@@ -24,13 +24,15 @@ use app\models\DeelnemersEvent;
     echo Html::tag('br');
     echo Html::tag('b', Html::encode($model->getAttributeLabel('checked')) . ': ');
     echo GeneralFunctions::printGlyphiconCheck($model->checked);
-    echo Html::tag('br');
-    echo Html::tag('b', Html::encode($model->getAttributeLabel('correct')) . ': ');
-    echo GeneralFunctions::printGlyphiconCheck($model->correct);
+    if ($model->checked) {
+        echo Html::tag('br');
+        echo Html::tag('b', Html::encode($model->getAttributeLabel('correct')) . ': ');
+        echo GeneralFunctions::printGlyphiconCheck($model->correct);
+    }
     echo Html::tag('br');
     echo Html::tag('b', Html::encode($model->getAttributeLabel('update_time')) . ': ');
     echo Html::encode(Yii::$app->setupdatetime->displayFormat($model->create_time, 'datetime', false, true));
-    if(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')){
+    if (Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')){
         echo  Html::tag('br');
         echo  Html::tag('i', Html::encode(Yii::$app->setupdatetime->displayRealTime($model->create_time, 'datetime')), ['class'=>'btn-xs']);
     }

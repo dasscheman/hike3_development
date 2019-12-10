@@ -25,16 +25,18 @@ class DeelnemerGestartTimeRule extends Rule
         if (Yii::$app->user->identity->getStatusForEvent() != EventNames::STATUS_gestart) {
             return false;
         }
-        
+
+        $posten = new Posten();
+        $postPassage = new PostPassage();
         // De aanname is dat als er geen startpost is, dat er dan gewoon gestart kan worden.
         // De max tijd werkt dan niet.
         if(!empty(Yii::$app->user->identity->getActiveDayForEvent()) &&
-            Posten::startPostExist(Yii::$app->user->identity->getActiveDayForEvent())) {
-            if(!PostPassage::isGroupStarted(Yii::$app->user->identity->getGroupUserForEvent())) {
+            $posten->startPostExist(Yii::$app->user->identity->getActiveDayForEvent())) {
+            if(!$postPassage->isGroupStarted(Yii::$app->user->identity->getGroupUserForEvent())) {
                 return false;
             }
 
-            if(!PostPassage::istimeLeftToday(Yii::$app->user->identity->getGroupUserForEvent())) {
+            if(!$postPassage->istimeLeftToday(Yii::$app->user->identity->getGroupUserForEvent())) {
                 return false;
             }
         }

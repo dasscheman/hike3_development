@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Html;
+use app\models\FriendList;
+use app\models\DeelnemersEvent;
 
 
 /* @var $this yii\web\View */
@@ -13,6 +15,8 @@ use yii\helpers\Html;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'friendList' => new FriendList(),
+        'deelnemersEvent' => new DeelnemersEvent(),
     ]) ?>
 
 </div>

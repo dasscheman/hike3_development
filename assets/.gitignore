@@ -1,4 +1,9 @@
 # ignore alle gegenereerde files, behalve de appasset.php
 !.gitignore
 !AppAsset.php
+!FixMarkerClusterAsset.php
 !LeafletFullscreenAsset.php
+!LeafletLocateAsset.php
+!Proj4Asset.php
+!TimeTableAsset.php
+!TrackAsset.php

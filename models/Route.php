@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\helpers\ArrayHelper;
 
 use Yii;
 
@@ -16,6 +17,8 @@ use Yii;
  * @property integer $create_user_ID
  * @property string $update_time
  * @property integer $update_user_ID
+ * @property integer $start_datetime
+ * @property integer $end_datetime
  *
  * @property NoodEnvelop[] $NoodEnvelops
  * @property OpenVragen[] $OpenVragens
@@ -44,13 +47,14 @@ class Route extends HikeActiveRecord
         return [
             [['route_name', 'event_ID'], 'required'],
             [['event_ID', 'route_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['day_date', 'create_time', 'update_time'], 'safe'],
+            [['day_date', 'create_time', 'update_time',
+              'start_datetime', 'end_datetime'], 'safe'],
             [['route_name'], 'string', 'max' => 255],
             [
-                ['event_ID', 'day_date', 'route_name'],
+                ['event_ID', 'route_name'],
                 'unique',
-                'targetAttribute' => ['event_ID', 'day_date', 'route_name'],
-                'message' => Yii::t('app', 'Route  name already exists for this day.')]
+                'targetAttribute' => ['event_ID', 'route_name'],
+                'message' => Yii::t('app', 'Route  name already exists for this hike.')]
         ];
     }
 
@@ -69,6 +73,8 @@ class Route extends HikeActiveRecord
             'create_user_ID' => Yii::t('app', 'Create User ID'),
             'update_time' => Yii::t('app', 'Update Time'),
             'update_user_ID' => Yii::t('app', 'Update User ID'),
+            'start_datetime' => Yii::t('app', 'Starttijd van route onderdeel'),
+            'end_datetime' => Yii::t('app', 'Einndtijd van route onderdeel'),
         ];
     }
 
@@ -207,12 +213,12 @@ class Route extends HikeActiveRecord
         return false;
     }
 
-    public function lowererOrderNumberExists($route_id)
+    public function lowerOrderNumberExists($route_id)
     {
         $data = Route::findOne($route_id);
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde <:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->where('event_ID =:event_id AND route_volgorde <:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde DESC')
             ->exists();
         if ($dataNext) {
@@ -225,8 +231,8 @@ class Route extends HikeActiveRecord
     {
         $data = Route::findOne($route_id);
         $dataNext = Route::find()
-            ->where('event_ID =:event_id AND (ISNULL(day_date) OR day_date =:date) AND route_volgorde >:order')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':date' => $data->day_date, ':order' => $data->route_volgorde])
+            ->where('event_ID =:event_id AND route_volgorde >:order')
+            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':order' => $data->route_volgorde])
             ->orderBy('route_volgorde ASC')
             ->exists();
 
@@ -249,5 +255,60 @@ class Route extends HikeActiveRecord
             )
             ->exists();
         return $exists;
+    }
+
+    /**
+     * Get al available group name options for a particular event.
+     */
+    public function getRouteOptionsForEvent()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $data = Route::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id])
+            ->all();
+
+        $listData=ArrayHelper::map($data, 'route_ID', 'route_name');
+
+        return $listData;
+    }
+
+    public function timeTable()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $routeData = Route::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id])
+            ->all();
+        $timetabledata = [];
+        foreach($routeData as $key => $item) {
+            $data['name'] = $item->route_name;
+            $data['title'] = 'Route ' . $item->start_datetime . ' - ' . $item->end_datetime;
+            $data['start'] = Yii::$app->setupdatetime->convert($item->start_datetime, 'datetime_short'); //startTime->format('Y-m-d H:i');
+            $data['end'] = Yii::$app->setupdatetime->convert($item->end_datetime, 'datetime_short'); //$endTime->format('Y-m-d H:i');
+            $data['type'] = 'Route';
+            $timetabledata[] = $data;
+        }
+        $postData = Posten::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id])
+            ->all();
+
+        foreach($postData as $key => $item) {
+            $data['name'] = $item->post_name;
+            $data['title'] = 'Post ' . $item->start_datetime . ' - ' . $item->end_datetime;
+            $data['start'] = Yii::$app->setupdatetime->convert($item->start_datetime, 'datetime_short'); //startTime->format('Y-m-d H:i');
+            $data['end'] = Yii::$app->setupdatetime->convert($item->end_datetime, 'datetime_short'); //$endTime->format('Y-m-d H:i');
+            $data['type'] = 'Post';
+
+            $timetabledata[] = $data;
+        }
+
+        $keys = array_column($timetabledata, 'end');
+        array_multisort($keys, SORT_ASC, $timetabledata);
+        $keys = array_column($timetabledata, 'start');
+        array_multisort($keys, SORT_ASC, $timetabledata);
+
+        return $timetabledata;
     }
 }

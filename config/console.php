@@ -42,8 +42,8 @@ $config = [
             'transport' => require(__DIR__ . '/email.php')
         ],
         'assetManager' => [
-            'bundles' => [
-        ]
+            'bundles' => []
+        ],
         'urlManager' => [
             'class' => 'yii\web\UrlManager',
             'scriptUrl' => $params['url']
@@ -62,7 +62,7 @@ $config = [
         ],
         'rbac' => 'dektrium\rbac\RbacWebModule',
     ],
-    'params' => $params,
+    'params' => $params
 ];
 
 if (YII_ENV == 'dev') {

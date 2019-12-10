@@ -1,9 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\models\FriendList;
 use kartik\widgets\Select2;
-use app\models\DeelnemersEvent;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DeelnemersEvent */
@@ -17,7 +15,7 @@ use app\models\DeelnemersEvent;
 
         if ($model->isNewRecord) {
             echo $form->field($model, 'user_ID')->widget(Select2::classname(), [
-                'data' => FriendList::getFriendsForEvent(),
+                'data' => $friendList->getFriendsForEvent(),
                 'options' => ['placeholder' => 'Filter as you type ...'],
                 'pluginOptions' => [
                 ]
@@ -36,7 +34,7 @@ use app\models\DeelnemersEvent;
                     ]
                 ])
             ->dropDownList(
-                DeelnemersEvent::getOrganisationRolOptions(),
+                $deelnemersEvent->getOrganisationRolOptions(),
                 [
                     'id' => $model->isNewRecord ?
                         'deelnemers-event-rol-dropdown-create' :

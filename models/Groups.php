@@ -366,18 +366,6 @@ class Groups extends HikeActiveRecord
     }
 
     /**
-     * Get al available group name options
-     */
-    // Dit slaat nergens op om een lijst met alle groepen te maken.
-    // Voot alle hikes.
-    // public function getGroupOptions()
-    // {
-    // 	$data = Groups::findAll();
-    // 	$groupsArray = CHtml::listData($data, 'group_ID', 'group_name');
-    // 	return $groupsArray;
-    // }
-
-    /**
      * Get al available group name options for a particular event.
      */
     public function getGroupOptionsForEvent()
@@ -407,7 +395,8 @@ class Groups extends HikeActiveRecord
      */
     public function getTime_left()
     {
-        $this->_time_left = PostPassage::getTimeLeftToday($this->group_ID);
+        $postPassage = new PostPassage();
+        $this->_time_left = $postPassage->getTimeLeftToday($this->group_ID);
         return $this->_time_left;
     }
 
@@ -416,7 +405,8 @@ class Groups extends HikeActiveRecord
      */
     public function getTime_walking()
     {
-        $this->_time_walking = PostPassage::getWalkingTimeToday($this->group_ID);
+        $postPassage = new PostPassage();
+        $this->_time_walking = $postPassage->getWalkingTimeToday($this->group_ID);
         return $this->_time_walking;
     }
 

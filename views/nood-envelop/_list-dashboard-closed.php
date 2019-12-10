@@ -11,29 +11,39 @@ use app\models\DeelnemersEvent;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
-
+$deelnemersEvent = new DeelnemersEvent();
 ?>
     <div class="view">
     <?php
     echo Html::tag('h4', Html::encode($model->nood_envelop_name));
     if (!$model->isHintOpenedByGroup()) {
-        $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
-
-        echo ButtonAjax::widget([
-            'name' => Yii::t('app', 'Open Hint'),
-            'route' => [
+        $group_ID = $deelnemersEvent->getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
+        if ( !Yii::$app->user->can('deelnemerIntroductie') && !Yii::$app->user->can('deelnemerGestartTime')) {
+            // disable functie van html::a lijkt niet te werken. Daarom dummy burtton:
+            echo Html::Button(
+                'Open ',
+                [
+                    'title' => Yii::t('app', 'Kan hint nu niet openen'),
+                    'class'=>'btn btn-xs btn-success',
+                    'disabled' => true,
+                ]
+            );
+        } else {
+            echo Html::a(
+              'Open',
+              [
                 '/open-nood-envelop/open',
                 'nood_envelop_ID'=>$model->nood_envelop_ID,
                 'group_ID' => $group_ID
-            ],
-            'modalId'=>'#main-modal',
-            'modalContent'=>'#main-content-modal',
-            'options' => [
+              ],
+              [
                 'class' => 'btn btn-xs btn-success',
-                'title' => Yii::t('app', 'Open Hint'),
-                'disabled' => !Yii::$app->user->can('deelnemerIntroductie') && !Yii::$app->user->can('deelnemerGestartTime')
-            ]
-        ]);
+                'data' => [
+                    'confirm' => Yii::t('app', 'Weet je zeker dat je deze hint wilt openen?'),
+                ],
+              ]
+            );
+        }
         echo Html::tag('br');
     }
     echo Html::tag('b', Html::encode($model->getAttributeLabel('score')) . ': ');

@@ -9,16 +9,20 @@ use yii\filters\VerbFilter;
 use app\models\ContactForm;
 use app\models\EventNames;
 use app\models\BonuspuntenSearch;
+use app\models\Qr;
 use app\models\QrCheckSearch;
 use app\models\DeelnemersEvent;
 use app\models\Groups;
 use app\models\Route;
+use app\models\Routebook;
 use app\models\RouteTrack;
 use app\models\Posten;
 use app\models\OpenNoodEnvelopSearch;
+use app\models\OpenVragen;
 use app\models\OpenVragenAntwoorden;
 use app\models\OpenVragenAntwoordenSearch;
 use app\models\OpenVragenSearch;
+use app\models\NoodEnvelop;
 use app\models\NoodEnvelopSearch;
 use app\models\TimeTrailCheckSearch;
 use yii\web\Cookie;
@@ -158,7 +162,6 @@ class SiteController extends Controller
                     'pageSize' => 20,
                 ],
             ]);
-
             $queryCheckQuestions = OpenVragenAntwoorden::find()
                 ->where('event_ID=:event_id and checked=:checked')
                 ->addParams([
@@ -169,7 +172,16 @@ class SiteController extends Controller
                 'query' => $queryCheckQuestions
             ]);
 
+            $routebookModel = Routebook::find()
+                ->where('event_ID=:event_id')
+                ->addParams([
+                'event_id' => Yii::$app->user->identity->selected_event_ID,
+            ]);
+
             $routeTrackModel = new RouteTrack;
+
+            $routeModel = new Route;
+            $timeTableData = $routeModel->timeTable();
 
             $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
@@ -179,11 +191,14 @@ class SiteController extends Controller
                     'organisatieData' => $providerOrganisatie,
                     'groupsData' => $providerGroups,
                     'groupModel' => $groupModel,
+                    'eventNames' => new EventNames,
+                    'routebookModel' => $routebookModel->all(),
                     'dataProviderCheck' => $dataProviderCheck,
                     'activityFeed' => $feed->getData(),
                     'routeTrackModel' => $routeTrackModel,
                     'modelDeelnemer' => new DeelnemersEvent,
                     'importModel' => new ExportImport,
+                    'timeTableData' => $timeTableData
             ));
         }
         return $this->render('/site/index');
@@ -191,11 +206,12 @@ class SiteController extends Controller
 
     public function actionOverviewPlayers()
     {
+        $deelnemersEvent = new DeelnemersEvent();
         if (isset(Yii::$app->user->identity->selected_event_ID)) {
             $event_id = Yii::$app->user->identity->selected_event_ID;
 
             if (null !== Yii::$app->request->get('group_ID') &&
-                DeelnemersEvent::getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie) {
+                $deelnemersEvent->getRolOfCurrentPlayerCurrentGame() === DeelnemersEvent::ROL_organisatie) {
                 $group_id = Yii::$app->request->get('group_ID');
             } else {
                 $temp = DeelnemersEvent::find()
@@ -205,46 +221,30 @@ class SiteController extends Controller
                     ->one();
                 $group_id = $temp->group_ID;
             }
-            $searchQuestionsModel = new OpenVragenSearch();
-            $questionsData = $searchQuestionsModel->searchQuestionNotAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
-
-            $searchAnswersModel = new OpenVragenAntwoordenSearch();
-            $answerData = $searchAnswersModel->searchQuestionAnsweredByGroup(Yii::$app->request->queryParams, $group_id);
-
-            $searchHintsModel = new NoodEnvelopSearch();
-            $closedHintsData = $searchHintsModel->searchNotOpenedByGroup(Yii::$app->request->queryParams, $group_id);
-
-            $searchOpenHintsModel = new OpenNoodEnvelopSearch();
-            $openHintsData = $searchOpenHintsModel->searchOpenedByGroup(Yii::$app->request->queryParams, $group_id);
 
             $searchBonusModel = new BonuspuntenSearch();
             $bonusData = $searchBonusModel->searchByGroup(Yii::$app->request->queryParams, $group_id);
 
-            $searchQrModel = new QrCheckSearch();
-            $qrCheckData = $searchQrModel->searchByGroup(Yii::$app->request->queryParams, $group_id);
-
             $groupModel = Groups::findOne($group_id);
             $groupModel->setGroupMembers();
+            $routebook = new Routebook();
+            $queryRoutebook = $routebook->getRoutebook();
 
-            $feed = new HikeActivityFeed;
-            $feed->pageSize = 9;
-            $feed->pageCount = 2;
+            $routeModel = new Route;
+            $timeTableData = $routeModel->timeTable();
 
             $searchTimeTrailCheckModel = new TimeTrailCheckSearch();
             $timeTrailCheckDataLastItem = $searchTimeTrailCheckModel->searchLastItem(Yii::$app->request->queryParams, $group_id);
             $timeTrailCheckData = $searchTimeTrailCheckModel->search(Yii::$app->request->queryParams, $group_id);
 
+
             return $this->render('index-players', [
                     'groupModel' => $groupModel,
-                    'activityFeed' => $feed->getData(),
-                    'questionsData' => $questionsData,
-                    'answerData' => $answerData,
-                    'openHintsData' => $openHintsData,
-                    'closedHintsData' => $closedHintsData,
-                    'qrCheckData' => $qrCheckData,
                     'bonusData' => $bonusData,
+                    'routebookModel' => $queryRoutebook->all(),
                     'timeTrailCheckData' => $timeTrailCheckData,
                     'timeTrailCheckDataLastItem' => $timeTrailCheckDataLastItem,
+                    'timeTableData' => $timeTableData
             ]);
         }
         return $this->render('/site/index');

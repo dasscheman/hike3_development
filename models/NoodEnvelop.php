@@ -69,7 +69,7 @@ class NoodEnvelop extends HikeActiveRecord
             'nood_envelop_ID' => Yii::t('app', 'Hint ID'),
             'nood_envelop_name' => Yii::t('app', 'Hint titel'),
             'event_ID' => Yii::t('app', 'Hike ID'),
-            'route_ID' => Yii::t('app', 'Route ID'),
+            'route_ID' => Yii::t('app', 'Route Onderdeel'),
             'route_name' => Yii::t('app', 'Route titel'),
             'nood_envelop_volgorde' => Yii::t('app', 'Volgorde'),
             'coordinaat' => Yii::t('app', 'Coordinaten'),

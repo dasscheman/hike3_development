@@ -26,8 +26,9 @@ use prawee\widgets\ButtonAjax;
             ]);
 
             echo Html::tag('h3', Html::encode($model->group_name));
-            $action = PostPassage::determineAction($post_id, $model->group_ID);
-            $title = PostPassage::getActionTitle($action, $model->group_name);
+            $postPassage = new PostPassage;
+            $action = $postPassage->determineAction($post_id, $model->group_ID);
+            $title = $postPassage->getActionTitle($action, $model->group_name);
             $postPassage = PostPassage::find()
                 ->where('post_ID =:post_id AND group_ID =:group_id')
                 ->params([':post_id' => $post_id, ':group_id' => $model->group_ID]);

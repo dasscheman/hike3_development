@@ -35,7 +35,7 @@ use app\models\DeelnemersEvent;
             [
                 'class' => 'btn btn-xs btn-primary',
                 'value'=>'beantwoord-vraag',
-                'name'=>'submit'
+                'name'=>'beantwoord'
             ]
         );
         ?>

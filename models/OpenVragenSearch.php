@@ -12,6 +12,8 @@ use app\models\OpenVragen;
  */
 class OpenVragenSearch extends OpenVragen
 {
+    public $group_id;
+
     /**
      * @inheritdoc
      */
@@ -75,16 +77,12 @@ class OpenVragenSearch extends OpenVragen
         return $dataProvider;
     }
 
-    public function searchQuestionNotAnsweredByGroup($params, $group_id = NULL)
+    public function searchQuestionNotAnsweredByGroup($params)
     {
-        if ($group_id === NULL) {
-            // Get group id of current user.
-            $groupModel = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            $group_id = $groupModel->group_ID;
+        if ($this->group_id === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
         }
 
         $event = EventNames::find()
@@ -92,38 +90,23 @@ class OpenVragenSearch extends OpenVragen
             ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
-        $queryRoute = Route::find()
-            ->select('route_ID')
-            ->orderBy('route_volgorde');
-        if($event->active_day == NULL ||
-           $event->active_day == '0000-00-00') {
-            $queryRoute->where('event_ID =:event_id and (ISNULL(tbl_route.day_date) OR day_date =:day_date OR day_date =:introductie)')
-                ->params([
-                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                    ':day_date' => $event->active_day,
-                    ':introductie' => '0000-00-00'
-                ]);
-        } else {
-            $queryRoute->where('event_ID =:event_id and day_date =:day_date')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
-        }
-
         // Find all answers for founr group id
         $queryAntwoorden = OpenVragenAntwoorden::find()
             ->select('open_vragen_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id
+                ':group_id' => $this->group_id
             ]);
 
         // Find all questions NOT answered by found group id.
         $query = OpenVragen::find()
             ->where(['not in', 'tbl_open_vragen.open_vragen_ID', $queryAntwoorden])
-            ->andWhere(['in', 'tbl_open_vragen.route_ID', $queryRoute])
-            ->andWhere('event_ID=:event_id')
+            ->andWhere('event_ID =:event_id')
+            ->andWhere('route_ID =:route_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected_event_ID
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':route_id' => $this->route_ID
             ]);
 
         $dataProvider = new ActiveDataProvider([

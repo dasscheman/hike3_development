@@ -1,7 +1,5 @@
 <?php
-use prawee\widgets\ButtonAjax;
 use yii\helpers\Html;
-use yii\data\ArrayDataProvider;
 /* @var $this GroupsController */
 /* @var $data Groups */
 

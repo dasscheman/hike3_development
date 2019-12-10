@@ -2,8 +2,6 @@ language: php
 
 php:
   # aliased to a recent 7.x version
-  - 7.1
-  - 7.2
   - 7.3
 
 # faster builds on new travis setup not using sudo
@@ -17,19 +15,21 @@ notifications:
 cache:
   directories:
     - $HOME/.composer/cache
+services:
+  - mysql
 
-before_install:
-  - mysql -e 'create database IF NOT EXISTS `hike-app-test`;' -u root
-  - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'secret';" -u root
-  - mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';" -u root
-  - mysql -e "FLUSH PRIVILEGES;"
-  - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n" -u root
+# before_install:
+#   - mysql -e 'create database IF NOT EXISTS `hike-app-test`;' -u root
+#   - mysql -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'secret';" -u root
+#   - mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';" -u root
+#   - mysql -e "FLUSH PRIVILEGES;"
+#   - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n" -u root
 
 install:
+  - mysql -e 'create database test;'
   - cp config/db.dist.php config/db.php
   - cp config/email.dist.php config/email.php
   - cp config/keys.dist.php config/keys.php
-  - sed -i "s/$db = require(__DIR__ . '\/db.php');/$db = require(__DIR__ . '\/test_db.php');/" config/console.php
   - travis_retry composer self-update && composer --version
 #  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
   - composer global require "fxp/composer-asset-plugin"

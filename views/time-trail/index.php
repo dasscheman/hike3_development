@@ -42,36 +42,10 @@ $this->title = Yii::t('app', 'Time Trails');
         'delay' => 20000,
     ]);
 
-//    echo ButtonAjax::widget([
-//        'name'=> Yii::t('app', 'Add time trail'),
-//        'route'=>['time-trail/create'],
-//        'modalId'=>'#main-modal',
-//        'modalContent'=>'#main-content-modal',
-//        'options'=>[
-//            'class' => 'btn btn-success pull-right',
-//            'title' => Yii::t('app', 'Create new time trail'),
-//            'disabled' => !Yii::$app->user->can('organisatieOpstart') && !Yii::$app->user->can('organisatieIntroductie'),
-//        ]
-//    ]);
-
     $count=0;
     $gridColumns = [
         [
             'attribute' => 'time_trail_item_name',
-//            'format' => 'raw',
-//            'value'=>function ($model, $key, $index, $column) {
-//                return ButtonAjax::widget([
-//                    'name'=>$model->time_trail_item_name,
-//                     'route'=>['time-trail-item/update', 'time_trail_item_ID' => $key],
-//                     'modalId'=>'#main-modal',
-//                     'modalContent'=>'#main-content-modal',
-//                     'options'=>[
-//                         'class'=> 'btn btn-xs btn-primary',
-//                         'title'=>'Edit',
-//                         'disabled' => !Yii::$app->user->can('organisatie'),
-//                     ]
-//                 ]);
-//            },
         ],
         [
             'header' => Yii::t('app', 'View time trail code'),
@@ -168,15 +142,17 @@ $this->title = Yii::t('app', 'Time Trails');
             ],
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
+                    $timeTrailItem = new TimeTrailItem();
                     if (Yii::$app->user->can('organisatie') &&
-                        TimeTrailItem::lowererOrderNumberExists($model->time_trail_item_ID)) {
+                        $timeTrailItem->lowererOrderNumberExists($model->time_trail_item_ID)) {
                         return true;
                     }
                     return false;
                 },
                 'down' => function ($model, $key, $index) {
+                    $timeTrailItem = new TimeTrailItem();
                     if (Yii::$app->user->can('organisatie') &&
-                        TimeTrailItem::higherOrderNumberExists($model->time_trail_item_ID)) {
+                        $timeTrailItem->higherOrderNumberExists($model->time_trail_item_ID)) {
                         return true;
                     }
                     return false;

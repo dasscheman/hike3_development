@@ -2,10 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Route;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\TblNoodEnvelop */
 /* @var $form yii\widgets\ActiveForm */
+
+$route = new Route();
 ?>
 
 <div class="tbl-nood-envelop-form">
@@ -18,7 +21,6 @@ use yii\widgets\ActiveForm;
     <br>
     <?php $form = ActiveForm::begin([
         'action' => $model->isNewRecord ? ['nood-envelop/create', 'route_ID' => $model->route_ID] : ['nood-envelop/' .  Yii::$app->controller->action->id, 'nood_envelop_ID' => $model->nood_envelop_ID]]);
-
     echo $form->field($model, 'nood_envelop_name')->textInput([
             'maxlength' => true,
             'placeholder' => Yii::t(
@@ -26,6 +28,17 @@ use yii\widgets\ActiveForm;
                 'Herkenbare naam, waardoor de spelers weten waar deze hint over gaat.'
             )
         ]);
+    echo $form->field($model, 'route_ID', [
+        'options' => [
+            'id' => 'route-noodenvelop-field-create',
+        ],
+    ])->dropDownList(
+        $route->getRouteOptionsForEvent(),
+        [
+            'prompt'=>'Select...',
+            'id' => 'route-noodenvelop-dropdown-create'
+        ]
+    );
     echo $form->field($model, 'show_coordinates')->checkbox();
     echo $form->field($model, 'opmerkingen')->textArea([
             'maxlength' => true,
@@ -44,7 +57,6 @@ use yii\widgets\ActiveForm;
 
     echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
     echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);
-    echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
     <div class="form-group">

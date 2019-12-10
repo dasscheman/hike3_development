@@ -18,6 +18,7 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
   	public $route_name;
   	public $username;
   	public $score;
+    public $route_id;
     /**
      * @inheritdoc
      */
@@ -141,24 +142,22 @@ class OpenVragenAntwoordenSearch extends OpenVragenAntwoorden
         return $dataProvider;
     }
 
-    public function searchQuestionAnsweredByGroup($params, $group_id = NULL)
+    public function searchQuestionAnsweredByGroup($params)
     {
-        if ($group_id === NULL) {
-            // Get group id of current user.
-            $groupModel = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            $group_id = $groupModel->group_ID;
+        if ($this->group_ID === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
         }
         // Find all answers for founr group id
         $query = OpenVragenAntwoorden::find()
-            ->where('event_ID=:event_id AND group_ID=:group_id AND checked=:checked')
+            ->joinWith('openVragen')
+            ->where(
+                'tbl_open_vragen_antwoorden.event_ID=:event_id AND group_ID=:group_id AND tbl_open_vragen.route_ID=:route_id')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id,
-                ':checked' => TRUE
+                ':group_id' => $this->group_ID,
+                ':route_id' => $this->route_id
             ])
             ->orderBy('update_time DESC');
 

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\OpenNoodEnvelop;
+use yii\web\NotFoundHttpException;
 
 /**
  * OpenNoodEnvelopSearch represents the model behind the search form about `app\models\OpenNoodEnvelop`.
@@ -17,6 +18,7 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
   	public $route_name;
   	public $username;
   	public $score;
+    public $route_id;
 
     /**
      * @inheritdoc
@@ -120,29 +122,29 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
      *
      * @return ActiveDataProvider
      */
-    public function searchOpenedByGroup($params, $group_id = NULL)
+    public function searchOpenedByGroup($params)
     {
-        if ($group_id === NULL) {
-            // Get group id of current user.
-            $groupModel = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            $group_id = $groupModel->group_ID;
+        if ($this->group_ID === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
         }
 
         // Find all open hints for founr group id
         $query = OpenNoodEnvelop::find()
-            ->joinWith(['group', 'createUser'])
+            ->joinWith(['group', 'createUser', 'noodEnvelop'])
             ->where('tbl_open_nood_envelop.event_ID=:event_id AND tbl_open_nood_envelop.group_ID=:group_id AND opened=:opened')
-            ->addParams([
+            ->params([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id,
+                ':group_id' => $this->group_ID,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ])
             ->orderBy(['create_time' => SORT_DESC]);
 
+        if($this->route_id !== null) {
+            $query->andWhere('tbl_nood_envelop.route_ID=:route_id')
+                ->addParams([':route_id' => $this->route_id]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -162,7 +164,7 @@ class OpenNoodEnvelopSearch extends OpenNoodEnvelop
         $query->andFilterWhere([
             'open_nood_envelop_ID' => $this->open_nood_envelop_ID,
             'nood_envelop_ID' => $this->nood_envelop_ID,
-            'group_ID' => $this->group_ID,
+            'tbl_open_nood_envelop.group_ID' => $this->group_ID,
             'opened' => $this->opened,
             'create_time' => $this->create_time,
             'create_user_ID' => $this->create_user_ID,

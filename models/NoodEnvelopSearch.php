@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\NoodEnvelop;
+use yii\web\NotFoundHttpException;
 
 /**
  * NoodEnvelopSearch represents the model behind the search form about `app\models\NoodEnvelop`.
@@ -13,6 +14,8 @@ use app\models\NoodEnvelop;
 class NoodEnvelopSearch extends NoodEnvelop
 {
   	public $route_name;
+    public $group_id;
+
     /**
      * @inheritdoc
      */
@@ -42,13 +45,11 @@ class NoodEnvelopSearch extends NoodEnvelop
      */
     public function search($params)
     {
-        // Get group id of current user.
-        $groupModel = DeelnemersEvent::find()
-            ->select('group_ID')
-            ->where('event_ID =:event_id and user_ID =:user_id')
-            ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-            ->one();
-        $group_id = $groupModel->group_ID;
+        if ($this->group_id === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
+        }
 
         $event = EventNames::find()
             ->where('event_ID =:event_id')
@@ -61,7 +62,7 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->where('event_ID=:event_id AND group_ID=:group_id AND opened=:opened')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id,
+                ':group_id' => $this->group_id,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ]);
 
@@ -152,16 +153,12 @@ class NoodEnvelopSearch extends NoodEnvelop
      *
      * @return ActiveDataProvider
      */
-    public function searchNotOpenedByGroup($params, $group_id = NULL)
+    public function searchNotOpenedByGroup($params)
     {
-        if ($group_id === NULL) {
-            // Get group id of current user.
-            $groupModel = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            $group_id = $groupModel->group_ID;
+        if ($this->group_id === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
         }
 
         $event = EventNames::find()
@@ -169,41 +166,23 @@ class NoodEnvelopSearch extends NoodEnvelop
             ->addParams([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
-        // Get route id's for current day.
-        $queryRoute = Route::find()
-            ->select('route_ID')
-            ->orderBy('route_volgorde');
-
-        if($event->active_day == NULL ||
-           $event->active_day == '0000-00-00') {
-            $queryRoute->where('event_ID =:event_id and (day_date =:day_date OR day_date =:introductie)')
-                ->params([
-                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                    ':day_date' => $event->active_day,
-                    ':introductie' => '0000-00-00'
-                ]);
-        } else {
-            $queryRoute->where('event_ID =:event_id and day_date =:day_date')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':day_date' => $event->active_day]);
-        }
-
         // Find all open hints for founr group id
         $queryOpenHints = OpenNoodEnvelop::find()
             ->select('nood_envelop_ID')
             ->where('event_ID=:event_id AND group_ID=:group_id AND opened=:opened')
             ->addParams([
                 ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id,
+                ':group_id' => $this->group_id,
                 ':opened' => OpenNoodEnvelop::STATUS_open
             ]);
 
         // Find all hinits NOT opened by found group id.
         $query = NoodEnvelop::find()
             ->where(['not in', 'tbl_nood_envelop.nood_envelop_ID', $queryOpenHints])
-            ->andwhere(['in', 'tbl_nood_envelop.route_ID', $queryRoute])
-            ->andWhere('event_ID=:event_id')
+            ->andWhere('event_ID=:event_id AND route_ID =:route_id')
             ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected_event_ID
+                ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                ':route_id' => $this->route_ID
             ])
             ->orderBy('nood_envelop_volgorde');
 

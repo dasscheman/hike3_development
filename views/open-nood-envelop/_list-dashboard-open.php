@@ -12,11 +12,12 @@ use app\models\DeelnemersEvent;
 /* @var $this GroupsController */
 /* @var $data Groups */
 
+$deelnemersEvent = new DeelnemersEvent();
 ?>
 <div class="view">
     <?php
     $nood_envelop = $model->getNoodEnvelop()->one();
-    $group_ID = DeelnemersEvent::getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
+    $group_ID = $deelnemersEvent->getGroupOfPlayer(Yii::$app->user->identity->selected_event_ID, Yii::$app->user->id);
     echo Html::tag('h4', Html::encode($nood_envelop->nood_envelop_name));
     echo Html::tag('b', Html::encode($nood_envelop->getAttributeLabel('score')) . ': ');
     echo Html::encode($nood_envelop->score);

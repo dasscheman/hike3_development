@@ -6,7 +6,7 @@ use app\models\NoodEnvelop;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
-
+$noodEnvelop = new NoodEnvelop();
 ?>
 
 <div class="col-sm-3">
@@ -42,7 +42,7 @@ use app\models\NoodEnvelop;
                         'title' => Yii::t('app', 'Move up'),
 
                         'class'=>'btn btn-primary btn-xs',
-                        'disabled' => !NoodEnvelop::lowererOrderNumberExists($model->nood_envelop_ID),
+                        'disabled' => !$noodEnvelop->lowererOrderNumberExists($model->nood_envelop_ID),
                     ]
                 );
 
@@ -55,7 +55,7 @@ use app\models\NoodEnvelop;
                             'up_down' => 'down']) . "';",
                         'title' => Yii::t('app', 'Move down'),
                         'class'=>'btn btn-primary btn-xs',
-                        'disabled' => !NoodEnvelop::higherOrderNumberExists($model->nood_envelop_ID),
+                        'disabled' => !$noodEnvelop->higherOrderNumberExists($model->nood_envelop_ID),
                     ]
                 ); ?>
             </p>

@@ -63,12 +63,13 @@ $this->title = Yii::t('app', 'Select hike');
             'attribute' => 'status',
             'value' => function($model){
                 return $model->getStatusText();
-            }, 
+            },
         ],
         [
             'header' => 'Rol',
             'value' => function($key){
-                return DeelnemersEvent::getRolOfCurrentPlayer($key);
+                $deelnemersEvent = new DeelnemersEvent();
+                return $deelnemersEvent->getRolOfCurrentPlayer($key);
             },
         ],
         'organisatie' => [

@@ -17,6 +17,7 @@ class QrCheckSearch extends QrCheck
     public $route_name;
     public $username;
     public $score;
+    public $route_id;
 
     /**
      * @inheritdoc
@@ -114,26 +115,33 @@ class QrCheckSearch extends QrCheck
     }
 
 
-    public function searchByGroup($params, $group_id = NULL)
+    public function searchByGroup($params)
     {
-        if ($group_id === NULL) {
-            // Get group id of current user.
-            $groupModel = DeelnemersEvent::find()
-                ->select('group_ID')
-                ->where('event_ID =:event_id and user_ID =:user_id')
-                ->params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':user_id' => Yii::$app->user->id])
-                ->one();
-            $group_id = $groupModel->group_ID;
+        if ($this->group_ID === NULL &&
+          Yii::$app->user->identity->getRolUserForEvent() !== DeelnemersEvent::ROL_organisatie) {
+            // When not organisatino, group_ID is required.
+            throw new NotFoundHttpException('group_ID not given.');
         }
         // Find all answers for founr group id
-        $query = QrCheck::find()
-            // ->select('qr_check_ID')
-            ->where('event_ID=:event_id AND group_ID=:group_id')
-            ->addParams([
-                ':event_id' => Yii::$app->user->identity->selected_event_ID,
-                ':group_id' => $group_id
-            ]);
 
+        if($this->route_id !== null) {
+            $query = QrCheck::find()
+                ->joinWith(['qr'])
+                ->where('tbl_qr_check.event_ID=:event_id AND group_ID=:group_id AND tbl_qr.route_ID=:route_id')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':group_id' => $this->group_ID,
+                    ':route_id' => $this->route_id
+                ]);
+        } else {
+            $query = QrCheck::find()
+                ->joinWith(['qr'])
+                ->where('tbl_qr_check.event_ID=:event_id AND group_ID=:group_id')
+                ->params([
+                    ':event_id' => Yii::$app->user->identity->selected_event_ID,
+                    ':group_id' => $this->group_ID
+                ]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=> ['defaultOrder' => ['create_time'=>SORT_DESC]],
@@ -152,7 +160,7 @@ class QrCheckSearch extends QrCheck
         $query->andFilterWhere([
             'qr_check_ID' => $this->qr_check_ID,
             'qr_ID' => $this->qr_ID,
-            'event_ID' => $this->event_ID,
+            'tbl_qr_check.event_ID' => $this->event_ID,
             'group_ID' => $this->group_ID,
             'create_time' => $this->create_time,
             'create_user_ID' => $this->create_user_ID,

@@ -20,29 +20,8 @@ echo Dialog::widget();
 ?>
 <div class="container-map">
 <div class="map-index">
+    <br><br>
     <?php
-    foreach ($routeDataProvider->getModels() as $routeItem) {
-        if ($routeItem->route_ID !== $routeModel->route_ID) {
-            echo Html::a(
-                $routeItem->route_name,
-                [
-                'edit',
-                'route_ID' => $routeItem->route_ID,
-                ],
-                ['class' => 'btn-lg route-buttons']
-            );
-        } else {
-            OpenMap::setCookieIndexRoute($routeModel->route_ID);
-            echo Html::label(
-                $routeItem->route_name,
-                [
-                    'edit',
-                    'route_ID' => $routeItem->route_ID,
-                ],
-                ['class' => 'btn-lg route-buttons']
-            );
-        }
-    }
     echo CustomAlertBlock::widget([
         'type' => CustomAlertBlock::TYPE_ALERT,
         'useSessionFlash' => true,

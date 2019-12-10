@@ -7,7 +7,7 @@ use app\models\OpenVragen;
 
 /* @var $this GroupsController */
 /* @var $data Groups */
-
+$openVragen = new OpenVragen();
 ?>
 <div class="col-sm-3">
     <div class="row-1">
@@ -49,7 +49,7 @@ use app\models\OpenVragen;
                             'title' => Yii::t('app', 'Move up'),
 
                             'class'=>'btn btn-primary btn-xs',
-                            'disabled' => !OpenVragen::lowererOrderNumberExists($model->open_vragen_ID),
+                            'disabled' => !$openVragen->lowererOrderNumberExists($model->open_vragen_ID),
                         ]
                     );
 
@@ -62,7 +62,7 @@ use app\models\OpenVragen;
                                 'up_down' => 'down']) . "';",
                             'title' => Yii::t('app', 'Move down'),
                             'class'=>'btn btn-primary btn-xs',
-                            'disabled' => !OpenVragen::higherOrderNumberExists($model->open_vragen_ID),
+                            'disabled' => !$openVragen->higherOrderNumberExists($model->open_vragen_ID),
                         ]
                     );
                 ?>

@@ -2,10 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Route;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\OpenVragen */
 /* @var $form yii\widgets\ActiveForm */
+
+$route = new Route();
 ?>
 
 <div class="tbl-open-vragen-form">
@@ -27,6 +30,17 @@ use yii\widgets\ActiveForm;
                 'Recognizable name for this question, visable by players.'
             )
         ]);
+    echo $form->field($model, 'route_ID', [
+        'options' => [
+            'id' => 'route-noodenvelop-field-create',
+        ],
+    ])->dropDownList(
+        $route->getRouteOptionsForEvent(),
+        [
+            'prompt'=>'Select...',
+            'id' => 'route-noodenvelop-dropdown-create'
+        ]
+    );
     echo $form->field($model, 'omschrijving')->textarea([
             'rows' => 6,
             'placeholder' => Yii::t(
@@ -54,8 +68,7 @@ use yii\widgets\ActiveForm;
         )]);
 
     echo $form->field($model, 'latitude')->textInput(['value'=> $model->latitude, 'readonly' => true, 'class' => 'form-control latitude']);
-    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);  
-    echo $form->field($model, 'route_ID')->hiddenInput(['value'=> $model->route_ID])->label(false);
+    echo $form->field($model, 'longitude')->textInput(['value'=> $model->longitude, 'readonly' => true, 'class' => 'form-control longitude']);
     echo $form->field($model, 'event_ID')->hiddenInput(['value'=> $model->event_ID])->label(false);
     ?>
 

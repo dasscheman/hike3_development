@@ -293,12 +293,14 @@ class PostPassage extends HikeActiveRecord
 
     public function isGroupStarted($group_id)
     {
-        $active_day = EventNames::getActiveDayOfHike();
+        $eventNames = new EventNAmes();
+        $active_day = $eventNames->getActiveDayOfHike();
         if($active_day == null) {
             // Geen active dag geselecteerd, dus deze dag kan ook niet gestart zijn
             return false;
         }
-        $start_post_id = Posten::getStartPost($active_day);
+        $posten = new Posten();
+        $start_post_id = $posten->getStartPost($active_day);
         if($start_post_id == null) {
             // Er zijn geen posten aangemaakt voor deze. Dus de groep is gewoon gestart.
             return true;
@@ -352,23 +354,25 @@ class PostPassage extends HikeActiveRecord
 
     public function determineAction($post_id, $group_id)
     {
-        $active_day = EventNames::getActiveDayOfHike();
+        $eventNames = new EventNames;
+        $active_day = $eventNames->getActiveDayOfHike();
         $data = Posten::findOne($post_id);
         $postPassage = PostPassage::find()
             ->where('post_ID =:post_id AND group_ID =:group_id')
             ->params([':post_id' => $post_id, ':group_id' => $group_id])
             ->exists();
-        Posten::getStartPost($active_day);
+        $posten = new Posten;
+        $posten->getStartPost($active_day);
         if ($data->isStartPost() &&
             $data->date === $active_day &&
-            !PostPassage::isGroupStarted($group_id)) {
+            !$this->isGroupStarted($group_id)) {
             return 'start';
         }
 
         if (!$data->isStartPost() &&
             $data->date === $active_day &&
             !$postPassage &&
-            !PostPassage::isPostPassedByGroup($group_id, $post_id)) {
+            !$this->isPostPassedByGroup($group_id, $post_id)) {
             return 'checkin';
         }
 

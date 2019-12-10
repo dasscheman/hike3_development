@@ -66,8 +66,9 @@ class OpenNoodEnvelopController extends Controller {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $startDate = EventNames::getStartDate($event_id);
-        $endDate = EventNames::getEndDate($event_id);
+        $eventNames = new EventNames();
+        $startDate = $eventNames->getStartDate($event_id);
+        $endDate = $eventNames->getEndDate($event_id);
 
         return $this->render('index', [
                 'searchModel' => $searchModel,
@@ -99,23 +100,25 @@ class OpenNoodEnvelopController extends Controller {
                 ])
                 ->one();
 
-            if (!isset($modelDeelnemersEvent->rol) ||
-                !$modelDeelnemersEvent->rol >= 1) {
+            if (isset($modelDeelnemersEvent->rol) &&
+                $modelDeelnemersEvent->rol = 3) {
                   Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor deze hike.'));
                   return $this->redirect(['site/overview-players']);
             }
-            Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
+            Yii::$app->user->identity->selected_event_ID = $modelDeelnemersEvent->event_ID;
             Yii::$app->user->identity->save();
             Yii::$app->cache->flush();
         }
 
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($modelEnvelop->event_ID);
+        $deelnemersEvent = new DeelnemersEvent();
+        $groupPlayer = $deelnemersEvent->getGroupOfPlayer($modelEnvelop->event_ID);
         if (!$groupPlayer) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Je mag deze hint niet openen.'));
             return $this->redirect(['site/index']);
         }
 
-        if ($modelEnvelop->route->day_date != EventNames::getActiveDayOfHike()) {
+        $eventNames = new EventNames();
+        if ($modelEnvelop->route->day_date != $eventNames->getActiveDayOfHike()) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor vandaag.'));
             return $this->redirect(['site/overview-players']);
         }
