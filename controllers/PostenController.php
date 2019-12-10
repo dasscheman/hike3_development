@@ -233,8 +233,9 @@ class PostenController extends Controller
         }
 
         $event_Id = Yii::$app->user->identity->selected_event_ID;
-        $startDate = EventNames::getStartDate($event_Id);
-        $endDate = EventNames::getEndDate($event_Id);
+        $eventNames = new EventNames;
+        $startDate = $eventNames->getStartDate($event_Id);
+        $endDate = $eventNames->getEndDate($event_Id);
         $searchModel = new PostenSearch();
 
         if (Yii::$app->request->isAjax) {
@@ -249,47 +250,6 @@ class PostenController extends Controller
                 'startDate' => $startDate,
                 'endDate' => $endDate
         ]);
-
-
-
-
-
-        $event_id = $_GET['event_id'];
-        $post_id = $_GET['post_id'];
-        $date = $_GET['date'];
-        $post_volgorde = $_GET['volgorde'];
-        $up_down = $_GET['up_down'];
-
-        $currentModel = Posten::findByPk($post_id);
-
-        $criteria = new CDbCriteria;
-
-        if ($up_down == 'up') {
-            $criteria->condition = 'event_ID =:event_id AND date =:date AND post_volgorde <:order';
-            $criteria->params = array(':event_id' => $event_id, ':date' => $date, ':order' => $post_volgorde);
-            $criteria->order = 'post_volgorde DESC';
-        }
-        if ($up_down == 'down') {
-            $criteria->condition = 'event_ID =:event_id AND date =:date AND post_volgorde >:order';
-            $criteria->params = array(':event_id' => $event_id, ':date' => $date, ':order' => $post_volgorde);
-            $criteria->order = 'post_volgorde ASC';
-        }
-        $criteria->limit = 1;
-        $previousModel = Posten::findAll($criteria);
-
-        $tempCurrentVolgorde = $currentModel->post_volgorde;
-        $currentModel->post_volgorde = $previousModel[0]->post_volgorde;
-        $previousModel[0]->post_volgorde = $tempCurrentVolgorde;
-
-        $currentModel->save();
-        $previousModel[0]->save();
-
-        $startDate = EventNames::getStartDate($event_id);
-        $endDate = EventNames::getEndDate($event_id);
-
-        $this->redirect(array('/posten/index',
-            'event_id' => $event_id,
-            'date' => $date));
     }
 
     public function actionListsPosts()

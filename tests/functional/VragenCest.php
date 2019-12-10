@@ -89,7 +89,7 @@ class VragenCest
 
     public function testBeantwoordenVraagIntroSpeler(\FunctionalTester $I)
     {
-        $I->amGoingTo('scan Qr of hike intro with deelnemera');
+        $I->amGoingTo('Awnser question hike intro with deelnemera');
         $I->amLoggedInAs(\app\models\Users::findByUsername('deelnemera'));
         Yii::$app->user->identity->selected_event_ID = 2;
         Yii::$app->user->identity->save();

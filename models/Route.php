@@ -273,25 +273,42 @@ class Route extends HikeActiveRecord
         return $listData;
     }
 
-    public function timeTable() {
+    public function timeTable()
+    {
         $event_id = Yii::$app->user->identity->selected_event_ID;
-        $data = Route::find()
+        $routeData = Route::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id])
+            ->all();
+        $timetabledata = [];
+        foreach($routeData as $key => $item) {
+            $data['name'] = $item->route_name;
+            $data['title'] = 'Route ' . $item->start_datetime . ' - ' . $item->end_datetime;
+            $data['start'] = Yii::$app->setupdatetime->convert($item->start_datetime, 'datetime_short'); //startTime->format('Y-m-d H:i');
+            $data['end'] = Yii::$app->setupdatetime->convert($item->end_datetime, 'datetime_short'); //$endTime->format('Y-m-d H:i');
+            $data['type'] = 'Route';
+            $timetabledata[] = $data;
+        }
+        $postData = Posten::find()
             ->where('event_ID =:event_ID')
             ->addParams([':event_ID' => $event_id])
             ->all();
 
-        foreach($data as $key => $item) {
-            if($item->start_datetime == null) {
-              continue;
-            }
-            if($item->end_datetime == null) {
-              continue;
-            }
-            $timetabledata['lokaties'][] = $item->route_name;
-            $timetabledata['events'][$item->route_name][0] = 'Route ' . $item->start_datetime . ' - ' . $item->end_datetime;
-            $timetabledata['events'][$item->route_name][1] = $item->start_datetime; //startTime->format('Y-m-d H:i');
-            $timetabledata['events'][$item->route_name][2] = $item->end_datetime; //$endTime->format('Y-m-d H:i');
+        foreach($postData as $key => $item) {
+            $data['name'] = $item->post_name;
+            $data['title'] = 'Post ' . $item->start_datetime . ' - ' . $item->end_datetime;
+            $data['start'] = Yii::$app->setupdatetime->convert($item->start_datetime, 'datetime_short'); //startTime->format('Y-m-d H:i');
+            $data['end'] = Yii::$app->setupdatetime->convert($item->end_datetime, 'datetime_short'); //$endTime->format('Y-m-d H:i');
+            $data['type'] = 'Post';
+
+            $timetabledata[] = $data;
         }
+
+        $keys = array_column($timetabledata, 'end');
+        array_multisort($keys, SORT_ASC, $timetabledata);
+        $keys = array_column($timetabledata, 'start');
+        array_multisort($keys, SORT_ASC, $timetabledata);
+
         return $timetabledata;
     }
 }

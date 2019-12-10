@@ -30,5 +30,4 @@ tests/_output/*
 config/passwords.txt
 config/db.php
 config/email.php
-certificaten/*
 /config/keys.php

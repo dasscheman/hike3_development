@@ -27,7 +27,7 @@ class LoginFormCest
     {
         $I->amLoggedInAs(1);
         $I->amOnPage('/');
-        $I->see('Uitloggen organisatie');
+        $I->see('Uitloggen');
     }
 
     // demonstrates `amLoggedInAs` method
@@ -35,7 +35,7 @@ class LoginFormCest
     {
         $I->amLoggedInAs(\app\models\Users::findByUsername('organisatie'));
         $I->amOnPage('/');
-        $I->see('Uitloggen organisatie');
+        $I->see('Uitloggen');
     }
 
     public function loginWithEmptyCredentials(\FunctionalTester $I)
@@ -65,7 +65,7 @@ class LoginFormCest
             'login-form[login]' => 'organisatie',
             'login-form[password]' => 'test',
         ]);
-        $I->see('Uitloggen organisatie');
+        $I->see('Uitloggen');
         $I->dontSeeElement('form#login-form');
     }
 }

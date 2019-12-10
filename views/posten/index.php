@@ -130,14 +130,14 @@ $this->title = Yii::t('app', 'Posten');
             'visibleButtons' => [
                 'up' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
-                        Posten::lowerOrderNumberExists($model->post_ID)) {
+                        $model->lowerOrderNumberExists($model->post_ID)) {
                         return true;
                     }
                     return false;
                 },
                 'down' => function ($model, $key, $index) {
                     if (Yii::$app->user->can('organisatie') &&
-                        Posten::higherOrderNumberExists($model->post_ID)) {
+                        $model->higherOrderNumberExists($model->post_ID)) {
                         return true;
                     }
                     return false;

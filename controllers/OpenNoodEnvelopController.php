@@ -100,12 +100,12 @@ class OpenNoodEnvelopController extends Controller {
                 ])
                 ->one();
 
-            if (!isset($modelDeelnemersEvent->rol) ||
-                !$modelDeelnemersEvent->rol >= 1) {
+            if (isset($modelDeelnemersEvent->rol) &&
+                $modelDeelnemersEvent->rol = 3) {
                   Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor deze hike.'));
                   return $this->redirect(['site/overview-players']);
             }
-            Yii::$app->user->identity->selected_event_ID = (int) Yii::$app->request->get('event_ID');
+            Yii::$app->user->identity->selected_event_ID = $modelDeelnemersEvent->event_ID;
             Yii::$app->user->identity->save();
             Yii::$app->cache->flush();
         }
