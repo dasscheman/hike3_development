@@ -255,8 +255,10 @@ class PostenController extends Controller
     public function actionListsPosts()
     {
         $post_id = '';
+        $model = new Posten;
         if (null !== Yii::$app->request->get('post_id')) {
             $post_id = Yii::$app->request->get('post_id');
+            $model = $this->findModel($post_id);
         }
 
         $out = [];
@@ -264,7 +266,7 @@ class PostenController extends Controller
             $parents = Yii::$app->request->post('depdrop_parents');
             if ($parents != null) {
                 $date = $parents[0];
-                $data = Posten::getPostNameOptionsToday($date);
+                $data = $model->getPostNameOptionsToday($date);
                 foreach ($data as $key => $item) {
                     $out[] = ['id' => $key, 'name' => $item];
                 }

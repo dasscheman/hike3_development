@@ -21,7 +21,6 @@ use kartik\widgets\Select2;
                 ]
             ]);
         }
-
         echo $form->field(
                 $model,
                 'rol',
@@ -34,7 +33,7 @@ use kartik\widgets\Select2;
                     ]
                 ])
             ->dropDownList(
-                $deelnemersEvent->getOrganisationRolOptions(),
+                $model->getOrganisationRolOptions(),
                 [
                     'id' => $model->isNewRecord ?
                         'deelnemers-event-rol-dropdown-create' :
