@@ -4,7 +4,8 @@ $ip = require(__DIR__ . '/../config/ip_white_list.php');
 
 if( $_SERVER['HTTP_HOST'] == 'hike.devel' ||
     $_SERVER['HTTP_HOST'] == 'hike.vagrant' ||
-    (($_SERVER['HTTP_HOST'] == 'acc.hike-app.nl' ||
+    (($_SERVER['HTTP_HOST'] == 'hike-app.nl' ||
+    $_SERVER['HTTP_HOST'] == 'acc.hike-app.nl' ||
     $_SERVER['HTTP_HOST'] == 'test.hike-app.nl') &&
     in_array(@$_SERVER['REMOTE_ADDR'], $ip ))){
     defined('YII_DEBUG') or define('YII_DEBUG', true);
