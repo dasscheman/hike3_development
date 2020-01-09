@@ -357,8 +357,8 @@ class PostenController extends Controller
             //    'cssInline' => '.kv-heading-1{font-size:18px}',
             // set mPDF properties on the fly
             'options' => [
-                'title' => Yii::t('app', 'In-uitcheckt post:') . ' ' . $model->post_name,
-                'subject' => Yii::t('app', 'In-uitcheck post:') . ' ' . $model->post_name,
+                'title' => Yii::t('app', 'In-uitcheckt posten'),
+                'subject' => Yii::t('app', 'In-uitcheck posten'),
             //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
             ],
             // call mPDF methods on the fly

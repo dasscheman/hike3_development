@@ -162,12 +162,12 @@ class PostPassageController extends Controller {
         }
 
         if (isset($posten->start_datetime) && $posten->start_datetime > $now) {
-          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze postcode is nog niet open gestart.'));
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze postcode is nog niet open.'));
           return $this->redirect(['site/overview-players']);
         }
 
-        if (isset($posten->end_datetime) && $posten->end_datetime < $now) {
-          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze post is al afegelopen.'));
+        if ($action == 'incheck' && isset($posten->end_datetime) && $posten->end_datetime < $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze post is al gesloten.'));
           return $this->redirect(['site/overview-players']);
         }
 

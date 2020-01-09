@@ -33,17 +33,27 @@
     $incheck_code = $model->incheck_code;
     $uitcheck_code = $model->uitcheck_code;
     $post_name = $model->post_name;
-    $post_name = $model->post_name;
-    $post_name = $model->post_name;
+    $start = $model->start_datetime;
+    $end = $model->end_datetime;
     $score = $model->score;?>
 
 <div style="border: none; background-color: #21C5CE; ">
 	<div class="rounded title">
-		<h1> <?php echo $event_name; ?> </h1>
+		<h1> <?php echo $event_name; ?>  (score:<?php echo $score; ?>)</h1>
 		<h2> Datum <?php echo $start_date; ?> tot <?php echo $end_date?> </h2>
 
-		<!-- <b>Score:</b><?php //echo $score; ?><br> -->
 		<b>Post naam:</b> <?php echo $post_name ?><br>
+    <?php
+    if(isset($start)) { ?>
+      <b> Open vanaf:</b><?php echo $start;
+    }
+    if(isset($end)) { ?>
+        <b>Sluit om:</b><?php echo $end;
+    }
+
+    if(isset($end) || isset($start)) { ?>
+        <br>
+    <?php } ?>
 		<b>Organisatie:</b><?php echo $organisatie ?><br>
 
 	</div>
@@ -55,15 +65,14 @@
 
 	<div class="rounded tekst centre">
 		<b>Inchecken Post</b><br>
-		Dit is een stille post. Je kunt deze scannen met een QR code scanner op je smartphone.
-		Als je de QR code gescand hebt, dan moet je de link volgen die in de code staat.
-		Je komt dan op de site van www.hike-app.nl, er wordt om je inlog gevraagd.
-		Als je inlogt krijgt je groepje punten voor het vinden van deze stille post.
-		Indien je geen bereik hebt kun je met de meeste QR code scanners de code ook bewaren.
-		Je kunt dan de link in de code volgen als je weer bereik hebt.
+    <br>
+    <br>
+	  Je kunt alleen inchecken als je binnen de tijd bent.
+    <br>
 		<br>
-		<br>
-		<i>www.hike-app.nl</i>
+    <br>
+    <br>
+    <i>www.hike-app.nl</i>
 		<br><br>
 		<div class="centretext"><?php echo $incheck_code ?></div>
 	</div>
@@ -78,8 +87,19 @@
 		<h1> <?php echo $event_name; ?> </h1>
 		<h2> Datum <?php echo $start_date; ?> tot <?php echo $end_date?> </h2>
 
-		<!-- <b>Score:</b><?php //echo $score; ?><br> -->
-		<b>QR code naam:</b> <?php echo $post_name ?><br>
+		<b>Post naam:</b> <?php echo $post_name ?><br>
+    <?php
+    if(isset($start)) { ?>
+      <b> Open vanaf:</b><?php echo $start;
+    }
+    if(isset($end)) { ?>
+        <b>Sluit om:</b><?php echo $end;
+    }
+
+    if(isset($end) || isset($start)) { ?>
+        <br>
+    <?php } ?>
+
 		<b>Organisatie:</b><?php echo $organisatie ?><br>
 
 	</div>
@@ -91,14 +111,13 @@
 
 	<div class="rounded tekst centre">
 		<b>Uitchecken post</b><br>
-		Dit is een stille post. Je kunt deze scannen met een QR code scanner op je smartphone.
-		Als je de QR code gescand hebt, dan moet je de link volgen die in de code staat.
-		Je komt dan op de site van www.hike-app.nl, er wordt om je inlog gevraagd.
-		Als je inlogt krijgt je groepje punten voor het vinden van deze stille post.
-		Indien je geen bereik hebt kun je met de meeste QR code scanners de code ook bewaren.
-		Je kunt dan de link in de code volgen als je weer bereik hebt.
+    <br>
+    <br>
+    Je kunt alleen uitchecken als je eerst ingecheckt bent.
+    <br>
 		<br>
-		<br>
+    <br>
+    <br>
 		<i>www.hike-app.nl</i>
 		<br><br>
 		<div class="centretext"><?php echo $uitcheck_code ?></div>
