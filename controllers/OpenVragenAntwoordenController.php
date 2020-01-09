@@ -82,10 +82,14 @@ class OpenVragenAntwoordenController extends Controller {
             return $this->redirect(['site/overview-players']);
         }
 
-        $eventNames = new EventNames();
-        if ($modelVraag->route->day_date != $eventNames->getActiveDayOfHike()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag is niet voor vandaag.'));
+        if (isset($modelVraag->route->start_datetime) && $modelVraag->route->start_datetime > $now) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag hoort bij routeonderdeel die nog niet gestart is.'));
             return $this->redirect(['site/overview-players']);
+        }
+
+        if (isset($modelVraag->route->end_datetime) && $modelVraag->route->end_datetime < $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag hoort bij routeonderdeel die al afegelopen is..'));
+          return $this->redirect(['site/overview-players']);
         }
 
         if (!$model->load(Yii::$app->request->post())) {

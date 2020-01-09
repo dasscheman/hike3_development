@@ -158,6 +158,14 @@ class Route extends HikeActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'update_user_ID']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRoutebook()
+    {
+        return $this->hasOne(Routebook::className(), ['route_ID' => 'route_ID']);
+    }
+
     public function setRouteOrder()
     {
         $max_order = Route::find()
@@ -273,13 +281,10 @@ class Route extends HikeActiveRecord
         return $listData;
     }
 
-    public function timeTable()
+    public function timeTable($groupView)
     {
-        $event_id = Yii::$app->user->identity->selected_event_ID;
-        $routeData = Route::find()
-            ->where('event_ID =:event_ID')
-            ->addParams([':event_ID' => $event_id])
-            ->all();
+        $routeData = $this->getTimeTableData($groupView);
+
         $timetabledata = [];
         foreach($routeData as $key => $item) {
             $data['name'] = $item->route_name;
@@ -289,10 +294,9 @@ class Route extends HikeActiveRecord
             $data['type'] = 'Route';
             $timetabledata[] = $data;
         }
-        $postData = Posten::find()
-            ->where('event_ID =:event_ID')
-            ->addParams([':event_ID' => $event_id])
-            ->all();
+
+        $posten = new Posten;
+        $postData = $posten->getTimeTableData($groupView);
 
         foreach($postData as $key => $item) {
             $data['name'] = $item->post_name;
@@ -310,5 +314,29 @@ class Route extends HikeActiveRecord
         array_multisort($keys, SORT_ASC, $timetabledata);
 
         return $timetabledata;
+    }
+
+    public function getTimeTableData($groupView = true)
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $route = Route::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id]);
+
+        if($groupView) {
+            $route
+                // lijkt tegen intuitief. Maar voor de start tijd moet er een uur bij
+                // de huidige opgeteld worden en voor de eind tijd juist eraf gehaald worden.
+                ->andWhere(['or',
+                    ['<=', 'start_datetime', Yii::$app->setupdatetime->convert(strtotime('+1 hours'), 'datetime')],
+                    ['start_datetime' => null]
+                ])
+                ->andWhere(['or',
+                    ['>=', 'end_datetime', Yii::$app->setupdatetime->convert(strtotime('-1 hours'), 'datetime')],
+                    ['end_datetime' => null]
+                ]);
+        }
+
+        return $route->all();
     }
 }

@@ -14,6 +14,7 @@ class Bootstrap implements BootstrapInterface
         $app->params['map_icons'] = $app->basePath . '/web/images/map_icons/';
         $app->params['map_icons_marker'] = $app->basePath . '/web/images/map_icons/marker';
         $app->params['qr_code_path'] = $app->basePath . '/web/qr/';
+        $app->params['post_code_path'] = $app->basePath . '/web/post/';
         $app->params['timetrail_code_path'] = $app->basePath . '/web/timetrail/';
         $app->params['kiwilogo'] = $app->basePath . '/web/images/kiwilogo.jpg';
     }

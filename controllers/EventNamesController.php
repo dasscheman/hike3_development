@@ -248,8 +248,8 @@ class EventNamesController extends Controller
                   $dayname = Yii::$app->setupdatetime->getDay($i);
                   // Wanneer er een hike aangemaakt wordt, dan wordt er voor
                   // elke dag een route aangemaakt.
-                  if (!Route::routeExistForDay($day)) {
-                      $modelRoute = new Route;
+                  $modelRoute = new Route;
+                  if (!$modelRoute->routeExistForDay($day)) {
                       $modelRoute->setAttributes([
                           'event_ID' => $model->event_ID,
                           'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
@@ -271,9 +271,6 @@ class EventNamesController extends Controller
                     $modelPassage->gepasseerd = 1;
                     $modelPassage->vertrek = Yii::$app->request->post('EventNames')['start_time_all_groups'];
                     $modelPassage->save();
-                    // d($modelPassage);
-                    // d($modelPassage->save());
-                    // d($modelPassage->getErrors());
                 }
             }
         }

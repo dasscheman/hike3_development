@@ -178,7 +178,7 @@ class DeelnemersEvent extends HikeActiveRecord
     * Retrieves een lijst met mogelijke rollen die een deelnemer tijdens een hike kan hebben
     * @return array an array of available rollen.
     */
-    public function getRolOptions()
+    static public function getRolOptions()
     {
         return array(
             self::ROL_organisatie=>'Organisatie',
@@ -204,7 +204,7 @@ class DeelnemersEvent extends HikeActiveRecord
     /**
     * @return string de rol text display
     */
-    public function getRolText($rol)
+    static public function getRolText($rol)
     {
         $rolOptions = self::getRolOptions();
         return isset($rolOptions[$rol]) ?

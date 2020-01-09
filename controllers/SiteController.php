@@ -173,15 +173,15 @@ class SiteController extends Controller
             ]);
 
             $routebookModel = Routebook::find()
-                ->where('event_ID=:event_id')
+                ->where('tbl_routebook.event_ID=:event_id')
                 ->addParams([
                 'event_id' => Yii::$app->user->identity->selected_event_ID,
-            ]);
+            ])->joinWith('route');
 
             $routeTrackModel = new RouteTrack;
 
             $routeModel = new Route;
-            $timeTableData = $routeModel->timeTable();
+            $timeTableData = $routeModel->timeTable(false);
 
             $feed = new HikeActivityFeed;
             $feed->pageSize = 10;
@@ -231,7 +231,7 @@ class SiteController extends Controller
             $queryRoutebook = $routebook->getRoutebook();
 
             $routeModel = new Route;
-            $timeTableData = $routeModel->timeTable();
+            $timeTableData = $routeModel->timeTable(true);
 
             $searchTimeTrailCheckModel = new TimeTrailCheckSearch();
             $timeTrailCheckDataLastItem = $searchTimeTrailCheckModel->searchLastItem(Yii::$app->request->queryParams, $group_id);

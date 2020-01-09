@@ -212,9 +212,9 @@ class RouteController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Kan volgorde niet wijzigen.'));
             }
         }
-
-        $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
-        $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
+        $eventNames = new EventNames;
+        $startDate = $eventNames->getStartDate(Yii::$app->user->identity->selected_event_ID);
+        $endDate = $eventNames->getEndDate(Yii::$app->user->identity->selected_event_ID);
         $searchModel = new RouteSearch();
 
         if (Yii::$app->request->isAjax) {

@@ -117,10 +117,14 @@ class OpenNoodEnvelopController extends Controller {
             return $this->redirect(['site/index']);
         }
 
-        $eventNames = new EventNames();
-        if ($modelEnvelop->route->day_date != $eventNames->getActiveDayOfHike()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint is niet voor vandaag.'));
+        if (isset($modelEnvelop->route->start_datetime) && $modelEnvelop->route->start_datetime > $now) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint hoort bij routeonderdeel die nog niet gestart is.'));
             return $this->redirect(['site/overview-players']);
+        }
+
+        if (isset($modelEnvelop->route->end_datetime) && $modelEnvelop->route->end_datetime < $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze hint hoort bij routeonderdeel die al afegelopen is..'));
+          return $this->redirect(['site/overview-players']);
         }
 
         $openHint = OpenNoodEnvelop::find()

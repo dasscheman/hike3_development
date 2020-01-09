@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\DeelnemersEvent;
+use app\models\Posten;
 use app\models\PostPassage;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -40,6 +42,11 @@ class PostPassageController extends Controller {
                               ];
                               return Yii::$app->user->can('organisatiePostCheck', $params);
                           }
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['self-check'],
+                        'roles' => ['deelnemerGestartTime'],
                     ],
                     [
                         'allow' => true,
@@ -107,6 +114,110 @@ class PostPassageController extends Controller {
                 'model' => $model,
                 'action' => $action,
         ]);
+    }
+
+    /**
+     * Creates a new PostPassage model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionSelfCheck()
+    {
+        $post_code = Yii::$app->request->get('post_code');
+        $even_id = Yii::$app->request->get('event_id');
+
+        $now = date('Y-m-d H:i:s');
+
+        $posten = Posten::find()
+            ->where('event_ID =:event_id AND (incheck_code =:post_code OR uitcheck_code =:post_code ) ')
+            ->params([
+                ':event_id' => $even_id,
+                ':post_code' => $post_code])
+            ->one();
+
+
+        if (!isset($posten->post_ID)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Dit is geen geldige post.'));
+            return $this->redirect(['site/overview-players']);
+        }
+        $action = null;
+        if($posten->incheck_code == $post_code) {
+          $action = 'incheck';
+        }
+        if($posten->uitcheck_code == $post_code) {
+          $action = 'uitcheck';
+        }
+
+        if ($posten->event_ID != Yii::$app->user->identity->selected_event_ID) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze post is niet voor huidige geselecteerde hike.'));
+            return $this->redirect(['site/overview-players']);
+        }
+
+        $deelnemersEvent = new DeelnemersEvent;
+        $groupPlayer = $deelnemersEvent->getGroupOfPlayer($posten->event_ID);
+
+        if (!$groupPlayer) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Dit is geen groep gevonden.'));
+            return $this->redirect(['site/index']);
+        }
+
+        if (isset($posten->start_datetime) && $posten->start_datetime > $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze postcode is nog niet open gestart.'));
+          return $this->redirect(['site/overview-players']);
+        }
+
+        if (isset($posten->end_datetime) && $posten->end_datetime < $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze post is al afegelopen.'));
+          return $this->redirect(['site/overview-players']);
+        }
+
+        $postenPassage = PostPassage::find()
+            ->where('event_ID =:event_id AND post_ID =:post_id AND group_ID =:group_id')
+            ->params([
+                ':event_id' => $posten->event_ID,
+                ':post_id' => $posten->post_ID,
+                ':group_id' => $groupPlayer
+            ])
+            ->one();
+        if($action == 'uitcheck') {
+            if (!$postenPassage->gepasseerd || $postenPassage->binnenkomst == null ) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je moet eerst inchecken om uit te kunnen checken.'));
+                return $this->redirect(['site/overview-players']);
+            }
+
+            if ($postenPassage->vertrek !== null ) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je bent al uigecheckt.'));
+                return $this->redirect(['site/overview-players']);
+            }
+            $postenPassage->vertrek = $now;
+            if ($postenPassage->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Uitgecheckt om ' . $now));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Kan niet uitchecken'));
+            }
+            return $this->redirect(['site/overview-players']);
+        }
+
+        if($action == 'incheck'){
+            if (isset($postenPassage->posten_passage_ID) && ($postenPassage->gepasseerd || $postenPassage->binnenkomst != null )) {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Je bent al ingecheckt op deze post.'));
+                return $this->redirect(['site/overview-players']);
+            }
+            // Every thing is checked, now we can create the checked qr record.
+            $model = new PostenPassage;
+            $model->gepasseerd = 1;
+            $model->event_ID = Yii::$app->user->identity->selected_event_ID;
+            $model->post_ID = $posten->post_ID;
+            $model->group_ID = $groupPlayer;
+
+            if ($model->save()) {
+                Yii::$app->cache->flush();
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Ingecheckt!'));
+                return $this->redirect(['posten/index']);
+            }
+        }
+        Yii::$app->session->setFlash('error', Yii::t('app', 'Er is iets mis gegaan!'));
+        return $this->redirect(['site/overview-players']);
     }
 
     /**

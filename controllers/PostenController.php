@@ -3,15 +3,16 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\EventNames;
 use app\models\Posten;
 use app\models\PostenSearch;
 use app\models\PostPassage;
+use kartik\mpdf\Pdf;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
-use app\models\EventNames;
 
 /**
  * PostenController implements the CRUD actions for Posten model.
@@ -37,7 +38,11 @@ class PostenController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'map-update', 'move-up-down', 'lists-posts', 'ajaxupdate'],
+                        'actions' => [
+                            'index', 'update', 'map-update',
+                            'move-up-down', 'lists-posts',
+                            'ajaxupdate', 'print-all-pdf'
+                        ],
                         'roles' => ['organisatie'],
                     ],
                     [
@@ -85,6 +90,7 @@ class PostenController extends Controller
         $model = new Posten();
         if (Yii::$app->request->post('Posten') &&
             $model->load(Yii::$app->request->post())) {
+            $model->getUniqueQrCode();
             $model->setNewOrderForPosten();
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe post opgeslagen.'));
@@ -313,5 +319,55 @@ class PostenController extends Controller
                 return Json::encode($error);
             }
         }
+    }
+
+    public function actionPrintAllPdf()
+    {
+        $models = Posten::findAll(['event_ID' => Yii::$app->user->identity->selected_event_ID]);
+
+        $content = "";
+        foreach ($models as $model) {
+            $model->qrcode();
+            $content .= $this->renderPartial('reportview', ['model' => $model]);
+        }
+
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A5 paper format
+            'format' => [100, 200],
+            'marginLeft' => 0,
+            'marginRight' => 0,
+            'marginTop' => 0,
+            'marginBottom' => 0,
+            'defaultFont' => 'arial',
+            'filename' => 'in-uitcheck_stations.pdf',
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => 'css/qrreport.css',
+            //'@web/css/qrreport.css',
+            //   'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            //    'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => [
+                'title' => Yii::t('app', 'In-uitcheckt post:') . ' ' . $model->post_name,
+                'subject' => Yii::t('app', 'In-uitcheck post:') . ' ' . $model->post_name,
+            //    'keywords' => 'krajee, grid, export, yii2-grid, pdf'
+            ],
+            // call mPDF methods on the fly
+            //    'methods' => [
+            //        'SetHeader'=>[$model->qr_name],
+            //        'SetFooter'=>[$model->qr_code],
+            //    ]
+        ]);
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 }

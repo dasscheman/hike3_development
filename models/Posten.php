@@ -3,7 +3,10 @@
 namespace app\models;
 
 use Yii;
+use app\components\GeneralFunctions;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use Da\QrCode\QrCode;
 
 /**
  * This is the model class for table "tbl_posten".
@@ -305,6 +308,72 @@ class Posten extends HikeActiveRecord
             return false;
         } else {
             return true;
+        }
+    }
+
+    public function getTimeTableData($groupView = true)
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+        $posten = Posten::find()
+            ->where('event_ID =:event_ID')
+            ->addParams([':event_ID' => $event_id]);
+
+        if($groupView) {
+            $posten
+                // lijkt tegen intuitief. Maar voor de start tijd moet er een uur bij
+                // de huidige opgeteld worden en voor de eind tijd juist eraf gehaald worden.
+                ->andWhere(['or',
+                    ['<=', 'start_datetime', Yii::$app->setupdatetime->convert(strtotime('+1 hours'), 'datetime')],
+                    ['start_datetime' => null]
+                ])
+                ->andWhere(['or',
+                    ['>=', 'end_datetime', Yii::$app->setupdatetime->convert(strtotime('-1 hours'), 'datetime')],
+                    ['end_datetime' => null]
+                ]);
+        }
+        return $posten->all();
+    }
+
+    public function qrcode()
+    {
+        $event_id = Yii::$app->user->identity->selected_event_ID;
+
+        $link = Url::to([
+            'post-passage/self-check',
+            'event_id' => $event_id,
+            'post_code' => $this->incheck_code
+        ], true);
+        $qrCode = new QrCode($link);
+        $qrCode->writeFile(Yii::$app->params['post_code_path'] . $this->incheck_code . '.jpg');
+
+        $link = Url::to([
+            'post-passage/self-check',
+            'event_id' => $event_id,
+            'post_code' => $this->uitcheck_code
+        ], true);
+        $qrCode = new QrCode($link);
+        $qrCode->writeFile(Yii::$app->params['post_code_path'] . $this->uitcheck_code . '.jpg');
+    }
+
+    public function getUniqueQrCode()
+    {
+        while (true) {
+            $incheckCode = GeneralFunctions::randomString(22);
+            $uitcheckCode = GeneralFunctions::randomString(22);
+            $incheckData = Posten::find()
+                ->where('incheck_code = :qr_code OR uitcheck_code = :qr_code')
+                ->params([':qr_code' => $incheckCode])
+                ->exists();
+            $uitcheckData = Posten::find()
+                ->where('incheck_code = :qr_code OR uitcheck_code = :qr_code')
+                ->params([':qr_code' => $uitcheckCode])
+                ->exists();
+            // if QR code niet bestaat dan wordt de nieuwe gegenereede code gebruikt
+            if (!$incheckData && !$uitcheckData) {
+                $this->incheck_code = $incheckCode;
+                $this->uitcheck_code = $uitcheckCode;
+                break;
+            }
         }
     }
 }

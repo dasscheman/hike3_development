@@ -10,6 +10,7 @@ use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
+$eventNames = new EventNames;
 
 $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model->achternaam;
 
@@ -54,7 +55,7 @@ $this->title = Yii::t('app', 'Overview') . ' '. $model->voornaam . ' ' . $model-
           <b>
           <?php echo Html::encode($model->getAttributeLabel('selected')); ?>:
           </b>
-          <?php echo Html::encode(EventNames::getEventName(Yii::$app->user->identity->selected_event_ID)); ?></br>
+          <?php echo Html::encode($eventNames->getEventName(Yii::$app->user->identity->selected_event_ID)); ?></br>
           <?php
                 Modal::begin(
                 [

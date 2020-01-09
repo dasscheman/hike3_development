@@ -89,7 +89,9 @@ class Routebook extends \yii\db\ActiveRecord
      */
     public function getRoute()
     {
-        return $this->hasOne(Route::className(), ['route_ID' => 'route_ID']);
+        return $this->hasOne(Route::className(), ['route_ID' => 'route_ID'])
+            ->orderBy(['tbl_route.start_datetime' => SORT_ASC, 'tbl_route.end_datetime' => SORT_ASC ]);
+;
     }
 
     /**

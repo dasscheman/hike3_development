@@ -84,7 +84,9 @@ class RouteSearch extends Route
                 ':end_date' => $event->end_date])
             ->orderBy([
                 'day_date'=>SORT_ASC,
+                'start_datetime'=>SORT_ASC,
                 'route_volgorde' => SORT_ASC,
+                'end_datetime'=>SORT_ASC,
             ]);
 
         $dataProvider = new ActiveDataProvider([

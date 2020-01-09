@@ -78,6 +78,8 @@ class QrCheckController extends Controller
         $qr_code = Yii::$app->request->get('qr_code');
         $even_id = Yii::$app->request->get('event_id');
 
+        $now = date('Y-m-d H:i:s');
+
         $qr = Qr::find()
             ->where('event_ID =:event_id AND qr_code =:qr_code')
             ->params([
@@ -102,9 +104,14 @@ class QrCheckController extends Controller
             return $this->redirect(['site/index']);
         }
 
-        if ($qr->route->day_date != EventNames::getActiveDayOfHike()) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR is vandaag niet geldig.'));
-            return $this->redirect(['site/overview-players']);
+        if (isset($qr->route->start_datetime) && $qr->route->start_datetime > $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR code hoort bij routeonderdeel die nog niet gestart is.'));
+          return $this->redirect(['site/overview-players']);
+        }
+
+        if (isset($qr->route->end_datetime) && $qr->route->end_datetime < $now) {
+          Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR code hoort bij routeonderdeel die al afegelopen is..'));
+          return $this->redirect(['site/overview-players']);
         }
 
         $qrCheck = QrCheck::find()

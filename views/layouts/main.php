@@ -181,6 +181,14 @@ AppAsset::register($this);
                                             ]
                                         ],
                                         [
+                                            'label' => Yii::t('app', 'Print alle posten'),
+                                            'url' => ['/posten/print-all-pdf'],
+                                            'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
+                                            'linkOptions' => [
+                                                'target'=>'_blank'
+                                            ]
+                                        ],
+                                        [
                                             'label' => Yii::t('app', 'Print alle tijdritten'),
                                             'url' => ['/time-trail-item/print-all-pdf'],
                                             'visible' => Yii::$app->user->isGuest ? false : Yii::$app->user->can('organisatie'),
