@@ -90,26 +90,23 @@ echo Dialog::widget();
                 <div class="map-right">
                     <h3>
                         <?php
-                        if ($routeModel->day_date !== null) {
-                            Modal::begin(
-                                [
-                                    'id' => 'modalCreatePost',
-                                    'toggleButton' => [
-                                        'label' => Yii::t('app', 'Post toevoegen'),
-                                        'class' => 'btn btn btn-success padding-right',
-                                        'disabled' => !Yii::$app->user->can('organisatie'),
-                                    ],
-                                ]
-                            );
+                        Modal::begin(
+                            [
+                                'id' => 'modalCreatePost',
+                                'toggleButton' => [
+                                    'label' => Yii::t('app', 'Post toevoegen'),
+                                    'class' => 'btn btn btn-success padding-right',
+                                    'disabled' => !Yii::$app->user->can('organisatie'),
+                                ],
+                            ]
+                        );
 
-                            echo $this->render('/posten/create', [
-                                'model' => $postenModel
-                            ]);
-                            Modal::end();
-                        }
+                        echo $this->render('/posten/create', [
+                            'model' => $postenModel
+                        ]);
+                        Modal::end();
                         ?>
-
-                        </h3>
+                    </h3>
                 </div>
                 <div class="map-left">
                     <?php

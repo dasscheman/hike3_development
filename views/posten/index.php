@@ -47,8 +47,18 @@ $this->title = Yii::t('app', 'Posten');
             'format' => 'raw',
             // here comes the problem - instead of parent_region I need to have parent
             'value' => function ($model, $key, $index, $column) {
+                $label = $model->post_name;
+                if(isset($model->start_datetime) ||
+                  isset($model->end_datetime)){
+                    $label = $model->post_name  .
+                        ' (' .
+                        Yii::$app->setupdatetime->displayFormat($model->start_datetime, 'datetime_short', false, false)
+                        . ' - ' .
+                        Yii::$app->setupdatetime->displayFormat($model->end_datetime, 'datetime_short', false, false) .')';
+
+                }
                 return ButtonAjax::widget([
-                        'name' => $model->post_name,
+                        'name' => $label,
                         'route' => ['posten/update', 'post_ID' => $key],
                         'modalId' => '#main-modal',
                         'modalContent' => '#main-content-modal',

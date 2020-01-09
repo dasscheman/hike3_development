@@ -22,6 +22,7 @@ class OrganisatiePostCheckRule extends Rule
      */
     public function execute($user, $item, $params)
     {
+        $postPassage = new PostPAssage();
         if (!Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart) {
             return false;
         }
@@ -44,25 +45,25 @@ class OrganisatiePostCheckRule extends Rule
         if(empty($post)) {
             return false;
         }
-        
+
         if($action=='start' &&
             $post->isStartPost() &&
-            !PostPassage::isPostChechedOutByGroup($group_id,$post_id)) {
+            !$postPassage->isPostChechedOutByGroup($group_id,$post_id)) {
                 return true;
         }
 
         if($action=='checkout' &&
-            PostPassage::isPostPassedByGroup($group_id, $post_id) &&
-            !PostPassage::isPostChechedOutByGroup($group_id, $post_id) &&
-            PostPassage::isGroupStarted($group_id) &&
-            PostPassage::istimeLeftToday($group_id)) {
+            $postPassage->isPostPassedByGroup($group_id, $post_id) &&
+            !$postPassage->isPostChechedOutByGroup($group_id, $post_id) &&
+            $postPassage->isGroupStarted($group_id) &&
+            $postPassage->istimeLeftToday($group_id)) {
                 return true;
         }
 
         if($action=='checkin' &&
             !$post->isStartPost() &&
-            PostPassage::isGroupStarted($group_id) &&
-            !PostPassage::isPostPassedByGroup($group_id, $post_id) )    {
+            $postPassage->isGroupStarted($group_id) &&
+            !$postPassage->isPostPassedByGroup($group_id, $post_id) )    {
                 return true;
         }
 

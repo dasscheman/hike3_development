@@ -49,7 +49,9 @@ class Posten extends HikeActiveRecord
         return [
             [['post_name', 'event_ID', 'score', 'latitude', 'longitude'], 'required'],
             [['event_ID', 'score', 'post_volgorde', 'create_user_ID', 'update_user_ID'], 'integer'],
-            [['latitude', 'longitude', 'date', 'create_time', 'update_time'], 'safe'],
+            [[
+                'latitude', 'longitude', 'date', 'create_time',
+                'update_time', 'start_datetime', 'end_datetime'], 'safe'],
             [['latitude', 'longitude'], 'number'],
             [['post_name'], 'string', 'max' => 255],
             [['post_name', 'event_ID', 'date'], 'unique', 'targetAttribute' => ['post_name', 'event_ID', 'date'], 'message' => Yii::t('app', 'This station name exist for this day.')],

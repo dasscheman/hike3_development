@@ -21,11 +21,12 @@ class OrganisatieGestartTimeRule extends Rule
      */
     public function execute($user, $item, $params)
     {
+        $postPassage = new PostPAssage();
         if (Yii::$app->user->identity->getStatusForEvent() == EventNames::STATUS_gestart &&
             Yii::$app->user->identity->getRolUserForEvent() == DeelnemersEvent::ROL_organisatie &&
             isset($params['group_id']) &&
-            PostPassage::isGroupStarted($params['group_id']) &&
-            PostPassage::istimeLeftToday($params['group_id'])) {
+            $postPassage->isGroupStarted($params['group_id']) &&
+            $postPassage->istimeLeftToday($params['group_id'])) {
             return true;
         }
         return false;
