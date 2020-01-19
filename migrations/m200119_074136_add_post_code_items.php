@@ -6,7 +6,7 @@ use app\models\Posten;
 /**
  * Class m190901_074136_add_route_items
  */
-class m190901_074136_add_post_code_items extends Migration
+class m200119_074136_add_post_code_items extends Migration
 {
     /**
      * {@inheritdoc}
