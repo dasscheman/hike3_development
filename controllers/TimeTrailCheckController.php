@@ -143,7 +143,7 @@ class TimeTrailCheckController extends Controller {
             $timeTrailCheckPrevious->end_time = \Yii::$app->setupdatetime->storeFormat(time(), 'datetime');
 
             if ($end_date > time()) {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Je hebt het gehaald'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Je hebt het gehaald'));
                 $timeTrailCheckPrevious->succeded = 1;
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Je bent te laat'));

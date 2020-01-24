@@ -67,6 +67,7 @@ class NoodEnvelopController extends Controller
     public function actionIndex()
     {
         $searchModel = new NoodEnvelopSearch();
+        $searchModel->group_id = Yii::$app->user->identity->getGroupUserForEvent();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -216,7 +217,7 @@ class NoodEnvelopController extends Controller
         $startDate = EventNames::getStartDate(Yii::$app->user->identity->selected_event_ID);
         $endDate = EventNames::getEndDate(Yii::$app->user->identity->selected_event_ID);
         $searchModel = new RouteSearch();
-        
+
         if (Yii::$app->request->isAjax) {
             $searchModel = new NoodEnvelopSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

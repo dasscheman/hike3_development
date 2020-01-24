@@ -84,7 +84,9 @@ class OpenNoodEnvelopController extends Controller {
      * @return mixed
      */
     public function actionOpen($nood_envelop_ID) {
-        Yii::$app->cache->flush();
+        Yii::$app->cache->flush();        
+        $now = date('Y-m-d H:i:s');
+
         $model = new OpenNoodEnvelop;
         $modelEnvelop = NoodEnvelop::findOne($nood_envelop_ID);
         if(!$modelEnvelop) {

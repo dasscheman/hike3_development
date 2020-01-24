@@ -76,6 +76,7 @@ class OpenVragenAntwoordenController extends Controller {
     public function actionBeantwoorden($open_vragen_ID) {
         $model = new OpenVragenAntwoorden;
         $modelVraag = OpenVragen::findOne($open_vragen_ID);
+        $now = date('Y-m-d H:i:s');
 
         if($modelVraag->event_ID != Yii::$app->user->identity->selected_event_ID) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze vraag is niet voor deze hike.'));

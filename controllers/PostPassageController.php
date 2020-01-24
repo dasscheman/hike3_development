@@ -204,8 +204,9 @@ class PostPassageController extends Controller {
                 return $this->redirect(['site/overview-players']);
             }
             // Every thing is checked, now we can create the checked qr record.
-            $model = new PostenPassage;
+            $model = new PostPassage;
             $model->gepasseerd = 1;
+            $model->binnenkomst = $now;
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->post_ID = $posten->post_ID;
             $model->group_ID = $groupPlayer;
@@ -213,7 +214,7 @@ class PostPassageController extends Controller {
             if ($model->save()) {
                 Yii::$app->cache->flush();
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Ingecheckt!'));
-                return $this->redirect(['posten/index']);
+                return $this->redirect(['site/overview-players']);
             }
         }
         Yii::$app->session->setFlash('error', Yii::t('app', 'Er is iets mis gegaan!'));

@@ -50,12 +50,13 @@ $this->title = Yii::t('app', 'Hints zoeken');
             'template' => '{open} {up} {down}',
             'buttons' => [
                 'open' => function ($url, $model) {
+                    $deelnemersEvent = new DeelnemersEvent();
                     return ButtonAjax::widget([
                             'name' => Yii::t('app', 'Open Hint'),
                             'route' => [
                                 '/open-nood-envelop/open',
                                 'nood_envelop_ID' => $model->nood_envelop_ID,
-                                'group_ID' => DeelnemersEvent::getGroupOfPlayer($model->nood_envelop_ID)
+                                'group_ID' => $deelnemersEvent->getGroupOfPlayer($model->nood_envelop_ID)
                             ],
                             'modalId' => '#main-modal',
                             'modalContent' => '#main-content-modal',
@@ -99,14 +100,14 @@ $this->title = Yii::t('app', 'Hints zoeken');
             'visibleButtons' => [
               'up' => function ($model, $key, $index) {
                 if (Yii::$app->user->can('organisatie') &&
-                    NoodEnvelop::lowererOrderNumberExists($model->nood_envelop_ID)) {
+                    $model->lowererOrderNumberExists($model->nood_envelop_ID)) {
                     return true;
                 }
                 return false;
               },
               'down' => function ($model, $key, $index) {
                 if (Yii::$app->user->can('organisatie') &&
-                NoodEnvelop::higherOrderNumberExists($model->nood_envelop_ID)) {
+                $model->higherOrderNumberExists($model->nood_envelop_ID)) {
                   return true;
                 }
                 return false;
