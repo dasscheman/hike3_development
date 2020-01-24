@@ -103,7 +103,8 @@ class TimeTrailCheckController extends Controller {
             return $this->redirect(['site/overview-players']);
         }
 
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($timeTrailItem->event_ID);
+        $deelnemersEvent = new DeelnemersEvent();
+        $groupPlayer = $deelnemersEvent->getGroupOfPlayer($timeTrailItem->event_ID);
         if (!$groupPlayer) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Geen geldige tijdrit code.'));
             return $this->redirect(['site/index']);

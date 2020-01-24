@@ -96,8 +96,8 @@ class QrCheckController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('app', 'Deze QR is niet voor deze hike.'));
             return $this->redirect(['site/overview-players']);
         }
-
-        $groupPlayer = DeelnemersEvent::getGroupOfPlayer($qr->event_ID);
+        $deelnemersEvent = new DeelnemersEvent();
+        $groupPlayer = $deelnemersEvent->getGroupOfPlayer($qr->event_ID);
 
         if (!$groupPlayer) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Dit is geen geldige QR code.'));

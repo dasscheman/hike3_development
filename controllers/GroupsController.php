@@ -114,11 +114,11 @@ class GroupsController extends Controller
         // It is not a problem when group is saved and the save of the group members fail.
         // Because it is very easy to add them
         $errors = false;
-        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
+        if (!$model->addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             $errors = true;
         }
 
-        if (!Groups::addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
+        if (!$model->addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
             $errors = true;
         }
         if (!$errors) {
@@ -187,11 +187,11 @@ class GroupsController extends Controller
         }
 
         $errors = false;
-        if (!Groups::addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
+        if (!$model->addMembersToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_temp'])) {
             $errors = true;
         }
 
-        if (!Groups::addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
+        if (!$model->addEmailsToGroup($model->group_ID, Yii::$app->request->post('Groups')['users_email_temp'])) {
             $errors = true;
         }
         if (!$errors) {
