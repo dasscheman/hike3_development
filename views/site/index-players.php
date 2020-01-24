@@ -13,6 +13,11 @@ use app\models\QrCheckSearch;
 $this->title = Yii::t('app', 'Hike overzicht');
 
 ?>
+<script>
+    setInterval(function() {
+        window.location.reload();
+    }, 30000);
+</script>
 <div class="site-index-players">
     <div class="container text-center">
         <h1><?= Html::encode($this->title) ?></h1>

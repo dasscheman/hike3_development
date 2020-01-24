@@ -23,38 +23,10 @@ $this->registerJsVar ( 'postpassages', $model->postPassages, \yii\web\View::POS_
         ],
     ];
 
-    $attributes['active_day'] = [
-        'type' => Form::INPUT_DROPDOWN_LIST,
-        'items' => $model->getDatesAvailable(false),
-        'options' => [
-            'prompt' => Yii::t('app', 'Selecteer active dag'),
-            'placeholder' => Yii::t('app', 'Active dag')
-        ]
-    ];
-
     $attributes['max_time'] = [
         'type' => Form::INPUT_TEXT,
         // 'value' => '01/04/2005 08:17',
         'attribute' => 'max_time',
-    ];
-
-    $attributes['start_time_all_groups'] = [
-        // 'type' => DateTimePicker::TYPE_INPUT,
-        'type' => Form::INPUT_WIDGET,
-        'widgetClass' => 'kartik\datetime\DateTimePicker',
-        'options' => [
-            'removeButton' => false,
-            'pickerButton' => ['icon' => 'time'],
-            'readonly' => TRUE,
-            'attribute' => 'start_time_all_groups',
-            'pluginOptions' => [
-                'autoclose' => true,
-            ],
-        ],
-    ];
-
-    $attributes['start_all_groups'] = [
-      'type' => Form::INPUT_CHECKBOX
     ];
 
     $form = ActiveForm::begin([
@@ -91,9 +63,4 @@ $this->registerJsVar ( 'postpassages', $model->postPassages, \yii\web\View::POS_
         }?>
     </div>
     <?php ActiveForm::end(); ?>
-    <div class="alert alert-danger" id="no_stations_warning">
-          Let op, je hebt geen posten aangemaakt. Je kunt starten, maar er kan
-          geen tijd bijgehouden worden en alle deelnemers starten automatisch
-          als je de status op 'Gestart' zet.
-    </div>
 </div>
