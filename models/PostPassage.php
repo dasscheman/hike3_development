@@ -228,14 +228,10 @@ class PostPassage extends HikeActiveRecord
             ->params([':event_id' => Yii::$app->user->identity->selected_event_ID])
             ->one();
 
-        if ($dataEvent->active_day === null || $dataEvent->active_day === '0000-00-00') {
-            return false;
-        }
-
         $queryPosten = Posten::find()
             ->select('post_ID')
-            ->where('event_ID =:event_id AND date =:active_date')
-            ->Params([':event_id' => Yii::$app->user->identity->selected_event_ID, ':active_date' => $dataEvent->active_day]);
+            ->where('event_ID =:event_id')
+            ->Params([':event_id' => Yii::$app->user->identity->selected_event_ID]);
 
         $queryPassage = PostPassage::find()
             ->where(['in', 'post_ID', $queryPosten])

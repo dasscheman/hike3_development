@@ -106,7 +106,6 @@ class TimeTrailItemController extends Controller
         } else {
             $model->event_ID = Yii::$app->user->identity->selected_event_ID;
             $model->time_trail_ID = Yii::$app->request->get('time_trail_ID');
-//            $this->setCookieIndexTab($model->time_trail_ID);
         }
 
         if (Yii::$app->request->isAjax) {
@@ -147,7 +146,7 @@ class TimeTrailItemController extends Controller
                     [
                         ':event_id' => Yii::$app->user->identity->selected_event_ID,
                         ':time_trail_item_id' => $model->time_trail_item_ID
-                ]
+                    ]
                 )
                 ->exists();
 
@@ -362,14 +361,6 @@ class TimeTrailItemController extends Controller
             ->where('event_ID =:event_id', array(':event_id' => Yii::$app->user->identity->selected_event_ID))
             ->all();
 
-//        if (Yii::$app->request->isAjax) {
-//            return $this->renderAjax('time-trail/index', [
-//                    'searchModel' => $searchModel,
-//                    'dataProvider' => $dataProvider,
-//                    'model' => $model,
-//            ]);
-//        }
-
         return $this->render('/time-trail/index', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -405,22 +396,9 @@ class TimeTrailItemController extends Controller
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-//            $this->setCookieIndexTab($model->time_trail_ID);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-//    public function setCookieIndexTab($date)
-//    {
-//        $cookies = Yii::$app->getResponse()->getCookies();
-//        $cookies->remove('time_trail_tab');
-//        $cookie = new Cookie([
-//            'name' => 'time_trail_tab',
-//            'value' => $date,
-//            'expire' => time() + 86400 * 365,
-//        ]);
-//        $cookies->add($cookie);
-//    }
 }

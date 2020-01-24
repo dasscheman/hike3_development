@@ -219,6 +219,7 @@ class EventNamesController extends Controller
      */
     public function actionChangeSettings($event_ID, $action)
     {
+
         Yii::$app->cache->flush();
         $model = $this->findModel($event_ID);
 
@@ -237,43 +238,8 @@ class EventNamesController extends Controller
             Yii::$app->session->setFlash('error', Yii::t('app', 'Kan wijzigingen niet opslaan.'));
             return $this->redirect(['site/overview-organisation']);
         }
-
         Yii::$app->cache->flush();
-        if (Yii::$app->request->get('action') === 'change_settings') {
-            $begin = new DateTime($model->start_date);
-            $end = new DateTime($model->end_date);
 
-            for ($i = $begin; $i <= $end; $i->modify('+1 day')) {
-                  $day = Yii::$app->setupdatetime->convert($i);
-                  $dayname = Yii::$app->setupdatetime->getDay($i);
-                  // Wanneer er een hike aangemaakt wordt, dan wordt er voor
-                  // elke dag een route aangemaakt.
-                  $modelRoute = new Route;
-                  if (!$modelRoute->routeExistForDay($day)) {
-                      $modelRoute->setAttributes([
-                          'event_ID' => $model->event_ID,
-                          'route_name' => $dayname . ' ' . Yii::t('app', 'route'),
-                          'day_date' => $day,
-                          'route_volgorde' => 1
-                      ]);
-                      $modelRoute->save();
-                  }
-            }
-        }
-        if (Yii::$app->request->get('action') === 'set_change_status') {
-            if(Yii::$app->request->post('EventNames')['start_all_groups']) {
-                $startPost = Posten::getStartPost($model->active_day);
-                foreach($model->groups as $group) {
-                    $modelPassage = new PostPassage();
-                    $modelPassage->post_ID = $startPost;
-                    $modelPassage->event_ID = $model->event_ID;
-                    $modelPassage->group_ID = $group->group_ID;
-                    $modelPassage->gepasseerd = 1;
-                    $modelPassage->vertrek = Yii::$app->request->post('EventNames')['start_time_all_groups'];
-                    $modelPassage->save();
-                }
-            }
-        }
         if (Yii::$app->request->get('action') == 'change_settings') {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Wijzigingen zijn opgeslagen.'));
         }

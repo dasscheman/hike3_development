@@ -2,10 +2,8 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\OpenNoodEnvelop */
-dd('asdf');
 ?>
 <div class="tbl-open-nood-envelop-open">
 

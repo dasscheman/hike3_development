@@ -128,7 +128,6 @@ class TimeTrailController extends Controller
         if (Yii::$app->request->post('TimeTrail') &&
             $model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-//                $this->setCookieIndexTab($model->time_trail_ID);
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Nieuwe tijdrit opgeslagen.'));
                 return $this->redirect(['open-map/index']);
             }
@@ -241,22 +240,9 @@ class TimeTrailController extends Controller
                 'event_ID' => Yii::$app->user->identity->selected_event_ID]);
 
         if ($model !== null) {
-//            $this->setCookieIndexTab($model->time_trail_ID);
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-//    public function setCookieIndexTab($date)
-//    {
-//        $cookies = Yii::$app->getResponse()->getCookies();
-//        $cookies->remove('time_trail_tab');
-//        $cookie = new Cookie([
-//            'name' => 'time_trail_tab',
-//            'value' => $date,
-//            'expire' => time() + 86400 * 365,
-//        ]);
-//        $cookies->add($cookie);
-//    }
 }
